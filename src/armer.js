@@ -16,6 +16,7 @@
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
+    alert(11)
     // TODO(wuhf): 核心工具集
     // ========================================================
     (function(){

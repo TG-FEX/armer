@@ -1,0 +1,19 @@
+{
+  "title": "ArmerJS",
+  "name": "armer",
+  "description": "",
+  "version": "0.1.0",
+  "license": {
+    "type": "MIT",
+    "url": ""
+  },
+  "author": {
+    "name": "Alphmega",
+    "url": ""
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-requirejs": "*"
+  }
+}

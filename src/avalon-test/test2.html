@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../../avalon/avalon.js"></script>
+</head>
+<body>
+    <div ms-controller="buggyDemo">{{testitem.a.html|html}}</div>
+    <script>
+        var vm = avalon.define('buggyDemo', function(vm){
+            vm.testitem = {a:{html:false}}
+        })
+    </script>
+</body>
+</html>

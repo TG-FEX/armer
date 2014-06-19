@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script>
+        var picPath;
+        var image;
+        // preview picture
+        function preview()
+        {
+            document.getElementById('preview').style.display = 'none';
+// 下面代码用来获得图片尺寸，这样才能在IE下正常显示图片
+            document.getElementById('box').innerHTML
+                    = "<img width='"+image.width+"' height='"+image.height+"' id='aPic' src='"+picPath+"'>";
+        }
+        // show view button
+        function buttonShow()
+        {
+            /*
+             这里用来解决图片加载延时造成的预览失败.
+             简单说明一下，当image对象的src属性发生改变时JavaScript会重新给image装载图片内容，
+             这通常是需要一些时间的，如果在加载完成之前想将图片显示出来就会造成错误，所以我们
+             通过图片的宽度和高度来判断图片是否已经被成功加载，加载完毕才会显示预览按钮.
+             这里我仍然有一个困惑，在IE7下预览效果偶尔会失效.
+             */
+            if ( image.width == 0 || image.height == 0 ) {
+                setTimeout(buttonShow, 1000);
+            } else {
+                document.getElementById('preview').style.display = 'block';
+            }
+        }
+        function loadImage(ele) {
+            picPath   = getPath(ele);
+            image     = new Image();
+            image.src = picPath;
+            setTimeout(buttonShow, 1000);
+        }
+        function getPath(obj)
+        {
+            if(obj)
+            {
+//ie
+                if (window.navigator.userAgent.indexOf("MSIE")>=1)
+                {
+                    obj.select();
+// IE下取得图片的本地路径
+                    return document.selection.createRange().text;
+                }
+//firefox
+                else if(window.navigator.userAgent.indexOf("Firefox")>=1)
+                {
+                    if(obj.files)
+                    {
+// Firefox下取得的是图片的数据
+                        return obj.files.item(0).getAsDataURL();
+                    }
+                    return obj.value;
+                }
+                return obj.value;
+            }
+        }
+    </script>
+</head>
+<body>
+<input type="file" name="pic" id="pic" onchange='loadImage(this)' />
+<input id='preview' type='button' value='preview' style='display:none;' onclick='preview();'>
+<div id='box'></div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<head>
+    <script type="text/javascript">
+        function Init () {
+            var source = document.getElementById ("source");
+            var target = document.getElementById ("target");
+            if (source.addEventListener) {  // all browsers except IE before version 9
+                // Firefox from version 3.5, Google Chrome, Safari, Internet Exlorer
+                source.addEventListener ("dragstart", DumpInfo, false);
+                // Firefox before version 3.5
+                source.addEventListener ("draggesture", DumpInfo, false);
+                // Firefox, Google Chrome, Safari, Internet Exlorer
+                source.addEventListener ("drag", DumpInfo, false);
+                // Firefox, Google Chrome, Safari, Internet Exlorer
+                source.addEventListener ("dragend", DumpInfo, false);
+
+                // Firefox, Google Chrome, Safari, Internet Exlorer
+                target.addEventListener ("dragenter", DumpInfo, false);
+                // Firefox, Google Chrome, Safari, Internet Exlorer
+                target.addEventListener ("dragover", DumpInfo, false);
+                // Firefox from version 3.5, Google Chrome, Safari, Internet Exlorer
+                target.addEventListener ("dragleave", DumpInfo, false);
+                // Firefox
+                target.addEventListener ("dragexit", DumpInfo, false);
+                // Firefox from version 3.5, Google Chrome, Safari, Internet Exlorer
+                target.addEventListener ("drop", DumpInfo, false);
+                // Firefox before version 3.5
+                target.addEventListener ("dragdrop", DumpInfo, false);
+            }
+            else {
+                if (source.attachEvent) {   // IE before version 9
+                    source.attachEvent ("ondragstart", DumpInfo);
+                    source.attachEvent ("ondrag", DumpInfo);
+                    source.attachEvent ("ondragend", DumpInfo);
+
+                    target.attachEvent ("ondragenter", DumpInfo);
+                    target.attachEvent ("ondragover", DumpInfo);
+                    target.attachEvent ("ondragleave", DumpInfo);
+                    target.attachEvent ("ondrop", DumpInfo);
+                }
+            }
+        }
+
+        function DumpInfo (event) {
+            var firedOn = event.target ? event.target : event.srcElement;
+            if (firedOn.tagName === undefined) {
+                firedOn = firedOn.parentNode;
+            }
+
+            var info = document.getElementById ("info");
+            if (firedOn.id == "source") {
+                info.innerHTML += "<span style='color:#008000'>" + event.type + "</span>, ";
+            }
+            else {
+                info.innerHTML += "<span style='color:#800000'>" + event.type + "</span>, ";
+            }
+
+            if (event.type == "dragover") {
+                // the dragover event needs to be canceled to allow firing the drop event
+                if (event.preventDefault) {
+                    event.preventDefault ();
+                }
+            }
+        }
+    </script>
+</head>
+<body onload="Init ();">
+<div id="source" style="background-color:#d0f0a0; width:200px">
+    Select and drag some text from this field and drop it into the target.
+</div>
+<br /><br />
+<textarea id="target" rows="5">
+    This is the target element.
+</textarea>
+<br /><br />
+<div id="info" style="background-color:#f0f0ff; font-weight:bold;"></div>
+</body>

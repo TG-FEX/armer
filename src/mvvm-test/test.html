@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../../jquery.js"></script>
+
+    <script src="../armer.js"></script>
+    <script src="../polyfill.js"></script>
+    <script src="../mvvm.js"></script>
+
+<!--
+    <script src="../../../../avalon/avalon.js"></script>
+    <script>
+        var $ = avalon;
+        $.MVVM = function(id, factory){
+            if (arguments.length == 1)
+                return avalon.vmodels[id];
+            else if (arguments.length == 2)
+                if (typeof factory == 'object') {
+                    var model = factory
+                    factory = function(){
+                        $.mix(this, model);
+                    }
+                }
+            return avalon.define(id, function(vm){
+                factory.call(vm)
+            });
+        };
+        $.MVVM.scan = avalon.scan;
+    </script>
+-->
+</head>
+<body>
+    <div vm-controller="test">
+        <h1 vm-click='click'>{{test0|html}} - {{name}}<a vm-href="{{url}}" vm-title="{{url}}">≤‚ ‘</a></h1>
+        <form vm-action='{{url}}'>
+            <img vm-alt="{{url}}" vm-src="{{img}}"/>
+            <input vm-duplex="name" name="myname"/>
+            <ul vm-each-item="list">
+                <li><a vm-href="{{item.b}}">{{item.c}}</a></li>
+            </ul>
+        </form>
+    </div>
+    <script>
+        var vm = $.MVVM('test', function(){
+            vm = this;
+            vm.url = 'http://www.baidu.com';
+            vm.img = 'http://www.baidu.com/img/baidu_jgylogo3.gif';
+            vm.name = 'Œ‚∫∆∑Ê';
+            vm.list = [
+                {a: '≤‚ ‘', b:'asd', c: '≤‚ ‘10'},
+                {a: '≤‚ ‘', b:'asd', c: '≤‚ ‘10'}
+            ];
+            vm.test0 = '111';
+            vm.click = function(){
+                alert(1);
+            };
+            vm.$watch('name', function(value){});
+        });
+
+    </script>
+</body>
+</html>

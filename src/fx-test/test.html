@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../../jquery.js"></script>
+    <script src="../effects.js"></script>
+    <style>
+        .test {
+            width:100px; height: 100px; background: #000;
+            border: 1px solid blue;
+            border-width: 10px;
+            color: #FFF;
+            margin: 50px;
+            fix-transition-chlidren: 'a';
+            transition: margin 1s ease, border 1s ease;
+        }
+        .test2 {
+            margin: 100px;
+            border-width: 30px;
+        }
+    </style>
+</head>
+<body>
+<div id="test" class="test">²âÊÔ</div>
+<div id="test2"></div>
+
+<button class="btn1">Ìí¼Óclass</button>
+<button class="btn2">É¾³ýclass</button>
+<script>
+
+    var div = document.getElementById('test');
+    var div2 = document.getElementById('test2');
+
+
+    $('.btn1').click(function(){
+        $(div).addClass('test2');
+    });
+    $('.btn2').click(function(){
+        $(div).removeClass('test2');
+    });
+</script>
+-webkit-transition: margin 10000ms cubic-bezier(0.02, 0.01, 0.47, 1);
+</body>
+</html>

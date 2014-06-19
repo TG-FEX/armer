@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../../../jquery.js"></script>
+    <script src="../core.js"></script>
+    <script src="../ajax.js"></script>
+</head>
+<body>
+<script>
+    var a = $.URL('http://www.baidu.com:8080/tfs/asda.asp?a=123&b=345#asda');
+    var b = $.URL('./tfs/asda.asp?a=123&b=345#asda');
+    var c = $.URL('../../tfs/asda.asp?a=123&b=345#asda');
+    var d = $.URL('../../tfs/asda?a=123&b=345#asda');
+    alert(a.toString());
+</script>
+</body>
+</html>

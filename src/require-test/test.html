@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+<!--
+    <script src="../../../require.js"></script>
+-->
+    <script src="../../../jquery.js"></script>
+    <script src="../armer.js"></script>
+    <script src="../polyfill.js"></script>
+    <script src="../lang.js"></script>
+    <script src="../io.js"></script>
+
+<!--
+    <script src="support.js"></script>
+    <script src="lang.js"></script>
+    <script src="fx.js"></script>
+-->
+    <style>
+        body div {
+            width: 300px; height: 400px; background-color: #000;
+        }
+        body div.newClass {
+            width: 400px;
+            height: 300px
+        }
+    </style>
+</head>
+<body>
+    <h1>╪сть</h1>
+    <a href="/a.html">/a.html</a>
+    <a href="../a.html">../a.html</a>
+    <a href="./a.html">./a.html</a>
+    <a href="a.html">a.html</a>
+    <div style=""></div>
+    <script>
+        define('test0', function(){
+            return '0000';
+        });
+
+/*
+        require(['test3'], function(test3){
+            alert(test3);
+        })
+        require(['test2'], function(test2){
+            alert(test2);
+        });
+
+        require(['test7'], function(test7){
+            alert(test7)
+        })
+*/
+        define('test9', ['domready!', 'test7', 'test8'], function(_, ts7, ts8){
+            return ts7 + ts8 + '9999'
+        });
+
+        require(['test0', 'test.css', 'test1','test2','test3', 'test9', 'inner/test10'], function(){
+            alert([].slice.call(arguments).join(''));
+        }, function(){
+            console.log(arguments);
+        });
+    </script>
+</body>
+</html>

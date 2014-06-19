@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="../../../../jquery.js"></script>
+    <script src="../core.js"></script>
+</head>
+<body>
+<a href="javascript:" data-url="test.txt" data-name="test">点击我</a>
+
+<script>
+    var DOC = document
+    var $body = $('body');
+    var uuid = 0;
+    var $hiddenArea;
+    $.support.xhr2 = !!window.FormData;
+    //$.support.xhr2 = false;
+    function getFileSize(file) {
+        var size;
+        try {
+            var image = new Image();
+            image.dynsrc = file.value;
+            size = image.fileSize;
+        } catch (e){
+            var fso = new ActiveXObject("Scripting.FileSystemObject");
+            size = fso.getFile(file.value).size;
+        }
+        return size;
+    }
+    function getFileSize2(filePath) {
+
+    }
+    $.fn.uploader = function(url, name){
+        return this.each(function(){
+            var $btn = $(this);
+            url = url || $btn.data('url');
+            name = name || $btn.data('name');
+            // 插入一个隐藏的区域
+            $hiddenArea = $hiddenArea || $('<div style="display:none"></div>').appendTo($body);
+            var formName = 'ajaxuploadform' + uuid;
+            var ret = {
+                url: url,
+                name: name,
+                $btn: $btn
+            };
+            // 创建文件域
+            ret.$file = $('<input type="file" name=' + name + '/>');
+            if (!$.support.xhr2) {
+                // 创建iframe
+                // 必须以这种方式写入name，否则IE67不认
+                ret.$iframe = $('<iframe name=' + formName + '/>').attr('id', formName).appendTo($hiddenArea);
+                // 创建表单
+                ret.$form = $('<form/>').attr({
+                    method: 'POST',
+                    enctype: 'multipart/form-data',
+                    target: formName,
+                    action: url
+                }).appendTo($hiddenArea);
+                ret.$file.appendTo(ret.$btn);
+            } else {
+                ret.$file.appendTo($hiddenArea);
+                $btn.click(function(){
+                    ret.$file.click();
+                });
+            }
+            ret.$file.on('change', function(event){
+                var file = ret.$file[0], size;
+                if (file.files) {
+                    size = file.files[0].size
+                } else {
+                    size = getFileSize(file);
+                }
+                //var size = file.files[0].size || getFileSize2(file.value) || getFileSize(file.value);
+                alert(size);
+
+                var e = $.Event('change');
+                $btn.trigger(e);
+                if (e.isDefaultPrevented()) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+            $btn.on('upload', function(){
+                if ($.support.xhr2) {
+                    var xhr = new XMLHttpRequest();
+                    var fd = new FormData();
+                    var file = ret.$file[0].files[0];
+                    fd.append(ret.fileName, file, encodeURI(file.name));
+                    xhr.onreadystatechange = function(evt){
+                        if(xhr.readyState === 4){
+                            if (xhr.state >= 400)
+                            var e = $.Event('uploaded')
+                            e.originalEvent = evt;
+                            e.state = xhr.state;
+                            e.responseText = xhr.responseText;
+                            $btn.trigger(e, ret);
+                        }
+                    }
+                    xhr.upload.onprogress = function(evt) {
+                        if (evt.lengthComputable) {
+                            var e = $.Event('progress');
+                            e.originalEvent = evt;
+                            $.extend(e, {
+                                loaded: evt.loaded,
+                                total: evt.total
+                            })
+                            $btn.trigger(e, ret);
+                        }
+                    }
+                    xhr.open('POST', ret.url);
+                    xhr.send(fd);
+                } else {
+                    ret.$iframe.off('load').on('load', function(evt){
+                        var e = $.Event('uploaded')
+                        e.originalEvent = evt;
+                        e.responseText = $(this).contents().eq(0).find('body').text();
+                        $btn.trigger(e, ret);
+                    });
+                    ret.$file.appendTo(ret.$form);
+                    ret.$form.submit();
+                    ret.$file.appendTo($btn);
+                }
+            });
+        })
+    }
+
+
+    $('a').uploader();
+    $('a').on('change', function(){
+        //$('a').trigger('upload');
+    });
+    $('a').on('uploaded', function(e){
+        alert(e.responseText);
+    });
+    $('a').on('progress', function(e){
+        console.log('上传进度：' + e.loaded / e.total * 100 + '%')
+    });
+</script>
+</body>
+</html>

@@ -174,11 +174,11 @@
                     $.trace(" Object.create implementation only accepts the first parameter.");
                 }
 
-                function F() {
+                function bridge() {
                 }
 
-                F.prototype = o;
-                return new F();
+                bridge.prototype = o;
+                return new bridge();
             },
             //取得其所有键名以数组形式返回
             keys: function (obj) { //ecma262v5 15.2.3.14

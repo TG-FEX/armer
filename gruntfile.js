@@ -14,6 +14,10 @@ module.exports = function(grunt) {
                 ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= package.author.name %>;' +
                 ' Licensed <%= package.license.type + "(" + package.license.url + ")" %> \n */\n'
         },
+        'armer': {
+            src: ['src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
+            dest: 'dist/armer.js'
+        },
         'jq': {
             /* (所有浏览器)包含如下文件
              * jquery.1.x 核心框架
@@ -22,20 +26,8 @@ module.exports = function(grunt) {
              * armer.mvvm 模块
              * armer.lang 语言扩展模块
              */
-            src: ['../jquery.js', 'src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
-            dest: '../jq<%= package.name %>.js',
-            nonull: true
-        },
-        '2.X': {
-            /* (高级浏览器)包含如下文件
-             * jquery.2.x 核心框架
-             * armer 扩展框架核心
-             * armer.mvvm 模块
-             * armer.lang 语言扩展模块
-             */
-            src: ['../jquery/2.x.js', 'src/armer.js', 'src/mvvm.js', 'src/lang.js'],
-            dest: '../jq<%= package.name %>.2.x.js',
-            nonull: true
+            src: ['bower_components/jquery/dist/jquery.js', 'src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
+            dest: 'dist/jq<%= package.name %>.js'
         },
         z: {
             /* (移动端)包含如下文件
@@ -45,9 +37,8 @@ module.exports = function(grunt) {
              * armer 扩展框架核心
              * armer.mvvm 模块
              */
-            src: ['../zepto.js', '../zepto/src/adapter.js', '../fastclick.js', 'src/armer.js', 'src/mvvm.js'],
-            dest: '../z<%= package.name %>.js',
-            nonull: true
+            src: ['bower_components/zepto/zepto.js', '../fastclick.js', '/src/zepto/adapter.js', 'src/armer.js', 'src/mvvm.js'],
+            dest: 'dist/z<%= package.name %>.js'
         }
     };
 

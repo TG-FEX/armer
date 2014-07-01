@@ -1,5 +1,5 @@
 /*==================================================
- Copyright 20013-2014 Ë¾Í½ÕıÃÀ¡¢ UnitedStack and other contributors
+ Copyright 20013-2014 å¸å¾’æ­£ç¾ã€ UnitedStack and other contributors
  http://www.cnblogs.com/rubylouvre/
  https://github.com/RubyLouvre
  http://weibo.com/jslouvre/
@@ -8,14 +8,14 @@
  avalon 1.2.4 2014.3.18
  ==================================================*/
 ;(function(DOC, $) {
-    var Registry = {} //½«º¯ÊıÆØ¹âµ½´Ë¶ÔÏóÉÏ£¬·½±ã·ÃÎÊÆ÷ÊÕ¼¯ÒÀÀµ
+    var Registry = {} //å°†å‡½æ•°æ›å…‰åˆ°æ­¤å¯¹è±¡ä¸Šï¼Œæ–¹ä¾¿è®¿é—®å™¨æ”¶é›†ä¾èµ–
     var expose = new Date - 0
     var subscribers = "$" + expose
     var window = this || (0, eval)('this')
     //var otherRequire = window.require
     //var otherDefine = window.define
     var stopRepeatAssign = false
-    //var rword = /[^, ]+/g //ÇĞ¸î×Ö·û´®ÎªÒ»¸ö¸öĞ¡¿é£¬ÒÔ¿Õ¸ñ»ò¶¹ºÅ·Ö¿ªËüÃÇ£¬½áºÏreplaceÊµÏÖ×Ö·û´®µÄforEach
+    //var rword = /[^, ]+/g //åˆ‡å‰²å­—ç¬¦ä¸²ä¸ºä¸€ä¸ªä¸ªå°å—ï¼Œä»¥ç©ºæ ¼æˆ–è±†å·åˆ†å¼€å®ƒä»¬ï¼Œç»“åˆreplaceå®ç°å­—ç¬¦ä¸²çš„forEach
     //var class2type = {}
     var oproto = Object.prototype
     var ohasOwn = oproto.hasOwnProperty
@@ -25,7 +25,7 @@
     //var serialize = oproto.toString
     var ap = Array.prototype
     var aslice = ap.slice
-    var head = DOC.head || DOC.getElementsByTagName("head")[0] //HEADÔªËØ
+    var head = DOC.head || DOC.getElementsByTagName("head")[0] //HEADå…ƒç´ 
     var documentFragment = DOC.createDocumentFragment()
     //var DONT_ENUM = "propertyIsEnumerable,isPrototypeOf,hasOwnProperty,toLocaleString,toString,valueOf,constructor".split(",")
     /*
@@ -52,7 +52,7 @@
 */
 
     /*********************************************************************
-     *                    ÃüÃû¿Õ¼äÓë¹¤¾ßº¯Êı                               *
+     *                    å‘½åç©ºé—´ä¸å·¥å…·å‡½æ•°                               *
      **********************************************************************/
     var getType = $.type;
     var resetNumber = $.slice.resetNumber;
@@ -84,7 +84,7 @@
     avalon.Array = $.Array;
 
 /*
-    avalon = function(el) { //´´½¨jQueryÊ½µÄÎŞnew ÊµÀı»¯½á¹¹
+    avalon = function(el) { //åˆ›å»ºjQueryå¼çš„æ— new å®ä¾‹åŒ–ç»“æ„
         return new avalon.init(el)
     }
 
@@ -92,13 +92,13 @@
         this[0] = this.element = el
     }
     avalon.fn = avalon.prototype = avalon.init.prototype
-    //ÂÊÏÈÌí¼ÓÈı¸öÅĞ¶¨ÀàĞÍµÄ·½·¨
+    //ç‡å…ˆæ·»åŠ ä¸‰ä¸ªåˆ¤å®šç±»å‹çš„æ–¹æ³•
 
-    function getType(obj) { //È¡µÃÀàĞÍ
+    function getType(obj) { //å–å¾—ç±»å‹
         if (obj == null) {
             return String(obj)
         }
-        // ÔçÆÚµÄwebkitÄÚºËä¯ÀÀÆ÷ÊµÏÖÁËÒÑ·ÏÆúµÄecma262v4±ê×¼£¬¿ÉÒÔ½«ÕıÔò×ÖÃæÁ¿µ±×÷º¯ÊıÊ¹ÓÃ£¬Òò´ËtypeofÔÚÅĞ¶¨ÕıÔòÊ±»á·µ»Øfunction
+        // æ—©æœŸçš„webkitå†…æ ¸æµè§ˆå™¨å®ç°äº†å·²åºŸå¼ƒçš„ecma262v4æ ‡å‡†ï¼Œå¯ä»¥å°†æ­£åˆ™å­—é¢é‡å½“ä½œå‡½æ•°ä½¿ç”¨ï¼Œå› æ­¤typeofåœ¨åˆ¤å®šæ­£åˆ™æ—¶ä¼šè¿”å›function
         return typeof obj === "object" || typeof obj === "function" ?
             class2type[serialize.call(obj)] || "object" :
             typeof obj
@@ -108,8 +108,8 @@
     avalon.isWindow = function(obj) {
         if (!obj)
             return false
-        // ÀûÓÃIE678 window == documentÎªtrue,document == window¾¹È»ÎªfalseµÄÉñÆæÌØĞÔ
-        // ±ê×¼ä¯ÀÀÆ÷¼°IE9£¬IE10µÈÊ¹ÓÃ ÕıÔò¼ì²â
+        // åˆ©ç”¨IE678 window == documentä¸ºtrue,document == windowç«Ÿç„¶ä¸ºfalseçš„ç¥å¥‡ç‰¹æ€§
+        // æ ‡å‡†æµè§ˆå™¨åŠIE9ï¼ŒIE10ç­‰ä½¿ç”¨ æ­£åˆ™æ£€æµ‹
         return obj == obj.document && obj.document != obj
     }
 
@@ -119,7 +119,7 @@
     if (isWindow(window)) {
         avalon.isWindow = isWindow
     }
-    //ÅĞ¶¨ÊÇ·ñÊÇÒ»¸öÆÓËØµÄjavascript¶ÔÏó£¨Object£©£¬²»ÊÇDOM¶ÔÏó£¬²»ÊÇBOM¶ÔÏó£¬²»ÊÇ×Ô¶¨ÒåÀàµÄÊµÀı¡£
+    //åˆ¤å®šæ˜¯å¦æ˜¯ä¸€ä¸ªæœ´ç´ çš„javascriptå¯¹è±¡ï¼ˆObjectï¼‰ï¼Œä¸æ˜¯DOMå¯¹è±¡ï¼Œä¸æ˜¯BOMå¯¹è±¡ï¼Œä¸æ˜¯è‡ªå®šä¹‰ç±»çš„å®ä¾‹ã€‚
     avalon.isPlainObject = function(obj) {
         if (getType(obj) !== "object" || obj.nodeType || this.isWindow(obj)) {
             return false
@@ -146,32 +146,32 @@
             length = arguments.length,
             deep = false
 
-        // Èç¹ûµÚÒ»¸ö²ÎÊıÎª²¼¶û,ÅĞ¶¨ÊÇ·ñÉî¿½±´
+        // å¦‚æœç¬¬ä¸€ä¸ªå‚æ•°ä¸ºå¸ƒå°”,åˆ¤å®šæ˜¯å¦æ·±æ‹·è´
         if (typeof target === "boolean") {
             deep = target
             target = arguments[1] || {}
             i++
         }
 
-        //È·±£½ÓÊÜ·½ÎªÒ»¸ö¸´ÔÓµÄÊı¾İÀàĞÍ
+        //ç¡®ä¿æ¥å—æ–¹ä¸ºä¸€ä¸ªå¤æ‚çš„æ•°æ®ç±»å‹
         if (typeof target !== "object" && getType(target) !== "function") {
             target = {}
         }
 
-        //Èç¹ûÖ»ÓĞÒ»¸ö²ÎÊı£¬ÄÇÃ´ĞÂ³ÉÔ±Ìí¼ÓÓÚmixËùÔÚµÄ¶ÔÏóÉÏ
+        //å¦‚æœåªæœ‰ä¸€ä¸ªå‚æ•°ï¼Œé‚£ä¹ˆæ–°æˆå‘˜æ·»åŠ äºmixæ‰€åœ¨çš„å¯¹è±¡ä¸Š
         if (i === length) {
             target = this
             i--
         }
 
         for (; i < length; i++) {
-            //Ö»´¦Àí·Ç¿Õ²ÎÊı
+            //åªå¤„ç†éç©ºå‚æ•°
             if ((options = arguments[i]) != null) {
                 for (name in options) {
                     src = target[name]
                     copy = options[name]
 
-                    // ·ÀÖ¹»·ÒıÓÃ
+                    // é˜²æ­¢ç¯å¼•ç”¨
                     if (target === copy) {
                         continue
                     }
@@ -213,8 +213,8 @@
     /*
     var eventMap = avalon.eventMap = {}
 
-    function resetNumber(a, n, end) { //ÓÃÓÚÄ£Äâslice, spliceµÄĞ§¹û
-        if ((a === +a) && !(a % 1)) { //Èç¹ûÊÇÕûÊı
+    function resetNumber(a, n, end) { //ç”¨äºæ¨¡æ‹Ÿslice, spliceçš„æ•ˆæœ
+        if ((a === +a) && !(a % 1)) { //å¦‚æœæ˜¯æ•´æ•°
             if (a < 0) {
                 a = a * -1 >= n ? 0 : a + n
             } else {
@@ -257,7 +257,7 @@
             return ret
         },
         noop: noop,
-        error: function(str, e) { //Èç¹û²»ÓÃError¶ÔÏó·â×°Ò»ÏÂ£¬strÔÚ¿ØÖÆÌ¨ÏÂ¿ÉÄÜ»áÂÒÂë
+        error: function(str, e) { //å¦‚æœä¸ç”¨Errorå¯¹è±¡å°è£…ä¸€ä¸‹ï¼Œstråœ¨æ§åˆ¶å°ä¸‹å¯èƒ½ä¼šä¹±ç 
             throw new (e || Error)(str)
         },
         oneObject: oneObject,
@@ -271,7 +271,7 @@
         // => [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
         // avalon.range(0)
         // => []
-        range: function(start, end, step) { // ÓÃÓÚÉú³ÉÕûÊıÊı×é
+        range: function(start, end, step) { // ç”¨äºç”Ÿæˆæ•´æ•°æ•°ç»„
             step || (step = 1)
             if (end == null) {
                 end = start || 0
@@ -286,7 +286,7 @@
             }
             return result
         },
-        bind: function(el, type, fn, phase) { // °ó¶¨ÊÂ¼ş
+        bind: function(el, type, fn, phase) { // ç»‘å®šäº‹ä»¶
             var callback = W3C ? fn : function(e) {
                 return fn.call(el, fixEvent(e))
             }
@@ -297,7 +297,7 @@
             }
             return callback
         },
-        unbind: W3C ? function(el, type, fn, phase) { //Ğ¶ÔØÊÂ¼ş
+        unbind: W3C ? function(el, type, fn, phase) { //å¸è½½äº‹ä»¶
             el.removeEventListener(eventMap[type] || type, fn || noop, !!phase)
         } : function(el, type, fn) {
             el.detachEvent("on" + type, fn || noop)
@@ -308,13 +308,13 @@
             }
             var prop = /[_-]/.test(name) ? camelize(name) : name
             name = avalon.cssName(prop) || prop
-            if (value === void 0 || typeof value === "boolean") { //»ñÈ¡ÑùÊ½
+            if (value === void 0 || typeof value === "boolean") { //è·å–æ ·å¼
                 var fn = cssHooks[prop + ":get"] || cssHooks["@:get"]
                 var val = fn(node, name)
                 return value === true ? parseFloat(val) || 0 : val
-            } else if (value === "") { //Çë³ıÑùÊ½
+            } else if (value === "") { //è¯·é™¤æ ·å¼
                 node.style[name] = ""
-            } else { //ÉèÖÃÑùÊ½
+            } else { //è®¾ç½®æ ·å¼
                 if (value == null || value !== value) {
                     return
                 }
@@ -326,7 +326,7 @@
             }
         },
         each: function(obj, fn) {
-            if (obj) { //ÅÅ³ınull, undefined
+            if (obj) { //æ’é™¤null, undefined
                 var i = 0
                 if (isArrayLike(obj)) {
                     for (var n = obj.length; i < n; i++) {
@@ -343,18 +343,18 @@
         },
         Array: {
             ensure: function(target, item) {
-                //Ö»ÓĞµ±Ç°Êı×é²»´æÔÚ´ËÔªËØÊ±Ö»Ìí¼ÓËü
+                //åªæœ‰å½“å‰æ•°ç»„ä¸å­˜åœ¨æ­¤å…ƒç´ æ—¶åªæ·»åŠ å®ƒ
                 if (target.indexOf(item) === -1) {
                     target.push(item)
                 }
                 return target
             },
             removeAt: function(target, index) {
-                //ÒÆ³ıÊı×éÖĞÖ¸¶¨Î»ÖÃµÄÔªËØ£¬·µ»Ø²¼¶û±íÊ¾³É¹¦Óë·ñ¡£
+                //ç§»é™¤æ•°ç»„ä¸­æŒ‡å®šä½ç½®çš„å…ƒç´ ï¼Œè¿”å›å¸ƒå°”è¡¨ç¤ºæˆåŠŸä¸å¦ã€‚
                 return !!target.splice(index, 1).length
             },
             remove: function(target, item) {
-                //ÒÆ³ıÊı×éÖĞµÚÒ»¸öÆ¥Åä´«²ÎµÄÄÇ¸öÔªËØ£¬·µ»Ø²¼¶û±íÊ¾³É¹¦Óë·ñ¡£
+                //ç§»é™¤æ•°ç»„ä¸­ç¬¬ä¸€ä¸ªåŒ¹é…ä¼ å‚çš„é‚£ä¸ªå…ƒç´ ï¼Œè¿”å›å¸ƒå°”è¡¨ç¤ºæˆåŠŸä¸å¦ã€‚
                 var index = target.indexOf(item)
                 if (~index)
                     return avalon.Array.removeAt(target, index)
@@ -364,29 +364,29 @@
     })
 
     function generateID() {
-        //Éú³ÉUUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+        //ç”ŸæˆUUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
         return "avalon" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     }
 
-    //Ö»ÈÃ½Úµã¼¯ºÏ£¬´¿Êı×é£¬argumentsÓëÓµÓĞ·Ç¸ºÕûÊıµÄlengthÊôĞÔµÄ´¿JS¶ÔÏóÍ¨¹ı
+    //åªè®©èŠ‚ç‚¹é›†åˆï¼Œçº¯æ•°ç»„ï¼Œargumentsä¸æ‹¥æœ‰éè´Ÿæ•´æ•°çš„lengthå±æ€§çš„çº¯JSå¯¹è±¡é€šè¿‡
 
     function isArrayLike(obj) {
         if (obj && typeof obj === "object" && !avalon.isWindow(obj)) {
             var n = obj.length
-            if (+n === n && !(n % 1) && n >= 0) { //¼ì²âlengthÊôĞÔÊÇ·ñÎª·Ç¸ºÕûÊı
+            if (+n === n && !(n % 1) && n >= 0) { //æ£€æµ‹lengthå±æ€§æ˜¯å¦ä¸ºéè´Ÿæ•´æ•°
                 try {
-                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //Èç¹ûÊÇÔ­Éú¶ÔÏó
+                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //å¦‚æœæ˜¯åŸç”Ÿå¯¹è±¡
                         return Array.isArray(obj) || /^\s?function/.test(obj.item || obj.callee)
                     }
                     return true
-                } catch (e) { //IEµÄNodeListÖ±½ÓÅ×´í
+                } catch (e) { //IEçš„NodeListç›´æ¥æŠ›é”™
                     return true
                 }
             }
         }
         return false
     }
-    //ÊÓä¯ÀÀÆ÷Çé¿ö²ÉÓÃ×î¿ìµÄÒì²½»Øµ÷(ÔÚavalon.readyÀï£¬»¹ÓĞÒ»¸ö·ÖÖ§£¬ÓÃÓÚ´¦ÀíIE6-9)
+    //è§†æµè§ˆå™¨æƒ…å†µé‡‡ç”¨æœ€å¿«çš„å¼‚æ­¥å›è°ƒ(åœ¨avalon.readyé‡Œï¼Œè¿˜æœ‰ä¸€ä¸ªåˆ†æ”¯ï¼Œç”¨äºå¤„ç†IE6-9)
     avalon.nextTick = window.setImmediate ? setImmediate.bind(window) : function(callback) {
         setTimeout(callback, 0) //IE10-11 or W3C
     }
@@ -397,16 +397,16 @@
     var VMODELS = avalon.vmodels = {}
     avalon.define = function(name, factory) {
         if (typeof name !== "string") {
-            avalon.error("±ØĞëÖ¸¶¨ID")
+            avalon.error("å¿…é¡»æŒ‡å®šID")
         }
         if (typeof factory !== "function") {
-            avalon.error("factory±ØĞëÊÇº¯Êı")
+            avalon.error("factoryå¿…é¡»æ˜¯å‡½æ•°")
         }
         var scope = {
             $watch: noop
         }
-        factory(scope) //µÃµ½ËùÓĞ¶¨Òå
-        var model = modelFactory(scope) //ÍµÌì»»ÈÕ£¬½«scope»»Îªmodel
+        factory(scope) //å¾—åˆ°æ‰€æœ‰å®šä¹‰
+        var model = modelFactory(scope) //å·å¤©æ¢æ—¥ï¼Œå°†scopeæ¢ä¸ºmodel
         stopRepeatAssign = true
         factory(model)
         stopRepeatAssign = false
@@ -416,7 +416,7 @@
 
     function modelFactory(scope, model) {
         if (Array.isArray(scope)) {
-            var arr = scope.concat() //Ô­Êı×éµÄ×÷ÎªĞÂÉú³ÉµÄ¼à¿ØÊı×éµÄ$model¶ø´æÔÚ
+            var arr = scope.concat() //åŸæ•°ç»„çš„ä½œä¸ºæ–°ç”Ÿæˆçš„ç›‘æ§æ•°ç»„çš„$modelè€Œå­˜åœ¨
             scope.length = 0
             var collection = Collection(scope)
             collection.push.apply(collection, arr)
@@ -425,13 +425,13 @@
         if (typeof scope.nodeType === "number") {
             return scope
         }
-        var vmodel = {} //Òª·µ»ØµÄ¶ÔÏó
-        model = model || {} //·ÅÖÃ$modelÉÏµÄÊôĞÔ
-        var accessingProperties = {} //¼à¿ØÊôĞÔ
-        var normalProperties = {} //ÆÕÍ¨ÊôĞÔ
-        var computedProperties = [] //¼ÆËãÊôĞÔ
-        var watchProperties = arguments[2] || {} //Ç¿ÖÆÒª¼àÌıµÄÊôĞÔ
-        var skipArray = scope.$skipArray //ÒªºöÂÔ¼à¿ØµÄÊôĞÔ
+        var vmodel = {} //è¦è¿”å›çš„å¯¹è±¡
+        model = model || {} //æ”¾ç½®$modelä¸Šçš„å±æ€§
+        var accessingProperties = {} //ç›‘æ§å±æ€§
+        var normalProperties = {} //æ™®é€šå±æ€§
+        var computedProperties = [] //è®¡ç®—å±æ€§
+        var watchProperties = arguments[2] || {} //å¼ºåˆ¶è¦ç›‘å¬çš„å±æ€§
+        var skipArray = scope.$skipArray //è¦å¿½ç•¥ç›‘æ§çš„å±æ€§
         for (var i = 0, name; name = skipProperties[i++]; ) {
             delete scope[name]
             normalProperties[name] = true
@@ -444,7 +444,7 @@
         for (var i in scope) {
             loopModel(i, scope[i], model, normalProperties, accessingProperties, computedProperties, watchProperties)
         }
-        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //Éú³ÉÒ»¸ö¿ÕµÄViewModel
+        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //ç”Ÿæˆä¸€ä¸ªç©ºçš„ViewModel
         for (var name in normalProperties) {
             vmodel[name] = normalProperties[name]
         }
@@ -456,7 +456,7 @@
         vmodel[subscribers] = []
         for (var i in Observable) {
             var fn = Observable[i]
-            if (!W3C) { //ÔÚIE6-8ÏÂ£¬VB¶ÔÏóµÄ·½·¨ÀïµÄthis²¢²»Ö¸Ïò×ÔÉí£¬ĞèÒªÓÃbind´¦ÀíÒ»ÏÂ
+            if (!W3C) { //åœ¨IE6-8ä¸‹ï¼ŒVBå¯¹è±¡çš„æ–¹æ³•é‡Œçš„thiså¹¶ä¸æŒ‡å‘è‡ªèº«ï¼Œéœ€è¦ç”¨bindå¤„ç†ä¸€ä¸‹
                 fn = fn.bind(vmodel)
             }
             vmodel[i] = fn
@@ -464,7 +464,7 @@
         vmodel.hasOwnProperty = function(name) {
             return name in vmodel.$model
         }
-        for (var i = 0, fn; fn = computedProperties[i++]; ) { //×îºóÇ¿±Æ¼ÆËãÊôĞÔ ¼ÆËã×Ô¼ºµÄÖµ
+        for (var i = 0, fn; fn = computedProperties[i++]; ) { //æœ€åå¼ºé€¼è®¡ç®—å±æ€§ è®¡ç®—è‡ªå·±çš„å€¼
             Registry[expose] = fn
             fn()
             collectSubscribers(fn)
@@ -507,21 +507,21 @@
 
     function loopModel(name, val, model, normalProperties, accessingProperties, computedProperties, watchProperties) {
         model[name] = val
-        if (normalProperties[name] || (val && val.nodeType)) { //Èç¹ûÊÇÖ¸Ã÷²»ÓÃ¼à¿ØµÄÏµÍ³ÊôĞÔ»òÔªËØ½Úµã£¬»ò·Åµ½ $skipArrayÀïÃæ
+        if (normalProperties[name] || (val && val.nodeType)) { //å¦‚æœæ˜¯æŒ‡æ˜ä¸ç”¨ç›‘æ§çš„ç³»ç»Ÿå±æ€§æˆ–å…ƒç´ èŠ‚ç‚¹ï¼Œæˆ–æ”¾åˆ° $skipArrayé‡Œé¢
             return normalProperties[name] = val
         }
-        if (name.charAt(0) === "$" && !watchProperties[name]) { //Èç¹ûÊÇ$¿ªÍ·£¬²¢ÇÒ²»ÔÚwatchMoreÀïÃæµÄ
+        if (name.charAt(0) === "$" && !watchProperties[name]) { //å¦‚æœæ˜¯$å¼€å¤´ï¼Œå¹¶ä¸”ä¸åœ¨watchMoreé‡Œé¢çš„
             return normalProperties[name] = val
         }
         var valueType = getType(val)
-        if (valueType === "function") { //Èç¹ûÊÇº¯Êı£¬Ò²²»ÓÃ¼à¿Ø
+        if (valueType === "function") { //å¦‚æœæ˜¯å‡½æ•°ï¼Œä¹Ÿä¸ç”¨ç›‘æ§
             return normalProperties[name] = val
         }
         var accessor, oldArgs
         if (valueType === "object" && typeof val.get === "function" && Object.keys(val).length <= 2) {
             var setter = val.set,
                 getter = val.get
-            accessor = function(newValue) { //´´½¨¼ÆËãÊôĞÔ£¬Òò±äÁ¿£¬»ù±¾ÉÏÓÉÆäËû¼à¿ØÊôĞÔ´¥·¢Æä¸Ä±ä
+            accessor = function(newValue) { //åˆ›å»ºè®¡ç®—å±æ€§ï¼Œå› å˜é‡ï¼ŒåŸºæœ¬ä¸Šç”±å…¶ä»–ç›‘æ§å±æ€§è§¦å‘å…¶æ”¹å˜
                 var vmodel = watchProperties.vmodel
                 var value = model[name],
                     preValue = value
@@ -531,19 +531,19 @@
                     }
                     if (typeof setter === "function") {
                         var backup = vmodel.$events[name]
-                        vmodel.$events[name] = [] //Çå¿Õ»Øµ÷£¬·ÀÖ¹ÄÚ²¿Ã°Åİ¶ø´¥·¢¶à´Î$fire
+                        vmodel.$events[name] = [] //æ¸…ç©ºå›è°ƒï¼Œé˜²æ­¢å†…éƒ¨å†’æ³¡è€Œè§¦å‘å¤šæ¬¡$fire
                         setter.call(vmodel, newValue)
                         vmodel.$events[name] = backup
                     }
                     if (!isEqual(oldArgs, newValue)) {
                         oldArgs = newValue
-                        newValue = model[name] = getter.call(vmodel)//Í¬²½$model
-                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//Í¬²½Ñ­»·°ó¶¨ÖĞµÄ´úÀíVM
-                        notifySubscribers(accessor) //Í¨Öª¶¥²ã¸Ä±ä
-                        safeFire(vmodel, name, newValue, preValue)//´¥·¢$watch»Øµ÷
+                        newValue = model[name] = getter.call(vmodel)//åŒæ­¥$model
+                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//åŒæ­¥å¾ªç¯ç»‘å®šä¸­çš„ä»£ç†VM
+                        notifySubscribers(accessor) //é€šçŸ¥é¡¶å±‚æ”¹å˜
+                        safeFire(vmodel, name, newValue, preValue)//è§¦å‘$watchå›è°ƒ
                     }
                 } else {
-                    if (avalon.openComputedCollect) { // ÊÕ¼¯ÊÓÍ¼Ë¢ĞÂº¯Êı
+                    if (avalon.openComputedCollect) { // æ”¶é›†è§†å›¾åˆ·æ–°å‡½æ•°
                         collectSubscribers(accessor)
                     }
                     newValue = model[name] = getter.call(vmodel)
@@ -556,7 +556,7 @@
             }
             computedProperties.push(accessor)
         } else if (rchecktype.test(valueType)) {
-            accessor = function(newValue) { //×ÓViewModel»ò¼à¿ØÊı×é
+            accessor = function(newValue) { //å­ViewModelæˆ–ç›‘æ§æ•°ç»„
                 var realAccessor = accessor.$vmodel, preValue = realAccessor.$model
                 if (arguments.length) {
                     if (stopRepeatAssign) {
@@ -565,42 +565,42 @@
                     if (!isEqual(preValue, newValue)) {
                         newValue = accessor.$vmodel = updateVModel(realAccessor, newValue, valueType)
                         var fn = rebindings[newValue.$id]
-                        fn && fn()//¸üĞÂÊÓÍ¼
+                        fn && fn()//æ›´æ–°è§†å›¾
                         var parent = watchProperties.vmodel
-                        // withProxyCount && updateWithProxy(parent.$id, name, newValue)//Í¬²½Ñ­»·°ó¶¨ÖĞµÄ´úÀíVM
-                        model[name] = newValue.$model//Í¬²½$model
-                        notifySubscribers(realAccessor)   //Í¨Öª¶¥²ã¸Ä±ä
-                        safeFire(parent, name, model[name], preValue)   //´¥·¢$watch»Øµ÷
+                        // withProxyCount && updateWithProxy(parent.$id, name, newValue)//åŒæ­¥å¾ªç¯ç»‘å®šä¸­çš„ä»£ç†VM
+                        model[name] = newValue.$model//åŒæ­¥$model
+                        notifySubscribers(realAccessor)   //é€šçŸ¥é¡¶å±‚æ”¹å˜
+                        safeFire(parent, name, model[name], preValue)   //è§¦å‘$watchå›è°ƒ
                     }
                 } else {
-                    collectSubscribers(realAccessor) //ÊÕ¼¯ÊÓÍ¼º¯Êı
+                    collectSubscribers(realAccessor) //æ”¶é›†è§†å›¾å‡½æ•°
                     return realAccessor
                 }
             }
             accessor.$vmodel = val.$model ? val : modelFactory(val, val)
             model[name] = accessor.$vmodel.$model
         } else {
-            accessor = function(newValue) { //¼òµ¥µÄÊı¾İÀàĞÍ
+            accessor = function(newValue) { //ç®€å•çš„æ•°æ®ç±»å‹
                 var preValue = model[name]
                 if (arguments.length) {
                     if (!isEqual(preValue, newValue)) {
-                        model[name] = newValue //Í¬²½$model
+                        model[name] = newValue //åŒæ­¥$model
                         var vmodel = watchProperties.vmodel
-                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//Í¬²½Ñ­»·°ó¶¨ÖĞµÄ´úÀíVM
-                        notifySubscribers(accessor) //Í¨Öª¶¥²ã¸Ä±ä
-                        safeFire(vmodel, name, newValue, preValue)//´¥·¢$watch»Øµ÷
+                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//åŒæ­¥å¾ªç¯ç»‘å®šä¸­çš„ä»£ç†VM
+                        notifySubscribers(accessor) //é€šçŸ¥é¡¶å±‚æ”¹å˜
+                        safeFire(vmodel, name, newValue, preValue)//è§¦å‘$watchå›è°ƒ
                     }
                 } else {
-                    collectSubscribers(accessor) //ÊÕ¼¯ÊÓÍ¼º¯Êı
+                    collectSubscribers(accessor) //æ”¶é›†è§†å›¾å‡½æ•°
                     return preValue
                 }
             }
             model[name] = val
         }
-        accessor[subscribers] = [] //¶©ÔÄÕßÊı×é
+        accessor[subscribers] = [] //è®¢é˜…è€…æ•°ç»„
         accessingProperties[name] = accessor
     }
-    //with°ó¶¨Éú³ÉµÄ´úÀí¶ÔÏó´¢´æ³Ø
+    //withç»‘å®šç”Ÿæˆçš„ä»£ç†å¯¹è±¡å‚¨å­˜æ± 
     var withProxyPool = {}
     var withProxyCount = 0
     var rebindings = {}
@@ -613,7 +613,7 @@
     }
 
     function updateVModel(a, b, valueType) {
-        //aÎªÔ­À´µÄVM£¬ bÎªĞÂÊı×é»òĞÂ¶ÔÏó
+        //aä¸ºåŸæ¥çš„VMï¼Œ bä¸ºæ–°æ•°ç»„æˆ–æ–°å¯¹è±¡
         if (valueType === "array") {
             if (!Array.isArray(b)) {
                 return a //fix https://github.com/RubyLouvre/avalon/issues/261
@@ -629,13 +629,13 @@
                 delete withProxyPool[a.$id]
             }
             iterators.forEach(function(data) {
-                data.rollback && data.rollback() //»¹Ô­ vm-with vm-on
+                data.rollback && data.rollback() //è¿˜åŸ vm-with vm-on
             })
             var ret = modelFactory(b)
             rebindings[ret.$id] = function(data) {
                 while (data = iterators.shift()) {
                     (function(el) {
-                        if (el.type) { //ÖØĞÂ°ó¶¨
+                        if (el.type) { //é‡æ–°ç»‘å®š
                             avalon.nextTick(function() {
                                 bindingHandlers[el.type](el, el.vmodels)
                             })
@@ -648,10 +648,10 @@
         }
     }
 
-    //===================ĞŞ¸´ä¯ÀÀÆ÷¶ÔObject.definePropertiesµÄÖ§³Ö=================
+    //===================ä¿®å¤æµè§ˆå™¨å¯¹Object.definePropertiesçš„æ”¯æŒ=================
     var defineProperty = Object.defineProperty
-    //Èç¹ûä¯ÀÀÆ÷²»Ö§³Öecma262v5µÄObject.defineProperties»òÕß´æÔÚBUG£¬±ÈÈçIE8
-    //±ê×¼ä¯ÀÀÆ÷Ê¹ÓÃ__defineGetter__, __defineSetter__ÊµÏÖ
+    //å¦‚æœæµè§ˆå™¨ä¸æ”¯æŒecma262v5çš„Object.definePropertiesæˆ–è€…å­˜åœ¨BUGï¼Œæ¯”å¦‚IE8
+    //æ ‡å‡†æµè§ˆå™¨ä½¿ç”¨__defineGetter__, __defineSetter__å®ç°
     try {
         defineProperty({}, "_", {
             value: "x"
@@ -681,7 +681,7 @@
             }
         }
     }
-    //IE6-8Ê¹ÓÃVBScriptÀàµÄset getÓï¾äÊµÏÖ
+    //IE6-8ä½¿ç”¨VBScriptç±»çš„set getè¯­å¥å®ç°
     if (!defineProperties && window.VBArray) {
         window.execScript([
             "Function parseVB(code)",
@@ -705,18 +705,18 @@
                 "\tPrivate [__data__], [__proxy__]",
                 "\tPublic Default Function [__const__](d, p)",
                 "\t\tSet [__data__] = d: set [__proxy__] = p",
-                "\t\tSet [__const__] = Me", //Á´Ê½µ÷ÓÃ
+                "\t\tSet [__const__] = Me", //é“¾å¼è°ƒç”¨
                 "\tEnd Function")
-            //Ìí¼ÓÆÕÍ¨ÊôĞÔ,ÒòÎªVBScript¶ÔÏó²»ÄÜÏñJSÄÇÑùËæÒâÔöÉ¾ÊôĞÔ£¬±ØĞëÔÚÕâÀïÔ¤ÏÈ¶¨ÒåºÃ
+            //æ·»åŠ æ™®é€šå±æ€§,å› ä¸ºVBScriptå¯¹è±¡ä¸èƒ½åƒJSé‚£æ ·éšæ„å¢åˆ å±æ€§ï¼Œå¿…é¡»åœ¨è¿™é‡Œé¢„å…ˆå®šä¹‰å¥½
             for (name in normalProperties) {
                 buffer.push("\tPublic [" + name + "]")
             }
             buffer.push("\tPublic [" + 'hasOwnProperty' + "]")
-            //Ìí¼Ó·ÃÎÊÆ÷ÊôĞÔ 
+            //æ·»åŠ è®¿é—®å™¨å±æ€§ 
             for (name in accessingProperties) {
-                if (!(name in normalProperties)) { //·ÀÖ¹ÖØ¸´¶¨Òå
+                if (!(name in normalProperties)) { //é˜²æ­¢é‡å¤å®šä¹‰
                     buffer.push(
-                        //ÓÉÓÚ²»Öª¶Ô·½»á´«ÈëÊ²Ã´,Òò´Ëset, let¶¼ÓÃÉÏ
+                        //ç”±äºä¸çŸ¥å¯¹æ–¹ä¼šä¼ å…¥ä»€ä¹ˆ,å› æ­¤set, letéƒ½ç”¨ä¸Š
                         "\tPublic Property Let [" + name + "](val" + expose + ")", //setter
                         "\t\tCall [__proxy__]([__data__], \"" + name + "\", val" + expose + ")",
                         "\tEnd Property",
@@ -724,7 +724,7 @@
                         "\t\tCall [__proxy__]([__data__], \"" + name + "\", val" + expose + ")",
                         "\tEnd Property",
                         "\tPublic Property Get [" + name + "]", //getter
-                        "\tOn Error Resume Next", //±ØĞëÓÅÏÈÊ¹ÓÃsetÓï¾ä,·ñÔòËü»áÎó½«Êı×éµ±×Ö·û´®·µ»Ø
+                        "\tOn Error Resume Next", //å¿…é¡»ä¼˜å…ˆä½¿ç”¨setè¯­å¥,å¦åˆ™å®ƒä¼šè¯¯å°†æ•°ç»„å½“å­—ç¬¦ä¸²è¿”å›
                         "\t\tSet[" + name + "] = [__proxy__]([__data__],\"" + name + "\")",
                         "\tIf Err.Number <> 0 Then",
                         "\t\t[" + name + "] = [__proxy__]([__data__],\"" + name + "\")",
@@ -733,22 +733,22 @@
                         "\tEnd Property")
                 }
             }
-            buffer.push("End Class") //Àà¶¨ÒåÍê±Ï
+            buffer.push("End Class") //ç±»å®šä¹‰å®Œæ¯•
             buffer.push(
-                "Function " + className + "Factory(a, b)", //´´½¨ÊµÀı²¢´«ÈëÁ½¸ö¹Ø¼üµÄ²ÎÊı
+                "Function " + className + "Factory(a, b)", //åˆ›å»ºå®ä¾‹å¹¶ä¼ å…¥ä¸¤ä¸ªå…³é”®çš„å‚æ•°
                 "\tDim o",
                 "\tSet o = (New " + className + ")(a, b)",
                 "\tSet " + className + "Factory = o",
                 "End Function")
-            window.parseVB(buffer.join("\r\n")) //ÏÈ´´½¨Ò»¸öVBÀà¹¤³§
-            return window[className + "Factory"](accessingProperties, VBMediator) //µÃµ½Æä²úÆ·
+            window.parseVB(buffer.join("\r\n")) //å…ˆåˆ›å»ºä¸€ä¸ªVBç±»å·¥å‚
+            return window[className + "Factory"](accessingProperties, VBMediator) //å¾—åˆ°å…¶äº§å“
         }
     }
     /*********************************************************************
-     *                           ecma262 v5Óï·¨²¹¶¡                   *
+     *                           ecma262 v5è¯­æ³•è¡¥ä¸                   *
      **********************************************************************/
     /*
-    if (!"Ë¾Í½ÕıÃÀ".trim) {
+    if (!"å¸å¾’æ­£ç¾".trim) {
         var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g
         String.prototype.trim = function() {
             return this.replace(rtrim, "")
@@ -806,7 +806,7 @@
     }
     if (!rnative.test([].map)) {
         avalon.mix(ap, {
-            //¶¨Î»²Ù×÷£¬·µ»ØÊı×éÖĞµÚÒ»¸öµÈÓÚ¸ø¶¨²ÎÊıµÄÔªËØµÄË÷ÒıÖµ¡£
+            //å®šä½æ“ä½œï¼Œè¿”å›æ•°ç»„ä¸­ç¬¬ä¸€ä¸ªç­‰äºç»™å®šå‚æ•°çš„å…ƒç´ çš„ç´¢å¼•å€¼ã€‚
             indexOf: function(item, index) {
                 var n = this.length,
                     i = ~~index
@@ -817,7 +817,7 @@
                         return i
                 return -1
             },
-            //¶¨Î»Òı²Ù×÷£¬Í¬ÉÏ£¬²»¹ıÊÇ´Óºó±éÀú¡£
+            //å®šä½å¼•æ“ä½œï¼ŒåŒä¸Šï¼Œä¸è¿‡æ˜¯ä»åéå†ã€‚
             lastIndexOf: function(item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index
@@ -828,15 +828,15 @@
                         return i
                 return -1
             },
-            //µü´ú²Ù×÷£¬½«Êı×éµÄÔªËØ°¤¸ö¶ù´«ÈëÒ»¸öº¯ÊıÖĞÖ´ĞĞ¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªeach¡£
+            //è¿­ä»£æ“ä½œï¼Œå°†æ•°ç»„çš„å…ƒç´ æŒ¨ä¸ªå„¿ä¼ å…¥ä¸€ä¸ªå‡½æ•°ä¸­æ‰§è¡Œã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºeachã€‚
             forEach: iterator("", '_', ""),
-            //µü´úÀà ÔÚÊı×éÖĞµÄÃ¿¸öÏîÉÏÔËĞĞÒ»¸öº¯Êı£¬Èç¹û´Ëº¯ÊıµÄÖµÎªÕæ£¬Ôò´ËÔªËØ×÷ÎªĞÂÊı×éµÄÔªËØÊÕ¼¯ÆğÀ´£¬²¢·µ»ØĞÂÊı×é
+            //è¿­ä»£ç±» åœ¨æ•°ç»„ä¸­çš„æ¯ä¸ªé¡¹ä¸Šè¿è¡Œä¸€ä¸ªå‡½æ•°ï¼Œå¦‚æœæ­¤å‡½æ•°çš„å€¼ä¸ºçœŸï¼Œåˆ™æ­¤å…ƒç´ ä½œä¸ºæ–°æ•°ç»„çš„å…ƒç´ æ”¶é›†èµ·æ¥ï¼Œå¹¶è¿”å›æ–°æ•°ç»„
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //ÊÕ¼¯²Ù×÷£¬½«Êı×éµÄÔªËØ°¤¸ö¶ù´«ÈëÒ»¸öº¯ÊıÖĞÖ´ĞĞ£¬È»ºó°ÑËüÃÇµÄ·µ»ØÖµ×é³ÉÒ»¸öĞÂÊı×é·µ»Ø¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªcollect¡£
+            //æ”¶é›†æ“ä½œï¼Œå°†æ•°ç»„çš„å…ƒç´ æŒ¨ä¸ªå„¿ä¼ å…¥ä¸€ä¸ªå‡½æ•°ä¸­æ‰§è¡Œï¼Œç„¶åæŠŠå®ƒä»¬çš„è¿”å›å€¼ç»„æˆä¸€ä¸ªæ–°æ•°ç»„è¿”å›ã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºcollectã€‚
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //Ö»ÒªÊı×éÖĞÓĞÒ»¸öÔªËØÂú×ãÌõ¼ş£¨·Å½ø¸ø¶¨º¯Êı·µ»Øtrue£©£¬ÄÇÃ´Ëü¾Í·µ»Øtrue¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªany¡£
+            //åªè¦æ•°ç»„ä¸­æœ‰ä¸€ä¸ªå…ƒç´ æ»¡è¶³æ¡ä»¶ï¼ˆæ”¾è¿›ç»™å®šå‡½æ•°è¿”å›trueï¼‰ï¼Œé‚£ä¹ˆå®ƒå°±è¿”å›trueã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºanyã€‚
             some: iterator("", 'if(_)return true', 'return false'),
-            //Ö»ÓĞÊı×éÖĞµÄÔªËØ¶¼Âú×ãÌõ¼ş£¨·Å½ø¸ø¶¨º¯Êı·µ»Øtrue£©£¬Ëü²Å·µ»Øtrue¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªall¡£
+            //åªæœ‰æ•°ç»„ä¸­çš„å…ƒç´ éƒ½æ»¡è¶³æ¡ä»¶ï¼ˆæ”¾è¿›ç»™å®šå‡½æ•°è¿”å›trueï¼‰ï¼Œå®ƒæ‰è¿”å›trueã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºallã€‚
             every: iterator("", 'if(!_)return false', 'return true')
         })
     }
@@ -851,17 +851,17 @@
         }
         return false;
     }
-    if (!root.contains) { //safari5+ÊÇ°Ñcontains·½·¨·ÅÔÚElement.prototypeÉÏ¶ø²»ÊÇNode.prototype
+    if (!root.contains) { //safari5+æ˜¯æŠŠcontainsæ–¹æ³•æ”¾åœ¨Element.prototypeä¸Šè€Œä¸æ˜¯Node.prototype
         Node.prototype.contains = function(arg) {
             return !!(this.compareDocumentPosition(arg) & 16)
         }
     }
-    if (!DOC.contains) { //IE6-11µÄÎÄµµ¶ÔÏóÃ»ÓĞcontains
+    if (!DOC.contains) { //IE6-11çš„æ–‡æ¡£å¯¹è±¡æ²¡æœ‰contains
         DOC.contains = function(b) {
             return fixContains(this, b)
         }
     }
-    if (!root.outerHTML && window.HTMLElement) {//firefox µ½11Ê±²ÅÓĞouterHTML
+    if (!root.outerHTML && window.HTMLElement) {//firefox åˆ°11æ—¶æ‰æœ‰outerHTML
         HTMLElement.prototype.__defineGetter__("outerHTML", function() {
             domParser.textContent = ""
             domParser.appendChild(this)
@@ -871,7 +871,7 @@
         });
     }
     /*********************************************************************
-     *                           ÅäÖÃÄ£¿é                                  *
+     *                           é…ç½®æ¨¡å—                                  *
      **********************************************************************/
 
     function kernel(settings) {
@@ -893,13 +893,13 @@
 
     function escapeRegExp(target) {
         //http://stevenlevithan.com/regex/xregexp/
-        //½«×Ö·û´®°²È«¸ñÊ½»¯ÎªÕıÔò±í´ïÊ½µÄÔ´Âë
+        //å°†å­—ç¬¦ä¸²å®‰å…¨æ ¼å¼åŒ–ä¸ºæ­£åˆ™è¡¨è¾¾å¼çš„æºç 
         return (target + "").replace(rregexp, "\\$&")
     }
     /*
     var plugins = {
         alias: function(val) {
-            log("Warning: alias·½·¨ÒÑ·ÏÆú£¬ÇëÓÃpaths, shimÅäÖÃÏî")
+            log("Warning: aliasæ–¹æ³•å·²åºŸå¼ƒï¼Œè¯·ç”¨paths, shimé…ç½®é¡¹")
             for (var c in val) {
                 if (ohasOwn.call(val, c)) {
                     var currValue = val[c]
@@ -960,19 +960,19 @@
         }
     }
     /*********************************************************************
-     *                      DOM APIµÄ¸ß¼¶·â×°                           *
+     *                      DOM APIçš„é«˜çº§å°è£…                           *
      **********************************************************************/
 
     /*
     function hyphen(target) {
-        //×ª»»ÎªÁ¬×Ö·ûÏß·ç¸ñ
+        //è½¬æ¢ä¸ºè¿å­—ç¬¦çº¿é£æ ¼
         return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase()
     }
 
     function camelize(target) {
-        //×ª»»ÎªÍÕ·å·ç¸ñ
+        //è½¬æ¢ä¸ºé©¼å³°é£æ ¼
         if (target.indexOf("-") < 0 && target.indexOf("_") < 0) {
-            return target //ÌáÇ°ÅĞ¶Ï£¬Ìá¸ßgetStyleµÈµÄĞ§ÂÊ
+            return target //æå‰åˆ¤æ–­ï¼Œæé«˜getStyleç­‰çš„æ•ˆç‡
         }
         return target.replace(/[-_][^-_]/g, function(match) {
             return match.charAt(1).toUpperCase()
@@ -1088,8 +1088,8 @@
             if (this.css("position") === "fixed") {
                 offset = elem.getBoundingClientRect()
             } else {
-                offsetParent = this.offsetParent() //µÃµ½ÕæÕıµÄoffsetParent
-                offset = this.offset() // µÃµ½ÕıÈ·µÄoffsetParent
+                offsetParent = this.offsetParent() //å¾—åˆ°çœŸæ­£çš„offsetParent
+                offset = this.offset() // å¾—åˆ°æ­£ç¡®çš„offsetParent
                 if (offsetParent[0].tagName !== "HTML") {
                     parentOffset = offsetParent.offset()
                 }
@@ -1109,7 +1109,7 @@
             return avalon(offsetParent || root)
         },
         bind: function(type, fn, phase) {
-            if (this[0]) { //´Ë·½·¨²»»áÁ´
+            if (this[0]) { //æ­¤æ–¹æ³•ä¸ä¼šé“¾
                 return avalon.bind(this[0], type, fn, phase)
             }
         },
@@ -1165,7 +1165,7 @@
         }
     }
 
-    //Éú³Éavalon.fn.scrollLeft, avalon.fn.scrollTop·½·¨
+    //ç”Ÿæˆavalon.fn.scrollLeft, avalon.fn.scrollTopæ–¹æ³•
     avalon.each({
         scrollLeft: "pageXOffset",
         scrollTop: "pageYOffset"
@@ -1188,7 +1188,7 @@
     function getWindow(node) {
         return node.window && node.document ? node : node.nodeType === 9 ? node.defaultView || node.parentWindow : false;
     }
-    //=============================cssÏà¹Ø=======================
+    //=============================cssç›¸å…³=======================
     var cssHooks = avalon.cssHooks = {}
     var prefixes = ["", "-webkit-", "-o-", "-moz-", "-vm-"]
     var cssMap = {
@@ -1211,7 +1211,7 @@
         return null
     }
     cssHooks["@:set"] = function(node, name, value) {
-        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine ÔÚ¾ÉÊ½IEÏÂ»áÅ×Òì³£
+        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine åœ¨æ—§å¼IEä¸‹ä¼šæŠ›å¼‚å¸¸
             node.style[name] = value
         } catch (e) {
         }
@@ -1222,7 +1222,7 @@
             if (styles) {
                 ret = name === "filter" ? styles.getPropertyValue(name) : styles[name]
                 if (ret === "") {
-                    ret = node.style[name] //ÆäËûä¯ÀÀÆ÷ĞèÒªÎÒÃÇÊÖ¶¯È¡ÄÚÁªÑùÊ½
+                    ret = node.style[name] //å…¶ä»–æµè§ˆå™¨éœ€è¦æˆ‘ä»¬æ‰‹åŠ¨å–å†…è”æ ·å¼
                 }
             }
             return ret
@@ -1242,29 +1242,29 @@
             thick: ie8 ? '5px' : '6px'
         }
         cssHooks["@:get"] = function(node, name) {
-            //È¡µÃ¾«È·Öµ£¬²»¹ıËüÓĞ¿ÉÄÜÊÇ´øem,pc,mm,pt,%µÈµ¥Î»
+            //å–å¾—ç²¾ç¡®å€¼ï¼Œä¸è¿‡å®ƒæœ‰å¯èƒ½æ˜¯å¸¦em,pc,mm,pt,%ç­‰å•ä½
             var currentStyle = node.currentStyle
             var ret = currentStyle[name]
             if ((rnumnonpx.test(ret) && !rposition.test(ret))) {
-                //¢Ù£¬±£´æÔ­ÓĞµÄstyle.left, runtimeStyle.left,
+                //â‘ ï¼Œä¿å­˜åŸæœ‰çš„style.left, runtimeStyle.left,
                 var style = node.style,
                     left = style.left,
                     rsLeft = node.runtimeStyle.left
-                //¢ÚÓÉÓÚ¢Û´¦µÄstyle.left = xxx»áÓ°Ïìµ½currentStyle.left£¬
-                //Òò´Ë°ÑËücurrentStyle.left·Åµ½runtimeStyle.left£¬
-                //runtimeStyle.leftÓµÓĞ×î¸ßÓÅÏÈ¼¶£¬²»»ástyle.leftÓ°Ïì
+                //â‘¡ç”±äºâ‘¢å¤„çš„style.left = xxxä¼šå½±å“åˆ°currentStyle.leftï¼Œ
+                //å› æ­¤æŠŠå®ƒcurrentStyle.leftæ”¾åˆ°runtimeStyle.leftï¼Œ
+                //runtimeStyle.leftæ‹¥æœ‰æœ€é«˜ä¼˜å…ˆçº§ï¼Œä¸ä¼šstyle.leftå½±å“
                 node.runtimeStyle.left = currentStyle.left
-                //¢Û½«¾«È·Öµ¸³¸øµ½style.left£¬È»ºóÍ¨¹ıIEµÄÁíÒ»¸öË½ÓĞÊôĞÔ style.pixelLeft
-                //µÃµ½µ¥Î»ÎªpxµÄ½á¹û£»fontSizeµÄ·ÖÖ§¼ûhttp://bugs.jquery.com/ticket/760
+                //â‘¢å°†ç²¾ç¡®å€¼èµ‹ç»™åˆ°style.leftï¼Œç„¶åé€šè¿‡IEçš„å¦ä¸€ä¸ªç§æœ‰å±æ€§ style.pixelLeft
+                //å¾—åˆ°å•ä½ä¸ºpxçš„ç»“æœï¼›fontSizeçš„åˆ†æ”¯è§http://bugs.jquery.com/ticket/760
                 style.left = name === 'fontSize' ? '1em' : (ret || 0)
                 ret = style.pixelLeft + "px"
-                //¢Ü»¹Ô­ style.left£¬runtimeStyle.left
+                //â‘£è¿˜åŸ style.leftï¼ŒruntimeStyle.left
                 style.left = left
                 node.runtimeStyle.left = rsLeft
             }
             if (ret === "medium") {
                 name = name.replace("Width", "Style")
-                //border width Ä¬ÈÏÖµÎªmedium£¬¼´Ê¹ÆäÎª0"
+                //border width é»˜è®¤å€¼ä¸ºmediumï¼Œå³ä½¿å…¶ä¸º0"
                 if (currentStyle[name] === "none") {
                     ret = "0px"
                 }
@@ -1276,12 +1276,12 @@
             node.style.zoom = 1
         }
         cssHooks["opacity:get"] = function(node) {
-            //ÕâÊÇ×î¿ìµÄ»ñÈ¡IEÍ¸Ã÷ÖµµÄ·½Ê½£¬²»ĞèÒª¶¯ÓÃÕıÔòÁË£¡
+            //è¿™æ˜¯æœ€å¿«çš„è·å–IEé€æ˜å€¼çš„æ–¹å¼ï¼Œä¸éœ€è¦åŠ¨ç”¨æ­£åˆ™äº†ï¼
             var alpha = node.filters.alpha || node.filters[salpha],
                 op = alpha ? alpha.opacity : 100
-            return (op / 100) + "" //È·±£·µ»ØµÄÊÇ×Ö·û´®
+            return (op / 100) + "" //ç¡®ä¿è¿”å›çš„æ˜¯å­—ç¬¦ä¸²
         }
-        //¾ÉÊ½IEÎŞ·¨Í¨¹ıcurrentStyleÈ¡µÃÃ»ÓĞ¶¨ÒåÔÚÑùÊ½±íÖĞµÄwidth, heightÖµ
+        //æ—§å¼IEæ— æ³•é€šè¿‡currentStyleå–å¾—æ²¡æœ‰å®šä¹‰åœ¨æ ·å¼è¡¨ä¸­çš„width, heightå€¼
         "width,height".replace(rword, function(name) {
             cssHooks[name + ":get"] = function(node) {
                 if (name === "width") {
@@ -1310,7 +1310,7 @@
 
     function showHidden(node, array) {
         //http://www.cnblogs.com/rubylouvre/archive/2012/10/27/2742529.html
-        if (node.offsetWidth <= 0) { //opera.offsetWidth¿ÉÄÜĞ¡ÓÚ0
+        if (node.offsetWidth <= 0) { //opera.offsetWidthå¯èƒ½å°äº0
             if (rdisplayswap.test(cssHooks["@:get"](node, "display"))) {
                 var obj = {
                     node: node
@@ -1349,14 +1349,14 @@
         avalon.fn[method] = function(value) {
             var node = this[0]
             if (arguments.length === 0) {
-                if (node.setTimeout) { //È¡µÃ´°¿Ú³ß´ç,IE9ºó¿ÉÒÔÓÃnode.innerWidth /innerHeight´úÌæ
+                if (node.setTimeout) { //å–å¾—çª—å£å°ºå¯¸,IE9åå¯ä»¥ç”¨node.innerWidth /innerHeightä»£æ›¿
                     return node["inner" + name] || node.document.documentElement[clientProp]
                 }
-                if (node.nodeType === 9) { //È¡µÃÒ³Ãæ³ß´ç
+                if (node.nodeType === 9) { //å–å¾—é¡µé¢å°ºå¯¸
                     var doc = node.documentElement
                     //FF chrome    html.scrollHeight< body.scrollHeight
-                    //IE ±ê×¼Ä£Ê½ : html.scrollHeight> body.scrollHeight
-                    //IE ¹ÖÒìÄ£Ê½ : html.scrollHeight ×î´óµÈÓÚ¿ÉÊÓ´°¿Ú¶àÒ»µã£¿
+                    //IE æ ‡å‡†æ¨¡å¼ : html.scrollHeight> body.scrollHeight
+                    //IE æ€ªå¼‚æ¨¡å¼ : html.scrollHeight æœ€å¤§ç­‰äºå¯è§†çª—å£å¤šä¸€ç‚¹ï¼Ÿ
                     return Math.max(node.body[scrollProp], doc[scrollProp], node.body[offsetProp], doc[offsetProp], doc[clientProp])
                 }
                 return cssHooks[method + "::get"](node)
@@ -1366,7 +1366,7 @@
         }
 
     })
-    avalon.fn.offset = function() { //È¡µÃ¾àÀëÒ³Ãæ×óÓÒ½ÇµÄ×ø±ê
+    avalon.fn.offset = function() { //å–å¾—è·ç¦»é¡µé¢å·¦å³è§’çš„åæ ‡
         var node = this[0],
             doc = node && node.ownerDocument
         var pos = {
@@ -1376,8 +1376,8 @@
         if (!doc) {
             return pos
         }
-        //http://hkom.blog1.fc2.com/?mode=m&no=750 bodyµÄÆ«ÒÆÁ¿ÊÇ²»°üº¬marginµÄ
-        //ÎÒÃÇ¿ÉÒÔÍ¨¹ıgetBoundingClientRectÀ´»ñµÃÔªËØÏà¶ÔÓÚclientµÄrect.
+        //http://hkom.blog1.fc2.com/?mode=m&no=750 bodyçš„åç§»é‡æ˜¯ä¸åŒ…å«marginçš„
+        //æˆ‘ä»¬å¯ä»¥é€šè¿‡getBoundingClientRectæ¥è·å¾—å…ƒç´ ç›¸å¯¹äºclientçš„rect.
         //http://msdn.microsoft.com/en-us/library/ms536433.aspx
         var box = node.getBoundingClientRect(),
         //chrome1+, firefox3+, ie4+, opera(yes) safari4+
@@ -1387,15 +1387,15 @@
             clientLeft = root.clientLeft >> 0,
             scrollTop = win.pageYOffset || root.scrollTop,
             scrollLeft = win.pageXOffset || root.scrollLeft
-        // °Ñ¹ö¶¯¾àÀë¼Óµ½left,topÖĞÈ¥¡£
-        // IEÒ»Ğ©°æ±¾ÖĞ»á×Ô¶¯ÎªHTMLÔªËØ¼ÓÉÏ2pxµÄborder£¬ÎÒÃÇĞèÒªÈ¥µôËü
+        // æŠŠæ»šåŠ¨è·ç¦»åŠ åˆ°left,topä¸­å»ã€‚
+        // IEä¸€äº›ç‰ˆæœ¬ä¸­ä¼šè‡ªåŠ¨ä¸ºHTMLå…ƒç´ åŠ ä¸Š2pxçš„borderï¼Œæˆ‘ä»¬éœ€è¦å»æ‰å®ƒ
         // http://msdn.microsoft.com/en-us/library/ms533564(VS.85).aspx
         pos.top = box.top + scrollTop - clientTop
         pos.left = box.left + scrollLeft - clientLeft
         return pos
     }
 
-    //==================================valÏà¹Ø============================
+    //==================================valç›¸å…³============================
 
     function getValType(el) {
         var ret = el.tagName.toLowerCase()
@@ -1404,11 +1404,11 @@
     var roption = /^<option(?:\s+\w+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*\s+value[\s=]/i
     var valHooks = {
         "option:get": function(node) {
-            //ÔÚIE11¼°W3C£¬Èç¹ûÃ»ÓĞÖ¸¶¨value£¬ÄÇÃ´node.valueÄ¬ÈÏÎªnode.text£¨´æÔÚtrim×÷£©£¬µ«IE9-10ÔòÊÇÈ¡innerHTML(Ã»trim²Ù×÷)
+            //åœ¨IE11åŠW3Cï¼Œå¦‚æœæ²¡æœ‰æŒ‡å®švalueï¼Œé‚£ä¹ˆnode.valueé»˜è®¤ä¸ºnode.textï¼ˆå­˜åœ¨trimä½œï¼‰ï¼Œä½†IE9-10åˆ™æ˜¯å–innerHTML(æ²¡trimæ“ä½œ)
             if (node.hasAttribute) {
                 return node.hasAttribute("value") ? node.value : node.text
             }
-            //specified²¢²»¿É¿¿£¬Òò´ËÍ¨¹ı·ÖÎöouterHTMLÅĞ¶¨ÓÃ»§ÓĞÃ»ÓĞÏÔÊ¾¶¨Òåvalue
+            //specifiedå¹¶ä¸å¯é ï¼Œå› æ­¤é€šè¿‡åˆ†æouterHTMLåˆ¤å®šç”¨æˆ·æœ‰æ²¡æœ‰æ˜¾ç¤ºå®šä¹‰value
             return roption.test(node.outerHTML) ? node.value : node.text
         },
         "select:get": function(node, value) {
@@ -1421,22 +1421,22 @@
                 i = index < 0 ? max : one ? index : 0
             for (; i < max; i++) {
                 option = options[i]
-                //¾ÉÊ½IEÔÚresetºó²»»á¸Ä±äselected£¬ĞèÒª¸ÄÓÃi === indexÅĞ¶¨
-                //ÎÒÃÇ¹ıÂËËùÓĞdisabledµÄoptionÔªËØ£¬µ«ÔÚsafari5ÏÂ£¬Èç¹ûÉèÖÃselectÎªdisable£¬ÄÇÃ´ÆäËùÓĞº¢×Ó¶¼disable
-                //Òò´Ëµ±Ò»¸öÔªËØÎªdisable£¬ĞèÒª¼ì²âÆäÊÇ·ñÏÔÊ½ÉèÖÃÁËdisable¼°Æä¸¸½ÚµãµÄdisableÇé¿ö
+                //æ—§å¼IEåœ¨resetåä¸ä¼šæ”¹å˜selectedï¼Œéœ€è¦æ”¹ç”¨i === indexåˆ¤å®š
+                //æˆ‘ä»¬è¿‡æ»¤æ‰€æœ‰disabledçš„optionå…ƒç´ ï¼Œä½†åœ¨safari5ä¸‹ï¼Œå¦‚æœè®¾ç½®selectä¸ºdisableï¼Œé‚£ä¹ˆå…¶æ‰€æœ‰å­©å­éƒ½disable
+                //å› æ­¤å½“ä¸€ä¸ªå…ƒç´ ä¸ºdisableï¼Œéœ€è¦æ£€æµ‹å…¶æ˜¯å¦æ˜¾å¼è®¾ç½®äº†disableåŠå…¶çˆ¶èŠ‚ç‚¹çš„disableæƒ…å†µ
                 if ((option.selected || i === index) && !option.disabled) {
                     value = getter(option)
                     if (one) {
                         return value
                     }
-                    //ÊÕ¼¯ËùÓĞselectedÖµ×é³ÉÊı×é·µ»Ø
+                    //æ”¶é›†æ‰€æœ‰selectedå€¼ç»„æˆæ•°ç»„è¿”å›
                     values.push(value)
                 }
             }
             return values
         },
         "select:set": function(node, values, optionSet) {
-            values = [].concat(values) //Ç¿ÖÆ×ª»»ÎªÊı×é
+            values = [].concat(values) //å¼ºåˆ¶è½¬æ¢ä¸ºæ•°ç»„
             var getter = valHooks["option:get"]
             for (var i = 0, el; el = node.options[i++]; ) {
                 if ((el.selected = values.indexOf(getter(el)) >= 0)) {
@@ -1455,13 +1455,13 @@
      ************************************************************************/
     /*
     var rtagName = /<([\w:]+)/,
-    //È¡µÃÆätagName
+    //å–å¾—å…¶tagName
         rxhtml = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
         rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
         scriptTypes = oneObject("text/javascript", "text/ecmascript", "application/ecmascript", "application/javascript", "text/vbscript"),
-    //ĞèÒª´¦ÀíÌ×Ç¶¹ØÏµµÄ±êÇ©
+    //éœ€è¦å¤„ç†å¥—åµŒå…³ç³»çš„æ ‡ç­¾
         rnest = /<(?:tb|td|tf|th|tr|col|opt|leg|cap|area)/
-    //parseHTMLµÄ¸¨Öú±äÁ¿
+    //parseHTMLçš„è¾…åŠ©å˜é‡
     var tagHooks = {
         area: [1, "<map>"],
         param: [1, "<object>"],
@@ -1471,8 +1471,8 @@
         thead: [1, "<table>", "</table>"],
         tr: [2, "<table><tbody>"],
         td: [3, "<table><tbody><tr>"],
-        //IE6-8ÔÚÓÃinnerHTMLÉú³É½ÚµãÊ±£¬²»ÄÜÖ±½Ó´´½¨no-scopeÔªËØÓëHTML5µÄĞÂ±êÇ©
-        _default: W3C ? [0, ""] : [1, "X<div>"] //div¿ÉÒÔ²»ÓÃ±ÕºÏ
+        //IE6-8åœ¨ç”¨innerHTMLç”ŸæˆèŠ‚ç‚¹æ—¶ï¼Œä¸èƒ½ç›´æ¥åˆ›å»ºno-scopeå…ƒç´ ä¸HTML5çš„æ–°æ ‡ç­¾
+        _default: W3C ? [0, ""] : [1, "X<div>"] //divå¯ä»¥ä¸ç”¨é—­åˆ
     }
     tagHooks.optgroup = tagHooks.option
     tagHooks.tbody = tagHooks.tfoot = tagHooks.colgroup = tagHooks.caption = tagHooks.thead
@@ -1485,31 +1485,31 @@
         }
         html = html.replace(rxhtml, "<$1></$2>").trim()
         var tag = (rtagName.exec(html) || ["", ""])[1].toLowerCase(),
-        //È¡µÃÆä±êÇ©Ãû
+        //å–å¾—å…¶æ ‡ç­¾å
             wrap = tagHooks[tag] || tagHooks._default,
             fragment = documentFragment.cloneNode(false),
             wrapper = domParser,
             firstChild, neo
         if (!W3C) { //fix IE
-            html = html.replace(rcreate, "<br class=msNoScope>$1") //ÔÚlink style scriptµÈ±êÇ©Ö®Ç°Ìí¼ÓÒ»¸ö²¹¶¡
+            html = html.replace(rcreate, "<br class=msNoScope>$1") //åœ¨link style scriptç­‰æ ‡ç­¾ä¹‹å‰æ·»åŠ ä¸€ä¸ªè¡¥ä¸
         }
         wrapper.innerHTML = wrap[1] + html + (wrap[2] || "")
         var els = wrapper.getElementsByTagName("script")
-        if (els.length) { //Ê¹ÓÃinnerHTMLÉú³ÉµÄscript½Úµã²»»á·¢³öÇëÇóÓëÖ´ĞĞtextÊôĞÔ
+        if (els.length) { //ä½¿ç”¨innerHTMLç”Ÿæˆçš„scriptèŠ‚ç‚¹ä¸ä¼šå‘å‡ºè¯·æ±‚ä¸æ‰§è¡Œtextå±æ€§
             for (var i = 0, el; el = els[i++]; ) {
-                if (!el.type || scriptTypes[el.type]) { //Èç¹ûscript½ÚµãµÄMIMEÄÜÈÃÆäÖ´ĞĞ½Å±¾
-                    neo = script.cloneNode(false) //FF²»ÄÜÊ¡ÂÔ²ÎÊı
+                if (!el.type || scriptTypes[el.type]) { //å¦‚æœscriptèŠ‚ç‚¹çš„MIMEèƒ½è®©å…¶æ‰§è¡Œè„šæœ¬
+                    neo = script.cloneNode(false) //FFä¸èƒ½çœç•¥å‚æ•°
                     for (var j = 0, attr; attr = el.attributes[j++]; ) {
-                        if (attr.specified) { //¸´ÖÆÆäÊôĞÔ
+                        if (attr.specified) { //å¤åˆ¶å…¶å±æ€§
                             neo[attr.name] = attr.value
                         }
                     }
-                    neo.text = el.text //±ØĞëÖ¸¶¨,ÒòÎªÎŞ·¨ÔÚattributesÖĞ±éÀú³öÀ´
-                    el.parentNode.replaceChild(neo, el) //Ìæ»»½Úµã
+                    neo.text = el.text //å¿…é¡»æŒ‡å®š,å› ä¸ºæ— æ³•åœ¨attributesä¸­éå†å‡ºæ¥
+                    el.parentNode.replaceChild(neo, el) //æ›¿æ¢èŠ‚ç‚¹
                 }
             }
         }
-        //ÒÆ³ıÎÒÃÇÎªÁË·ûºÏÌ×Ç¶¹ØÏµ¶øÌí¼ÓµÄ±êÇ©
+        //ç§»é™¤æˆ‘ä»¬ä¸ºäº†ç¬¦åˆå¥—åµŒå…³ç³»è€Œæ·»åŠ çš„æ ‡ç­¾
         for (i = wrap[0]; i--; wrapper = wrapper.lastChild) {
         }
         if (!W3C) { //fix IE
@@ -1519,7 +1519,7 @@
                 }
             }
         }
-        while (firstChild = wrapper.firstChild) { // ½«wrapperÉÏµÄ½Úµã×ªÒÆµ½ÎÄµµËéÆ¬ÉÏ£¡
+        while (firstChild = wrapper.firstChild) { // å°†wrapperä¸Šçš„èŠ‚ç‚¹è½¬ç§»åˆ°æ–‡æ¡£ç¢ç‰‡ä¸Šï¼
             fragment.appendChild(firstChild)
         }
         return fragment
@@ -1554,14 +1554,14 @@
                 } else {
                     this.$events[type] = [callback]
                 }
-            } else { //ÖØĞÂ¿ªÊ¼¼àÌı´ËVMµÄµÚÒ»ÖØ¼òµ¥ÊôĞÔµÄ±ä¶¯
+            } else { //é‡æ–°å¼€å§‹ç›‘å¬æ­¤VMçš„ç¬¬ä¸€é‡ç®€å•å±æ€§çš„å˜åŠ¨
                 this.$events = this.$watch.backup
             }
             return this
         },
         $unwatch: function(type, callback) {
             var n = arguments.length
-            if (n === 0) { //ÈÃ´ËVMµÄËùÓĞ$watch»Øµ÷ÎŞĞ§»¯
+            if (n === 0) { //è®©æ­¤VMçš„æ‰€æœ‰$watchå›è°ƒæ— æ•ˆåŒ–
                 this.$watch.backup = this.$events
                 this.$events = {}
             } else if (n === 1) {
@@ -1591,34 +1591,34 @@
     }
 
     /*********************************************************************
-     *                           ÒÀÀµÊÕ¼¯Óë´¥·¢                                *
+     *                           ä¾èµ–æ”¶é›†ä¸è§¦å‘                                *
      **********************************************************************/
 
     function registerSubscriber(data) {
-        Registry[expose] = data //±©¹â´Ëº¯Êı,·½±ãcollectSubscribersÊÕ¼¯
+        Registry[expose] = data //æš´å…‰æ­¤å‡½æ•°,æ–¹ä¾¿collectSubscribersæ”¶é›†
         avalon.openComputedCollect = true
         var fn = data.evaluator
-        if (fn) { //Èç¹ûÊÇÇóÖµº¯Êı
+        if (fn) { //å¦‚æœæ˜¯æ±‚å€¼å‡½æ•°
             if (data.type === "duplex") {
                 data.handler()
             } else {
                 data.handler(fn.apply(0, data.args), data.element, data)
             }
-        } else { //Èç¹ûÊÇ¼ÆËãÊôĞÔµÄaccessor
+        } else { //å¦‚æœæ˜¯è®¡ç®—å±æ€§çš„accessor
             data()
         }
         avalon.openComputedCollect = false
         delete Registry[expose]
     }
 
-    function collectSubscribers(accessor) { //ÊÕ¼¯ÒÀÀµÓÚÕâ¸ö·ÃÎÊÆ÷µÄ¶©ÔÄÕß
+    function collectSubscribers(accessor) { //æ”¶é›†ä¾èµ–äºè¿™ä¸ªè®¿é—®å™¨çš„è®¢é˜…è€…
         if (Registry[expose]) {
             var list = accessor[subscribers]
-            list && avalon.Array.ensure(list, Registry[expose]) //Ö»ÓĞÊı×é²»´æÔÚ´ËÔªËØ²Åpush½øÈ¥
+            list && avalon.Array.ensure(list, Registry[expose]) //åªæœ‰æ•°ç»„ä¸å­˜åœ¨æ­¤å…ƒç´ æ‰pushè¿›å»
         }
     }
 
-    function notifySubscribers(accessor) { //Í¨ÖªÒÀÀµÓÚÕâ¸ö·ÃÎÊÆ÷µÄ¶©ÔÄÕß¸üĞÂ×ÔÉí
+    function notifySubscribers(accessor) { //é€šçŸ¥ä¾èµ–äºè¿™ä¸ªè®¿é—®å™¨çš„è®¢é˜…è€…æ›´æ–°è‡ªèº«
         var list = accessor[subscribers]
         if (list && list.length) {
             var args = aslice.call(arguments, 1)
@@ -1631,15 +1631,15 @@
                     } else {
                         remove = !avalon.contains(root, el)
                     }
-                    if (remove) { //Èç¹ûËüÃ»ÓĞÔÚDOMÊ÷
+                    if (remove) { //å¦‚æœå®ƒæ²¡æœ‰åœ¨DOMæ ‘
                         list.splice(i, 1)
                         log("Debug: remove " + fn.name)
                     }
                 }
                 if (typeof fn === "function") {
-                    fn.apply(0, args) //Ç¿ÖÆÖØĞÂ¼ÆËã×ÔÉí
+                    fn.apply(0, args) //å¼ºåˆ¶é‡æ–°è®¡ç®—è‡ªèº«
                 } else if (fn.getter) {
-                    fn.handler.apply(fn, args) //´¦Àí¼à¿ØÊı×éµÄ·½·¨
+                    fn.handler.apply(fn, args) //å¤„ç†ç›‘æ§æ•°ç»„çš„æ–¹æ³•
                 } else {
                     fn.handler(fn.evaluator.apply(0, fn.args || []), el, fn)
                 }
@@ -1648,7 +1648,7 @@
     }
 
     /*********************************************************************
-     *                           É¨ÃèÏµÍ³                                 *
+     *                           æ‰«æç³»ç»Ÿ                                 *
      **********************************************************************/
     avalon.scan = function(elem, vmodel) {
         elem = elem || root
@@ -1659,7 +1659,7 @@
     //http://www.w3.org/TR/html5/syntax.html#void-elements
     var stopScan = oneObject("area,base,basefont,br,col,command,embed,hr,img,input,link,meta,param,source,track,wbr,noscript,script,style,textarea".toUpperCase())
 
-    //È·±£ÔªËØµÄÄÚÈİ±»ÍêÈ«É¨ÃèäÖÈ¾Íê±Ï²Åµ÷ÓÃ»Øµ÷
+    //ç¡®ä¿å…ƒç´ çš„å†…å®¹è¢«å®Œå…¨æ‰«ææ¸²æŸ“å®Œæ¯•æ‰è°ƒç”¨å›è°ƒ
     var interval = W3C ? 15 : 50
 
     function checkScan(elem, callback) {
@@ -1677,8 +1677,8 @@
 
 
     function scanTag(elem, vmodels, node) {
-        //É¨ÃèË³Ğò  vm-skip(0) --> vm-important(1) --> vm-controller(2) --> vm-if(10) --> vm-repeat(100) 
-        //--> vm-if-loop(110) --> vm-attr(970) ...--> vm-each(1400)-->vm-with(1500)--¡µvm-duplex(2000)µæºó
+        //æ‰«æé¡ºåº  vm-skip(0) --> vm-important(1) --> vm-controller(2) --> vm-if(10) --> vm-repeat(100) 
+        //--> vm-if-loop(110) --> vm-attr(970) ...--> vm-each(1400)-->vm-with(1500)--ã€‰vm-duplex(2000)å«å
         var a = elem.getAttribute(prefix + "skip")
         var b = elem.getAttributeNode(prefix + "important")
         var c = elem.getAttributeNode(prefix + "controller")
@@ -1689,12 +1689,12 @@
             if (!newVmodel) {
                 return
             }
-            //vm-important²»°üº¬¸¸VM£¬vm-controllerÏà·´
+            //vm-importantä¸åŒ…å«çˆ¶VMï¼Œvm-controllerç›¸å
             vmodels = node === b ? [newVmodel] : [newVmodel].concat(vmodels)
-            elem.removeAttribute(node.name) //removeAttributeNode²»»áË¢ĞÂ[vm-controller]ÑùÊ½¹æÔò
-            avalon(elem).removeClass(node.name) //´¦ÀíIE6
+            elem.removeAttribute(node.name) //removeAttributeNodeä¸ä¼šåˆ·æ–°[vm-controller]æ ·å¼è§„åˆ™
+            avalon(elem).removeClass(node.name) //å¤„ç†IE6
         }
-        scanAttr(elem, vmodels) //É¨ÃèÌØĞÔ½Úµã
+        scanAttr(elem, vmodels) //æ‰«æç‰¹æ€§èŠ‚ç‚¹
     }
 
     function scanNodes(parent, vmodels) {
@@ -1703,9 +1703,9 @@
         while (node) {
             var nextNode = node.nextSibling
             if (node.nodeType === 1) {
-                scanTag(node, vmodels) //É¨ÃèÔªËØ½Úµã
+                scanTag(node, vmodels) //æ‰«æå…ƒç´ èŠ‚ç‚¹
             } else if (node.nodeType === 3 && rexpr.test(node.nodeValue)) {
-                scanText(node, vmodels) //É¨ÃèÎÄ±¾½Úµã
+                scanText(node, vmodels) //æ‰«ææ–‡æœ¬èŠ‚ç‚¹
             }
             node = nextNode
         }
@@ -1716,7 +1716,7 @@
             tokens = scanExpr(textNode.nodeValue)
         if (tokens.length) {
             for (var i = 0, token; token = tokens[i++]; ) {
-                var node = DOC.createTextNode(token.value) //½«ÎÄ±¾×ª»»ÎªÎÄ±¾½Úµã£¬²¢Ìæ»»Ô­À´µÄÎÄ±¾½Úµã
+                var node = DOC.createTextNode(token.value) //å°†æ–‡æœ¬è½¬æ¢ä¸ºæ–‡æœ¬èŠ‚ç‚¹ï¼Œå¹¶æ›¿æ¢åŸæ¥çš„æ–‡æœ¬èŠ‚ç‚¹
                 if (token.expr) {
                     var filters = token.filters
                     var binding = {
@@ -1734,7 +1734,7 @@
                             delete bindings.filters
                         }
                     }
-                    bindings.push(binding) //ÊÕ¼¯´øÓĞ²åÖµ±í´ïÊ½µÄÎÄ±¾
+                    bindings.push(binding) //æ”¶é›†å¸¦æœ‰æ’å€¼è¡¨è¾¾å¼çš„æ–‡æœ¬
                 }
                 documentFragment.appendChild(node)
             }
@@ -1761,7 +1761,7 @@
         for (var i = 0, attr; attr = attributes[i++]; ) {
             if (attr.specified) {
                 if (match = attr.name.match(rmsAttr)) {
-                    //Èç¹ûÊÇÒÔÖ¸¶¨Ç°×ºÃüÃûµÄ
+                    //å¦‚æœæ˜¯ä»¥æŒ‡å®šå‰ç¼€å‘½åçš„
                     var type = match[1]
                     msData[attr.name] = attr.value
                     if (typeof bindingHandlers[type] === "function") {
@@ -1792,7 +1792,7 @@
             return a.priority - b.priority
         })
         if (msData["vm-checked"] && msData["vm-duplex"]) {
-            log("warning!Ò»¸öÔªËØÉÏ²»ÄÜÍ¬Ê±¶¨Òåvm-checkedÓëvm-duplex")
+            log("warning!ä¸€ä¸ªå…ƒç´ ä¸Šä¸èƒ½åŒæ—¶å®šä¹‰vm-checkedä¸vm-duplex")
         }
         var firstBinding = bindings[0] || {}
         switch (firstBinding.type) {
@@ -1803,7 +1803,7 @@
             default:
                 executeBindings(bindings, vmodels)
                 if (!stopScan[elem.tagName] && rbind.test(elem.innerHTML)) {
-                    scanNodes(elem, vmodels) //É¨Ãè×ÓËïÔªËØ
+                    scanNodes(elem, vmodels) //æ‰«æå­å­™å…ƒç´ 
                 }
                 break;
         }
@@ -1814,15 +1814,15 @@
         }
 
     }
-    //IE67ÏÂ£¬ÔÚÑ­»·°ó¶¨ÖĞ£¬Ò»¸ö½ÚµãÈç¹ûÊÇÍ¨¹ıcloneNodeµÃµ½£¬×Ô¶¨ÒåÊôĞÔµÄspecifiedÎªfalse£¬ÎŞ·¨½øÈëÀïÃæµÄ·ÖÖ§£¬
-    //µ«Èç¹ûÎÒÃÇÈ¥µôscanAttrÖĞµÄattr.specified¼ì²â£¬Ò»¸öÔªËØ»áÓĞ80+¸öÌØĞÔ½Úµã£¨ÒòÎªËü²»Çø·Ö¹ÌÓĞÊôĞÔÓë×Ô¶¨ÒåÊôĞÔ£©£¬ºÜÈİÒ×¿¨ËÀÒ³Ãæ
+    //IE67ä¸‹ï¼Œåœ¨å¾ªç¯ç»‘å®šä¸­ï¼Œä¸€ä¸ªèŠ‚ç‚¹å¦‚æœæ˜¯é€šè¿‡cloneNodeå¾—åˆ°ï¼Œè‡ªå®šä¹‰å±æ€§çš„specifiedä¸ºfalseï¼Œæ— æ³•è¿›å…¥é‡Œé¢çš„åˆ†æ”¯ï¼Œ
+    //ä½†å¦‚æœæˆ‘ä»¬å»æ‰scanAtträ¸­çš„attr.specifiedæ£€æµ‹ï¼Œä¸€ä¸ªå…ƒç´ ä¼šæœ‰80+ä¸ªç‰¹æ€§èŠ‚ç‚¹ï¼ˆå› ä¸ºå®ƒä¸åŒºåˆ†å›ºæœ‰å±æ€§ä¸è‡ªå®šä¹‰å±æ€§ï¼‰ï¼Œå¾ˆå®¹æ˜“å¡æ­»é¡µé¢
     if (!"1" [0]) {
         var cacheAttr = createCache(512)
         var rattrs = /\s+(vm-[^=\s]+)(?:=("[^"]*"|'[^']*'|[^\s>]+))?/g,
             rquote = /^['"]/,
             rtag = /<\w+\b(?:(["'])[^"]*?(\1)|[^>])*>/i
         var getAttributes = function(elem) {
-            if (elem.outerHTML.slice(0, 2) == "</") { //´¦Àí¾ÉÊ½IEÄ£ÄâHTML5ĞÂÔªËØ´øÀ´µÄÎ±±êÇ©
+            if (elem.outerHTML.slice(0, 2) == "</") { //å¤„ç†æ—§å¼IEæ¨¡æ‹ŸHTML5æ–°å…ƒç´ å¸¦æ¥çš„ä¼ªæ ‡ç­¾
                 return []
             }
             var str = elem.outerHTML.match(rtag)[0]
@@ -1852,8 +1852,8 @@
             data.vmodels = vmodels
             bindingHandlers[data.type](data, vmodels)
 
-            if (data.evaluator && data.name) { //ÒÆ³ıÊı¾İ°ó¶¨£¬·ÀÖ¹±»¶ş´Î½âÎö
-                //chromeÊ¹ÓÃremoveAttributeNodeÒÆ³ı²»´æÔÚµÄÌØĞÔ½ÚµãÊ±»á±¨´í https://github.com/RubyLouvre/avalon/issues/99
+            if (data.evaluator && data.name) { //ç§»é™¤æ•°æ®ç»‘å®šï¼Œé˜²æ­¢è¢«äºŒæ¬¡è§£æ
+                //chromeä½¿ç”¨removeAttributeNodeç§»é™¤ä¸å­˜åœ¨çš„ç‰¹æ€§èŠ‚ç‚¹æ—¶ä¼šæŠ¥é”™ https://github.com/RubyLouvre/avalon/issues/99
                 data.element.removeAttribute(data.name)
             }
         }
@@ -1875,7 +1875,7 @@
                 break
             }
             value = str.slice(start, stop)
-            if (value) { // {{ ×ó±ßµÄÎÄ±¾
+            if (value) { // {{ å·¦è¾¹çš„æ–‡æœ¬
                 tokens.push({
                     value: value,
                     expr: false
@@ -1887,15 +1887,15 @@
                 break
             }
             value = str.slice(start, stop)
-            if (value) { //´¦Àí{{ }}²åÖµ±í´ïÊ½
+            if (value) { //å¤„ç†{{ }}æ’å€¼è¡¨è¾¾å¼
                 var leach = []
-                if (value.indexOf("|") > 0) { // ³éÈ¡¹ıÂËÆ÷ ÏÈÌæ»»µôËùÓĞ¶ÌÂ·Óë
+                if (value.indexOf("|") > 0) { // æŠ½å–è¿‡æ»¤å™¨ å…ˆæ›¿æ¢æ‰æ‰€æœ‰çŸ­è·¯ä¸
                     value = value.replace(r11a, "U2hvcnRDaXJjdWl0") //btoa("ShortCircuit")
                     value = value.replace(rfilters, function(c, d, e) {
                         leach.push(d + (e || ""))
                         return ""
                     })
-                    value = value.replace(r11b, "||") //»¹Ô­¶ÌÂ·Óë
+                    value = value.replace(r11b, "||") //è¿˜åŸçŸ­è·¯ä¸
                 }
                 tokens.push({
                     value: value,
@@ -1906,7 +1906,7 @@
             start = stop + closeTag.length
         } while (1)
         value = str.slice(start)
-        if (value) { //}} ÓÒ±ßµÄÎÄ±¾
+        if (value) { //}} å³è¾¹çš„æ–‡æœ¬
             tokens.push({
                 value: value,
                 expr: false
@@ -1916,13 +1916,13 @@
         return tokens
     }
     /*********************************************************************
-     *                          ±àÒëÄ£¿é                                  *
+     *                          ç¼–è¯‘æ¨¡å—                                  *
      **********************************************************************/
 
     var keywords =
-        // ¹Ø¼ü×Ö
+        // å…³é”®å­—
         "break,case,catch,continue,debugger,default,delete,do,else,false" + ",finally,for,function,if,in,instanceof,new,null,return,switch,this" + ",throw,true,try,typeof,var,void,while,with"
-            // ±£Áô×Ö
+            // ä¿ç•™å­—
             + ",abstract,boolean,byte,char,class,const,double,enum,export,extends" + ",final,float,goto,implements,import,int,interface,long,native" + ",package,private,protected,public,short,static,super,synchronized" + ",throws,transient,volatile"
 
             // ECMA 5 - use strict
@@ -1945,13 +1945,13 @@
         return code ? code.split(/,+/) : []
     }
 
-    //Ìí¼Ó¸³ÖµÓï¾ä
+    //æ·»åŠ èµ‹å€¼è¯­å¥
 
     function addAssign(vars, scope, name, duplex) {
         var ret = [],
             prefix = " = " + name + "."
         for (var i = vars.length, prop; prop = vars[--i]; ) {
-            if (scope.hasOwnProperty && scope.hasOwnProperty(prop)) { //IE6ÏÂ½ÚµãÃ»ÓĞhasOwnProperty
+            if (scope.hasOwnProperty && scope.hasOwnProperty(prop)) { //IE6ä¸‹èŠ‚ç‚¹æ²¡æœ‰hasOwnProperty
                 ret.push(prop + prefix + prop)
                 if (duplex === "duplex") {
                     vars.get = name + "." + prop
@@ -1979,7 +1979,7 @@
             return false
         })
     }
-    //»º´æÇóÖµº¯Êı£¬ÒÔ±ã¶à´ÎÀûÓÃ
+    //ç¼“å­˜æ±‚å€¼å‡½æ•°ï¼Œä»¥ä¾¿å¤šæ¬¡åˆ©ç”¨
 
     function createCache(maxLength) {
         var keys = []
@@ -1993,7 +1993,7 @@
         return cache;
     }
     var cacheExpr = createCache(256)
-    //È¡µÃÇóÖµº¯Êı¼°Æä´«²Î
+    //å–å¾—æ±‚å€¼å‡½æ•°åŠå…¶ä¼ å‚
     var rduplex = /\w\[.*\]|\w\.\w/
     var rproxy = /(\$proxy\$[a-z]+)\d+$/
     function parseExpr(code, scopes, data, four) {
@@ -2007,7 +2007,7 @@
             names = [],
             args = [],
             prefix = ""
-        //args ÊÇÒ»¸ö¶ÔÏóÊı×é£¬ names ÊÇ½«ÒªÉú³ÉµÄÇóÖµº¯ÊıµÄ²ÎÊı
+        //args æ˜¯ä¸€ä¸ªå¯¹è±¡æ•°ç»„ï¼Œ names æ˜¯å°†è¦ç”Ÿæˆçš„æ±‚å€¼å‡½æ•°çš„å‚æ•°
         vars = uniqArray(vars), scopes = uniqArray(scopes, 1)
         for (var i = 0, sn = scopes.length; i < sn; i++) {
             if (vars.length) {
@@ -2023,7 +2023,7 @@
         }
         data.args = args
         //---------------cache----------------
-        var fn = cacheExpr[exprId] //Ö±½Ó´Ó»º´æ£¬ÃâµÃÖØ¸´Éú³É
+        var fn = cacheExpr[exprId] //ç›´æ¥ä»ç¼“å­˜ï¼Œå…å¾—é‡å¤ç”Ÿæˆ
         if (fn) {
             data.evaluator = fn
             return
@@ -2032,7 +2032,7 @@
         if (prefix) {
             prefix = "var " + prefix
         }
-        if (filters) {//ÎÄ±¾°ó¶¨£¬Ë«¹¤°ó¶¨²ÅÓĞ¹ıÂËÆ÷
+        if (filters) {//æ–‡æœ¬ç»‘å®šï¼ŒåŒå·¥ç»‘å®šæ‰æœ‰è¿‡æ»¤å™¨
             code = "\nvar ret" + expose + " = " + code
             var textBuffer = [],
                 fargs
@@ -2052,7 +2052,7 @@
             code = textBuffer.join("")
             code += "\nreturn ret" + expose
             names.push("filters" + expose)
-        } else if (dataType === "duplex") {//Ë«¹¤°ó¶¨
+        } else if (dataType === "duplex") {//åŒå·¥ç»‘å®š
             var _body = "'use strict';\nreturn function(vvv){\n\t" +
                 prefix +
                 ";\n\tif(!arguments.length){\n\t\treturn " +
@@ -2065,18 +2065,18 @@
             } catch (e) {
             }
             return
-        } else if (dataType === "on") {//ÊÂ¼ş°ó¶¨
+        } else if (dataType === "on") {//äº‹ä»¶ç»‘å®š
             code = code.replace("(", ".call(this,")
             if (four === "$event") {
                 names.push(four)
             }
-            code = "\nreturn " + code + ";" //IEÈ«¼Ò Function("return ")³ö´í£¬ĞèÒªFunction("return ;")
+            code = "\nreturn " + code + ";" //IEå…¨å®¶ Function("return ")å‡ºé”™ï¼Œéœ€è¦Function("return ;")
             var lastIndex = code.lastIndexOf("\nreturn")
             var header = code.slice(0, lastIndex)
             var footer = code.slice(lastIndex)
             code = header + "\nif(avalon.openComputedCollect) return ;" + footer
-        } else {//ÆäËû°ó¶¨
-            code = "\nreturn " + code + ";" //IEÈ«¼Ò Function("return ")³ö´í£¬ĞèÒªFunction("return ;")
+        } else {//å…¶ä»–ç»‘å®š
+            code = "\nreturn " + code + ";" //IEå…¨å®¶ Function("return ")å‡ºé”™ï¼Œéœ€è¦Function("return ;")
         }
         try {
             fn = Function.apply(noop, names.concat("'use strict';\n" + prefix + code))
@@ -2087,11 +2087,11 @@
         } catch (e) {
             log("Debug:" + e.message)
         } finally {
-            vars = textBuffer = names = null //ÊÍ·ÅÄÚ´æ
+            vars = textBuffer = names = null //é‡Šæ”¾å†…å­˜
         }
     }
 
-    //parseExprµÄÖÇÄÜÒıÓÃ´úÀí
+    //parseExprçš„æ™ºèƒ½å¼•ç”¨ä»£ç†
 
     function parseExprProxy(code, scopes, data, tokens) {
         if (Array.isArray(tokens)) {
@@ -2115,22 +2115,22 @@
             data.evaluator.toString = function() {
                 return data.type + " binding to eval(" + code + ")"
             }
-            //·½±ãµ÷ÊÔ
-            //ÕâÀï·Ç³£ÖØÒª,ÎÒÃÇÍ¨¹ıÅĞ¶¨ÊÓÍ¼Ë¢ĞÂº¯ÊıµÄelementÊÇ·ñÔÚDOMÊ÷¾ö¶¨
-            //½«ËüÒÆ³ö¶©ÔÄÕßÁĞ±í
+            //æ–¹ä¾¿è°ƒè¯•
+            //è¿™é‡Œéå¸¸é‡è¦,æˆ‘ä»¬é€šè¿‡åˆ¤å®šè§†å›¾åˆ·æ–°å‡½æ•°çš„elementæ˜¯å¦åœ¨DOMæ ‘å†³å®š
+            //å°†å®ƒç§»å‡ºè®¢é˜…è€…åˆ—è¡¨
             registerSubscriber(data)
         }
     }
     avalon.parseExprProxy = parseExprProxy
     /*********************************************************************
-     *°ó¶¨Ä£¿é£¨ÊµÏÖ¡°²Ù×÷Êı¾İ¼´²Ù×÷DOM¡±µÄ¹Ø¼ü£¬½«DOM²Ù×÷·ÅÖğ³öÇ°¶Ë¿ª·¢ÈËÔ±µÄÊÓÒ°£¬ÈÃËü½»ÓÉ¿ò¼Ü×ÔĞĞ´¦Àí£¬¿ª·¢ÈËÔ±×¨ÖÂÓÚÒµÎñ±¾Éí£© *                                 *
+     *ç»‘å®šæ¨¡å—ï¼ˆå®ç°â€œæ“ä½œæ•°æ®å³æ“ä½œDOMâ€çš„å…³é”®ï¼Œå°†DOMæ“ä½œæ”¾é€å‡ºå‰ç«¯å¼€å‘äººå‘˜çš„è§†é‡ï¼Œè®©å®ƒäº¤ç”±æ¡†æ¶è‡ªè¡Œå¤„ç†ï¼Œå¼€å‘äººå‘˜ä¸“è‡´äºä¸šåŠ¡æœ¬èº«ï¼‰ *                                 *
      **********************************************************************/
     /*
     var cacheDisplay = oneObject("a,abbr,b,span,strong,em,font,i,kbd", "inline")
     avalon.mix(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
     function parseDisplay(nodeName, val) {
-        //ÓÃÓÚÈ¡µÃ´ËÀà±êÇ©µÄÄ¬ÈÏdisplayÖµ
+        //ç”¨äºå–å¾—æ­¤ç±»æ ‡ç­¾çš„é»˜è®¤displayå€¼
         nodeName = nodeName.toLowerCase()
         if (!cacheDisplay[nodeName]) {
             var node = DOC.createElement(nodeName)
@@ -2162,8 +2162,8 @@
     var rdash = /\(([^)]*)\)/
 
     var styleEl = '<style id="avalonStyle">.avalonHide{ display: none!important }</style>'
-    styleEl = avalon.parseHTML(styleEl).firstChild //IE6-8 head±êÇ©µÄinnerHTMLÊÇÖ»¶ÁµÄ
-    head.insertBefore(styleEl, null) //±ÜÃâIE6 base±êÇ©BUG
+    styleEl = avalon.parseHTML(styleEl).firstChild //IE6-8 headæ ‡ç­¾çš„innerHTMLæ˜¯åªè¯»çš„
+    head.insertBefore(styleEl, null) //é¿å…IE6 baseæ ‡ç­¾BUG
     var rnoscripts = /<noscript.*?>(?:[\s\S]+?)<\/noscript>/img
     var rnoscriptText = /<noscript.*?>([\s\S]+?)<\/noscript>/im
 
@@ -2193,7 +2193,7 @@
         avalon.contains = fixContains
     }
 */
-    //ÕâÀïµÄº¯ÊıÃ¿µ±VM·¢Éú¸Ä±äºó£¬¶¼»á±»Ö´ĞĞ£¨²Ù×÷·½ÎªnotifySubscribers£©
+    //è¿™é‡Œçš„å‡½æ•°æ¯å½“VMå‘ç”Ÿæ”¹å˜åï¼Œéƒ½ä¼šè¢«æ‰§è¡Œï¼ˆæ“ä½œæ–¹ä¸ºnotifySubscribersï¼‰
     var bindingExecutors = avalon.bindingExecutors = {
         "attr": function(val, elem, data) {
             var method = data.type,
@@ -2201,9 +2201,9 @@
             if (method === "css") {
                 avalon(elem).css(attrName, val)
             } else if (method === "attr") {
-                // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"½«ÔªËØµÄclassNameÉèÖÃÎªaaa bbb ccc
-                // vm-attr-class="xxx" vm.xxx=false  Çå¿ÕÔªËØµÄËùÓĞÀàÃû
-                // vm-attr-name="yyy"  vm.yyy="ooo" ÎªÔªËØÉèÖÃnameÊôĞÔ
+                // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"å°†å…ƒç´ çš„classNameè®¾ç½®ä¸ºaaa bbb ccc
+                // vm-attr-class="xxx" vm.xxx=false  æ¸…ç©ºå…ƒç´ çš„æ‰€æœ‰ç±»å
+                // vm-attr-name="yyy"  vm.yyy="ooo" ä¸ºå…ƒç´ è®¾ç½®nameå±æ€§
                 var toRemove = (val === false) || (val === null) || (val === void 0)
                 if (toRemove)
                     elem.removeAttribute(attrName)
@@ -2253,13 +2253,13 @@
                         xhr.send(null)
                     }
                 } else {
-                    //IEÏµÁĞÓë¹»ĞÂµÄ±ê×¼ä¯ÀÀÆ÷Ö§³ÖÍ¨¹ıIDÈ¡µÃÔªËØ£¨firefox14+£©
+                    //IEç³»åˆ—ä¸å¤Ÿæ–°çš„æ ‡å‡†æµè§ˆå™¨æ”¯æŒé€šè¿‡IDå–å¾—å…ƒç´ ï¼ˆfirefox14+ï¼‰
                     //http://tjvantoll.com/2012/07/19/dom-element-references-as-global-variables/
                     var el = val && val.nodeType == 1 ? val : DOC.getElementById(val)
                     if (el) {
-                        if (el.tagName === "NOSCRIPT" && !(el.innerHTML || el.fixIE78)) { //IE7-8 innerText,innerHTML¶¼ÎŞ·¨È¡µÃÆäÄÚÈİ£¬IE6ÄÜÈ¡µÃÆäinnerHTML
-                            var xhr = getXHR() //IE9-11ÓëchromeµÄinnerHTML»áµÃµ½×ªÒåµÄÄÚÈİ£¬ËüÃÇµÄinnerText¿ÉÒÔ
-                            xhr.open("GET", location, false) //Ğ»Ğ»Nodejs ÂÒìÀÈº ÉîÛÚ-´¿ÊôĞé¹¹
+                        if (el.tagName === "NOSCRIPT" && !(el.innerHTML || el.fixIE78)) { //IE7-8 innerText,innerHTMLéƒ½æ— æ³•å–å¾—å…¶å†…å®¹ï¼ŒIE6èƒ½å–å¾—å…¶innerHTML
+                            var xhr = getXHR() //IE9-11ä¸chromeçš„innerHTMLä¼šå¾—åˆ°è½¬ä¹‰çš„å†…å®¹ï¼Œå®ƒä»¬çš„innerTextå¯ä»¥
+                            xhr.open("GET", location, false) //è°¢è°¢Nodejs ä¹±ç‚–ç¾¤ æ·±åœ³-çº¯å±è™šæ„
                             xhr.send(null)
                             //http://bbs.csdn.net/topics/390349046?page=1#post-393492653
                             var noscripts = DOC.getElementsByTagName("noscript")
@@ -2267,7 +2267,7 @@
                             var n = array.length
                             for (var i = 0; i < n; i++) {
                                 var tag = noscripts[i]
-                                if (tag) { //IE6-8ÖĞnoscript±êÇ©µÄinnerHTML,innerTextÊÇÖ»¶ÁµÄ
+                                if (tag) { //IE6-8ä¸­noscriptæ ‡ç­¾çš„innerHTML,innerTextæ˜¯åªè¯»çš„
                                     tag.style.display = "none" //http://haslayout.net/css/noscript-Ghost-Bug
                                     tag.fixIE78 = (array[i].match(rnoscriptText) || ["", "&nbsp;"])[1]
                                 }
@@ -2280,7 +2280,7 @@
                 }
             } else {
                 if (!root.hasAttribute && typeof val === "string" && (method === "src" || method === "href")) {
-                    val = val.replace(/&amp;/g, "&") //´¦ÀíIE67×Ô¶¯×ªÒåµÄÎÊÌâ
+                    val = val.replace(/&amp;/g, "&") //å¤„ç†IE67è‡ªåŠ¨è½¬ä¹‰çš„é—®é¢˜
                 }
                 elem[method] = val
             }
@@ -2288,7 +2288,7 @@
         "class": function(val, elem, data) {
             var $elem = avalon(elem),
                 method = data.type
-            if (method === "class" && data.param) { //Èç¹ûÊÇ¾É·ç¸ñ
+            if (method === "class" && data.param) { //å¦‚æœæ˜¯æ—§é£æ ¼
                 $elem.toggleClass(data.param, !!val)
             } else {
                 var toggle = data._evaluator ? !!data._evaluator.apply(elem, data._args) : true
@@ -2303,11 +2303,11 @@
                         break;
                     case "hover":
                     case "active":
-                        if (!data.init) { //È·±£Ö»°ó¶¨Ò»´Î
-                            if (method === "hover") { //ÔÚÒÆ³öÒÆÈëÊ±ÇĞ»»ÀàÃû
+                        if (!data.init) { //ç¡®ä¿åªç»‘å®šä¸€æ¬¡
+                            if (method === "hover") { //åœ¨ç§»å‡ºç§»å…¥æ—¶åˆ‡æ¢ç±»å
                                 var event1 = "mouseenter",
                                     event2 = "mouseleave"
-                            } else { //ÔÚ¾Û½¹Ê§½¹ÖĞÇĞ»»ÀàÃû
+                            } else { //åœ¨èšç„¦å¤±ç„¦ä¸­åˆ‡æ¢ç±»å
                                 elem.tabIndex = elem.tabIndex || -1
                                 event1 = "mousedown", event2 = "mouseup"
                                 $elem.bind("mouseleave", function() {
@@ -2357,7 +2357,7 @@
                     var locatedNode = getLocatedNode(parent, data, pos)
                 }
                 switch (method) {
-                    case "add": //ÔÚposÎ»ÖÃºóÌí¼ÓelÊı×é£¨posÎªÊı×Ö£¬elÎªÊı×é£©
+                    case "add": //åœ¨posä½ç½®åæ·»åŠ elæ•°ç»„ï¼ˆposä¸ºæ•°å­—ï¼Œelä¸ºæ•°ç»„ï¼‰
                         var arr = el
                         var last = data.getter().length - 1
                         var transation = documentFragment.cloneNode(false)
@@ -2378,11 +2378,11 @@
                         }
                         spans = null
                         break
-                    case "del": //½«posºóµÄel¸öÔªËØÉ¾µô(pos, el¶¼ÊÇÊı×Ö)
-                        proxies.splice(pos, el) //ÒÆ³ı¶ÔÓ¦µÄ×ÓVM
+                    case "del": //å°†posåçš„elä¸ªå…ƒç´ åˆ æ‰(pos, eléƒ½æ˜¯æ•°å­—)
+                        proxies.splice(pos, el) //ç§»é™¤å¯¹åº”çš„å­VM
                         removeFromSanctuary(removeView(locatedNode, group, el))
                         break
-                    case "index": //½«proxiesÖĞµÄµÚpos¸öÆğµÄËùÓĞÔªËØÖØĞÂË÷Òı£¨posÎªÊı×Ö£¬elÓÃ×÷Ñ­»·±äÁ¿£©
+                    case "index": //å°†proxiesä¸­çš„ç¬¬posä¸ªèµ·çš„æ‰€æœ‰å…ƒç´ é‡æ–°ç´¢å¼•ï¼ˆposä¸ºæ•°å­—ï¼Œelç”¨ä½œå¾ªç¯å˜é‡ï¼‰
                         var last = proxies.length - 1
                         for (; el = proxies[pos]; pos++) {
                             el.$index = pos
@@ -2409,7 +2409,7 @@
                         removeFromSanctuary(deleteFragment)
                         proxies.length = 0
                         break
-                    case "move": //½«proxiesÖĞµÄµÚpos¸öÔªËØÒÆ¶¯elÎ»ÖÃÉÏ(pos, el¶¼ÊÇÊı×Ö)
+                    case "move": //å°†proxiesä¸­çš„ç¬¬posä¸ªå…ƒç´ ç§»åŠ¨elä½ç½®ä¸Š(pos, eléƒ½æ˜¯æ•°å­—)
                         var t = proxies.splice(pos, 1)[0]
                         if (t) {
                             proxies.splice(el, 0, t)
@@ -2418,25 +2418,25 @@
                             parent.insertBefore(moveNode, locatedNode)
                         }
                         break
-                    case "set": //½«proxiesÖĞµÄµÚpos¸öÔªËØµÄVMÉèÖÃÎªel£¨posÎªÊı×Ö£¬elÈÎÒâ£©
+                    case "set": //å°†proxiesä¸­çš„ç¬¬posä¸ªå…ƒç´ çš„VMè®¾ç½®ä¸ºelï¼ˆposä¸ºæ•°å­—ï¼Œelä»»æ„ï¼‰
                         var proxy = proxies[pos]
                         if (proxy) {
                             proxy[proxy.$itemName] = el
                         }
                         break
-                    case "append": //½«posµÄ¼üÖµ¶Ô´ÓelÖĞÈ¡³ö£¨posÎªÒ»¸öÆÕÍ¨¶ÔÏó£¬elÎªÔ¤ÏÈÉú³ÉºÃµÄ´úÀíVM¶ÔÏó³Ø£©
+                    case "append": //å°†posçš„é”®å€¼å¯¹ä»elä¸­å–å‡ºï¼ˆposä¸ºä¸€ä¸ªæ™®é€šå¯¹è±¡ï¼Œelä¸ºé¢„å…ˆç”Ÿæˆå¥½çš„ä»£ç†VMå¯¹è±¡æ± ï¼‰
                         var pool = el
                         var transation = documentFragment.cloneNode(false)
                         var callback = getBindingCallback(data.callbackElement, "data-with-sorted", data.vmodels)
                         var keys = [],
                             spans = [],
                             lastFn = {}
-                        for (var key in pos) { //µÃµ½ËùÓĞ¼üÃû
+                        for (var key in pos) { //å¾—åˆ°æ‰€æœ‰é”®å
                             if (pos.hasOwnProperty(key) && key !== "hasOwnProperty") {
                                 keys.push(key)
                             }
                         }
-                        if (callback) { //Èç¹ûÓĞ»Øµ÷£¬ÔòÈÃËüÃÇÅÅĞò
+                        if (callback) { //å¦‚æœæœ‰å›è°ƒï¼Œåˆ™è®©å®ƒä»¬æ’åº
                             var keys2 = callback.call(parent, keys)
                             if (keys2 && Array.isArray(keys2) && keys2.length) {
                                 keys = keys2
@@ -2478,7 +2478,7 @@
                     fragment = avalon.parseHTML(val)
                 }
                 var replaceNodes = avalon.slice(fragment.childNodes)
-                elem.insertBefore(fragment, data.replaceNodes[0] || null) //fix IE6-8 insertBeforeµÄµÚ2¸ö²ÎÊıÖ»ÄÜÎª½Úµã»ònull
+                elem.insertBefore(fragment, data.replaceNodes[0] || null) //fix IE6-8 insertBeforeçš„ç¬¬2ä¸ªå‚æ•°åªèƒ½ä¸ºèŠ‚ç‚¹æˆ–null
                 for (var i = 0, node; node = data.replaceNodes[i++]; ) {
                     elem.removeChild(node)
                 }
@@ -2492,7 +2492,7 @@
         },
         "if": function(val, elem, data) {
             var placehoder = data.placehoder
-            if (val) { //²å»ØDOMÊ÷
+            if (val) { //æ’å›DOMæ ‘
                 if (!data.msInDocument) {
                     data.msInDocument = true
                     try {
@@ -2507,7 +2507,7 @@
 //                        data.handler = noop
 //                    }
                 }
-            } else { //ÒÆ³öDOMÊ÷£¬·Å½øifSanctuary DIVÖĞ£¬²¢ÓÃ×¢ÊÍ½ÚµãÕ¼¾İÔ­Î»ÖÃ
+            } else { //ç§»å‡ºDOMæ ‘ï¼Œæ”¾è¿›ifSanctuary DIVä¸­ï¼Œå¹¶ç”¨æ³¨é‡ŠèŠ‚ç‚¹å æ®åŸä½ç½®
 
                 if (data.msInDocument) {
                     data.msInDocument = false
@@ -2547,10 +2547,10 @@
             data.evaluator = data.handler = noop
         },
         "text": function(val, elem, data) {
-            val = val == null ? "" : val //²»ÔÚÒ³ÃæÉÏÏÔÊ¾undefined null
-            if (data.nodeType === 3) { //°ó¶¨ÔÚÎÄ±¾½ÚµãÉÏ
+            val = val == null ? "" : val //ä¸åœ¨é¡µé¢ä¸Šæ˜¾ç¤ºundefined null
+            if (data.nodeType === 3) { //ç»‘å®šåœ¨æ–‡æœ¬èŠ‚ç‚¹ä¸Š
                 data.node.data = val
-            } else { //°ó¶¨ÔÚÌØĞÔ½ÚµãÉÏ
+            } else { //ç»‘å®šåœ¨ç‰¹æ€§èŠ‚ç‚¹ä¸Š
                 if (!elem) {
                     elem = data.element = data.node.parentNode
                 }
@@ -2567,9 +2567,9 @@
         "widget": noop
     }
     var rwhitespace = /^\s+$/
-    //ÕâÀïµÄº¯ÊıÖ»»áÔÚµÚÒ»´Î±»É¨Ãèºó±»Ö´ĞĞÒ»´Î£¬²¢·Å½øĞĞ¶ÔÓ¦VMÊôĞÔµÄsubscribersÊı×éÄÚ£¨²Ù×÷·½ÎªregisterSubscriber£©
+    //è¿™é‡Œçš„å‡½æ•°åªä¼šåœ¨ç¬¬ä¸€æ¬¡è¢«æ‰«æåè¢«æ‰§è¡Œä¸€æ¬¡ï¼Œå¹¶æ”¾è¿›è¡Œå¯¹åº”VMå±æ€§çš„subscribersæ•°ç»„å†…ï¼ˆæ“ä½œæ–¹ä¸ºregisterSubscriberï¼‰
     var bindingHandlers = avalon.bindingHandlers = {
-        //ÕâÊÇÒ»¸ö×Ö·û´®ÊôĞÔ°ó¶¨µÄ·¶±¾, ·½±ãÄãÔÚtitle, alt,  src, href, include, cssÌí¼Ó²åÖµ±í´ïÊ½
+        //è¿™æ˜¯ä¸€ä¸ªå­—ç¬¦ä¸²å±æ€§ç»‘å®šçš„èŒƒæœ¬, æ–¹ä¾¿ä½ åœ¨title, alt,  src, href, include, cssæ·»åŠ æ’å€¼è¡¨è¾¾å¼
         //<a vm-href="{{url.hostname}}/{{url.pathname}}.html">
         "attr": function(data, vmodels) {
             var text = data.value.trim(),
@@ -2581,14 +2581,14 @@
                     text = RegExp.$1
                 }
             }
-            data.handlerName = "attr" //handleNameÓÃÓÚ´¦Àí¶àÖÖ°ó¶¨¹²ÓÃÍ¬Ò»ÖÖbindingExecutorµÄÇé¿ö
+            data.handlerName = "attr" //handleNameç”¨äºå¤„ç†å¤šç§ç»‘å®šå…±ç”¨åŒä¸€ç§bindingExecutorçš„æƒ…å†µ
             parseExprProxy(text, vmodels, data, (simple ? null : scanExpr(data.value)))
         },
         "checked": function(data, vmodels) {
             data.handlerName = "checked"
             parseExprProxy(data.value, vmodels, data)
         },
-        //¸ù¾İVMµÄÊôĞÔÖµ»ò±í´ïÊ½µÄÖµÇĞ»»ÀàÃû£¬vm-class="xxx yyy zzz:flag" 
+        //æ ¹æ®VMçš„å±æ€§å€¼æˆ–è¡¨è¾¾å¼çš„å€¼åˆ‡æ¢ç±»åï¼Œvm-class="xxx yyy zzz:flag" 
         //http://www.cnblogs.com/rubylouvre/archive/2012/12/17/2818540.html
         "class": function(data, vmodels) {
             var oldStyle = data.param,
@@ -2596,26 +2596,26 @@
                 rightExpr
             data.handlerName = "class"
             if (!oldStyle || isFinite(oldStyle)) {
-                data.param = "" //È¥µôÊı×Ö
+                data.param = "" //å»æ‰æ•°å­—
                 var noExpr = text.replace(rexprg, function(a) {
-                    return Math.pow(10, a.length - 1) //½«²åÖµ±í´ïÊ½²åÈë10µÄN-1´Î·½À´Õ¼Î»
+                    return Math.pow(10, a.length - 1) //å°†æ’å€¼è¡¨è¾¾å¼æ’å…¥10çš„N-1æ¬¡æ–¹æ¥å ä½
                 })
-                var colonIndex = noExpr.indexOf(":") //È¡µÃµÚÒ»¸öÃ°ºÅµÄÎ»ÖÃ
-                if (colonIndex === -1) { // ±ÈÈç vm-class="aaa bbb ccc" µÄÇé¿ö
+                var colonIndex = noExpr.indexOf(":") //å–å¾—ç¬¬ä¸€ä¸ªå†’å·çš„ä½ç½®
+                if (colonIndex === -1) { // æ¯”å¦‚ vm-class="aaa bbb ccc" çš„æƒ…å†µ
                     var className = text
-                } else { // ±ÈÈç vm-class-1="ui-state-active:checked" µÄÇé¿ö 
+                } else { // æ¯”å¦‚ vm-class-1="ui-state-active:checked" çš„æƒ…å†µ 
                     className = text.slice(0, colonIndex)
                     rightExpr = text.slice(colonIndex + 1)
-                    parseExpr(rightExpr, vmodels, data) //¾ö¶¨ÊÇÌí¼Ó»¹ÊÇÉ¾³ı
+                    parseExpr(rightExpr, vmodels, data) //å†³å®šæ˜¯æ·»åŠ è¿˜æ˜¯åˆ é™¤
                     if (!data.evaluator) {
-                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' ²»´æÔÚÓÚVMÖĞ")
+                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' ä¸å­˜åœ¨äºVMä¸­")
                         return false
                     } else {
                         data._evaluator = data.evaluator
                         data._args = data.args
                     }
                 }
-                var hasExpr = rexpr.test(className) //±ÈÈçvm-class="width{{w}}"µÄÇé¿ö
+                var hasExpr = rexpr.test(className) //æ¯”å¦‚vm-class="width{{w}}"çš„æƒ…å†µ
                 if (!hasExpr) {
                     data._class = className
                 }
@@ -2629,7 +2629,7 @@
                 tagName = elem.tagName
             if (typeof modelBinding[tagName] === "function") {
                 data.changed = getBindingCallback(elem, "data-duplex-changed", vmodels) || noop
-                //ÓÉÓÚÇé¿öÌØÊâ£¬²»ÔÙ¾­¹ıparseExprProxy
+                //ç”±äºæƒ…å†µç‰¹æ®Šï¼Œä¸å†ç»è¿‡parseExprProxy
                 parseExpr(data.value, vmodels, data, "duplex")
                 if (data.evaluator && data.args) {
                     var form = elem.form
@@ -2651,7 +2651,7 @@
             data.handler = bindingExecutors.each
             data.callbackName = "data-" + (type || "each") + "-rendered"
             if (type !== "repeat") {
-                avalon.log("Warning:½¨ÒéÊ¹ÓÃvm-repeat´úÌævm-each, vm-with, vm-repeatÖ»Õ¼ÓÃÒ»¸ö±êÇ©²¢ÇÒĞÔÄÜ¸üºÃ")
+                avalon.log("Warning:å»ºè®®ä½¿ç”¨vm-repeatä»£æ›¿vm-each, vm-with, vm-repeatåªå ç”¨ä¸€ä¸ªæ ‡ç­¾å¹¶ä¸”æ€§èƒ½æ›´å¥½")
             }
             data.callbackElement = data.parent = elem
             var freturn = true
@@ -2754,7 +2754,7 @@
                 four = "$event"
             if (value.indexOf("(") > 0 && value.indexOf(")") > -1) {
                 var matched = (value.match(rdash) || ["", ""])[1].trim()
-                if (matched === "" || matched === "$event") { // aaa() aaa($event)µ±³Éaaa´¦Àí
+                if (matched === "" || matched === "$event") { // aaa() aaa($event)å½“æˆaaaå¤„ç†
                     four = void 0
                     value = value.replace(rdash, "")
                 }
@@ -2768,7 +2768,7 @@
         },
         "visible": function(data, vmodels) {
             var elem = data.element
-            if (!supportDisplay && !root.contains(elem)) { //fuck firfox È«¼Ò£¡
+            if (!supportDisplay && !root.contains(elem)) { //fuck firfox å…¨å®¶ï¼
                 var display = parseDisplay(elem.tagName)
             }
             display = display || avalon(elem).css("display")
@@ -2792,12 +2792,12 @@
             if (typeof constructor === "function") { //vm-widget="tabs,tabsAAA,optname"
                 vmodels = element.vmodels || vmodels
                 for (var i = 0, v; v = vmodels[i++]; ) {
-                    if (VMODELS[v.$id]) { //È¡µÃÀëËü×î½üÓÉÓÃ»§¶¨ÒåµÄVM
+                    if (VMODELS[v.$id]) { //å–å¾—ç¦»å®ƒæœ€è¿‘ç”±ç”¨æˆ·å®šä¹‰çš„VM
                         var nearestVM = v
                         break
                     }
                 }
-                var optName = args[2] || widget //³¢ÊÔ»ñµÃÅäÖÃÏîµÄÃû×Ö£¬Ã»ÓĞÔòÈ¡widgetµÄÃû×Ö
+                var optName = args[2] || widget //å°è¯•è·å¾—é…ç½®é¡¹çš„åå­—ï¼Œæ²¡æœ‰åˆ™å–widgetçš„åå­—
                 if (nearestVM && typeof nearestVM[optName] === "object") {
                     vmOptions = nearestVM[optName]
                     vmOptions = vmOptions.$model || vmOptions
@@ -2806,7 +2806,7 @@
                         args[1] = id
                     }
                 }
-                var widgetData = avalon.getWidgetData(element, args[0]) //³éÈ¡data-tooltip-text¡¢data-tooltip-attrÊôĞÔ£¬×é³ÉÒ»¸öÅäÖÃ¶ÔÏó
+                var widgetData = avalon.getWidgetData(element, args[0]) //æŠ½å–data-tooltip-textã€data-tooltip-attrå±æ€§ï¼Œç»„æˆä¸€ä¸ªé…ç½®å¯¹è±¡
                 data[widget + "Id"] = args[1]
                 data[widget + "Options"] = avalon.mix({}, constructor.defaults, vmOptions, widgetData)
                 element.removeAttribute("vm-widget")
@@ -2816,7 +2816,7 @@
                 if (callback) {
                     callback.call(element, widgetVM)
                 }
-            } else if (vmodels.length) { //Èç¹û¸Ã×é¼ş»¹Ã»ÓĞ¼ÓÔØ£¬ÄÇÃ´±£´æµ±Ç°µÄvmodels
+            } else if (vmodels.length) { //å¦‚æœè¯¥ç»„ä»¶è¿˜æ²¡æœ‰åŠ è½½ï¼Œé‚£ä¹ˆä¿å­˜å½“å‰çš„vmodels
                 element.vmodels = vmodels
             }
             return true
@@ -2838,16 +2838,16 @@
     })
     bindingHandlers.data = bindingHandlers.text = bindingHandlers.html
     //============================= string preperty binding =======================
-    //Óëhref°ó¶¨Æ÷ ÓÃ·¨²î²»¶àµÄÆäËû×Ö·û´®ÊôĞÔµÄ°ó¶¨Æ÷
-    //½¨Òé²»ÒªÖ±½ÓÔÚsrcÊôĞÔÉÏĞŞ¸Ä£¬ÕâÑù»á·¢³öÎŞĞ§µÄÇëÇó£¬ÇëÊ¹ÓÃvm-src
+    //ä¸hrefç»‘å®šå™¨ ç”¨æ³•å·®ä¸å¤šçš„å…¶ä»–å­—ç¬¦ä¸²å±æ€§çš„ç»‘å®šå™¨
+    //å»ºè®®ä¸è¦ç›´æ¥åœ¨srcå±æ€§ä¸Šä¿®æ”¹ï¼Œè¿™æ ·ä¼šå‘å‡ºæ— æ•ˆçš„è¯·æ±‚ï¼Œè¯·ä½¿ç”¨vm-src
     "title,alt,src,value,css,include,href".replace(rword, function(name) {
         bindingHandlers[name] = bindingHandlers.attr
     })
     //============================= model binding =======================
-    //½«Ä£ĞÍÖĞµÄ×Ö¶ÎÓëinput, textareaµÄvalueÖµ¹ØÁªÔÚÒ»Æğ
+    //å°†æ¨¡å‹ä¸­çš„å­—æ®µä¸input, textareaçš„valueå€¼å…³è”åœ¨ä¸€èµ·
     var modelBinding = bindingHandlers.duplex
-    //Èç¹ûÒ»¸öinput±êÇ©Ìí¼ÓÁËmodel°ó¶¨¡£ÄÇÃ´Ëü¶ÔÓ¦µÄ×Ö¶Î½«ÓëÔªËØµÄvalueÁ¬½áÔÚÒ»Æğ
-    //×Ö¶Î±ä£¬value¾Í±ä£»value±ä£¬×Ö¶ÎÒ²¸ú×Å±ä¡£Ä¬ÈÏÊÇ°ó¶¨inputÊÂ¼ş£¬
+    //å¦‚æœä¸€ä¸ªinputæ ‡ç­¾æ·»åŠ äº†modelç»‘å®šã€‚é‚£ä¹ˆå®ƒå¯¹åº”çš„å­—æ®µå°†ä¸å…ƒç´ çš„valueè¿ç»“åœ¨ä¸€èµ·
+    //å­—æ®µå˜ï¼Œvalueå°±å˜ï¼›valueå˜ï¼Œå­—æ®µä¹Ÿè·Ÿç€å˜ã€‚é»˜è®¤æ˜¯ç»‘å®šinputäº‹ä»¶ï¼Œ
     modelBinding.INPUT = function(element, evaluator, data) {
         var fixType = data.param,
             type = element.type,
@@ -2858,7 +2858,7 @@
         if (type === "checkbox" && fixType === "radio") {
             type = "radio"
         }
-        //µ±value±ä»¯Ê±¸Ä±ämodelµÄÖµ
+        //å½“valueå˜åŒ–æ—¶æ”¹å˜modelçš„å€¼
         var updateVModel = function() {
             var val = element.oldValue = element.value
             if ($elem.data("duplex-observe") !== false) {
@@ -2866,7 +2866,7 @@
                 callback.call(element, val)
             }
         }
-        //µ±model±ä»¯Ê±,Ëü¾Í»á¸Ä±ävalueµÄÖµ
+        //å½“modelå˜åŒ–æ—¶,å®ƒå°±ä¼šæ”¹å˜valueçš„å€¼
         data.handler = function() {
             var val = evaluator()
             if (val !== element.value) {
@@ -2875,7 +2875,7 @@
         }
         if (type === "radio") {
             data.handler = function() {
-                //IE6ÊÇÍ¨¹ıdefaultCheckedÀ´ÊµÏÖ´ò¹´Ğ§¹û
+                //IE6æ˜¯é€šè¿‡defaultCheckedæ¥å®ç°æ‰“å‹¾æ•ˆæœ
                 element.defaultChecked = (element.checked = /bool|text/.test(fixType) ? evaluator() + "" === element.value : !!evaluator())
             }
             updateVModel = function() {
@@ -2906,13 +2906,13 @@
                     if (Array.isArray(array)) {
                         avalon.Array[method](array, element.value)
                     } else {
-                        avalon.error("vm-duplexÎ»ÓÚcheckboxÊ±ÒªÇó¶ÔÓ¦Ò»¸öÊı×é")
+                        avalon.error("vm-duplexä½äºcheckboxæ—¶è¦æ±‚å¯¹åº”ä¸€ä¸ªæ•°ç»„")
                     }
                     callback.call(element, array)
                 }
             }
             data.handler = function() {
-                var array = [].concat(evaluator()) //Ç¿ÖÆ×ª»»ÎªÊı×é
+                var array = [].concat(evaluator()) //å¼ºåˆ¶è½¬æ¢ä¸ºæ•°ç»„
                 element.checked = array.indexOf(element.value) >= 0
             }
             removeFn = $elem.bind("click", updateVModel) //IE6-8
@@ -2925,7 +2925,7 @@
             if (event === "change") {
                 avalon.bind(element, event, updateVModel)
             } else {
-                if (W3C) { //ÏÈÖ´ĞĞW3C
+                if (W3C) { //å…ˆæ‰§è¡ŒW3C
                     element.addEventListener("input", updateVModel)
                     data.rollback = function() {
                         element.removeEventListener("input", updateVModel)
@@ -2942,7 +2942,7 @@
                     }
                 }
 
-                if (DOC.documentMode === 9) { // IE9 ÎŞ·¨ÔÚÇĞ¼ôÖĞÍ¬²½VM
+                if (DOC.documentMode === 9) { // IE9 æ— æ³•åœ¨åˆ‡å‰ªä¸­åŒæ­¥VM
                     var selectionchange = function(e) {
                         if (e.type === "focus") {
                             DOC.addEventListener("selectionchange", updateVModel)
@@ -2993,7 +2993,7 @@
     }
     //http://msdn.microsoft.com/en-us/library/dd229916(VS.85).aspx
     //https://docs.google.com/document/d/1jwA8mtClwxI-QJuHT7872Z0pxpZz8PBkf2bGAbsUtqs/edit?pli=1
-    if (Object.getOwnPropertyNames) { //ÆÁ±ÎIE8
+    if (Object.getOwnPropertyNames) { //å±è”½IE8
         try {
             var inputProto = HTMLInputElement.prototype,
                 oldSetter
@@ -3006,7 +3006,7 @@
                     this.dispatchEvent(event)
                 }
             }
-            oldSetter = Object.getOwnPropertyDescriptor(inputProto, "value").set //ÆÁ±Îchrome, safari,opera
+            oldSetter = Object.getOwnPropertyDescriptor(inputProto, "value").set //å±è”½chrome, safari,opera
             Object.defineProperty(inputProto, "value", {
                 set: newSetter
             })
@@ -3018,7 +3018,7 @@
         var $elem = avalon(element)
         function updateVModel() {
             if ($elem.data("duplex-observe") !== false) {
-                var val = $elem.val() //×Ö·û´®»ò×Ö·û´®Êı×é
+                var val = $elem.val() //å­—ç¬¦ä¸²æˆ–å­—ç¬¦ä¸²æ•°ç»„
                 if (val + "" !== oldValue) {
                     evaluator(val)
                     oldValue = val + ""
@@ -3044,7 +3044,7 @@
             var currHTML = element.innerHTML
             if (currHTML === innerHTML) {
                 clearInterval(id)
-                //ÏÈµÈµ½selectÀïµÄoptionÔªËØ±»É¨Ãèºó£¬²Å¸ù¾İmodelÉèÖÃselectedÊôĞÔ  
+                //å…ˆç­‰åˆ°selecté‡Œçš„optionå…ƒç´ è¢«æ‰«æåï¼Œæ‰æ ¹æ®modelè®¾ç½®selectedå±æ€§  
                 registerSubscriber(data)
             } else {
                 innerHTML = currHTML
@@ -3082,10 +3082,10 @@
         }
         ret.timeStamp = new Date - 0
         ret.originalEvent = event
-        ret.preventDefault = function() { //×èÖ¹Ä¬ÈÏĞĞÎª
+        ret.preventDefault = function() { //é˜»æ­¢é»˜è®¤è¡Œä¸º
             event.returnValue = false
         }
-        ret.stopPropagation = function() { //×èÖ¹ÊÂ¼şÔÚDOMÊ÷ÖĞµÄ´«²¥
+        ret.stopPropagation = function() { //é˜»æ­¢äº‹ä»¶åœ¨DOMæ ‘ä¸­çš„ä¼ æ’­
             event.cancelBubble = true
         }
         return ret
@@ -3135,7 +3135,7 @@
         }
     }
     /*********************************************************************
-     *          ¼à¿ØÊı×é£¨Óëvm-each, vm-repeatÅäºÏÊ¹ÓÃ£©                     *
+     *          ç›‘æ§æ•°ç»„ï¼ˆä¸vm-each, vm-repeaté…åˆä½¿ç”¨ï¼‰                     *
      **********************************************************************/
 
     function Collection(model) {
@@ -3143,7 +3143,7 @@
         array.$id = generateID()
         array[subscribers] = []
         array.$model = model // model.concat()
-        array.$events = {} //VB¶ÔÏóµÄ·½·¨ÀïµÄthis²¢²»Ö¸Ïò×ÔÉí£¬ĞèÒªÊ¹ÓÃbind´¦ÀíÒ»ÏÂ
+        array.$events = {} //VBå¯¹è±¡çš„æ–¹æ³•é‡Œçš„thiså¹¶ä¸æŒ‡å‘è‡ªèº«ï¼Œéœ€è¦ä½¿ç”¨bindå¤„ç†ä¸€ä¸‹
         array._ = modelFactory({
             length: model.length
         })
@@ -3160,7 +3160,7 @@
     var _splice = ap.splice
     var CollectionPrototype = {
         _splice: _splice,
-        _add: function(arr, pos) { //ÔÚµÚpos¸öÎ»ÖÃÉÏ£¬Ìí¼ÓÒ»×éÔªËØ
+        _add: function(arr, pos) { //åœ¨ç¬¬posä¸ªä½ç½®ä¸Šï¼Œæ·»åŠ ä¸€ç»„å…ƒç´ 
             var oldLength = this.length
             pos = typeof pos === "number" ? pos : oldLength
             var added = []
@@ -3173,7 +3173,7 @@
                 return this._.length = this.length
             }
         },
-        _del: function(pos, n) { //ÔÚµÚpos¸öÎ»ÖÃÉÏ£¬É¾³ıN¸öÔªËØ
+        _del: function(pos, n) { //åœ¨ç¬¬posä¸ªä½ç½®ä¸Šï¼Œåˆ é™¤Nä¸ªå…ƒç´ 
             var ret = this._splice(pos, n)
             if (ret.length) {
                 notifySubscribers(this, "del", pos, n)
@@ -3191,7 +3191,7 @@
         },
         unshift: function() {
             ap.unshift.apply(this.$model, arguments)
-            var ret = this._add(arguments, 0) //·µ»Ø³¤¶È
+            var ret = this._add(arguments, 0) //è¿”å›é•¿åº¦
             notifySubscribers(this, "index", arguments.length)
             return ret
         },
@@ -3199,22 +3199,22 @@
             var el = this.$model.shift()
             this._del(0, 1)
             notifySubscribers(this, "index", 0)
-            return el //·µ»Ø±»ÒÆ³ıµÄÔªËØ
+            return el //è¿”å›è¢«ç§»é™¤çš„å…ƒç´ 
         },
         pop: function() {
             var el = this.$model.pop()
             this._del(this.length - 1, 1)
-            return el //·µ»Ø±»ÒÆ³ıµÄÔªËØ
+            return el //è¿”å›è¢«ç§»é™¤çš„å…ƒç´ 
         },
         splice: function(a, b) {
-            // ±ØĞë´æÔÚµÚÒ»¸ö²ÎÊı£¬ĞèÒª´óÓÚ-1, ÎªÌí¼Ó»òÉ¾³ıÔªËØµÄ»ùµã
+            // å¿…é¡»å­˜åœ¨ç¬¬ä¸€ä¸ªå‚æ•°ï¼Œéœ€è¦å¤§äº-1, ä¸ºæ·»åŠ æˆ–åˆ é™¤å…ƒç´ çš„åŸºç‚¹
             a = resetNumber(a, this.length)
             var removed = _splice.apply(this.$model, arguments),
                 ret = []
-            this._stopFireLength = true //È·±£ÔÚÕâ¸ö·½·¨ÖĞ , $watch("length",fn)Ö»´¥·¢Ò»´Î
+            this._stopFireLength = true //ç¡®ä¿åœ¨è¿™ä¸ªæ–¹æ³•ä¸­ , $watch("length",fn)åªè§¦å‘ä¸€æ¬¡
             if (removed.length) {
                 ret = this._del(a, removed.length)
-                if (arguments.length <= 2) { //Èç¹ûÃ»ÓĞÖ´ĞĞÌí¼Ó²Ù×÷£¬ĞèÒªÊÖ¶¯resetIndex
+                if (arguments.length <= 2) { //å¦‚æœæ²¡æœ‰æ‰§è¡Œæ·»åŠ æ“ä½œï¼Œéœ€è¦æ‰‹åŠ¨resetIndex
                     notifySubscribers(this, "index", a)
                 }
             }
@@ -3223,29 +3223,29 @@
             }
             this._stopFireLength = false
             this._.length = this.length
-            return ret //·µ»Ø±»ÒÆ³ıµÄÔªËØ
+            return ret //è¿”å›è¢«ç§»é™¤çš„å…ƒç´ 
         },
-        contains: function(el) { //ÅĞ¶¨ÊÇ·ñ°üº¬
+        contains: function(el) { //åˆ¤å®šæ˜¯å¦åŒ…å«
             return this.indexOf(el) !== -1
         },
-        size: function() { //È¡µÃÊı×é³¤¶È£¬Õâ¸öº¯Êı¿ÉÒÔÍ¬²½ÊÓÍ¼£¬length²»ÄÜ
+        size: function() { //å–å¾—æ•°ç»„é•¿åº¦ï¼Œè¿™ä¸ªå‡½æ•°å¯ä»¥åŒæ­¥è§†å›¾ï¼Œlengthä¸èƒ½
             return this._.length
         },
-        remove: function(el) { //ÒÆ³ıµÚÒ»¸öµÈÓÚ¸ø¶¨ÖµµÄÔªËØ
+        remove: function(el) { //ç§»é™¤ç¬¬ä¸€ä¸ªç­‰äºç»™å®šå€¼çš„å…ƒç´ 
             var index = this.indexOf(el)
             if (index >= 0) {
                 return this.removeAt(index)
             }
         },
-        removeAt: function(index) { //ÒÆ³ıÖ¸¶¨Ë÷ÒıÉÏµÄÔªËØ
+        removeAt: function(index) { //ç§»é™¤æŒ‡å®šç´¢å¼•ä¸Šçš„å…ƒç´ 
             this.splice(index, 1)
         },
         clear: function() {
-            this.$model.length = this.length = this._.length = 0 //Çå¿ÕÊı×é
+            this.$model.length = this.length = this._.length = 0 //æ¸…ç©ºæ•°ç»„
             notifySubscribers(this, "clear", 0)
             return this
         },
-        removeAll: function(all) { //ÒÆ³ıN¸öÔªËØ
+        removeAll: function(all) { //ç§»é™¤Nä¸ªå…ƒç´ 
             if (Array.isArray(all)) {
                 all.forEach(function(el) {
                     this.remove(el)
@@ -3262,7 +3262,7 @@
             }
         },
         ensure: function(el) {
-            if (!this.contains(el)) { //Ö»ÓĞ²»´æÔÚ²Åpush
+            if (!this.contains(el)) { //åªæœ‰ä¸å­˜åœ¨æ‰push
                 this.push(el)
             }
             return this
@@ -3295,7 +3295,7 @@
             var aaa = this.$model,
                 bbb = aaa.slice(0),
                 sorted = false
-            ap[method].apply(aaa, arguments) //ÏÈÒÆ¶¯model
+            ap[method].apply(aaa, arguments) //å…ˆç§»åŠ¨model
             for (var i = 0, n = bbb.length; i < n; i++) {
                 var a = aaa[i],
                     b = bbb[i]
@@ -3325,7 +3325,7 @@
         return val
     }
 
-    //È¡µÃelÔÚarrayµÄÎ»ÖÃ
+    //å–å¾—elåœ¨arrayçš„ä½ç½®
 
     function getIndex(a, array, start) {
         for (var i = start, n = array.length; i < n; i++) {
@@ -3335,8 +3335,8 @@
         }
         return -1
     }
-    //============ each/repeat/with binding ÓÃµ½µÄ¸¨Öúº¯ÊıÓë¶ÔÏó ======================
-    //µÃµ½Ä³Ò»ÔªËØ½Úµã»òÎÄµµËéÆ¬¶ÔÏóÏÂµÄËùÓĞ×¢ÊÍ½Úµã
+    //============ each/repeat/with binding ç”¨åˆ°çš„è¾…åŠ©å‡½æ•°ä¸å¯¹è±¡ ======================
+    //å¾—åˆ°æŸä¸€å…ƒç´ èŠ‚ç‚¹æˆ–æ–‡æ¡£ç¢ç‰‡å¯¹è±¡ä¸‹çš„æ‰€æœ‰æ³¨é‡ŠèŠ‚ç‚¹
     var queryComments = DOC.createTreeWalker ? function(parent) {
         var tw = DOC.createTreeWalker(parent, NodeFilter.SHOW_COMMENT, null, null),
             comment, ret = []
@@ -3347,7 +3347,7 @@
     } : function(parent) {
         return parent.getElementsByTagName("!")
     }
-    //½«Í¨¹ıvm-ifÒÆ³öDOMÊ÷·Å½øifSanctuaryµÄÔªËØ½ÚµãÒÆ³öÀ´£¬ÒÔ±ãÀ¬»ø»ØÊÕ
+    //å°†é€šè¿‡vm-ifç§»å‡ºDOMæ ‘æ”¾è¿›ifSanctuaryçš„å…ƒç´ èŠ‚ç‚¹ç§»å‡ºæ¥ï¼Œä»¥ä¾¿åƒåœ¾å›æ”¶
 
     function removeFromSanctuary(parent) {
         var comments = queryComments(parent)
@@ -3371,7 +3371,7 @@
             })
         }
     }
-    //Îªvm-each, vm-with, vm-repeatÒªÑ­»·µÄÔªËØÍâ°üÒ»¸ömsloopÁÙÊ±½Úµã£¬vm-controllerµÄÖµÎª´úÀíVMµÄ$id
+    //ä¸ºvm-each, vm-with, vm-repeatè¦å¾ªç¯çš„å…ƒç´ å¤–åŒ…ä¸€ä¸ªmsloopä¸´æ—¶èŠ‚ç‚¹ï¼Œvm-controllerçš„å€¼ä¸ºä»£ç†VMçš„$id
     function shimController(data, transation, spans, proxy) {
         var tview = data.template.cloneNode(true)
         var id = proxy.$id
@@ -3401,10 +3401,10 @@
         }
         return span.patchRepeat = fn
     }
-    // È¡µÃÓÃÓÚ¶¨Î»µÄ½Úµã¡£ÔÚ°ó¶¨ÁËvm-each, vm-withÊôĞÔµÄÔªËØÀï£¬ËüµÄÕû¸öinnerHTML¶¼»áÊÓÎªÒ»¸ö×ÓÄ£°åÏÈĞĞÒÆ³öDOMÊ÷£¬
-    // È»ºóÈç¹ûËüµÄÔªËØÓĞ¶àÉÙ¸ö£¨vm-each£©»ò¼üÖµ¶ÔÓĞ¶àÉÙË«£¨vm-with£©£¬¾Í½«Ëü¸´ÖÆ¶àÉÙ·İ(¶àÉÙÎªN)£¬ÔÙ¾­¹ıÉ¨Ãèºó£¬ÖØĞÂ²åÈë¸ÃÔªËØÖĞ¡£
-    // ÕâÊ±¸ÃÔªËØµÄº¢×Ó½«·ÖÎªNµÈ·Ö£¬Ã¿µÈ·İµÄµÚÒ»¸ö½Úµã¾ÍÊÇÕâ¸öÓÃÓÚ¶¨Î»µÄ½Úµã£¬
-    // ·½±ãÎÒÃÇ¸ù¾İËüËã³öÕû¸öµÈ·ÖµÄ½ÚµãÃÇ£¬È»ºóÕûÌåÒÆ³ı»òÒÆ¶¯ËüÃÇ¡£
+    // å–å¾—ç”¨äºå®šä½çš„èŠ‚ç‚¹ã€‚åœ¨ç»‘å®šäº†vm-each, vm-withå±æ€§çš„å…ƒç´ é‡Œï¼Œå®ƒçš„æ•´ä¸ªinnerHTMLéƒ½ä¼šè§†ä¸ºä¸€ä¸ªå­æ¨¡æ¿å…ˆè¡Œç§»å‡ºDOMæ ‘ï¼Œ
+    // ç„¶åå¦‚æœå®ƒçš„å…ƒç´ æœ‰å¤šå°‘ä¸ªï¼ˆvm-eachï¼‰æˆ–é”®å€¼å¯¹æœ‰å¤šå°‘åŒï¼ˆvm-withï¼‰ï¼Œå°±å°†å®ƒå¤åˆ¶å¤šå°‘ä»½(å¤šå°‘ä¸ºN)ï¼Œå†ç»è¿‡æ‰«æåï¼Œé‡æ–°æ’å…¥è¯¥å…ƒç´ ä¸­ã€‚
+    // è¿™æ—¶è¯¥å…ƒç´ çš„å­©å­å°†åˆ†ä¸ºNç­‰åˆ†ï¼Œæ¯ç­‰ä»½çš„ç¬¬ä¸€ä¸ªèŠ‚ç‚¹å°±æ˜¯è¿™ä¸ªç”¨äºå®šä½çš„èŠ‚ç‚¹ï¼Œ
+    // æ–¹ä¾¿æˆ‘ä»¬æ ¹æ®å®ƒç®—å‡ºæ•´ä¸ªç­‰åˆ†çš„èŠ‚ç‚¹ä»¬ï¼Œç„¶åæ•´ä½“ç§»é™¤æˆ–ç§»åŠ¨å®ƒä»¬ã€‚
 
     function getLocatedNode(parent, data, pos) {
         if (data.startRepeat) {
@@ -3435,7 +3435,7 @@
         }
         return view
     }
-    // Îªvm-each, vm-repeat´´½¨Ò»¸ö´úÀí¶ÔÏó£¬Í¨¹ıËüÃÇÄÜÊ¹ÓÃÒ»Ğ©¶îÍâµÄÊôĞÔÓë¹¦ÄÜ£¨$index,$first,$last,$remove,$key,$val,$outer£©
+    // ä¸ºvm-each, vm-repeatåˆ›å»ºä¸€ä¸ªä»£ç†å¯¹è±¡ï¼Œé€šè¿‡å®ƒä»¬èƒ½ä½¿ç”¨ä¸€äº›é¢å¤–çš„å±æ€§ä¸åŠŸèƒ½ï¼ˆ$index,$first,$last,$remove,$key,$val,$outerï¼‰
     var watchEachOne = oneObject("$index,$first,$last")
 
     function createWithProxy(key, val, $outer) {
@@ -3469,7 +3469,7 @@
         return proxy
     }
     /*********************************************************************
-     *                  ÎÄ±¾°ó¶¨ÀïÄ¬ÈÏ¿ÉÓÃµÄ¹ıÂËÆ÷                          *
+     *                  æ–‡æœ¬ç»‘å®šé‡Œé»˜è®¤å¯ç”¨çš„è¿‡æ»¤å™¨                          *
      **********************************************************************/
     var filters = avalon.filters = {
         uppercase: function(str) {
@@ -3493,14 +3493,14 @@
             return str.toLowerCase()
         },
         truncate: function(target, length, truncation) {
-            //length£¬ĞÂ×Ö·û´®³¤¶È£¬truncation£¬ĞÂ×Ö·û´®µÄ½áÎ²µÄ×Ö¶Î,·µ»ØĞÂ×Ö·û´®
+            //lengthï¼Œæ–°å­—ç¬¦ä¸²é•¿åº¦ï¼Œtruncationï¼Œæ–°å­—ç¬¦ä¸²çš„ç»“å°¾çš„å­—æ®µ,è¿”å›æ–°å­—ç¬¦ä¸²
             length = length || 30
             truncation = truncation === void(0) ? "..." : truncation
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target)
         },
         camelize: camelize,
         escape: function(html) {
-            //½«×Ö·û´®¾­¹ı html ×ªÒåµÃµ½ÊÊºÏÔÚÒ³ÃæÖĞÏÔÊ¾µÄÄÚÈİ, ÀıÈçÌæ»» < Îª &lt 
+            //å°†å­—ç¬¦ä¸²ç»è¿‡ html è½¬ä¹‰å¾—åˆ°é€‚åˆåœ¨é¡µé¢ä¸­æ˜¾ç¤ºçš„å†…å®¹, ä¾‹å¦‚æ›¿æ¢ < ä¸º &lt 
             return String(html)
                 .replace(/&(?!\w+;)/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -3508,15 +3508,15 @@
                 .replace(/"/g, '&quot;')
         },
         currency: function(number, symbol) {
-            symbol = symbol || "£¤"
+            symbol = symbol || "ï¿¥"
             return symbol + avalon.filters.number(number)
         },
         number: function(number, decimals, dec_point, thousands_sep) {
-            //ÓëPHPµÄnumber_formatÍêÈ«¼æÈİ
-            //number	±ØĞè£¬Òª¸ñÊ½»¯µÄÊı×Ö
-            //decimals	¿ÉÑ¡£¬¹æ¶¨¶àÉÙ¸öĞ¡ÊıÎ»¡£
-            //dec_point	¿ÉÑ¡£¬¹æ¶¨ÓÃ×÷Ğ¡ÊıµãµÄ×Ö·û´®£¨Ä¬ÈÏÎª . £©¡£
-            //thousands_sep	¿ÉÑ¡£¬¹æ¶¨ÓÃ×÷Ç§Î»·Ö¸ô·ûµÄ×Ö·û´®£¨Ä¬ÈÏÎª , £©£¬Èç¹ûÉèÖÃÁË¸Ã²ÎÊı£¬ÄÇÃ´ËùÓĞÆäËû²ÎÊı¶¼ÊÇ±ØĞèµÄ¡£
+            //ä¸PHPçš„number_formatå®Œå…¨å…¼å®¹
+            //number	å¿…éœ€ï¼Œè¦æ ¼å¼åŒ–çš„æ•°å­—
+            //decimals	å¯é€‰ï¼Œè§„å®šå¤šå°‘ä¸ªå°æ•°ä½ã€‚
+            //dec_point	å¯é€‰ï¼Œè§„å®šç”¨ä½œå°æ•°ç‚¹çš„å­—ç¬¦ä¸²ï¼ˆé»˜è®¤ä¸º . ï¼‰ã€‚
+            //thousands_sep	å¯é€‰ï¼Œè§„å®šç”¨ä½œåƒä½åˆ†éš”ç¬¦çš„å­—ç¬¦ä¸²ï¼ˆé»˜è®¤ä¸º , ï¼‰ï¼Œå¦‚æœè®¾ç½®äº†è¯¥å‚æ•°ï¼Œé‚£ä¹ˆæ‰€æœ‰å…¶ä»–å‚æ•°éƒ½æ˜¯å¿…éœ€çš„ã€‚
             // http://kevin.vanzonneveld.net
             number = (number + "").replace(/[^0-9+\-Ee.]/g, "")
             var n = !isFinite(+number) ? 0 : +number,
@@ -3620,7 +3620,7 @@
             paddedZone += padNumber(Math[zone > 0 ? "floor" : "ceil"](zone / 60), 2) + padNumber(Math.abs(zone % 60), 2)
             return paddedZone
         }
-        //È¡µÃÉÏÎçÏÂÎç
+        //å–å¾—ä¸Šåˆä¸‹åˆ
 
         function ampmGetter(date, formats) {
             return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
@@ -3721,43 +3721,43 @@
         }
         var locate = {
             AMPMS: {
-                0: "ÉÏÎç",
-                1: "ÏÂÎç"
+                0: "ä¸Šåˆ",
+                1: "ä¸‹åˆ"
             },
             DAY: {
-                0: "ĞÇÆÚÈÕ",
-                1: "ĞÇÆÚÒ»",
-                2: "ĞÇÆÚ¶ş",
-                3: "ĞÇÆÚÈı",
-                4: "ĞÇÆÚËÄ",
-                5: "ĞÇÆÚÎå",
-                6: "ĞÇÆÚÁù"
+                0: "æ˜ŸæœŸæ—¥",
+                1: "æ˜ŸæœŸä¸€",
+                2: "æ˜ŸæœŸäºŒ",
+                3: "æ˜ŸæœŸä¸‰",
+                4: "æ˜ŸæœŸå››",
+                5: "æ˜ŸæœŸäº”",
+                6: "æ˜ŸæœŸå…­"
             },
             MONTH: {
-                0: "1ÔÂ",
-                1: "2ÔÂ",
-                2: "3ÔÂ",
-                3: "4ÔÂ",
-                4: "5ÔÂ",
-                5: "6ÔÂ",
-                6: "7ÔÂ",
-                7: "8ÔÂ",
-                8: "9ÔÂ",
-                9: "10ÔÂ",
-                10: "11ÔÂ",
-                11: "12ÔÂ"
+                0: "1æœˆ",
+                1: "2æœˆ",
+                2: "3æœˆ",
+                3: "4æœˆ",
+                4: "5æœˆ",
+                5: "6æœˆ",
+                6: "7æœˆ",
+                7: "8æœˆ",
+                8: "9æœˆ",
+                9: "10æœˆ",
+                10: "11æœˆ",
+                11: "12æœˆ"
             },
             SHORTDAY: {
-                "0": "ÖÜÈÕ",
-                "1": "ÖÜÒ»",
-                "2": "ÖÜ¶ş",
-                "3": "ÖÜÈı",
-                "4": "ÖÜËÄ",
-                "5": "ÖÜÎå",
-                "6": "ÖÜÁù"
+                "0": "å‘¨æ—¥",
+                "1": "å‘¨ä¸€",
+                "2": "å‘¨äºŒ",
+                "3": "å‘¨ä¸‰",
+                "4": "å‘¨å››",
+                "5": "å‘¨äº”",
+                "6": "å‘¨å…­"
             },
-            fullDate: "yÄêMÔÂdÈÕEEEE",
-            longDate: "yÄêMÔÂdÈÕ",
+            fullDate: "yå¹´Mæœˆdæ—¥EEEE",
+            longDate: "yå¹´Mæœˆdæ—¥",
             medium: "yyyy-M-d ah:mm:ss",
             mediumDate: "yyyy-M-d",
             mediumTime: "ah:mm:ss",
@@ -3787,8 +3787,8 @@
 
 
     new function() {
-        var loadings = [] //ÕıÔÚ¼ÓÔØÖĞµÄÄ£¿éÁĞ±í
-        var factorys = [] //´¢´æĞèÒª°ó¶¨IDÓëfactory¶ÔÓ¦¹ØÏµµÄÄ£¿é£¨±ê×¼ä¯ÀÀÆ÷ÏÂ£¬ÏÈparseµÄscript½Úµã»áÏÈonload£©
+        var loadings = [] //æ­£åœ¨åŠ è½½ä¸­çš„æ¨¡å—åˆ—è¡¨
+        var factorys = [] //å‚¨å­˜éœ€è¦ç»‘å®šIDä¸factoryå¯¹åº”å…³ç³»çš„æ¨¡å—ï¼ˆæ ‡å‡†æµè§ˆå™¨ä¸‹ï¼Œå…ˆparseçš„scriptèŠ‚ç‚¹ä¼šå…ˆonloadï¼‰
         var basepath
 
         function cleanUrl(url) {
@@ -3797,13 +3797,13 @@
 
         plugins.js = function(url, shim) {
             var id = cleanUrl(url)
-            if (!modules[id]) { //Èç¹ûÖ®Ç°Ã»ÓĞ¼ÓÔØ¹ı
+            if (!modules[id]) { //å¦‚æœä¹‹å‰æ²¡æœ‰åŠ è½½è¿‡
                 modules[id] = {
                     id: id,
                     parent: parent,
                     exports: {}
                 }
-                if (shim) { //shim»úÖÆ
+                if (shim) { //shimæœºåˆ¶
                     innerRequire(shim.deps || "", function() {
                         loadJS(url, id, function() {
                             modules[id].state = 2
@@ -3820,7 +3820,7 @@
             return id
         }
         plugins.css = function(url) {
-            var id = url.replace(/(#.+|\W)/g, "") ////ÓÃÓÚ´¦ÀíµôhrefÖĞµÄhashÓëËùÓĞÌØÊâ·ûºÅ
+            var id = url.replace(/(#.+|\W)/g, "") ////ç”¨äºå¤„ç†æ‰hrefä¸­çš„hashä¸æ‰€æœ‰ç‰¹æ®Šç¬¦å·
             if (!DOC.getElementById(id)) {
                 var node = DOC.createElement("link")
                 node.rel = "stylesheet"
@@ -3832,26 +3832,26 @@
         plugins.css.ext = ".css"
         plugins.js.ext = ".js"
         var cur = getCurrentScript(true)
-        if (!cur) { //´¦Àíwindow safariµÄErrorÃ»ÓĞstackµÄÎÊÌâ
+        if (!cur) { //å¤„ç†window safariçš„Erroræ²¡æœ‰stackçš„é—®é¢˜
             cur = avalon.slice(DOC.scripts).pop().src
         }
         var url = cleanUrl(cur)
         basepath = kernel.base = url.slice(0, url.lastIndexOf("/") + 1)
 
         function getCurrentScript(base) {
-            // ²Î¿¼ https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // å‚è€ƒ https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack
             try {
-                a.b.c() //Ç¿ÖÆ±¨´í,ÒÔ±ã²¶»ñe.stack
-            } catch (e) { //safariµÄ´íÎó¶ÔÏóÖ»ÓĞline,sourceId,sourceURL
+                a.b.c() //å¼ºåˆ¶æŠ¥é”™,ä»¥ä¾¿æ•è·e.stack
+            } catch (e) { //safariçš„é”™è¯¯å¯¹è±¡åªæœ‰line,sourceId,sourceURL
                 stack = e.stack
                 if (!stack && window.opera) {
-                    //opera 9Ã»ÓĞe.stack,µ«ÓĞe.Backtrace,µ«²»ÄÜÖ±½ÓÈ¡µÃ,ĞèÒª¶Ôe¶ÔÏó×ª×Ö·û´®½øĞĞ³éÈ¡
+                    //opera 9æ²¡æœ‰e.stack,ä½†æœ‰e.Backtrace,ä½†ä¸èƒ½ç›´æ¥å–å¾—,éœ€è¦å¯¹eå¯¹è±¡è½¬å­—ç¬¦ä¸²è¿›è¡ŒæŠ½å–
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ")
                 }
             }
             if (stack) {
-                //e.stack×îºóÒ»ĞĞÔÚËùÓĞÖ§³ÖµÄä¯ÀÀÆ÷´óÖÂÈçÏÂ:
+                //e.stackæœ€åä¸€è¡Œåœ¨æ‰€æœ‰æ”¯æŒçš„æµè§ˆå™¨å¤§è‡´å¦‚ä¸‹:
                 //chrome23:
                 //at http://113.93.50.63/data.js:4:1
                 //firefox17:
@@ -3860,12 +3860,12 @@
                 //@http://113.93.50.63/data.js:4
                 //IE10:
                 //at Global code (http://113.93.50.63/data.js:4:1)
-                //firefox4+ ¿ÉÒÔÓÃdocument.currentScript
-                stack = stack.split(/[@ ]/g).pop() //È¡µÃ×îºóÒ»ĞĞ,×îºóÒ»¸ö¿Õ¸ñ»ò@Ö®ºóµÄ²¿·Ö
-                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //È¥µô»»ĞĞ·û
-                return stack.replace(/(:\d+)?:\d+$/i, "") //È¥µôĞĞºÅÓë»òĞí´æÔÚµÄ³ö´í×Ö·ûÆğÊ¼Î»ÖÃ
+                //firefox4+ å¯ä»¥ç”¨document.currentScript
+                stack = stack.split(/[@ ]/g).pop() //å–å¾—æœ€åä¸€è¡Œ,æœ€åä¸€ä¸ªç©ºæ ¼æˆ–@ä¹‹åçš„éƒ¨åˆ†
+                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //å»æ‰æ¢è¡Œç¬¦
+                return stack.replace(/(:\d+)?:\d+$/i, "") //å»æ‰è¡Œå·ä¸æˆ–è®¸å­˜åœ¨çš„å‡ºé”™å­—ç¬¦èµ·å§‹ä½ç½®
             }
-            var nodes = (base ? DOC : head).getElementsByTagName("script") //Ö»ÔÚhead±êÇ©ÖĞÑ°ÕÒ
+            var nodes = (base ? DOC : head).getElementsByTagName("script") //åªåœ¨headæ ‡ç­¾ä¸­å¯»æ‰¾
             for (var i = nodes.length, node; node = nodes[--i]; ) {
                 if ((base || node.className === subscribers) && node.readyState === "interactive") {
                     return node.className = node.src
@@ -3874,16 +3874,16 @@
         }
 
         function checkCycle(deps, nick) {
-            //¼ì²âÊÇ·ñ´æÔÚÑ­»·ÒÀÀµ
+            //æ£€æµ‹æ˜¯å¦å­˜åœ¨å¾ªç¯ä¾èµ–
             for (var id in deps) {
-                if (deps[id] === "Ë¾Í½ÕıÃÀ" && modules[id].state !== 2 && (id === nick || checkCycle(modules[id].deps, nick))) {
+                if (deps[id] === "å¸å¾’æ­£ç¾" && modules[id].state !== 2 && (id === nick || checkCycle(modules[id].deps, nick))) {
                     return true
                 }
             }
         }
 
         function checkDeps() {
-            //¼ì²â´ËJSÄ£¿éµÄÒÀÀµÊÇ·ñ¶¼ÒÑ°²×°Íê±Ï,ÊÇÔò°²×°×ÔÉí
+            //æ£€æµ‹æ­¤JSæ¨¡å—çš„ä¾èµ–æ˜¯å¦éƒ½å·²å®‰è£…å®Œæ¯•,æ˜¯åˆ™å®‰è£…è‡ªèº«
             loop: for (var i = loadings.length, id; id = loadings[--i]; ) {
 
                 var obj = modules[id],
@@ -3893,24 +3893,24 @@
                         continue loop
                     }
                 }
-                //Èç¹ûdepsÊÇ¿Õ¶ÔÏó»òÕßÆäÒÀÀµµÄÄ£¿éµÄ×´Ì¬¶¼ÊÇ2
+                //å¦‚æœdepsæ˜¯ç©ºå¯¹è±¡æˆ–è€…å…¶ä¾èµ–çš„æ¨¡å—çš„çŠ¶æ€éƒ½æ˜¯2
                 if (obj.state !== 2) {
-                    loadings.splice(i, 1) //±ØĞëÏÈÒÆ³ıÔÙ°²×°£¬·ÀÖ¹ÔÚIEÏÂDOMÊ÷½¨ÍêºóÊÖ¶¯Ë¢ĞÂÒ³Ãæ£¬»á¶à´ÎÖ´ĞĞËü
+                    loadings.splice(i, 1) //å¿…é¡»å…ˆç§»é™¤å†å®‰è£…ï¼Œé˜²æ­¢åœ¨IEä¸‹DOMæ ‘å»ºå®Œåæ‰‹åŠ¨åˆ·æ–°é¡µé¢ï¼Œä¼šå¤šæ¬¡æ‰§è¡Œå®ƒ
                     fireFactory(obj.id, obj.args, obj.factory)
-                    checkDeps() //Èç¹û³É¹¦,ÔòÔÙÖ´ĞĞÒ»´Î,ÒÔ·ÀÓĞĞ©Ä£¿é¾Í²î±¾Ä£¿éÃ»ÓĞ°²×°ºÃ
+                    checkDeps() //å¦‚æœæˆåŠŸ,åˆ™å†æ‰§è¡Œä¸€æ¬¡,ä»¥é˜²æœ‰äº›æ¨¡å—å°±å·®æœ¬æ¨¡å—æ²¡æœ‰å®‰è£…å¥½
                 }
             }
         }
 
         function checkFail(node, onError, fuckIE) {
-            var id = cleanUrl(node.src) //¼ì²âÊÇ·ñËÀÁ´
+            var id = cleanUrl(node.src) //æ£€æµ‹æ˜¯å¦æ­»é“¾
             node.onload = node.onreadystatechange = node.onerror = null
             if (onError || (fuckIE && !modules[id].state)) {
                 setTimeout(function() {
                     head.removeChild(node)
-                    node = null // ´¦Àí¾ÉÊ½IEÏÂµÄÑ­»·ÒıÓÃÎÊÌâ
+                    node = null // å¤„ç†æ—§å¼IEä¸‹çš„å¾ªç¯å¼•ç”¨é—®é¢˜
                 })
-                log("¼ÓÔØ " + id + " Ê§°Ü" + onError + " " + (!modules[id].state))
+                log("åŠ è½½ " + id + " å¤±è´¥" + onError + " " + (!modules[id].state))
             } else {
                 return true
             }
@@ -3918,18 +3918,18 @@
         var rdeuce = /\/\w+\/\.\./
 
         function loadResources(url, parent, ret, shim) {
-            //1. ÌØ±ğ´¦Àímass|ready±êÊ¶·û
+            //1. ç‰¹åˆ«å¤„ç†mass|readyæ ‡è¯†ç¬¦
             if (url === "ready!" || (modules[url] && modules[url].state === 2)) {
                 return url
             }
-            //2. ×ª»¯ÎªÍêÕûÂ·¾¶
+            //2. è½¬åŒ–ä¸ºå®Œæ•´è·¯å¾„
             if (typeof kernel.shim[url] === "object") {
                 shim = kernel.shim[url]
             }
-            if (kernel.paths[url]) { //±ğÃû»úÖÆ
+            if (kernel.paths[url]) { //åˆ«åæœºåˆ¶
                 url = kernel.paths[url]
             }
-            //3.  ´¦Àítext!  css! µÈ×ÊÔ´
+            //3.  å¤„ç†text!  css! ç­‰èµ„æº
             var plugin
             url = url.replace(/^\w+!/, function(a) {
                 plugin = a.slice(0, -1)
@@ -3937,29 +3937,29 @@
             })
             plugin = plugin || "js"
             plugin = plugins[plugin] || noop
-            //4. ²¹È«Â·¾¶
+            //4. è¡¥å…¨è·¯å¾„
             if (/^(\w+)(\d)?:.*/
             /*.test(url)) {
                 ret = url
             } else {
                 parent = parent.substr(0, parent.lastIndexOf("/"))
                 var tmp = url.charAt(0)
-                if (tmp !== "." && tmp !== "/") { //Ïà¶ÔÓÚ¸ùÂ·¾¶
+                if (tmp !== "." && tmp !== "/") { //ç›¸å¯¹äºæ ¹è·¯å¾„
                     ret = basepath + url
-                } else if (url.slice(0, 2) === "./") { //Ïà¶ÔÓÚĞÖµÜÂ·¾¶
+                } else if (url.slice(0, 2) === "./") { //ç›¸å¯¹äºå…„å¼Ÿè·¯å¾„
                     ret = parent + url.slice(1)
-                } else if (url.slice(0, 2) === "..") { //Ïà¶ÔÓÚ¸¸Â·¾¶
+                } else if (url.slice(0, 2) === "..") { //ç›¸å¯¹äºçˆ¶è·¯å¾„
                     ret = parent + "/" + url
                     while (rdeuce.test(ret)) {
                         ret = ret.replace(rdeuce, "")
                     }
                 } else if (tmp === "/") {
-                    ret = parent + url //Ïà¶ÔÓÚĞÖµÜÂ·¾¶
+                    ret = parent + url //ç›¸å¯¹äºå…„å¼Ÿè·¯å¾„
                 } else {
-                    avalon.error("²»·ûºÏÄ£¿é±êÊ¶¹æÔò: " + url)
+                    avalon.error("ä¸ç¬¦åˆæ¨¡å—æ ‡è¯†è§„åˆ™: " + url)
                 }
             }
-            //5. ²¹È«À©Õ¹Ãû
+            //5. è¡¥å…¨æ‰©å±•å
             url = cleanUrl(ret)
             var ext = plugin.ext
             if (ext) {
@@ -3967,7 +3967,7 @@
                     ret += ext
                 }
             }
-            //6. »º´æ´¦Àí
+            //6. ç¼“å­˜å¤„ç†
             if (kernel.nocache) {
                 ret += (ret.indexOf("?") === -1 ? "?" : "&") + (new Date - 0)
             }
@@ -3975,38 +3975,38 @@
         }
 
         function loadJS(url, id, callback) {
-            //Í¨¹ıscript½Úµã¼ÓÔØÄ¿±êÄ£¿é
+            //é€šè¿‡scriptèŠ‚ç‚¹åŠ è½½ç›®æ ‡æ¨¡å—
             var node = DOC.createElement("script")
-            node.className = subscribers //ÈÃgetCurrentScriptÖ»´¦ÀíÀàÃûÎªsubscribersµÄscript½Úµã
+            node.className = subscribers //è®©getCurrentScriptåªå¤„ç†ç±»åä¸ºsubscribersçš„scriptèŠ‚ç‚¹
             node[W3C ? "onload" : "onreadystatechange"] = function() {
                 if (W3C || /loaded|complete/i.test(node.readyState)) {
-                    //mass Framework»áÔÚ_checkFail°ÑËüÉÏÃæµÄ»Øµ÷Çåµô£¬¾¡¿ÉÄÜÊÍ·Å»Ø´æ£¬¾¡¹ÜDOM0ÊÂ¼şĞ´·¨ÔÚIE6ÏÂGCÎŞÍû
+                    //mass Frameworkä¼šåœ¨_checkFailæŠŠå®ƒä¸Šé¢çš„å›è°ƒæ¸…æ‰ï¼Œå°½å¯èƒ½é‡Šæ”¾å›å­˜ï¼Œå°½ç®¡DOM0äº‹ä»¶å†™æ³•åœ¨IE6ä¸‹GCæ— æœ›
                     var factory = factorys.pop()
                     factory && factory.delay(id)
                     if (callback) {
                         callback()
                     }
                     if (checkFail(node, false, !W3C)) {
-                        log("Debug: ÒÑ³É¹¦¼ÓÔØ " + url)
+                        log("Debug: å·²æˆåŠŸåŠ è½½ " + url)
                     }
                 }
             }
             node.onerror = function() {
                 checkFail(node, true)
             }
-            node.src = url //²åÈëµ½headµÄµÚÒ»¸ö½ÚµãÇ°£¬·ÀÖ¹IE6ÏÂhead±êÇ©Ã»±ÕºÏÇ°Ê¹ÓÃappendChildÅ×´í
-            head.insertBefore(node, head.firstChild) //chromeÏÂµÚ¶ş¸ö²ÎÊı²»ÄÜÎªnull
-            log("Debug: Õı×¼±¸¼ÓÔØ " + url) //¸üÖØÒªµÄÊÇIE6ÏÂ¿ÉÒÔÊÕÕ­getCurrentScriptµÄÑ°ÕÒ·¶Î§
+            node.src = url //æ’å…¥åˆ°headçš„ç¬¬ä¸€ä¸ªèŠ‚ç‚¹å‰ï¼Œé˜²æ­¢IE6ä¸‹headæ ‡ç­¾æ²¡é—­åˆå‰ä½¿ç”¨appendChildæŠ›é”™
+            head.insertBefore(node, head.firstChild) //chromeä¸‹ç¬¬äºŒä¸ªå‚æ•°ä¸èƒ½ä¸ºnull
+            log("Debug: æ­£å‡†å¤‡åŠ è½½ " + url) //æ›´é‡è¦çš„æ˜¯IE6ä¸‹å¯ä»¥æ”¶çª„getCurrentScriptçš„å¯»æ‰¾èŒƒå›´
         }
 
         innerRequire = avalon.require = function(list, factory, parent) {
-            // ÓÃÓÚ¼ì²âËüµÄÒÀÀµÊÇ·ñ¶¼Îª2
+            // ç”¨äºæ£€æµ‹å®ƒçš„ä¾èµ–æ˜¯å¦éƒ½ä¸º2
             var deps = {},
-            // ÓÃÓÚ±£´æÒÀÀµÄ£¿éµÄ·µ»ØÖµ
+            // ç”¨äºä¿å­˜ä¾èµ–æ¨¡å—çš„è¿”å›å€¼
                 args = [],
-            // ĞèÒª°²×°µÄÄ£¿éÊı
+            // éœ€è¦å®‰è£…çš„æ¨¡å—æ•°
                 dn = 0,
-            // ÒÑ°²×°ÍêµÄÄ£¿éÊı
+            // å·²å®‰è£…å®Œçš„æ¨¡å—æ•°
                 cn = 0,
                 id = parent || "callback" + setTimeout("1")
             parent = parent || basepath
@@ -4019,34 +4019,34 @@
                     }
                     if (!deps[url]) {
                         args.push(url)
-                        deps[url] = "Ë¾Í½ÕıÃÀ" //È¥ÖØ
+                        deps[url] = "å¸å¾’æ­£ç¾" //å»é‡
                     }
                 }
             })
-            modules[id] = {//´´½¨Ò»¸ö¶ÔÏó,¼ÇÂ¼Ä£¿éµÄ¼ÓÔØÇé¿öÓëÆäËûĞÅÏ¢
+            modules[id] = {//åˆ›å»ºä¸€ä¸ªå¯¹è±¡,è®°å½•æ¨¡å—çš„åŠ è½½æƒ…å†µä¸å…¶ä»–ä¿¡æ¯
                 id: id,
                 factory: factory,
                 deps: deps,
                 args: args,
                 state: 1
             }
-            if (dn === cn) { //Èç¹ûĞèÒª°²×°µÄµÈÓÚÒÑ°²×°ºÃµÄ
-                fireFactory(id, args, factory) //°²×°µ½¿ò¼ÜÖĞ
+            if (dn === cn) { //å¦‚æœéœ€è¦å®‰è£…çš„ç­‰äºå·²å®‰è£…å¥½çš„
+                fireFactory(id, args, factory) //å®‰è£…åˆ°æ¡†æ¶ä¸­
             } else {
-                //·Åµ½¼ì²âÁĞ¶ÓÖĞ,µÈ´ıcheckDeps´¦Àí
+                //æ”¾åˆ°æ£€æµ‹åˆ—é˜Ÿä¸­,ç­‰å¾…checkDepså¤„ç†
                 loadings.unshift(id)
             }
             checkDeps()
         }
         */
         /**
-         * ¶¨ÒåÄ£¿é
-         * @param {String} id ? Ä£¿éID
-         * @param {Array} deps ? ÒÀÀµÁĞ±í
-         * @param {Function} factory Ä£¿é¹¤³§
+         * å®šä¹‰æ¨¡å—
+         * @param {String} id ? æ¨¡å—ID
+         * @param {Array} deps ? ä¾èµ–åˆ—è¡¨
+         * @param {Function} factory æ¨¡å—å·¥å‚
          * @api public
          *//*
-        innerRequire.define = function(id, deps, factory) { //Ä£¿éÃû,ÒÀÀµÁĞ±í,Ä£¿é±¾Éí
+        innerRequire.define = function(id, deps, factory) { //æ¨¡å—å,ä¾èµ–åˆ—è¡¨,æ¨¡å—æœ¬èº«
             var args = aslice.call(arguments)
 
             if (typeof id === "string") {
@@ -4054,9 +4054,9 @@
             }
             if (typeof args[0] === "function") {
                 args.unshift([])
-            } //ÉÏÏßºÏ²¢ºóÄÜÖ±½ÓµÃµ½Ä£¿éID,·ñÔòÑ°ÕÒµ±Ç°ÕıÔÚ½âÎöÖĞµÄscript½ÚµãµÄsrc×÷ÎªÄ£¿éID
-            //ÏÖÔÚ³ıÁËsafariÍâ£¬ÎÒÃÇ¶¼ÄÜÖ±½ÓÍ¨¹ıgetCurrentScriptÒ»²½µ½Î»µÃµ½µ±Ç°Ö´ĞĞµÄscript½Úµã£¬
-            //safari¿ÉÍ¨¹ıonload+delay±Õ°ü×éºÏ½â¾ö
+            } //ä¸Šçº¿åˆå¹¶åèƒ½ç›´æ¥å¾—åˆ°æ¨¡å—ID,å¦åˆ™å¯»æ‰¾å½“å‰æ­£åœ¨è§£æä¸­çš„scriptèŠ‚ç‚¹çš„srcä½œä¸ºæ¨¡å—ID
+            //ç°åœ¨é™¤äº†safariå¤–ï¼Œæˆ‘ä»¬éƒ½èƒ½ç›´æ¥é€šè¿‡getCurrentScriptä¸€æ­¥åˆ°ä½å¾—åˆ°å½“å‰æ‰§è¡Œçš„scriptèŠ‚ç‚¹ï¼Œ
+            //safariå¯é€šè¿‡onload+delayé—­åŒ…ç»„åˆè§£å†³
             var name = modules[_id] && modules[_id].state >= 1 ? _id : cleanUrl(getCurrentScript())
             if (!modules[name] && _id) {
                 modules[name] = {
@@ -4066,7 +4066,7 @@
                 }
             }
             factory = args[1]
-            factory.id = _id //ÓÃÓÚµ÷ÊÔ
+            factory.id = _id //ç”¨äºè°ƒè¯•
             factory.delay = function(d) {
                 args.push(d)
                 var isCycle = true
@@ -4075,15 +4075,15 @@
                 } catch (e) {
                 }
                 if (isCycle) {
-                    avalon.error(d + "Ä£¿éÓëÖ®Ç°µÄÄ³Ğ©Ä£¿é´æÔÚÑ­»·ÒÀÀµ")
+                    avalon.error(d + "æ¨¡å—ä¸ä¹‹å‰çš„æŸäº›æ¨¡å—å­˜åœ¨å¾ªç¯ä¾èµ–")
                 }
-                delete factory.delay //ÊÍ·ÅÄÚ´æ
+                delete factory.delay //é‡Šæ”¾å†…å­˜
                 innerRequire.apply(null, args) //0,1,2 --> 1,2,0
             }
 
             if (name) {
                 factory.delay(name, args)
-            } else { //ÏÈ½øÏÈ³ö
+            } else { //å…ˆè¿›å…ˆå‡º
                 factorys.push(factory)
             }
         }
@@ -4112,15 +4112,15 @@
     var ready = W3C ? "DOMContentLoaded" : "readystatechange"
 
     function fireReady() {
-        if (DOC.body) { //  ÔÚIE8 iframeÖĞdoScrollCheck¿ÉÄÜ²»ÕıÈ·
+        if (DOC.body) { //  åœ¨IE8 iframeä¸­doScrollCheckå¯èƒ½ä¸æ­£ç¡®
             modules["ready!"].state = 2
             innerRequire.checkDeps()
-            fireReady = noop //ËåĞÔº¯Êı£¬·ÀÖ¹IE9¶ş´Îµ÷ÓÃ_checkDeps
+            fireReady = noop //éš‹æ€§å‡½æ•°ï¼Œé˜²æ­¢IE9äºŒæ¬¡è°ƒç”¨_checkDeps
         }
     }
 
     function doScrollCheck() {
-        try { //IEÏÂÍ¨¹ıdoScrollCheck¼ì²âDOMÊ÷ÊÇ·ñ½¨Íê
+        try { //IEä¸‹é€šè¿‡doScrollCheckæ£€æµ‹DOMæ ‘æ˜¯å¦å»ºå®Œ
             root.doScroll("left")
             fireReady()
         } catch (e) {
@@ -4129,7 +4129,7 @@
     }
 
     if (DOC.readyState === "complete") {
-        setTimeout(fireReady) //Èç¹ûÔÚdomReadyÖ®Íâ¼ÓÔØ
+        setTimeout(fireReady) //å¦‚æœåœ¨domReadyä¹‹å¤–åŠ è½½
     } else if (W3C) {
         DOC.addEventListener(ready, fireReady)
         window.addEventListener("load", fireReady)
@@ -4153,7 +4153,7 @@
     })
     */
     avalon.ready(function() {
-        //IE6-9ÏÂÕâ¸öÍ¨³£Ö»Òª1ms,¶øÇÒÃ»ÓĞ¸±×÷ÓÃ£¬²»»á·¢³öÇëÇó£¬setImmediateÈç¹ûÖ»Ö´ĞĞÒ»´Î£¬ÓësetTimeoutÒ»ÑùÒª140msÉÏÏÂ
+        //IE6-9ä¸‹è¿™ä¸ªé€šå¸¸åªè¦1ms,è€Œä¸”æ²¡æœ‰å‰¯ä½œç”¨ï¼Œä¸ä¼šå‘å‡ºè¯·æ±‚ï¼ŒsetImmediateå¦‚æœåªæ‰§è¡Œä¸€æ¬¡ï¼Œä¸setTimeoutä¸€æ ·è¦140msä¸Šä¸‹
         if (window.VBArray && !window.setImmediate) {
             var handlerQueue = []
 
@@ -4172,7 +4172,7 @@
                 }
                 var node = DOC.createElement("script")
                 node.onreadystatechange = function() {
-                    drainQueue() //ÔÚinteractive½×¶Î¾Í´¥·¢
+                    drainQueue() //åœ¨interactiveé˜¶æ®µå°±è§¦å‘
                     node.onreadystatechange = null
                     head.removeChild(node)
                     node = null

@@ -1,28 +1,28 @@
 /**
  * =========================================
- * TODO(wuhf): CoreÄ£¿é
- * ¡¾ËµÃ÷¡¿
- *  ¿ò¼ÜµÄÕûÌå²¼¾ÖÒÔ¼°ÅäÖÃ
+ * TODO(wuhf): Coreæ¨¡å—
+ * ã€è¯´æ˜ã€‘
+ *  æ¡†æ¶çš„æ•´ä½“å¸ƒå±€ä»¥åŠé…ç½®
  *
- * ¡¾ÒÀÀµÒÔÏÂÎÄ¼ş¡¿
+ * ã€ä¾èµ–ä»¥ä¸‹æ–‡ä»¶ã€‘
  * 1. jQuery
  *
- * ¡¾°üº¬ÒÔÏÂÄÚÈİ¡¿
- * 1. Ç¿»¯jQueryºËĞÄ·½·¨£¬Ôö¼ÓÍ¨ÓÃ¹¤¾ß¼¯$.slice, $.oneObject, $.nextTickµÈ
- * 2. $.factory Àà¹¤³§
- * 3. $.URL URL·ÖÎöÆ÷
- * 4. AMDÄ£¿é¼ÓÔØÒıÇæ
+ * ã€åŒ…å«ä»¥ä¸‹å†…å®¹ã€‘
+ * 1. å¼ºåŒ–jQueryæ ¸å¿ƒæ–¹æ³•ï¼Œå¢åŠ é€šç”¨å·¥å…·é›†$.slice, $.oneObject, $.nextTickç­‰
+ * 2. $.factory ç±»å·¥å‚
+ * 3. $.URL URLåˆ†æå™¨
+ * 4. AMDæ¨¡å—åŠ è½½å¼•æ“
  * ==========================================
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
-    // TODO(wuhf): ºËĞÄ¹¤¾ß¼¯
+    // TODO(wuhf): æ ¸å¿ƒå·¥å…·é›†
     // ========================================================
     (function(){
-        var rword = /[^, |]+/g; //ÓÃÓÚ·Ö¸îµ¥´Ê
-        var html = DOC.documentElement; //HTMLÔªËØ
-        var head = DOC.head || DOC.getElementsByTagName("head")[0]; //HEADÔªËØ
-        var W3C = DOC.dispatchEvent; //IE9¿ªÊ¼Ö§³ÖW3CµÄÊÂ¼şÄ£ĞÍÓëgetComputedStyleÈ¡ÑùÊ½Öµ
+        var rword = /[^, |]+/g; //ç”¨äºåˆ†å‰²å•è¯
+        var html = DOC.documentElement; //HTMLå…ƒç´ 
+        var head = DOC.head || DOC.getElementsByTagName("head")[0]; //HEADå…ƒç´ 
+        var W3C = DOC.dispatchEvent; //IE9å¼€å§‹æ”¯æŒW3Cçš„äº‹ä»¶æ¨¡å‹ä¸getComputedStyleå–æ ·å¼å€¼
         var hasOwn = Object.prototype.hasOwnProperty;
         var emptyObj = {};
         var rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
@@ -38,7 +38,7 @@ armer = window.jQuery || window.Zepto;
 
 
             /**
-         * ÅĞ¶Ï¶ÔÏóÀàĞÍ
+         * åˆ¤æ–­å¯¹è±¡ç±»å‹
          * @param obj
          * @param [type]
          * @returns {boolean|string}
@@ -62,15 +62,15 @@ armer = window.jQuery || window.Zepto;
         }
 
         /**
-         * ¼ÆËãÀàËÆarray[-1]Îª×îºóÒ»Î»µÄËã·¨
-         * ÓÃÓÚÄ£Äâslice, spliceµÄĞ§¹û
-         * @param a ÏÂ±êÖµ
-         * @param [n] ×Ü³¤¶È
-         * @param [end] ·ÇÕûÊıµÄ´¦Àí·½Ê½£¬Èç¹ûÎªtrueÔòÈ¡nÖµ
+         * è®¡ç®—ç±»ä¼¼array[-1]ä¸ºæœ€åä¸€ä½çš„ç®—æ³•
+         * ç”¨äºæ¨¡æ‹Ÿslice, spliceçš„æ•ˆæœ
+         * @param a ä¸‹æ ‡å€¼
+         * @param [n] æ€»é•¿åº¦
+         * @param [end] éæ•´æ•°çš„å¤„ç†æ–¹å¼ï¼Œå¦‚æœä¸ºtrueåˆ™å–nå€¼
          * @returns {number}
          */
         function resetNumber(a, n, end) {
-            if ((a === +a) && !(a % 1)) { //Èç¹ûÊÇÕûÊı
+            if ((a === +a) && !(a % 1)) { //å¦‚æœæ˜¯æ•´æ•°
                 if (a < 0) {
                     a = a * -1 >= n ? 0 : a + n
                 } else {
@@ -89,10 +89,10 @@ armer = window.jQuery || window.Zepto;
         $.stringType = toStringType;
 
         /**
-         * Êı×é»¯
-         * @param {ArrayLike} nodes Òª´¦ÀíµÄÀàÊı×é¶ÔÏó
-         * @param {number} start ¿ÉÑ¡¡£Òª³éÈ¡µÄÆ¬¶ÏµÄÆğÊ¼ÏÂ±ê¡£Èç¹ûÊÇ¸ºÊı£¬´ÓºóÃæÈ¡Æğ
-         * @param {number} end  ¿ÉÑ¡¡£¹æ¶¨´ÓºÎ´¦½áÊøÑ¡È¡
+         * æ•°ç»„åŒ–
+         * @param {ArrayLike} nodes è¦å¤„ç†çš„ç±»æ•°ç»„å¯¹è±¡
+         * @param {number} start å¯é€‰ã€‚è¦æŠ½å–çš„ç‰‡æ–­çš„èµ·å§‹ä¸‹æ ‡ã€‚å¦‚æœæ˜¯è´Ÿæ•°ï¼Œä»åé¢å–èµ·
+         * @param {number} end  å¯é€‰ã€‚è§„å®šä»ä½•å¤„ç»“æŸé€‰å–
          * @returns {array}
          */
         $.slice = W3C ? function(nodes, start, end) {
@@ -112,30 +112,30 @@ armer = window.jQuery || window.Zepto;
         $.fn.mix = $.mix = $.extend;
 
         $.extend($, {
-            // ---²¹³äÒ»Ğ©È«¾Ö±äÁ¿---
+            // ---è¡¥å……ä¸€äº›å…¨å±€å˜é‡---
 
-            // ¹æ¶¨ÄÇĞ©·½·¨²»±»ÁĞ¾Ù
+            // è§„å®šé‚£äº›æ–¹æ³•ä¸è¢«åˆ—ä¸¾
             DONT_ENUM: "propertyIsEnumerable,isPrototypeOf,hasOwnProperty,toLocaleString,toString,valueOf,constructor".split(","),
-            // HTMLÔªËØºÍHEADÔªËØ
+            // HTMLå…ƒç´ å’ŒHEADå…ƒç´ 
             html: html,
             head: head,
-            // Á½¸öÕıÔò
+            // ä¸¤ä¸ªæ­£åˆ™
             rword: rword,
             rmapper: /(\w+)_(\w+)/g,
 
-            // ---²¹³äÒ»Ğ©¹¤¾ß·½·¨---
-            //Éú³ÉUUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+            // ---è¡¥å……ä¸€äº›å·¥å…·æ–¹æ³•---
+            //ç”ŸæˆUUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
             /**
-             * Éú³ÉÒ»¸öÈ«¾ÖÎ¨Ò»ID
+             * ç”Ÿæˆä¸€ä¸ªå…¨å±€å”¯ä¸€ID
              * @returns {string}
              */
             generateID: function () {
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             /**
-             * Éú³ÉËæ»úÊı
-             * @param {Number} upper ÉÏÏŞÖµ
-             * @param {Number} [lower] ÏÂÏŞÖµ
+             * ç”Ÿæˆéšæœºæ•°
+             * @param {Number} upper ä¸Šé™å€¼
+             * @param {Number} [lower] ä¸‹é™å€¼
              * @returns {Number}
              */
             random: function(upper, lower){
@@ -143,9 +143,9 @@ armer = window.jQuery || window.Zepto;
                 return parseInt(Math.random() * (upper - lower + 1)+ lower);
             },
             /**
-             * Éú³É¼üÖµÍ³Ò»µÄ¶ÔÏó£¬ÓÃÓÚ¸ßËÙ»¯ÅĞ¶¨
-             * @param {array|string} array Èç¹ûÊÇ×Ö·û´®£¬ÇëÓÃ","»ò¿Õ¸ñ·Ö¿ª
-             * @param {number} [val] Ä¬ÈÏÎª1
+             * ç”Ÿæˆé”®å€¼ç»Ÿä¸€çš„å¯¹è±¡ï¼Œç”¨äºé«˜é€ŸåŒ–åˆ¤å®š
+             * @param {array|string} array å¦‚æœæ˜¯å­—ç¬¦ä¸²ï¼Œè¯·ç”¨","æˆ–ç©ºæ ¼åˆ†å¼€
+             * @param {number} [val] é»˜è®¤ä¸º1
              * @returns {Object}
              */
             oneObject: oneObject,
@@ -164,22 +164,22 @@ armer = window.jQuery || window.Zepto;
                 return this;
             },
             /**
-             *  ½«µ÷ÊÔĞÅÏ¢´òÓ¡µ½¿ØÖÆÌ¨»òÒ³Ãæ
+             *  å°†è°ƒè¯•ä¿¡æ¯æ‰“å°åˆ°æ§åˆ¶å°æˆ–é¡µé¢
              *  $.trace(str, page, level )
-             *  @param {*} str ÓÃÓÚ´òÓ¡µÄĞÅÏ¢£¬²»ÊÇ×Ö·û´®½«×ª»»Îª×Ö·û´®
-             *  @param {Boolean} page ? ÊÇ·ñ´òÓ¡µ½Ò³Ãæ
-             *  @param {number} level ? Í¨¹ıËüÀ´¹ıÂËÏÔÊ¾µ½¿ØÖÆÌ¨µÄÈÕÖ¾ÊıÁ¿¡£
-             *          0Îª×îÉÙ£¬Ö»ÏÔÊ¾×îÖÂÃüµÄ´íÎó£»7£¬ÔòÁ¬ÆÕÍ¨µÄµ÷ÊÔÏûÏ¢Ò²´òÓ¡³öÀ´¡£
-             *          ÏÔÊ¾Ëã·¨Îª level <= $.config.level¡£
-             *          Õâ¸ö$.config.levelÄ¬ÈÏÎª9¡£ÏÂÃæÊÇlevel¸÷´ú±íµÄº¬Òå¡£
-             *          0 EMERGENCY ÖÂÃü´íÎó,¿ò¼Ü±ÀÀ£
-             *          1 ALERT ĞèÒªÁ¢¼´²ÉÈ¡´ëÊ©½øĞĞĞŞ¸´
-             *          2 CRITICAL Î£¼±´íÎó
-             *          3 ERROR Òì³£
-             *          4 WARNING ¾¯¸æ
-             *          5 NOTICE Í¨ÖªÓÃ»§ÒÑ¾­½øĞĞµ½·½·¨
-             *          6 INFO ¸üÒ»°ã»¯µÄÍ¨Öª
-             *          7 DEBUG µ÷ÊÔÏûÏ¢
+             *  @param {*} str ç”¨äºæ‰“å°çš„ä¿¡æ¯ï¼Œä¸æ˜¯å­—ç¬¦ä¸²å°†è½¬æ¢ä¸ºå­—ç¬¦ä¸²
+             *  @param {Boolean} page ? æ˜¯å¦æ‰“å°åˆ°é¡µé¢
+             *  @param {number} level ? é€šè¿‡å®ƒæ¥è¿‡æ»¤æ˜¾ç¤ºåˆ°æ§åˆ¶å°çš„æ—¥å¿—æ•°é‡ã€‚
+             *          0ä¸ºæœ€å°‘ï¼Œåªæ˜¾ç¤ºæœ€è‡´å‘½çš„é”™è¯¯ï¼›7ï¼Œåˆ™è¿æ™®é€šçš„è°ƒè¯•æ¶ˆæ¯ä¹Ÿæ‰“å°å‡ºæ¥ã€‚
+             *          æ˜¾ç¤ºç®—æ³•ä¸º level <= $.config.levelã€‚
+             *          è¿™ä¸ª$.config.levelé»˜è®¤ä¸º9ã€‚ä¸‹é¢æ˜¯levelå„ä»£è¡¨çš„å«ä¹‰ã€‚
+             *          0 EMERGENCY è‡´å‘½é”™è¯¯,æ¡†æ¶å´©æºƒ
+             *          1 ALERT éœ€è¦ç«‹å³é‡‡å–æªæ–½è¿›è¡Œä¿®å¤
+             *          2 CRITICAL å±æ€¥é”™è¯¯
+             *          3 ERROR å¼‚å¸¸
+             *          4 WARNING è­¦å‘Š
+             *          5 NOTICE é€šçŸ¥ç”¨æˆ·å·²ç»è¿›è¡Œåˆ°æ–¹æ³•
+             *          6 INFO æ›´ä¸€èˆ¬åŒ–çš„é€šçŸ¥
+             *          7 DEBUG è°ƒè¯•æ¶ˆæ¯
              *  @returns {string}
              *  @api public
              */
@@ -197,7 +197,7 @@ armer = window.jQuery || window.Zepto;
                         $(function() {
                             var div = DOC.createElement("pre");
                             div.className = "mass_sys_log";
-                            div.innerHTML = str + ""; //È·±£Îª×Ö·û´®
+                            div.innerHTML = str + ""; //ç¡®ä¿ä¸ºå­—ç¬¦ä¸²
                             DOC.body.appendChild(div);
                         });
                     } else if (global.opera) {
@@ -218,7 +218,7 @@ armer = window.jQuery || window.Zepto;
                 for (var i = 0; i <= obj.length; i++) {
                     if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
                         continue
-                    // ²»ÔÊĞíÒ»°ãÊı×é
+                    // ä¸å…è®¸ä¸€èˆ¬æ•°ç»„
                     result[obj[i].name] = result[obj[i].name] || [];
                     result[obj[i].name].push(ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked) ? obj[i].value : '');
                 }
@@ -230,15 +230,15 @@ armer = window.jQuery || window.Zepto;
                 return result
             },
             /**
-             * ĞòÁĞ»¯Í¨¹ı¶ÔÏó»òÊı×é²úÉúÀàËÆcookie¡¢getµÈ×Ö·û´®
+             * åºåˆ—åŒ–é€šè¿‡å¯¹è±¡æˆ–æ•°ç»„äº§ç”Ÿç±»ä¼¼cookieã€getç­‰å­—ç¬¦ä¸²
              * @param {Object|Array.Object} obj
-             * @param {string} [separator] ·Ö¸î·û£¬Ä¬ÈÏ&
-             * @param {string} [assignment] ¸³Öµ·û£¬Ä¬ÈÏ=
-             * @param {boolean} [encode] ÊÇ·ñ½øĞĞ±àÂë, Ä¬ÈÏtrue
+             * @param {string} [separator] åˆ†å‰²ç¬¦ï¼Œé»˜è®¤&
+             * @param {string} [assignment] èµ‹å€¼ç¬¦ï¼Œé»˜è®¤=
+             * @param {boolean} [encode] æ˜¯å¦è¿›è¡Œç¼–ç , é»˜è®¤true
              * @returns {string}
              */
             serialize: function(){
-                // ²Â²âÖµ·µ»Ø²»Í¬½á¹û
+                // çŒœæµ‹å€¼è¿”å›ä¸åŒç»“æœ
                 function assume(value){
                     if ('undefined' == typeof value) return;
                     else if (null == value) return '';
@@ -289,23 +289,23 @@ armer = window.jQuery || window.Zepto;
                 }
             }(),
             /**
-             * ·´ĞòÁĞ»¯Í¨¹ı¶ÔÏó
+             * ååºåˆ—åŒ–é€šè¿‡å¯¹è±¡
              * @param {String} str
-             * @param {String} [separator] ·Ö¸î·û£¬Ä¬ÈÏ&
-             * @param {String} [assignment] ¸³Öµ·û£¬Ä¬ÈÏ=
+             * @param {String} [separator] åˆ†å‰²ç¬¦ï¼Œé»˜è®¤&
+             * @param {String} [assignment] èµ‹å€¼ç¬¦ï¼Œé»˜è®¤=
              * @returns {Object|Array}
              */
             unserialize: function () {
                 var r = /[\n\r\s]/g
                 function assume (value){
                     if (value.indexOf('{') == 0) {
-                        // Ô¤²âÊÇ¶ÔÏó»òÕßÊı×é
+                        // é¢„æµ‹æ˜¯å¯¹è±¡æˆ–è€…æ•°ç»„
                         return decodeURIComponent(JSON.parse(value));
                     } else if (value == '') {
-                        //Îª¿Õ
+                        //ä¸ºç©º
                         return null
                     }/* else if (!isNaN(Number(value).valueOf())) {
-                        //Êı×Ö
+                        //æ•°å­—
                         return Number(value).valueOf();
                     }*/ else if (value == 'true') {
                         return true
@@ -345,18 +345,18 @@ armer = window.jQuery || window.Zepto;
                     return result;
                 }
             }(),
-            // ÅĞ¶ÏÒ»¸ö¶ÔÏóÊÇ²»ÊÇjQuery.Deferred
+            // åˆ¤æ–­ä¸€ä¸ªå¯¹è±¡æ˜¯ä¸æ˜¯jQuery.Deferred
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
             },
             /**
-             * ÊÇ·ñÎªÀàÊı×é£¨Array, Arguments, NodeListÓëÓµÓĞ·Ç¸ºÕûÊıµÄlengthÊôĞÔµÄObject¶ÔÏó£©
-             * Èç¹ûµÚ¶ş¸ö²ÎÊıÎªtrue,Ôò°üº¬ÓĞ×Ö·û´®
+             * æ˜¯å¦ä¸ºç±»æ•°ç»„ï¼ˆArray, Arguments, NodeListä¸æ‹¥æœ‰éè´Ÿæ•´æ•°çš„lengthå±æ€§çš„Objectå¯¹è±¡ï¼‰
+             * å¦‚æœç¬¬äºŒä¸ªå‚æ•°ä¸ºtrue,åˆ™åŒ…å«æœ‰å­—ç¬¦ä¸²
              * @param {Object} obj
              * @param {Boolean} [includeString]
              * @returns {Boolean}
              */
-            isArrayLike: function(obj, includeString) { //ÊÇ·ñ°üº¬×Ö·û´®
+            isArrayLike: function(obj, includeString) { //æ˜¯å¦åŒ…å«å­—ç¬¦ä¸²
                 var type = $.stringType(obj);
                 if (includeString && type === "String") {
                     return true;
@@ -371,16 +371,16 @@ armer = window.jQuery || window.Zepto;
                 }
                 if (type === "Object") {
                     var i = obj.length;
-                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && hasOwn.call(obj, '0'); //·Ç¸ºÕûÊı
+                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && hasOwn.call(obj, '0'); //éè´Ÿæ•´æ•°
                 }
                 return false;
             },
 
             /**
-             * Éú³ÉÒ»¸öÕûÊıÊı×é
-             * @param {number} [start] Ä¬ÈÏÎª0
-             * @param {number} [end] Ä¬ÈÏÎª0
-             * @param {number} [step] Ä¬ÈÏÎª1
+             * ç”Ÿæˆä¸€ä¸ªæ•´æ•°æ•°ç»„
+             * @param {number} [start] é»˜è®¤ä¸º0
+             * @param {number} [end] é»˜è®¤ä¸º0
+             * @param {number} [step] é»˜è®¤ä¸º1
              * @returns {array}
              */
             range: function(start, end, step) {
@@ -401,7 +401,7 @@ armer = window.jQuery || window.Zepto;
             },
             parseFragment: function(html){return $.buildFragment([html], document)},
             /**
-             * ĞŞ¸ÄnodeµÄinnerHTML£¨È·±£ÀÏÊ½IEÊ¹ÓÃ£©
+             * ä¿®æ”¹nodeçš„innerHTMLï¼ˆç¡®ä¿è€å¼IEä½¿ç”¨ï¼‰
              * @param node
              * @param html
              */
@@ -417,7 +417,7 @@ armer = window.jQuery || window.Zepto;
                 this.clearChild(node).appendChild(a)
             },
             /**
-             * Çå³ınodeÀï±ßËùÓĞ×ÓÔªËØ
+             * æ¸…é™¤nodeé‡Œè¾¹æ‰€æœ‰å­å…ƒç´ 
              * @param node
              * @returns {*}
              */
@@ -428,8 +428,8 @@ armer = window.jQuery || window.Zepto;
                 return node
             },
             /**
-             * ¼ÆËãÄ¬ÈÏdisplay
-             * @param {string} nodeName ½ÚµãÃû×Ö
+             * è®¡ç®—é»˜è®¤display
+             * @param {string} nodeName èŠ‚ç‚¹åå­—
              * @returns {string}
              */
             defaultDisplay: (function(){
@@ -437,7 +437,7 @@ armer = window.jQuery || window.Zepto;
                 $.extend(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
                 return function parseDisplay(nodeName, val) {
-                    //ÓÃÓÚÈ¡µÃ´ËÀà±êÇ©µÄÄ¬ÈÏdisplayÖµ
+                    //ç”¨äºå–å¾—æ­¤ç±»æ ‡ç­¾çš„é»˜è®¤displayå€¼
                     nodeName = nodeName.toLowerCase()
                     if (!cacheDisplay[nodeName]) {
                         var node = DOC.createElement(nodeName)
@@ -456,15 +456,15 @@ armer = window.jQuery || window.Zepto;
             })()
         });
 
-        // TODO(wuhf): »º´æÆ÷
-        //ÊÓä¯ÀÀÆ÷Çé¿ö²ÉÓÃ×î¿ìµÄÒì²½»Øµ÷
+        // TODO(wuhf): ç¼“å­˜å™¨
+        //è§†æµè§ˆå™¨æƒ…å†µé‡‡ç”¨æœ€å¿«çš„å¼‚æ­¥å›è°ƒ
         $.nextTick = global.setImmediate ? setImmediate.bind(global) : function(callback) {
             setTimeout(callback, 0)//IE10-11 or W3C
         };
 
     })();
 
-    // TODO(wuhf): Ôö¼ÓajaxÎÄ¼şºó×ºÓëÀàĞÍµÄÓ³Éä
+    // TODO(wuhf): å¢åŠ ajaxæ–‡ä»¶åç¼€ä¸ç±»å‹çš„æ˜ å°„
     // ========================================================
     $.ajax.ext2Type = {
         js: 'script',
@@ -478,11 +478,11 @@ armer = window.jQuery || window.Zepto;
         swf: 'flash'
     };
 
-    // TODO(wuhf): URL½âÊÍÆ÷
+    // TODO(wuhf): URLè§£é‡Šå™¨
     // ========================================================
     (function(){
-        // url½âÊÍ¹æ·¶
-        // ²Î¿¼RFC3986 http://tools.ietf.org/html/rfc3986
+        // urlè§£é‡Šè§„èŒƒ
+        // å‚è€ƒRFC3986 http://tools.ietf.org/html/rfc3986
         var rHash = /#[^#?]*/;
         var rSearch = /\?[^#?]*/;
         var rProtocol = /^\w*:/;
@@ -497,7 +497,7 @@ armer = window.jQuery || window.Zepto;
         };
         var setProtocol = function(parent, self){
             parent = parent.replace(rProtocol, function(protocol){
-                //ÉèÖÃprotocol;
+                //è®¾ç½®protocol;
                 self._protocol = protocol;
                 return '';
             });
@@ -511,7 +511,7 @@ armer = window.jQuery || window.Zepto;
                 self._port = protocol2port[self._protocol];
             } else {
                 if (tmp = str.match(rPort)) {
-                    // Èç¹ûÓĞ¶Ë¿ÚºÅ
+                    // å¦‚æœæœ‰ç«¯å£å·
                     self._hostname = str.substr(0, str.indexOf(tmp[0]));
                     self._port = tmp[1];
                 } else {
@@ -525,19 +525,19 @@ armer = window.jQuery || window.Zepto;
             }
         };
         /**
-         * Éú³ÉÒ»¸öURL¶ÔÏó
-         * @param url Ò»¸ö¾ø¶ÔµØÖ·»òÕßÒ»¸öÏà¶ÔµØÖ·
-         * @param [parent] Ïà¶ÔµØÖ·µÄÇé¿ö£¬¿ÉÒÔÉèÖÃËüµÄ¸¸Â·¾¶
+         * ç”Ÿæˆä¸€ä¸ªURLå¯¹è±¡
+         * @param url ä¸€ä¸ªç»å¯¹åœ°å€æˆ–è€…ä¸€ä¸ªç›¸å¯¹åœ°å€
+         * @param [parent] ç›¸å¯¹åœ°å€çš„æƒ…å†µï¼Œå¯ä»¥è®¾ç½®å®ƒçš„çˆ¶è·¯å¾„
          * @param [basePath]
          * @returns {URL}
          * @constructor
          */
         $.URL = function(url, parent){
             var URL = arguments.callee;
-            // ÏÈ½«parentÂ·¾¶×ªĞĞÎª¾ø¶ÔÂ·¾¶
+            // å…ˆå°†parentè·¯å¾„è½¬è¡Œä¸ºç»å¯¹è·¯å¾„
             parent = parent ? URL.absolutize(parent) : null;
             if (!(this instanceof URL)) return new URL(url, parent);
-            // ·ÖÎöurl
+            // åˆ†æurl
             this.init(url, parent);
         };
         $.URL.prototype = {
@@ -545,7 +545,7 @@ armer = window.jQuery || window.Zepto;
             init: function(path, parent){
                 //alert(basePath);
                 var self = this, tmp;
-                // »ñÈ¡ search
+                // è·å– search
                 path = path.replace(rSearch, function(search){
                     search = search.replace('?', '');
                     search = $.unserialize(search);
@@ -554,26 +554,26 @@ armer = window.jQuery || window.Zepto;
                 });
                 self._search = self._search || {};
                 self._search.toString = function(){var s = $.serialize(this); return s == '' ? '' : '?' + s};
-                // »ñÈ¡ hash
+                // è·å– hash
                 path = path.replace(rHash, function(hash){
                     self._hash = hash;
                     return '';
                 });
                 self._hash = self._hash || '';
-                // »ñÈ¡ protocol
+                // è·å– protocol
                 path = path.replace(rProtocol, function(protocol){
                     self._protocol = protocol;
                     return '';
                 });
-                // Èç¹ûÄ¾ÓĞĞ­Òé
+                // å¦‚æœæœ¨æœ‰åè®®
                 if (!self._protocol) {
-                    // Èç¹ûÃ»ÓĞparentÄÇÃ´parent¾ÍÊÇlocation
+                    // å¦‚æœæ²¡æœ‰parenté‚£ä¹ˆparentå°±æ˜¯location
                     parent = parent || location.href;
                     //http://p.tgnet.com/Office/MyInfo.aspx
                     var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
                     //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
-                    // Ôò»ñÈ¡Ğ­Òé
-                    // Èç¹ûÄ¾ÓĞÓòÃûºó×º£¬ÔòÅĞ¶ÏÎªÏà¶ÔµØÖ·
+                    // åˆ™è·å–åè®®
+                    // å¦‚æœæœ¨æœ‰åŸŸååç¼€ï¼Œåˆ™åˆ¤æ–­ä¸ºç›¸å¯¹åœ°å€
                     if (!rSuffix.test(path)) {
                         /*
                          alert(path)
@@ -581,20 +581,20 @@ armer = window.jQuery || window.Zepto;
                          alert(basePath)
                          */
                         tmp = path.charAt(0);
-                        // ./css css ÕâÖÖÇé¿ö Ïà¶ÔÓÚ¡¾µ±Ç°Â·¾¶¡¿µÄĞÖµÜÂ·¾¶
-                        // /css ÕâÁ½ÖÖÇé¿ö Ïà¶ÔÓÚ¡¾¸ùÂ·¾¶¡¿
-                        // ../css ÕâÖÖÇé¿ö Ïà¶ÔÓÚ¡¾µ±Ç°Â·¾¶¡¿µÄ¸¸Â·¾¶
+                        // ./css css è¿™ç§æƒ…å†µ ç›¸å¯¹äºã€å½“å‰è·¯å¾„ã€‘çš„å…„å¼Ÿè·¯å¾„
+                        // /css è¿™ä¸¤ç§æƒ…å†µ ç›¸å¯¹äºã€æ ¹è·¯å¾„ã€‘
+                        // ../css è¿™ç§æƒ…å†µ ç›¸å¯¹äºã€å½“å‰è·¯å¾„ã€‘çš„çˆ¶è·¯å¾„
 
                         if (path.slice(0, 2) === './') {
-                            //Ïà¶ÔÓÚĞÖµÜÂ·¾¶
+                            //ç›¸å¯¹äºå…„å¼Ÿè·¯å¾„
                             path = setProtocol(parent, self) + path.slice(1);
                         } else if (tmp !== "." && tmp !== '/') {
-                            //Ïà¶ÔÓÚĞÖµÜÂ·¾¶
+                            //ç›¸å¯¹äºå…„å¼Ÿè·¯å¾„
                             path = setProtocol(parent, self) + '/' + path;
                         } else if (tmp == "/") {
                             path = setProtocol(basePath, self) + path;
                         } else if (path.slice(0, 2) === '..') {
-                            //Ïà¶ÔÓÚ¸¸Â·¾¶
+                            //ç›¸å¯¹äºçˆ¶è·¯å¾„
                             var arr = setProtocol(parent, self).split('/');
                             tmp = path.replace(/\.\.\//g, function() {
                                 arr.pop();
@@ -659,7 +659,7 @@ armer = window.jQuery || window.Zepto;
                 return r;
             },
             /**
-             * »ñÈ¡Â·¾¶£¬·µ»Ø
+             * è·å–è·¯å¾„ï¼Œè¿”å›
              * @param index
              * @param value
              * @returns {*}
@@ -696,8 +696,8 @@ armer = window.jQuery || window.Zepto;
             },
             href: function(url){},
             /**
-             * ½«URL¶ÔÏó×ª»»ÎªÒ»¸öHTMLAnchorElement¶ÔÏó
-             * @param {string=} innerHTML ×÷ÎªanchorÔªËØµÄinnerHTMLÄÚÈİ
+             * å°†URLå¯¹è±¡è½¬æ¢ä¸ºä¸€ä¸ªHTMLAnchorElementå¯¹è±¡
+             * @param {string=} innerHTML ä½œä¸ºanchorå…ƒç´ çš„innerHTMLå†…å®¹
              * @returns {HTMLElement}
              */
             anchor: function(innerHTML){
@@ -718,7 +718,7 @@ armer = window.jQuery || window.Zepto;
         }
     })();
 
-    // TODO(wuhf): AMD/CMD¼ÓÔØÆ÷
+    // TODO(wuhf): AMD/CMDåŠ è½½å™¨
     // ========================================================
     (function () {
         var modules = {
@@ -729,9 +729,9 @@ armer = window.jQuery || window.Zepto;
         var currentMod = null;
         var currentParent = null;
         var currentUrl = null;
-        // Õâ¸ö±äÁ¿ÓÃÓÚ´¢´ærequireµÄÊ±ºòµ±Ç°ÇëÇóµÄÎ»ÖÃÀ´È·¶¨ÒÀÀµµÄÎ»ÖÃ
+        // è¿™ä¸ªå˜é‡ç”¨äºå‚¨å­˜requireçš„æ—¶å€™å½“å‰è¯·æ±‚çš„ä½ç½®æ¥ç¡®å®šä¾èµ–çš„ä½ç½®
         var requesting = {};
-        // Í¨¹ırequireÕıÔÚÇëÇóµÄÄ£¿é
+        // é€šè¿‡requireæ­£åœ¨è¯·æ±‚çš„æ¨¡å—
         var defaults = {
             baseUrl : location.href,
             ext : 'js',
@@ -750,15 +750,15 @@ armer = window.jQuery || window.Zepto;
                     },
                     callback: function(){
                         var that = this;
-                        // Ã»ÓĞfactory Ö¤Ã÷Ã»ÓĞÍ¨¹ıdefine£¬·µ»ØÔ­Ê¼Êı¾İ;
+                        // æ²¡æœ‰factory è¯æ˜æ²¡æœ‰é€šè¿‡defineï¼Œè¿”å›åŸå§‹æ•°æ®;
                         if (!this.factory) this.factory = function(){return that.originData};
                         var fn = this.factory.toString(), ret;
-                        // Èç¹ûfactory²»ÊÇfunction
+                        // å¦‚æœfactoryä¸æ˜¯function
                         if (typeof this.factory !== 'function') {
-                            //JSONP ĞÎÊ½
+                            //JSONP å½¢å¼
                             this.exports = this.factory;
                         } else if (!!~fn.indexOf('exports') || !!~fn.indexOf('require')) {
-                            // CMD Èç¹ûfactory°üº¬exports
+                            // CMD å¦‚æœfactoryåŒ…å«exports
                             ret = this.factory.apply(this, [require, this.exports, this]);
                             if (ret)
                                 this.exports = ret;
@@ -772,7 +772,7 @@ armer = window.jQuery || window.Zepto;
             }
         };
 
-        // ¹¹ÔìÄ£¿é
+        // æ„é€ æ¨¡å—
         require.Model = function Model(config){
             $.extend(this, config);
             if (this.id) modules[this.id] = this;
@@ -780,9 +780,9 @@ armer = window.jQuery || window.Zepto;
             this.exports = {};
         };
         require.Model.prototype = {
-            // ´¦Àífactory
+            // å¤„ç†factory
             fire: function(data){
-                // Ê¹ÓÃshimÄ£Ê½
+                // ä½¿ç”¨shimæ¨¡å¼
                 var mod = this;
                 var shim = defaults.shim[mod.id] || {};
                 if ($.isArray(shim))
@@ -806,7 +806,7 @@ armer = window.jQuery || window.Zepto;
                     currentParent = null;
                 } else success();
 
-                // ÕâÁ½¸öÊÇÎªCMD·şÎñµÄ£¬Ö»¶Á
+                // è¿™ä¸¤ä¸ªæ˜¯ä¸ºCMDæœåŠ¡çš„ï¼Œåªè¯»
                 mod.dependencies = mod.deps;
                 mod.uri = mod.url;
             },
@@ -825,40 +825,40 @@ armer = window.jQuery || window.Zepto;
         function parseDep(config) {
             var mod;
             if (typeof config == 'string') {
-                // ´æÔÚÍ¬ÃûÄ£¿é
+                // å­˜åœ¨åŒåæ¨¡å—
                 if (!(mod = modules[config])) {
-                    // ²»´æÔÚÔòÊÇĞÂµÄÄ£¿é
+                    // ä¸å­˜åœ¨åˆ™æ˜¯æ–°çš„æ¨¡å—
                     config = analysisPath(config, currentParent || defaults.baseUrl);
                 }
             }
             if (mod) {
                 1;
-                //Èç¹ûÓĞmodÖ¤Ã÷ÒÑ¾­Í¨¹ıÍ¬ÃûÄ£¿éµÄif·ÖÖ§
+                //å¦‚æœæœ‰modè¯æ˜å·²ç»é€šè¿‡åŒåæ¨¡å—çš„ifåˆ†æ”¯
             } else if ($.isDeferred(config)) {
                 var id;
                 if (config.modelName && modules[config.modelName])
                     mod = modules[config.modelName];
                 else {
-                    // Èç¹ûÊÇÒ»¸ödfd£¬ÔòÍ¨¹ıdfd²úÉúÒ»¸öÄäÃûÄ£¿é
+                    // å¦‚æœæ˜¯ä¸€ä¸ªdfdï¼Œåˆ™é€šè¿‡dfdäº§ç”Ÿä¸€ä¸ªåŒ¿åæ¨¡å—
                     id = 'anonymousModel' + $.now();
                     mod = new require.Model({dfd: config, id: id});
                     config.modelName = id;
                 }
             }
             else if (typeof config == 'object') {
-                // ´¦ÀíÍ¬ÑùµØÖ·Í¬Ñù·½Ê½¼ÓÔØµ«²»Í¬idµÄÄ£¿é
+                // å¤„ç†åŒæ ·åœ°å€åŒæ ·æ–¹å¼åŠ è½½ä½†ä¸åŒidçš„æ¨¡å—
                 if (!(mod = modules[config.method + config.url]))
                     mod = new require.Model(config);
-                // Ä£¿é×÷Îª²ÎÊıÇé¿ö
+                // æ¨¡å—ä½œä¸ºå‚æ•°æƒ…å†µ
             } else if (typeof config == 'string')
                 mod = new require.Model({url: config})
 
             return mod;
         }
         /**
-         * ÇëÇóÄ£¿é
-         * @param deps ÒÀÀµÁĞ±í
-         * @param callback ÒÀÀµ¼ÓÔØ³É¹¦ºóÖ´ĞĞµÄ»Øµ÷º¯Êı
+         * è¯·æ±‚æ¨¡å—
+         * @param deps ä¾èµ–åˆ—è¡¨
+         * @param callback ä¾èµ–åŠ è½½æˆåŠŸåæ‰§è¡Œçš„å›è°ƒå‡½æ•°
          * @returns {$.Deferred.promise}
          */
 
@@ -868,10 +868,10 @@ armer = window.jQuery || window.Zepto;
             for (var i = 0; i < deps.length; i++) {
                 mod = parseDep(deps[i]);
                 if (!mod.dfd) {
-                    // ´¦ÀíĞÂ½¨µÄÄ£¿é
+                    // å¤„ç†æ–°å»ºçš„æ¨¡å—
                     mod.dfd = $.Deferred();
                     requesting[mod.url] = mod;
-                    // Èç¹ûÄ£¿éfactoryÃ»ÓĞ¶¨Òå£¬ÄÇÃ´¿ÉÒÔÅĞ¶Ï³öÊÇÍ¨¹ıÒì²½¼ÓÔØÒÑ´æÔÚµ«Î´ÇëÇó³É¹¦µÄÄ£¿é
+                    // å¦‚æœæ¨¡å—factoryæ²¡æœ‰å®šä¹‰ï¼Œé‚£ä¹ˆå¯ä»¥åˆ¤æ–­å‡ºæ˜¯é€šè¿‡å¼‚æ­¥åŠ è½½å·²å­˜åœ¨ä½†æœªè¯·æ±‚æˆåŠŸçš„æ¨¡å—
                     if (!mod.factory)
                         (function(mod){
                             var options = {
@@ -906,7 +906,7 @@ armer = window.jQuery || window.Zepto;
                             };
                             $.ajax(options);
                         })(mod);
-                    // Èç¹ûfactoryÒÑ¾­¶¨Òå¹ı£¬ÄÇÃ´¾ÍÖ±½Ó´¦Àí¸ÃÄ£¿é
+                    // å¦‚æœfactoryå·²ç»å®šä¹‰è¿‡ï¼Œé‚£ä¹ˆå°±ç›´æ¥å¤„ç†è¯¥æ¨¡å—
                     else mod.fire();
                 }
                 mDps.push(mod.dfd);
@@ -915,7 +915,7 @@ armer = window.jQuery || window.Zepto;
         }
 
         function require(deps, callback, errorCallback){
-            // ¼æÈİCMDÄ£Ê½
+            // å…¼å®¹CMDæ¨¡å¼
             if (!callback) {
                 if (typeof modules[deps] == 'object')
                     return modules[deps].exports;
@@ -930,9 +930,9 @@ armer = window.jQuery || window.Zepto;
         }
         /**
          *
-         * @param id Ä£¿éidÓÃÓÚ¼ÇÂ¼»º´æÕâ¸öÄ£¿é
-         * @param [deps] ÒÀÀµÁĞ±í£¬Õâ¸öÄ£¿éĞèÒªÒÀÀµÄÇĞ©Ä£¿é
-         * @param factory ¹¤³§£¬ÓÃÓÚ´¦Àí·µ»ØµÄÄ£¿é
+         * @param id æ¨¡å—idç”¨äºè®°å½•ç¼“å­˜è¿™ä¸ªæ¨¡å—
+         * @param [deps] ä¾èµ–åˆ—è¡¨ï¼Œè¿™ä¸ªæ¨¡å—éœ€è¦ä¾èµ–é‚£äº›æ¨¡å—
+         * @param factory å·¥å‚ï¼Œç”¨äºå¤„ç†è¿”å›çš„æ¨¡å—
          * @returns {Model}
          */
         function define(id, deps, factory){
@@ -948,17 +948,17 @@ armer = window.jQuery || window.Zepto;
             var mod, url;
 
             url = currentUrl || currentScriptURL();
-            // Èç¹ûÕıÔÚÇëÇóÕâ¸öjs
+            // å¦‚æœæ­£åœ¨è¯·æ±‚è¿™ä¸ªjs
             if (mod = requesting[url]) {
                 if (id && id !== mod.id) {
-                    // Èç¹ûdefineµÄÃû×Ö²»Ò»Ñù£¬¼ÇÂ¼bmod×÷Îªºó±¸Ä£¿é£¬µ±ÎÄ¼şÇëÇóÍê±ÏÈÔÈ»Ã»ÓĞÍ¬ÃûÄ£¿é£¬Ôò×îºóÒ»¸öºó±¸Ä£¿éÎª¸ÃÄ£¿é
+                    // å¦‚æœdefineçš„åå­—ä¸ä¸€æ ·ï¼Œè®°å½•bmodä½œä¸ºåå¤‡æ¨¡å—ï¼Œå½“æ–‡ä»¶è¯·æ±‚å®Œæ¯•ä»ç„¶æ²¡æœ‰åŒåæ¨¡å—ï¼Œåˆ™æœ€åä¸€ä¸ªåå¤‡æ¨¡å—ä¸ºè¯¥æ¨¡å—
                     mod = new require.Model(config(id, url));
                     requesting[url].bmod = mod;
                 } else {
                     delete mod.bmod;
                     delete requesting[url]
                 }
-            } else //Èç¹ûÃ»ÓĞÇëÇóÕâ¸öjs
+            } else //å¦‚æœæ²¡æœ‰è¯·æ±‚è¿™ä¸ªjs
                 mod = new require.Model(config(id, url));
 
             mod.deps = deps;
@@ -967,15 +967,15 @@ armer = window.jQuery || window.Zepto;
         }
 
         /**
-         * »ñÈ¡ÔËĞĞ´Ë´úÂëËùÔÚµÄjsµÄurl
+         * è·å–è¿è¡Œæ­¤ä»£ç æ‰€åœ¨çš„jsçš„url
          * @returns {string}
          */
         function currentScriptURL(){
-            //È¡µÃÕıÔÚ½âÎöµÄscript½Úµã
+            //å–å¾—æ­£åœ¨è§£æçš„scriptèŠ‚ç‚¹
             if(document.currentScript) { //firefox 4+
                 return document.currentScript.src || location.href;
             }
-            //Ö»ÔÚhead±êÇ©ÖĞÑ°ÕÒ
+            //åªåœ¨headæ ‡ç­¾ä¸­å¯»æ‰¾
             var nodes = document.getElementsByTagName("script");
             for(var i = 0, node; node = nodes[i++];) {
                 if(node.readyState === "interactive") {
@@ -984,22 +984,22 @@ armer = window.jQuery || window.Zepto;
                     else return location.href
                 }
             }
-            // ²Î¿¼ https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // å‚è€ƒ https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack;
             try {
-                //Ç¿ÖÆ±¨´í,ÒÔ±ã²¶»ñe.stack
+                //å¼ºåˆ¶æŠ¥é”™,ä»¥ä¾¿æ•è·e.stack
                 throw new Error();
             } catch(e) {
-                //safariµÄ´íÎó¶ÔÏóÖ»ÓĞline,sourceId,sourceURL
+                //safariçš„é”™è¯¯å¯¹è±¡åªæœ‰line,sourceId,sourceURL
                 stack = e.stack;
 
                 if(!stack && window.opera){
-                    //opera 9Ã»ÓĞe.stack,µ«ÓĞe.Backtrace,µ«²»ÄÜÖ±½ÓÈ¡µÃ,ĞèÒª¶Ôe¶ÔÏó×ª×Ö·û´®½øĞĞ³éÈ¡
+                    //opera 9æ²¡æœ‰e.stack,ä½†æœ‰e.Backtrace,ä½†ä¸èƒ½ç›´æ¥å–å¾—,éœ€è¦å¯¹eå¯¹è±¡è½¬å­—ç¬¦ä¸²è¿›è¡ŒæŠ½å–
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
                 }
             }
             if(stack) {
-                /**e.stack×îºóÒ»ĞĞÔÚËùÓĞÖ§³ÖµÄä¯ÀÀÆ÷´óÖÂÈçÏÂ:
+                /**e.stackæœ€åä¸€è¡Œåœ¨æ‰€æœ‰æ”¯æŒçš„æµè§ˆå™¨å¤§è‡´å¦‚ä¸‹:
                  *chrome23:
                  * at http://113.93.50.63/data.js:4:1
                  *firefox17:
@@ -1009,10 +1009,10 @@ armer = window.jQuery || window.Zepto;
                  *IE10:
                  *  at Global code (http://113.93.50.63/data.js:4:1)
                  */
-                    //È¡µÃ×îºóÒ»ĞĞ,×îºóÒ»¸ö¿Õ¸ñ»ò@Ö®ºóµÄ²¿·Ö
+                    //å–å¾—æœ€åä¸€è¡Œ,æœ€åä¸€ä¸ªç©ºæ ¼æˆ–@ä¹‹åçš„éƒ¨åˆ†
                 stack = stack.split( /[@ ]/g).pop();
                 stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
-                //È¥µôĞĞºÅÓë»òĞí´æÔÚµÄ³ö´í×Ö·ûÆğÊ¼Î»ÖÃ
+                //å»æ‰è¡Œå·ä¸æˆ–è®¸å­˜åœ¨çš„å‡ºé”™å­—ç¬¦èµ·å§‹ä½ç½®
                 return stack.replace(/(:\d+)?:\d+$/i, "");
             }
         }
@@ -1020,7 +1020,7 @@ armer = window.jQuery || window.Zepto;
             if (url) return {id: id, url: url == location.href ? null : url, method: mod || defaults.defaultMethod};
             var c = {id: id};
             c.url = id.split('!');
-            // ·ÖÎö´¦Àí·½·¨
+            // åˆ†æå¤„ç†æ–¹æ³•
             if (c.url.length == 2) {
                 c.method = c.url[0];
                 c.url = c.url[1];
@@ -1033,7 +1033,7 @@ armer = window.jQuery || window.Zepto;
         function analysisPath(id, parent) {
             var c = $.extend({parent: parent}, config(id))
             if (defaults.paths[id]) {
-                //±ğÃû»úÖÆ
+                //åˆ«åæœºåˆ¶
                 c.url = defaults.paths[id];
                 if (typeof c.url === "object") {
                     //paths
@@ -1050,7 +1050,7 @@ armer = window.jQuery || window.Zepto;
         require.config = function(options){
             $.extend(require.defaults, options)
         };
-        // CMDµÄasync·½·¨Êµ¼ÊÊÇ¾ÍÊÇAMDµÄrequire
+        // CMDçš„asyncæ–¹æ³•å®é™…æ˜¯å°±æ˜¯AMDçš„require
         require.async = require;
         require.resolve = function(url){
             return currentMod.resolve(url);
@@ -1059,7 +1059,7 @@ armer = window.jQuery || window.Zepto;
         global.require = require;
         global.define = define;
 
-        // domready ²å¼ş
+        // domready æ’ä»¶
         defaults.plusin['domready'] = {
             config: function(){
                 var mod = {
@@ -1080,10 +1080,10 @@ armer = window.jQuery || window.Zepto;
         if (dataMain) require([dataMain], $.noop);
     })();
 
-    // »ù±¾ÓïÑÔÀ©³ä
+    // åŸºæœ¬è¯­è¨€æ‰©å……
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
-            //¸ù¾İÖ¸¶¨Ìõ¼ş½øĞĞÅÅĞò£¬Í¨³£ÓÃÓÚ¶ÔÏóÊı×é¡£
+            //æ ¹æ®æŒ‡å®šæ¡ä»¶è¿›è¡Œæ’åºï¼Œé€šå¸¸ç”¨äºå¯¹è±¡æ•°ç»„ã€‚
             trend = typeof trend === "boolean" ? trend : false;
             var array = target.map(function(item, index) {
                 return {
@@ -1099,9 +1099,9 @@ armer = window.jQuery || window.Zepto;
             return $.Array.pluck(array, 'el');
         },
         /**
-         * È¡µÃ¶ÔÏóÊı×éµÄÃ¿¸öÔªËØµÄÖ¸¶¨ÊôĞÔ£¬×é³ÉÊı×é·µ»Ø¡£
-         * @param {Array} target Ä¿±êÊı×é
-         * @param {string} name ĞèÒª³éÈ¡µÄÖµµÄ¼üÃû
+         * å–å¾—å¯¹è±¡æ•°ç»„çš„æ¯ä¸ªå…ƒç´ çš„æŒ‡å®šå±æ€§ï¼Œç»„æˆæ•°ç»„è¿”å›ã€‚
+         * @param {Array} target ç›®æ ‡æ•°ç»„
+         * @param {string} name éœ€è¦æŠ½å–çš„å€¼çš„é”®å
          * @returns {Array}
          */
         pluck: function(target, name) {
@@ -1110,9 +1110,9 @@ armer = window.jQuery || window.Zepto;
             });
         },
         /**
-         * Ö»ÓĞµ±Ç°Êı×é²»´æÔÚ´ËÔªËØÊ±Ö»Ìí¼ÓËü
-         * @param {Array} target Ä¿±êÊı×é
-         * @param {*} el ÔªËØ
+         * åªæœ‰å½“å‰æ•°ç»„ä¸å­˜åœ¨æ­¤å…ƒç´ æ—¶åªæ·»åŠ å®ƒ
+         * @param {Array} target ç›®æ ‡æ•°ç»„
+         * @param {*} el å…ƒç´ 
          * @returns {Array}
          */
         ensure: function(target, el) {
@@ -1125,22 +1125,22 @@ armer = window.jQuery || window.Zepto;
             return target;
         },
         /**
-         * ÒÆ³ıÊı×éÖ¸¶¨ÏÂ±êµÄ³ÉÔ±
-         * @param target Ä¿±êÊı×é
-         * @param index ÏÂ±ê
-         * @returns {boolean} ÊÇ·ñÒÆ³ı³É¹¦
+         * ç§»é™¤æ•°ç»„æŒ‡å®šä¸‹æ ‡çš„æˆå‘˜
+         * @param target ç›®æ ‡æ•°ç»„
+         * @param index ä¸‹æ ‡
+         * @returns {boolean} æ˜¯å¦ç§»é™¤æˆåŠŸ
          */
         removeAt: function(target, index) {
             return !!target.splice(index, 1).length
         },
         /**
-         * ÒÆ³ıÊı×éÀï¶ÔÓ¦ÔªËØ
-         * @param target Ä¿±êÊı×é
-         * @param item ¶ÔÓ¦µÄÔªËØ
-         * @returns {boolean} ÊÇ·ñÉ¾³ı³É¹¦
+         * ç§»é™¤æ•°ç»„é‡Œå¯¹åº”å…ƒç´ 
+         * @param target ç›®æ ‡æ•°ç»„
+         * @param item å¯¹åº”çš„å…ƒç´ 
+         * @returns {boolean} æ˜¯å¦åˆ é™¤æˆåŠŸ
          */
         remove: function(target, item) {
-            //ÒÆ³ıÊı×éÖĞµÚÒ»¸öÆ¥Åä´«²ÎµÄÄÇ¸öÔªËØ£¬·µ»Ø²¼¶û±íÊ¾³É¹¦Óë·ñ¡£
+            //ç§»é™¤æ•°ç»„ä¸­ç¬¬ä¸€ä¸ªåŒ¹é…ä¼ å‚çš„é‚£ä¸ªå…ƒç´ ï¼Œè¿”å›å¸ƒå°”è¡¨ç¤ºæˆåŠŸä¸å¦ã€‚
             var index = target.indexOf(item);
             if (~index)
                 return $.Array.removeAt(target, index);
@@ -1149,10 +1149,10 @@ armer = window.jQuery || window.Zepto;
     }
     $.String = {
         /**
-         * ½ØÈ¡×Ö·û´®
-         * @param target Ä¿±ê×Ö·û´®
-         * @param length ĞÂ×Ö·û´®³¤¶È
-         * @param [truncation] ĞÂ×Ö·û´®µÄ½áÎ²µÄ×Ö¶Î
+         * æˆªå–å­—ç¬¦ä¸²
+         * @param target ç›®æ ‡å­—ç¬¦ä¸²
+         * @param length æ–°å­—ç¬¦ä¸²é•¿åº¦
+         * @param [truncation] æ–°å­—ç¬¦ä¸²çš„ç»“å°¾çš„å­—æ®µ
          * @returns {string}
          */
         truncate: function(target, length, truncation) {
@@ -1161,8 +1161,8 @@ armer = window.jQuery || window.Zepto;
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target);
         },
         /**
-         * ½«×Ö·û´®¾­¹ı html ×ªÒåµÃµ½ÊÊºÏÔÚÒ³ÃæÖĞÏÔÊ¾µÄÄÚÈİ, ÀıÈçÌæ»» < Îª &lt;
-         * @param target Ä¿±ê×Ö·û´®
+         * å°†å­—ç¬¦ä¸²ç»è¿‡ html è½¬ä¹‰å¾—åˆ°é€‚åˆåœ¨é¡µé¢ä¸­æ˜¾ç¤ºçš„å†…å®¹, ä¾‹å¦‚æ›¿æ¢ < ä¸º &lt;
+         * @param target ç›®æ ‡å­—ç¬¦ä¸²
          * @returns {string}
          */
         escapeHTML: function(target) {
@@ -1171,11 +1171,11 @@ armer = window.jQuery || window.Zepto;
     };
     $.Number = {
         /**
-         * ÓëPHPµÄnumber_formatÍêÈ«¼æÈİ
-         * @param number Òª¸ñÊ½»¯µÄÊı×Ö
-         * @param [decimals] ¹æ¶¨¶àÉÙ¸öĞ¡ÊıÎ»
-         * @param [decPoint] ¹æ¶¨ÓÃ×÷Ğ¡ÊıµãµÄ×Ö·û´®£¨Ä¬ÈÏÎª . £©
-         * @param [thousandsSep] ¿ÉÑ¡£¬¹æ¶¨ÓÃ×÷Ç§Î»·Ö¸ô·ûµÄ×Ö·û´®£¨Ä¬ÈÏÎª , £©£¬Èç¹ûÉèÖÃÁË¸Ã²ÎÊı£¬ÄÇÃ´ËùÓĞÆäËû²ÎÊı¶¼ÊÇ±ØĞèµÄ
+         * ä¸PHPçš„number_formatå®Œå…¨å…¼å®¹
+         * @param number è¦æ ¼å¼åŒ–çš„æ•°å­—
+         * @param [decimals] è§„å®šå¤šå°‘ä¸ªå°æ•°ä½
+         * @param [decPoint] è§„å®šç”¨ä½œå°æ•°ç‚¹çš„å­—ç¬¦ä¸²ï¼ˆé»˜è®¤ä¸º . ï¼‰
+         * @param [thousandsSep] å¯é€‰ï¼Œè§„å®šç”¨ä½œåƒä½åˆ†éš”ç¬¦çš„å­—ç¬¦ä¸²ï¼ˆé»˜è®¤ä¸º , ï¼‰ï¼Œå¦‚æœè®¾ç½®äº†è¯¥å‚æ•°ï¼Œé‚£ä¹ˆæ‰€æœ‰å…¶ä»–å‚æ•°éƒ½æ˜¯å¿…éœ€çš„
          * @returns {string}
          * http://kevin.vanzonneveld.net
          */

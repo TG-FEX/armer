@@ -3,29 +3,29 @@
 
     $.Utility = function(){
     return $.extend(function(){},{
-        // ¹Ø±Õ´°¿Ú
+        // å…³é—­çª—å£
         'closeWindow' : function(confirmStr){
             if (confirmStr && !confirm(confirmStr)) return;
             if (document.referrer == "") {
-                if ($.browser.mozilla) return alert("¸Ã´°¿ÚĞèÒª¹Ø±Õ¡£µ«»ğºüä¯ÀÀÆ÷²»Ö§³Ö¹Ø±Õµ¥¶À´°¿Ú£¬ÇëÊÖ¶¯¹Ø±Õ¡£");
+                if ($.browser.mozilla) return alert("è¯¥çª—å£éœ€è¦å…³é—­ã€‚ä½†ç«ç‹æµè§ˆå™¨ä¸æ”¯æŒå…³é—­å•ç‹¬çª—å£ï¼Œè¯·æ‰‹åŠ¨å…³é—­ã€‚");
                 window.opener = '';
                 window.open('','_self');
             }
             window.close();
         },
-        // ÎÄ±¾¸´ÖÆ
+        // æ–‡æœ¬å¤åˆ¶
         'copyText' : function(text, notdebug){
             var copy = true;
             if (window.clipboardData) {
                 window.clipboardData.clearData();
                 window.clipboardData.setData("Text", text);
             }else if (!notdebug) {
-                prompt("·ÇIEä¯ÀÀÆ÷ÇëÓÃCtrl+cÊÖ¶¯¸´ÖÆÁ´½Ó", text);
+                prompt("éIEæµè§ˆå™¨è¯·ç”¨Ctrl+cæ‰‹åŠ¨å¤åˆ¶é“¾æ¥", text);
                 copy = false;
             }
             return copy;
         },
-        // Ìí¼ÓÊÕ²Ø
+        // æ·»åŠ æ”¶è—
         'addFavorite' : function(url,title){
             var url = url || top.location.href;
             var title = title || top.document.title;
@@ -34,7 +34,7 @@
             else if (window.sidebar)  {
                 window.sidebar.addPanel(title, url, "");
             } else {
-                alert("ÊÕ²ØÊ§°Ü£¡ÇëÊ¹ÓÃCtrl+D½øĞĞÊÕ²Ø");
+                alert("æ”¶è—å¤±è´¥ï¼è¯·ä½¿ç”¨Ctrl+Dè¿›è¡Œæ”¶è—");
             }
         }
     })

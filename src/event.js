@@ -21,17 +21,17 @@
     $.EventEmitter.prototype = $.EventEmitter.fn = mul;
 })();
 
-// valuechangeÊÂ¼ş£¬¼àÌıÀ´×Ô¼üÅÌÇÃ´ò£¬¸´ÖÆÔÛÌù£¬´¥ÆÁÊÂ¼ş£¬ÓïÒôÊäÈëµ¼ÖÂµÄ±íµ¥Öµ±ä»¯
+// valuechangeäº‹ä»¶ï¼Œç›‘å¬æ¥è‡ªé”®ç›˜æ•²æ‰“ï¼Œå¤åˆ¶å’±è´´ï¼Œè§¦å±äº‹ä»¶ï¼Œè¯­éŸ³è¾“å…¥å¯¼è‡´çš„è¡¨å•å€¼å˜åŒ–
 /*
  $('input').valuechange(function(e){
- e.newValue; // ĞÂµÄÖµ
- e.oldValue; // ¾ÉµÄÖµ
- e.realEvent; // ´¥·¢±ä»¯µÄÕæÊµÊÂ¼ş
+ e.newValue; // æ–°çš„å€¼
+ e.oldValue; // æ—§çš„å€¼
+ e.realEvent; // è§¦å‘å˜åŒ–çš„çœŸå®äº‹ä»¶
  })
  */
 (function(){
     var DATA = "valuechangeData";
-    //Èç¹ûÖµÇ°ºó·¢Éú¸Ä±ä,´¥·¢°ó¶¨»Øµ÷
+    //å¦‚æœå€¼å‰åå‘ç”Ÿæ”¹å˜,è§¦å‘ç»‘å®šå›è°ƒ
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
@@ -108,7 +108,7 @@
 })();
 
 
-// Ìí¼Óenter,ctrlEnter,backspaceÊÂ¼ş
+// æ·»åŠ enter,ctrlEnter,backspaceäº‹ä»¶
 (function(){
     var keypressEvents = "keydown";
     $.each(["enter", "ctrlenter", "backspace"], function( i, name){
@@ -116,7 +116,7 @@
         $.fn[key] = function( fn ){
             return !fn || $.isFunction( fn ) ?
                 this[fn ? "bind" : "trigger"]( key, fn ) :
-                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //¼æÈİÒÔÇ°µÄenter´úÂë
+                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //å…¼å®¹ä»¥å‰çš„enterä»£ç 
         };
         $.event.special[key] = {
             setup: function(){
@@ -240,10 +240,10 @@
             selector.each(function(){
                 /*
                  $.log(
-                 'thisÊÇ£º' + this,
-                 'targetÊÇ£º' + e.target,
-                 'thisÊÇ·ñ°üº¬target:' + $.contains(this, e.target),
-                 'thisÊÇ·ñtarget:' +  this == e.target
+                 'thisæ˜¯ï¼š' + this,
+                 'targetæ˜¯ï¼š' + e.target,
+                 'thisæ˜¯å¦åŒ…å«target:' + $.contains(this, e.target),
+                 'thisæ˜¯å¦target:' +  this == e.target
                  );
                  */
                 if ($.contains(this, e.target) || $(this)[0] == e.target) {

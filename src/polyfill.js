@@ -1,19 +1,19 @@
 /**
  * =========================================
- * TODO(wuhf): polyFillsÄ£¿é
- * ¡¾ËµÃ÷¡¿
- * ĞŞ¸´ecmaÒÔ¼°javascriptÔÚ²»Í¬ä¯ÀÀÆ÷±íÏÖ²»Í¬µÄÎÊÌâ
+ * TODO(wuhf): polyFillsæ¨¡å—
+ * ã€è¯´æ˜ã€‘
+ * ä¿®å¤ecmaä»¥åŠjavascriptåœ¨ä¸åŒæµè§ˆå™¨è¡¨ç°ä¸åŒçš„é—®é¢˜
  *
- * ¡¾ÒÀÀµÒÔÏÂÎÄ¼ş¡¿
+ * ã€ä¾èµ–ä»¥ä¸‹æ–‡ä»¶ã€‘
  * 1. core.js
  *
- * ¡¾°üº¬ÒÔÏÂÄÚÈİ¡¿
- * 1. ĞŞ¸´ä¯ÀÀÆ÷£¨Ö÷ÒªÕë¶ÔIE£©Ò»Ğ©Ö§³Öµ«±íÏÖ²»ÕıÈ·µÄ·½·¨
- * 2. ecmaV5Óï·¨²¹¶¡ Array.isArray¡¢Array.prototype.forEachµÈ
- * 3. ecmaV6Óï·¨²¹¶¡ String.prototype.repeatµÈ
+ * ã€åŒ…å«ä»¥ä¸‹å†…å®¹ã€‘
+ * 1. ä¿®å¤æµè§ˆå™¨ï¼ˆä¸»è¦é’ˆå¯¹IEï¼‰ä¸€äº›æ”¯æŒä½†è¡¨ç°ä¸æ­£ç¡®çš„æ–¹æ³•
+ * 2. ecmaV5è¯­æ³•è¡¥ä¸ Array.isArrayã€Array.prototype.forEachç­‰
+ * 3. ecmaV6è¯­æ³•è¡¥ä¸ String.prototype.repeatç­‰
  * 4. localstorage
  * 5. json
- * 6. jQueryĞÎÊ½ĞŞ¸´onhashchange
+ * 6. jQueryå½¢å¼ä¿®å¤onhashchange
  * ==========================================
  */
 ;(function(){
@@ -26,8 +26,8 @@
     }) {
         DONT_ENUM = false;
     }
-    //IE8µÄObject.definePropertyÖ»¶ÔDOMÓĞĞ§
-    // ÅĞ¶ÏÊÇ·ñÖ§³ÖdefineProperty
+    //IE8çš„Object.definePropertyåªå¯¹DOMæœ‰æ•ˆ
+    // åˆ¤æ–­æ˜¯å¦æ”¯æŒdefineProperty
     var defineProperty = Object.defineProperty;
     try {
         defineProperty({}, 'a', {
@@ -62,20 +62,20 @@
     if (!Array.isArray) {
 
         //=====================
-        // TODO: ĞŞ¸´¸÷ÖÖbug
+        // TODO: ä¿®å¤å„ç§bug
         //=====================
         //------------------------------------------------
-        //ĞŞÕıIE67ÏÂunshift²»·µ»ØÊı×é³¤¶ÈµÄÎÊÌâ
+        //ä¿®æ­£IE67ä¸‹unshiftä¸è¿”å›æ•°ç»„é•¿åº¦çš„é—®é¢˜
         //http://www.cnblogs.com/rubylouvre/archive/2010/01/14/1647751.html
         if ([].unshift(1) !== 1) {
             var _unshift = Array[P].unshift;
             Array[P].unshift = function () {
                 _unshift.apply(this, arguments);
-                return this.length; //·µ»ØĞÂÊı×éµÄ³¤¶È
+                return this.length; //è¿”å›æ–°æ•°ç»„çš„é•¿åº¦
             }
         }
 
-        //ĞŞ¸´IE splice±ØĞëÓĞµÚ¶ş¸ö²ÎÊıµÄbug
+        //ä¿®å¤IE spliceå¿…é¡»æœ‰ç¬¬äºŒä¸ªå‚æ•°çš„bug
         //http://www.zhuwenbo.net/?p=52
         if ([1, 2, 3].splice(1).length === 0) {
             var _splice = Array[P].splice;
@@ -88,7 +88,7 @@
             }
         }
 
-        // ĞŞ¸´ Date.get/setYear() (IE5-7)
+        // ä¿®å¤ Date.get/setYear() (IE5-7)
         if ((new Date).getYear() > 1900) {
             //http://stackoverflow.com/questions/5763107/javascript-date-getyear-returns-different-result-between-ie-and-firefox-how-to
             Date[P].getYear = function () {
@@ -99,7 +99,7 @@
             };
         }
 
-        // ĞŞ¸´IE6 toFixed Bug
+        // ä¿®å¤IE6 toFixed Bug
         // http://stackoverflow.com/questions/10470810/javascript-tofixed-bug-in-ie6
         if (0.9.toFixed(0) !== '1') {
             Number.prototype.toFixed = function (n) {
@@ -116,8 +116,8 @@
             };
         }
 
-        //  string.substr(start, length)²Î¿¼ start
-        //  Òª³éÈ¡µÄ×Ó´®µÄÆğÊ¼ÏÂ±ê¡£Èç¹ûÊÇÒ»¸ö¸ºÊı£¬ÄÇÃ´¸Ã²ÎÊıÉùÃ÷´Ó×Ö·û´®µÄÎ²²¿¿ªÊ¼ËãÆğµÄÎ»ÖÃ¡£Ò²¾ÍÊÇËµ£¬-1Ö¸¶¨×Ö·û´®ÖĞµÄ×îºóÒ»¸ö×Ö·û£¬-2Ö¸µ¹ÊıµÚ¶ş¸ö×Ö·û£¬ÒÔ´ËÀàÍÆ¡£
+        //  string.substr(start, length)å‚è€ƒ start
+        //  è¦æŠ½å–çš„å­ä¸²çš„èµ·å§‹ä¸‹æ ‡ã€‚å¦‚æœæ˜¯ä¸€ä¸ªè´Ÿæ•°ï¼Œé‚£ä¹ˆè¯¥å‚æ•°å£°æ˜ä»å­—ç¬¦ä¸²çš„å°¾éƒ¨å¼€å§‹ç®—èµ·çš„ä½ç½®ã€‚ä¹Ÿå°±æ˜¯è¯´ï¼Œ-1æŒ‡å®šå­—ç¬¦ä¸²ä¸­çš„æœ€åä¸€ä¸ªå­—ç¬¦ï¼Œ-2æŒ‡å€’æ•°ç¬¬äºŒä¸ªå­—ç¬¦ï¼Œä»¥æ­¤ç±»æ¨ã€‚
         var substr = String.prototype.substr;
         if ('ab'.substr(-1) != 'b') {
             String.prototype.substr = function (start, length) {
@@ -147,13 +147,13 @@
             return false;
         }
 
-        //safari5+ÊÇ°Ñcontains·½·¨·ÅÔÚElement.prototypeÉÏ¶ø²»ÊÇNode.prototype
+        //safari5+æ˜¯æŠŠcontainsæ–¹æ³•æ”¾åœ¨Element.prototypeä¸Šè€Œä¸æ˜¯Node.prototype
         if (!document.documentElement) {
             Node.prototype.contains = function(arg) {
                 return !!(this.compareDocumentPosition(arg) & 16)
             }
         }
-        if (!document.contains) { //IE6-11µÄÎÄµµ¶ÔÏóÃ»ÓĞcontains
+        if (!document.contains) { //IE6-11çš„æ–‡æ¡£å¯¹è±¡æ²¡æœ‰contains
             document.contains = function(b) {
                 return fixContains(this, b)
             }
@@ -161,13 +161,13 @@
 
 
         //=====================================
-        // TODO: ES5²¹³ä²¿·Ö
+        // TODO: ES5è¡¥å……éƒ¨åˆ†
         //=====================================
 
         //=====================
         // TODO: Object
         //=====================
-        //µÚ¶ş¸ö²ÎÊı½öÔÚä¯ÀÀÆ÷Ö§³ÖObject.definePropertiesÊ±¿ÉÓÃ
+        //ç¬¬äºŒä¸ªå‚æ•°ä»…åœ¨æµè§ˆå™¨æ”¯æŒObject.definePropertiesæ—¶å¯ç”¨
         mix(Object, {
             create: function (o) {
                 if (arguments.length > 1) {
@@ -180,7 +180,7 @@
                 bridge.prototype = o;
                 return new bridge();
             },
-            //È¡µÃÆäËùÓĞ¼üÃûÒÔÊı×éĞÎÊ½·µ»Ø
+            //å–å¾—å…¶æ‰€æœ‰é”®åä»¥æ•°ç»„å½¢å¼è¿”å›
             keys: function (obj) { //ecma262v5 15.2.3.14
                 var result = [];
                 for (var key in obj)
@@ -209,7 +209,7 @@
         // TODO: Array
         //=====================
 
-        //ÓÃÓÚ´´½¨javascript1.6 ArrayµÄµü´úÆ÷
+        //ç”¨äºåˆ›å»ºjavascript1.6 Arrayçš„è¿­ä»£å™¨
 
         function iterator(vars, body, ret) {
             var fun = 'for(var ' + vars + 'i=0,n = this.length;i < n;i++){' + body.replace('_', '((i in this) && fn.call(scope,this[i],i,this))') + '}' + ret;
@@ -221,7 +221,7 @@
         };
 
         mix(Array[P], {
-            //¶¨Î»²Ù×÷£¬·µ»ØÊı×éÖĞµÚÒ»¸öµÈÓÚ¸ø¶¨²ÎÊıµÄÔªËØµÄË÷ÒıÖµ¡£
+            //å®šä½æ“ä½œï¼Œè¿”å›æ•°ç»„ä¸­ç¬¬ä¸€ä¸ªç­‰äºç»™å®šå‚æ•°çš„å…ƒç´ çš„ç´¢å¼•å€¼ã€‚
             indexOf: function (item, index) {
                 var n = this.length,
                     i = ~~index;
@@ -232,7 +232,7 @@
                         return i;
                 return -1;
             },
-            //¶¨Î»Òı²Ù×÷£¬Í¬ÉÏ£¬²»¹ıÊÇ´Óºó±éÀú¡£
+            //å®šä½å¼•æ“ä½œï¼ŒåŒä¸Šï¼Œä¸è¿‡æ˜¯ä»åéå†ã€‚
             lastIndexOf: function (item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index;
@@ -243,17 +243,17 @@
                         return i;
                 return -1;
             },
-            //µü´ú²Ù×÷£¬½«Êı×éµÄÔªËØ°¤¸ö¶ù´«ÈëÒ»¸öº¯ÊıÖĞÖ´ĞĞ¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªeach¡£
+            //è¿­ä»£æ“ä½œï¼Œå°†æ•°ç»„çš„å…ƒç´ æŒ¨ä¸ªå„¿ä¼ å…¥ä¸€ä¸ªå‡½æ•°ä¸­æ‰§è¡Œã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºeachã€‚
             forEach: iterator('', '_', ''),
-            //µü´úÀà ÔÚÊı×éÖĞµÄÃ¿¸öÏîÉÏÔËĞĞÒ»¸öº¯Êı£¬Èç¹û´Ëº¯ÊıµÄÖµÎªÕæ£¬Ôò´ËÔªËØ×÷ÎªĞÂÊı×éµÄÔªËØÊÕ¼¯ÆğÀ´£¬²¢·µ»ØĞÂÊı×é
+            //è¿­ä»£ç±» åœ¨æ•°ç»„ä¸­çš„æ¯ä¸ªé¡¹ä¸Šè¿è¡Œä¸€ä¸ªå‡½æ•°ï¼Œå¦‚æœæ­¤å‡½æ•°çš„å€¼ä¸ºçœŸï¼Œåˆ™æ­¤å…ƒç´ ä½œä¸ºæ–°æ•°ç»„çš„å…ƒç´ æ”¶é›†èµ·æ¥ï¼Œå¹¶è¿”å›æ–°æ•°ç»„
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //ÊÕ¼¯²Ù×÷£¬½«Êı×éµÄÔªËØ°¤¸ö¶ù´«ÈëÒ»¸öº¯ÊıÖĞÖ´ĞĞ£¬È»ºó°ÑËüÃÇµÄ·µ»ØÖµ×é³ÉÒ»¸öĞÂÊı×é·µ»Ø¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªcollect¡£
+            //æ”¶é›†æ“ä½œï¼Œå°†æ•°ç»„çš„å…ƒç´ æŒ¨ä¸ªå„¿ä¼ å…¥ä¸€ä¸ªå‡½æ•°ä¸­æ‰§è¡Œï¼Œç„¶åæŠŠå®ƒä»¬çš„è¿”å›å€¼ç»„æˆä¸€ä¸ªæ–°æ•°ç»„è¿”å›ã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºcollectã€‚
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //Ö»ÒªÊı×éÖĞÓĞÒ»¸öÔªËØÂú×ãÌõ¼ş£¨·Å½ø¸ø¶¨º¯Êı·µ»Øtrue£©£¬ÄÇÃ´Ëü¾Í·µ»Øtrue¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªany¡£
+            //åªè¦æ•°ç»„ä¸­æœ‰ä¸€ä¸ªå…ƒç´ æ»¡è¶³æ¡ä»¶ï¼ˆæ”¾è¿›ç»™å®šå‡½æ•°è¿”å›trueï¼‰ï¼Œé‚£ä¹ˆå®ƒå°±è¿”å›trueã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºanyã€‚
             some: iterator('', 'if(_)return true', 'return false'),
-            //Ö»ÓĞÊı×éÖĞµÄÔªËØ¶¼Âú×ãÌõ¼ş£¨·Å½ø¸ø¶¨º¯Êı·µ»Øtrue£©£¬Ëü²Å·µ»Øtrue¡£Ptototype.jsµÄ¶ÔÓ¦Ãû×ÖÎªall¡£
+            //åªæœ‰æ•°ç»„ä¸­çš„å…ƒç´ éƒ½æ»¡è¶³æ¡ä»¶ï¼ˆæ”¾è¿›ç»™å®šå‡½æ•°è¿”å›trueï¼‰ï¼Œå®ƒæ‰è¿”å›trueã€‚Ptototype.jsçš„å¯¹åº”åå­—ä¸ºallã€‚
             every: iterator('', 'if(!_)return false', 'return true'),
-            //¹é»¯Àà javascript1.8  ½«¸ÃÊı×éµÄÃ¿¸öÔªËØºÍÇ°Ò»´Îµ÷ÓÃµÄ½á¹ûÔËĞĞÒ»¸öº¯Êı£¬·µ»Ø×îºóµÄ½á¹û¡£
+            //å½’åŒ–ç±» javascript1.8  å°†è¯¥æ•°ç»„çš„æ¯ä¸ªå…ƒç´ å’Œå‰ä¸€æ¬¡è°ƒç”¨çš„ç»“æœè¿è¡Œä¸€ä¸ªå‡½æ•°ï¼Œè¿”å›æœ€åçš„ç»“æœã€‚
             reduce: function (fn, lastResult, scope) {
                 if (this.length == 0)
                     return lastResult;
@@ -263,7 +263,7 @@
                     result = fn.call(scope, result, this[i], i, this);
                 return result;
             },
-            //¹é»¯Àà javascript1.8 Í¬ÉÏ£¬µ«´ÓÓÒÏò×óÖ´ĞĞ¡£
+            //å½’åŒ–ç±» javascript1.8 åŒä¸Šï¼Œä½†ä»å³å‘å·¦æ‰§è¡Œã€‚
             reduceRight: function (fn, lastResult, scope) {
                 var array = this.concat().reverse();
                 return array.reduce(fn, lastResult, scope);
@@ -278,7 +278,7 @@
         // TODO: String
         //=====================
 
-        //StringÀ©Õ¹
+        //Stringæ‰©å±•
         mix(String[P], {
             //ecma262v5 15.5.4.20
             //http://www.cnblogs.com/rubylouvre/archive/2009/09/18/1568794.html
@@ -317,11 +317,11 @@
     if (!String[P].repeat) {
 
         //=====================================
-        // TODO: ES6²¹³ä²¿·Ö
+        // TODO: ES6è¡¥å……éƒ¨åˆ†
         //=====================================
         mix(String[P], {
             repeat: function (n) {
-                //½«×Ö·û´®ÖØ¸´n±é
+                //å°†å­—ç¬¦ä¸²é‡å¤né
                 var result = "",
                     target = this;
                 while (n > 0) {
@@ -333,15 +333,15 @@
                 return result;
             },
             startsWith: function (str) {
-                //ÅĞ¶¨ÊÇ·ñÒÔ¸ø¶¨×Ö·û´®¿ªÍ·
+                //åˆ¤å®šæ˜¯å¦ä»¥ç»™å®šå­—ç¬¦ä¸²å¼€å¤´
                 return this.indexOf(str) === 0;
             },
             endsWith: function (str) {
-                //ÅĞ¶¨ÊÇ·ñÒÔ¸ø¶¨×Ö·û´®½áÎ²
+                //åˆ¤å®šæ˜¯å¦ä»¥ç»™å®šå­—ç¬¦ä¸²ç»“å°¾
                 return this.lastIndexOf(str) === this.length - str.length;
             },
             contains: function (s, position) {
-                //ÅĞ¶ÏÒ»¸ö×Ö·û´®ÊÇ·ñ°üº¬ÁíÒ»¸ö×Ö·û
+                //åˆ¤æ–­ä¸€ä¸ªå­—ç¬¦ä¸²æ˜¯å¦åŒ…å«å¦ä¸€ä¸ªå­—ç¬¦
                 return ''.indexOf.call(this, s, position >> 0) !== -1;
             }
         });
@@ -398,28 +398,28 @@
 
 
     //TODO: fix localStorage
-    // ±¾µØ´æ´¢µÄ¼æÈİ·½°¸
+    // æœ¬åœ°å­˜å‚¨çš„å…¼å®¹æ–¹æ¡ˆ
     // http://www.cnblogs.com/zjcn/archive/2012/07/03/2575026.html#2607520
     // https://github.com/marcuswestin/store.js
     (function (win, doc) {
         if(!($.support.localStorage = !!win.localStorage) && doc.documentElement.addBehavior){
             var storage, store, box, container;
-            //´æ´¢ÎÄ¼şÃû£¨µ¥ÎÄ¼şĞ¡ÓÚ128k£¬×ã¹»ÆÕÍ¨Çé¿öÏÂÊ¹ÓÃÁË£©
-            //cookie´óĞ¡4096, 0.4K X 50¸ö´ó¸Å20K£¬¿É¼ûuserdata´óµÄ¶à
+            //å­˜å‚¨æ–‡ä»¶åï¼ˆå•æ–‡ä»¶å°äº128kï¼Œè¶³å¤Ÿæ™®é€šæƒ…å†µä¸‹ä½¿ç”¨äº†ï¼‰
+            //cookieå¤§å°4096, 0.4K X 50ä¸ªå¤§æ¦‚20Kï¼Œå¯è§userdataå¤§çš„å¤š
             var FILENAME = win.location.hostname || 'localStorage';
             try{
-                //ÓÉÓÚ#userDataµÄ´æ´¢½öÊÊÓÃÓÚÌØ¶¨µÄÂ·¾¶£¬
-                //ÎÒÃÇĞèÒªÒÔÄ³ÖÖ·½Ê½¹ØÁªÎÒÃÇµÄÊı¾İµ½Ò»¸öÌØ¶¨µÄÂ·¾¶¡£ÎÒÃÇÑ¡Ôñ/favicon.ico×÷ÎªÒ»¸ö·Ç³£°²È«µÄÄ¿±ê£¬
-                //ÒòÎªËùÓĞµÄä¯ÀÀÆ÷¶¼·¢³öÕâ¸öURLÇëÇó£¬¶øÇÒÕâ¸öÇëÇó¼´Ê¹ÊÇ404Ò²²»»áÓĞÎ£ÏÕ¡£
-                //ÎÒÃÇ¿ÉÒÔÍ¨¹ıÒ»¸öActiveXObject(htmlfile)¶ÔÏóµÄÎÄµµÀ´¸ÉÕâÊÂ¡£
-                //(²Î¼û:http://msdn.microsoft.com/en-us/library/aa752574(v = VS.85). aspx)
-                //ÒòÎªiframeµÄ·ÃÎÊ¹æÔòÔÊĞíÖ±½Ó·ÃÎÊºÍ²Ù×İÎÄµµÖĞµÄÔªËØ£¬¼´Ê¹ÊÇ404¡£
-                //ÕâÎÄµµ¿ÉÒÔÓÃÀ´´úÌæµ±Ç°ÎÄµµ£¨Õâ±»ÏŞÖÆÔÚµ±Ç°Â·¾¶£©Ö´ĞĞ#userDataµÄ´æ´¢¡£
+                //ç”±äº#userDataçš„å­˜å‚¨ä»…é€‚ç”¨äºç‰¹å®šçš„è·¯å¾„ï¼Œ
+                //æˆ‘ä»¬éœ€è¦ä»¥æŸç§æ–¹å¼å…³è”æˆ‘ä»¬çš„æ•°æ®åˆ°ä¸€ä¸ªç‰¹å®šçš„è·¯å¾„ã€‚æˆ‘ä»¬é€‰æ‹©/favicon.icoä½œä¸ºä¸€ä¸ªéå¸¸å®‰å…¨çš„ç›®æ ‡ï¼Œ
+                //å› ä¸ºæ‰€æœ‰çš„æµè§ˆå™¨éƒ½å‘å‡ºè¿™ä¸ªURLè¯·æ±‚ï¼Œè€Œä¸”è¿™ä¸ªè¯·æ±‚å³ä½¿æ˜¯404ä¹Ÿä¸ä¼šæœ‰å±é™©ã€‚
+                //æˆ‘ä»¬å¯ä»¥é€šè¿‡ä¸€ä¸ªActiveXObject(htmlfile)å¯¹è±¡çš„æ–‡æ¡£æ¥å¹²è¿™äº‹ã€‚
+                //(å‚è§:http://msdn.microsoft.com/en-us/library/aa752574(v = VS.85). aspx)
+                //å› ä¸ºiframeçš„è®¿é—®è§„åˆ™å…è®¸ç›´æ¥è®¿é—®å’Œæ“çºµæ–‡æ¡£ä¸­çš„å…ƒç´ ï¼Œå³ä½¿æ˜¯404ã€‚
+                //è¿™æ–‡æ¡£å¯ä»¥ç”¨æ¥ä»£æ›¿å½“å‰æ–‡æ¡£ï¼ˆè¿™è¢«é™åˆ¶åœ¨å½“å‰è·¯å¾„ï¼‰æ‰§è¡Œ#userDataçš„å­˜å‚¨ã€‚
                 container = new ActiveXObject('htmlfile');
                 container.open();
                 container.write('<script>document.w=window</script><iframe src="/favicon.ico"></iframe>');
                 container.close();
-                //container·µ»ØµÄÊÇhtmlfileµÄdocument
+                //containerè¿”å›çš„æ˜¯htmlfileçš„document
                 box = doc = container.w.frames[0].document;
             } catch(e) {
                 box = document.body || document.getElementsByTagName("head")[0] || document.documentElement
@@ -529,7 +529,7 @@
                 }
                 return r.join('');
             },
-            //ºÃ°É£¬ÕâÀï¸´ÖÆÁËÒ»±éjQµÄ£¬ÒÔÃâµİ¹é³ö´í
+            //å¥½å§ï¼Œè¿™é‡Œå¤åˆ¶äº†ä¸€éjQçš„ï¼Œä»¥å…é€’å½’å‡ºé”™
             parse : function(data){
                 if (typeof data != 'string') data = data.toString();
                 if ( data === null ) {
@@ -570,7 +570,7 @@
                     $.fn[ hashchange ].domain +"</script><body>" )
             }
 
-            function getHash ( url) {//ÓÃÓÚÈ¡µÃµ±Ç°´°¿Ú»òiframe´°¿ÚµÄhashÖµ
+            function getHash ( url) {//ç”¨äºå–å¾—å½“å‰çª—å£æˆ–iframeçª—å£çš„hashå€¼
                 url = url || DOC.URL
                 return '#' + url.replace( /^[^#]*#?(.*)$/, '$1' );
             }
@@ -579,8 +579,8 @@
             }
             function setHistory(hash, history_hash){
                 var doc = iframe.document;
-                if (  hash !== history_hash ) {//Ö»ÓĞµ±ĞÂhash²»µÈÓÚiframeÖĞµÄhash²ÅÖØĞ´
-                    //ÓÃÓÚ²úÉúÀúÊ·
+                if (  hash !== history_hash ) {//åªæœ‰å½“æ–°hashä¸ç­‰äºiframeä¸­çš„hashæ‰é‡å†™
+                    //ç”¨äºäº§ç”Ÿå†å²
                     doc.open();
                     doc.write($.format(html, hash));
                     doc.close();
@@ -592,8 +592,8 @@
                 setup: function(desc) {
                     $(function(){
                         if (!iframe) {
-                            //´´½¨Ò»¸öÒş²ØµÄiframe£¬Ê¹ÓÃÕâ²©ÎÄÌá¹©µÄ¼¼Êõ http://www.paciellogroup.com/blog/?p=604.
-                            //iframeÊÇÖ±½Ó¼ÓÔØ¸¸Ò³Ãæ£¬ÎªÁË·ÀÖ¹ËÀÑ­»·£¬ÔÚDOMÊ÷Î´½¨ÍêÖ®Ç°¾Í²ÁÈëĞÂµÄÄÚÈİ
+                            //åˆ›å»ºä¸€ä¸ªéšè—çš„iframeï¼Œä½¿ç”¨è¿™åšæ–‡æä¾›çš„æŠ€æœ¯ http://www.paciellogroup.com/blog/?p=604.
+                            //iframeæ˜¯ç›´æ¥åŠ è½½çˆ¶é¡µé¢ï¼Œä¸ºäº†é˜²æ­¢æ­»å¾ªç¯ï¼Œåœ¨DOMæ ‘æœªå»ºå®Œä¹‹å‰å°±æ“¦å…¥æ–°çš„å†…å®¹
                             var el = $('<iframe tabindex="-1" style="display:none" widht=0 height=0 title="empty" />').appendTo( document.body )[0], fn
                             iframe = el.contentWindow
                             $.event.add(el, "load", fn = function(){
@@ -605,12 +605,12 @@
                                 timeoutID = setInterval(poll,  $.fn[ hashchange ].delay)
                             });
                             function poll() {
-                                var hash = getHash(),//È¡µÃÖ÷´°¿ÚÖĞµÄhash
-                                    history_hash = iframe.document.body.innerText;//È¡µÃÏÖÔÚiframeÖĞµÄhash
-                                if(hash !== last_hash){//Èç¹ûÊÇÖ÷´°¿ÚµÄhash·¢Éú±ä»¯
+                                var hash = getHash(),//å–å¾—ä¸»çª—å£ä¸­çš„hash
+                                    history_hash = iframe.document.body.innerText;//å–å¾—ç°åœ¨iframeä¸­çš„hash
+                                if(hash !== last_hash){//å¦‚æœæ˜¯ä¸»çª—å£çš„hashå‘ç”Ÿå˜åŒ–
                                     setHistory(last_hash = hash, history_hash )
                                     $(desc.currentTarget).fire(hashchange)
-                                }else if(history_hash !== last_hash){//Èç¹û°´ÏÂ»ØÍË¼ü£¬
+                                }else if(history_hash !== last_hash){//å¦‚æœæŒ‰ä¸‹å›é€€é”®ï¼Œ
                                     location.href = location.href.replace( /#.*/, '' ) + history_hash;
                                 }
                             }

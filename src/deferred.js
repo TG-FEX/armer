@@ -1,6 +1,6 @@
 (function() {
     //http://www.codingserf.com/index.php/2013/06/dropdownlist2/
-    // ÔÊĞí´«ÈëÒ»¸ö¶ÔÏó£¬Ëü½«»ìÈëµ½ÕûÌõDeferredÁ´µÄËùÓĞPromise¶ÔÏó
+    // å…è®¸ä¼ å…¥ä¸€ä¸ªå¯¹è±¡ï¼Œå®ƒå°†æ··å…¥åˆ°æ•´æ¡Deferredé“¾çš„æ‰€æœ‰Promiseå¯¹è±¡
     var noop = function(){}
     function Deferred(mixin) {
         var state = "pending", dirty = false
@@ -109,7 +109,7 @@
                 var fn = this.callback[method]
                 try {
                     value = fn.apply(this, array);
-                } catch (e) {//´¦ÀínotifyµÄÒì³£
+                } catch (e) {//å¤„ç†notifyçš„å¼‚å¸¸
                     value = e
                 }
                 if (this.state() === "rejected") {
@@ -122,7 +122,7 @@
             var ensure = this.callback.ensure
             if (noop !== ensure) {
                 try {
-                    ensure.call(this)//Ä£Äâfinally
+                    ensure.call(this)//æ¨¡æ‹Ÿfinally
                 } catch (e) {
                     next = "reject";
                     array = [e];
@@ -148,7 +148,7 @@
         function loop(promise, index) {
             promise.then(function(ret) {
                 if (!end) {
-                    result[index] = ret//±£Ö¤»Øµ÷µÄË³Ğò
+                    result[index] = ret//ä¿è¯å›è°ƒçš„é¡ºåº
                     n++;
                     if (any || n >= promises.length) {
                         deferred.resolve(any ? ret : result);

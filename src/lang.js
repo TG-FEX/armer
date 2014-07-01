@@ -1,5 +1,5 @@
 //=========================================
-//  TODO(wuhf): lang.extendÄ£¿é
+//  TODO(wuhf): lang.extendæ¨¡å—
 //==========================================
 ;(function($){
     var global = window, DOC = global.document;
@@ -83,8 +83,8 @@
 
     $.extend($, {
         /**
-         * ÎªhashÑ¡Ïî¶ÔÏóÌí¼ÓÄ¬ÈÏ³ÉÔ±
-         * @param {object} obj ĞèÒª
+         * ä¸ºhashé€‰é¡¹å¯¹è±¡æ·»åŠ é»˜è®¤æˆå‘˜
+         * @param {object} obj éœ€è¦
          * @returns {*}
          */
         defaults: function(obj) {
@@ -101,7 +101,7 @@
 
 
         /*
-           ============= is ÏµÁĞ ================
+           ============= is ç³»åˆ— ================
          */
         isBlank: function (target) {
             return /^\s*$/.test(target);
@@ -110,9 +110,9 @@
             return $.type(obj) == 'string';
         },
         /**
-         * ÅĞ¶¨methodÊÇ·ñÎªobjµÄÔ­Éú·½·¨£¬Èç$.isNative("JSON",window)
+         * åˆ¤å®šmethodæ˜¯å¦ä¸ºobjçš„åŸç”Ÿæ–¹æ³•ï¼Œå¦‚$.isNative("JSON",window)
          * @param {String} methodKey
-         * @param {*} obj ¶ÔÏó
+         * @param {*} obj å¯¹è±¡
          * @return {Boolean}
          */
         isNative: function(methodKey, obj) {
@@ -121,7 +121,7 @@
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
         },
         /**
-         * ÊÇ·ñÎª¿Õ¶ÔÏó
+         * æ˜¯å¦ä¸ºç©ºå¯¹è±¡
          * @param {Object} obj
          * @return {Boolean}
          */
@@ -143,61 +143,61 @@
         isObjectLike : function(obj) {
             return typeof obj == 'object' || typeof obj == 'function';
         },
-        // ÅĞ¶Ï×Ö·û´®£¬¶ÔÏó£¬Êı×éÊÇ·ñÎª¿Õ
+        // åˆ¤æ–­å­—ç¬¦ä¸²ï¼Œå¯¹è±¡ï¼Œæ•°ç»„æ˜¯å¦ä¸ºç©º
         isEmpty : function(obj) {
             if (obj == null) return true;
             if ($.isArray(obj) || $.isString(obj)) return obj.length === 0;
             for (var key in obj) if (obj.hasOwnProperty(key)) return false;
             return true;
         },
-        // ÅĞ¶ÏÒ»¸ö¶ÔÏóÊÇ²»ÊÇjQ¶ÔÏó
+        // åˆ¤æ–­ä¸€ä¸ªå¯¹è±¡æ˜¯ä¸æ˜¯jQå¯¹è±¡
         isQuaryElement : function(obj){
             return typeof obj == 'object' && obj.constructor == $;
         },
         isDefined: function(obj){
             return obj !== null && obj !== undefined
         },
-        // ÅĞ¶ÏÊÇ·ñDOMÔªËØ
+        // åˆ¤æ–­æ˜¯å¦DOMå…ƒç´ 
         isElement : function(obj){
             return !!(obj && obj.nodeType == 1);
         },
-        // ÅĞ¶ÏÊÇ·ñÎŞÇî´ó
+        // åˆ¤æ–­æ˜¯å¦æ— ç©·å¤§
         isFinite : function(obj){
             return $.isNumeric(obj) && isFinite(obj);
         },
         isEmptyJson: function(str){return str == '[]' || str == '{}'},
         /**
-         * ±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ
-         * @param {*} a ±È½Ï¶ÔÏó1
-         * @param {*} b ±È½Ï¶ÔÏó2
-         * @return {boolean} ÊÇ·ñÏàµÈ
+         * æ¯”è¾ƒä¸¤ä¸ªå˜é‡æ˜¯å¦ç›¸ç­‰
+         * @param {*} a æ¯”è¾ƒå¯¹è±¡1
+         * @param {*} b æ¯”è¾ƒå¯¹è±¡2
+         * @return {boolean} æ˜¯å¦ç›¸ç­‰
          */
         isEqual: function(){
             var eq = function(a, b, aStack, bStack) {
-                // 0 === -0 Îªtrue£¬µ«Êµ¼ÊÉÏ²»Ó¦¸ÃÏàµÈ
+                // 0 === -0 ä¸ºtrueï¼Œä½†å®é™…ä¸Šä¸åº”è¯¥ç›¸ç­‰
                 // http://wiki.ecmascript.org/doku.php?id=harmony:egal
                 // http://www.w3.org/TR/xmlschema11-2/
                 if (a === b) return a !== 0 || 1 / a == 1 / b;
-                // ÔÚa»òbÎªnullµÄÊ±ºò£¬ĞèÒªÑÏ¸ñÅĞ¶Ï£¬ÒòÎªnull == undefined
+                // åœ¨aæˆ–bä¸ºnullçš„æ—¶å€™ï¼Œéœ€è¦ä¸¥æ ¼åˆ¤æ–­ï¼Œå› ä¸ºnull == undefined
                 if (a == null || b == null) return a === b;
-                // ±È½ÏÀàĞÍ£¨ÀàÃû£©
+                // æ¯”è¾ƒç±»å‹ï¼ˆç±»åï¼‰
                 var className = $.stringType(a);
                 if (className != $.stringType(b)) return false;
                 switch (className) {
-                    // ×Ö·û´®£¬Êı×Ö£¬ÈÕÆÚ£¬²¼¶û±È½ÏÖµ.
+                    // å­—ç¬¦ä¸²ï¼Œæ•°å­—ï¼Œæ—¥æœŸï¼Œå¸ƒå°”æ¯”è¾ƒå€¼.
                     case '[object String]':
-                        // Í¨¹ı°ü×°¶ÔÏó½â¾ö '5' Êµ¼ÊÉÏµÈÓÚ String(5) µÄÇé¿ö
+                        // é€šè¿‡åŒ…è£…å¯¹è±¡è§£å†³ '5' å®é™…ä¸Šç­‰äº String(5) çš„æƒ…å†µ
                         return a == String(b);
                     case '[object Number]':
-                        // ±È½ÏÊı×Ö
-                        // NaNÊµ¼ÊÉÏÊÇÏàµÈµÄ£¬µ«²»È»£¬µ«Í¨¹ıÒÔÏÂ·½Ê½ÈÔ¿É±È½Ï
+                        // æ¯”è¾ƒæ•°å­—
+                        // NaNå®é™…ä¸Šæ˜¯ç›¸ç­‰çš„ï¼Œä½†ä¸ç„¶ï¼Œä½†é€šè¿‡ä»¥ä¸‹æ–¹å¼ä»å¯æ¯”è¾ƒ
                         return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
                     case '[object Date]':
                     case '[object Boolean]':
-                        // ÈÕÆÚºÍ²¼¶ûÁ¿Ç¿ĞĞ×ª»»³ÉÊı×Ö½øĞĞ±È½Ï
-                        // ·Ç·¨ÈÕÆÚ×ª»»½«ÎªNaN£¬ËùÒÔÈÔÈ»±£³Ö²»ÏàµÈ
+                        // æ—¥æœŸå’Œå¸ƒå°”é‡å¼ºè¡Œè½¬æ¢æˆæ•°å­—è¿›è¡Œæ¯”è¾ƒ
+                        // éæ³•æ—¥æœŸè½¬æ¢å°†ä¸ºNaNï¼Œæ‰€ä»¥ä»ç„¶ä¿æŒä¸ç›¸ç­‰
                         return +a == +b;
-                    // ÕıÔòÔò±È½ÏÆä±í´ïÊ½ÒÔ¼°±ê¼Ç
+                    // æ­£åˆ™åˆ™æ¯”è¾ƒå…¶è¡¨è¾¾å¼ä»¥åŠæ ‡è®°
                     case '[object RegExp]':
                         return a.source == b.source &&
                             a.global == b.global &&
@@ -207,41 +207,41 @@
                 if (typeof a != 'object' || typeof b != 'object') return false;
                 var length = aStack.length;
                 while (length--) {
-                    // ÏßĞÔËÑË÷
+                    // çº¿æ€§æœç´¢
                     if (aStack[length] == a) return bStack[length] == b;
                 }
-                // ½«µÚÒ»¸ö¶ÔÏó¶Ñµ½±éÀú¶ÑÕ»ÖĞ
+                // å°†ç¬¬ä¸€ä¸ªå¯¹è±¡å †åˆ°éå†å †æ ˆä¸­
                 aStack.push(a);
                 bStack.push(b);
                 var size = 0, result = true;
-                // µİ¹é±È½ÏÊı×éºÍ¶ÔÏó
+                // é€’å½’æ¯”è¾ƒæ•°ç»„å’Œå¯¹è±¡
                 if (className == '[object Array]') {
-                    // ±È½ÏÊı×é³¤¶ÈÊÇ·ñÏàÍ¬È·¶¨ÊÇ·ñÉî¶È±È½Ï
+                    // æ¯”è¾ƒæ•°ç»„é•¿åº¦æ˜¯å¦ç›¸åŒç¡®å®šæ˜¯å¦æ·±åº¦æ¯”è¾ƒ
                     size = a.length;
                     result = size == b.length;
                     if (result) {
-                        // Éî¶È±È½Ï£¬ºöÂÔkey·ÇÊı×ÖµÄ³ÉÔ±
+                        // æ·±åº¦æ¯”è¾ƒï¼Œå¿½ç•¥keyéæ•°å­—çš„æˆå‘˜
                         while (size--) {
                             if (!(result = eq(a[size], b[size], aStack, bStack))) break;
                         }
                     }
                 } else {
-                    // ¹¹ÔìÌå²»Í¬µÄ¶ÔÏó½«±»ÈÏÎª²»ÏàµÈ
+                    // æ„é€ ä½“ä¸åŒçš„å¯¹è±¡å°†è¢«è®¤ä¸ºä¸ç›¸ç­‰
                     var aCtor = a.constructor, bCtor = b.constructor;
                     if (aCtor !== bCtor && !($.isFunction(aCtor) && (aCtor instanceof aCtor) &&
                         $.isFunction(bCtor) && (bCtor instanceof bCtor))) {
                         return false;
                     }
-                    // Éî¶Èµİ¹é±È½Ï¶ÔÏó
+                    // æ·±åº¦é€’å½’æ¯”è¾ƒå¯¹è±¡
                     for (var key in a) {
                         if (hasOwn.call(a, key)) {
-                            // ¼ÆËãÔ¤²â³ÉÔ±ÊıÁ¿
+                            // è®¡ç®—é¢„æµ‹æˆå‘˜æ•°é‡
                             size++;
-                            // Éî¶È±È½ÏÃ¿¸ö³ÉÔ±
+                            // æ·±åº¦æ¯”è¾ƒæ¯ä¸ªæˆå‘˜
                             if (!(result = hasOwn.call(b, key) && eq(a[key], b[key], aStack, bStack))) break;
                         }
                     }
-                    // È·±£Ã¿¸ö¶ÔÏó¶¼°üº¬ÏàÍ¬ÊıÁ¿µÄÊôĞÔ
+                    // ç¡®ä¿æ¯ä¸ªå¯¹è±¡éƒ½åŒ…å«ç›¸åŒæ•°é‡çš„å±æ€§
                     if (result) {
                         for (key in b) {
                             if (hasOwn.call(b, key) && !(size--)) break;
@@ -249,7 +249,7 @@
                         result = !size;
                     }
                 }
-                // ÒÆ³ı±éÀú¶ÔÏó¶ÑÕ»µÚÒ»¸ö¶ÔÏó
+                // ç§»é™¤éå†å¯¹è±¡å †æ ˆç¬¬ä¸€ä¸ªå¯¹è±¡
                 aStack.pop();
                 bStack.pop();
                 return result;
@@ -259,7 +259,7 @@
             }
         }(),
 
-        // Ç¿»¯ÀàĞÍÅĞ¶Ï
+        // å¼ºåŒ–ç±»å‹åˆ¤æ–­
         type: (function($type){
             var rsplit = /[, |]+/g;
             var typeCase = {
@@ -273,12 +273,12 @@
                 NodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
-             * ÓÃÓÚÈ¡µÃÊı¾İµÄÀàĞÍ£¨Ò»¸ö²ÎÊıµÄÇé¿öÏÂ£©»òÅĞ¶¨Êı¾İµÄÀàĞÍ£¨Á½¸ö²ÎÊıµÄÇé¿öÏÂ£©
-             * $.type(obj) == a ¿ÉÒÔÍÆ³ö $.type(obj, a) == true£¬µ«·´¹ıÀ´Î´±Ø
-             * ÈçĞè½øĞĞ¸üÏ¸½ÚÅĞ¶Ï£¬ÇëÊ¹ÓÃ $.type(obj, a) µÄ·½Ê½
+             * ç”¨äºå–å¾—æ•°æ®çš„ç±»å‹ï¼ˆä¸€ä¸ªå‚æ•°çš„æƒ…å†µä¸‹ï¼‰æˆ–åˆ¤å®šæ•°æ®çš„ç±»å‹ï¼ˆä¸¤ä¸ªå‚æ•°çš„æƒ…å†µä¸‹ï¼‰
+             * $.type(obj) == a å¯ä»¥æ¨å‡º $.type(obj, a) == trueï¼Œä½†åè¿‡æ¥æœªå¿…
+             * å¦‚éœ€è¿›è¡Œæ›´ç»†èŠ‚åˆ¤æ–­ï¼Œè¯·ä½¿ç”¨ $.type(obj, a) çš„æ–¹å¼
              *
-             * @param {*} obj Òª¼ì²âµÄ¶«Î÷
-             * @param {String|Array|Function} condition ? Òª±È½ÏµÄÌõ¼ş
+             * @param {*} obj è¦æ£€æµ‹çš„ä¸œè¥¿
+             * @param {String|Array|Function} condition ? è¦æ¯”è¾ƒçš„æ¡ä»¶
              * @return {String|Boolean}
              * @api public
              */
@@ -307,17 +307,17 @@
 
 
         /*
-         ============= parse ÏµÁĞ ================
+         ============= parse ç³»åˆ— ================
          */
 
         /**
-         * ½«×Ö·û´®µ±×÷JS´úÂëÖ´ĞĞ
+         * å°†å­—ç¬¦ä¸²å½“ä½œJSä»£ç æ‰§è¡Œ
          * @param {string} code
          */
         parseJS: function(code) {
-            //IEÖĞ£¬global.eval()ºÍeval()Ò»ÑùÖ»ÔÚµ±Ç°×÷ÓÃÓòÉúĞ§¡£
-            //Firefox£¬Safari£¬OperaÖĞ£¬Ö±½Óµ÷ÓÃeval()Îªµ±Ç°×÷ÓÃÓò£¬global.eval()µ÷ÓÃÎªÈ«¾Ö×÷ÓÃÓò¡£
-            //window.execScript ÔÚIEÏÂÒ»Ğ©ÏŞÖÆÌõ¼ş
+            //IEä¸­ï¼Œglobal.eval()å’Œeval()ä¸€æ ·åªåœ¨å½“å‰ä½œç”¨åŸŸç”Ÿæ•ˆã€‚
+            //Firefoxï¼ŒSafariï¼ŒOperaä¸­ï¼Œç›´æ¥è°ƒç”¨eval()ä¸ºå½“å‰ä½œç”¨åŸŸï¼Œglobal.eval()è°ƒç”¨ä¸ºå…¨å±€ä½œç”¨åŸŸã€‚
+            //window.execScript åœ¨IEä¸‹ä¸€äº›é™åˆ¶æ¡ä»¶
             //http://www.ascadnetworks.com/Guides-and-Tips/IE-error-%2522Could-not-complete-the-operation-due-to-error-80020101%2522
             if (code && /\S/.test(code)) {
                 try {
@@ -326,7 +326,7 @@
                 }
             }
         },
-        // ½«textÊı¾İ×ª»»Îªbase64×Ö·û´®
+        // å°†textæ•°æ®è½¬æ¢ä¸ºbase64å­—ç¬¦ä¸²
         parseBase64: function(inputStr){
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
@@ -386,18 +386,18 @@
         },
 
         /*
-         ============= ×Ö·û´®´¦Àí ÏµÁĞ ================
+         ============= å­—ç¬¦ä¸²å¤„ç† ç³»åˆ— ================
          */
 
 
         template: template,
         /**
-         * ×Ö·û´®²åÖµ£¬ÓĞÁ½ÖÖ²åÖµ·½·¨¡£
-         * µÚÒ»ÖÖ£¬µÚ¶ş¸ö²ÎÊıÎª¶ÔÏó£¬{{}}ÀïÃæÎª¼üÃû£¬Ìæ»»Îª¼üÖµ£¬ÊÊÓÃÓÚÖØµşÖµ¹»¶àµÄÇé¿ö
-         * µÚ¶şÖÖ£¬°ÑµÚÒ»¸ö²ÎÊıºóµÄ²ÎÊıÊÓÎªÒ»¸öÊı×é£¬{{}}ÀïÃæÎªË÷ÒıÖµ£¬´ÓÁã¿ªÊ¼£¬Ìæ»»ÎªÊı×éÔªËØ
+         * å­—ç¬¦ä¸²æ’å€¼ï¼Œæœ‰ä¸¤ç§æ’å€¼æ–¹æ³•ã€‚
+         * ç¬¬ä¸€ç§ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºå¯¹è±¡ï¼Œ{{}}é‡Œé¢ä¸ºé”®åï¼Œæ›¿æ¢ä¸ºé”®å€¼ï¼Œé€‚ç”¨äºé‡å å€¼å¤Ÿå¤šçš„æƒ…å†µ
+         * ç¬¬äºŒç§ï¼ŒæŠŠç¬¬ä¸€ä¸ªå‚æ•°åçš„å‚æ•°è§†ä¸ºä¸€ä¸ªæ•°ç»„ï¼Œ{{}}é‡Œé¢ä¸ºç´¢å¼•å€¼ï¼Œä»é›¶å¼€å§‹ï¼Œæ›¿æ¢ä¸ºæ•°ç»„å…ƒç´ 
          * http://www.cnblogs.com/rubylouvre/archive/2011/05/02/1972176.html
          * @param {string} str
-         * @param {*} object ²åÖµ°ü»òÄ³Ò»¸öÒª²åµÄÖµ
+         * @param {*} object æ’å€¼åŒ…æˆ–æŸä¸€ä¸ªè¦æ’çš„å€¼
          * @return {string}
          */
         format: function(str, object) {
@@ -408,7 +408,7 @@
             })
         },
         /**
-         * ²é¿´¶ÔÏó»òÊı×éµÄÄÚ²¿¹¹Ôì
+         * æŸ¥çœ‹å¯¹è±¡æˆ–æ•°ç»„çš„å†…éƒ¨æ„é€ 
          * @param {*} obj
          * @return {string}
          * https://github.com/tdolsen/jquery-dump/blob/master/jquery.dump.js
@@ -418,7 +418,7 @@
         dump: function(obj) {
             var space = $.isNative("parse", window.JSON) ? 4 : "\r\t", cache = [],
                 text = JSON.stringify(obj, function(key, value) {
-                    if (typeof value === 'object' && value !== null) {//·ÀÖ¹»·ÒıÓÃ
+                    if (typeof value === 'object' && value !== null) {//é˜²æ­¢ç¯å¼•ç”¨
                         if (cache.indexOf(value) !== -1) {
                             return;
                         }
@@ -426,13 +426,13 @@
                     }
                     return typeof value === "function" ? value + "" : value;
                 }, space);
-            cache = [];//GC»ØÊÕ
+            cache = [];//GCå›æ”¶
             return text;
         },
         /**
-         * ÎªÊı×Ö¼ÓÉÏµ¥Î»
+         * ä¸ºæ•°å­—åŠ ä¸Šå•ä½
          * @param i
-         * @param units µ¥Î»
+         * @param units å•ä½
          * @returns {string}
          */
         unit: function (i, units) {
@@ -443,13 +443,13 @@
             }
         },
         hyphen: function (target) {
-            //×ª»»ÎªÁ¬×Ö·ûÏß·ç¸ñ
+            //è½¬æ¢ä¸ºè¿å­—ç¬¦çº¿é£æ ¼
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase();
         },
 
 
 
-        // ²ÎÊı³õÊ¼»¯ÕûÀí·½·¨
+        // å‚æ•°åˆå§‹åŒ–æ•´ç†æ–¹æ³•
         argsArrange: (function(){
             var filter = function(args, params, defaults) {
                 var a = [], tempArr, arr = arguments, item;
@@ -472,7 +472,7 @@
                         if ($.type(arr[j], item.condition))
                             a[i] = grouper(arr[j++]);
                         else if (k < match && isNeed)
-                            throw new TypeError('²ÎÊı' + name + '±ØĞë·ûºÏÌõ¼ş£º' + item.condition + '£¬×îÉÙĞèÒª' + match + '¸ö£¬ÏÖ½öÓĞ' + k + '¸ö');
+                            throw new TypeError('å‚æ•°' + name + 'å¿…é¡»ç¬¦åˆæ¡ä»¶ï¼š' + item.condition + 'ï¼Œæœ€å°‘éœ€è¦' + match + 'ä¸ªï¼Œç°ä»…æœ‰' + k + 'ä¸ª');
                         else if (isAutoLen)
                             break;
                         else
@@ -492,7 +492,7 @@
         })()
     });
 
-    // TODO(wuhf): Àà¹¤³§
+    // TODO(wuhf): ç±»å·¥å‚
     // ========================================================
     (function(){
         var
@@ -513,12 +513,12 @@
             inherit : function( parent,init ) {
                 var bridge = function() { };
                 if( typeof parent == 'function'){
-                    for(var i in parent){//¼Ì³ĞÀà³ÉÔ±
+                    for(var i in parent){//ç»§æ‰¿ç±»æˆå‘˜
                         this[i] = parent[i];
                     }
                     bridge.prototype = parent.prototype;
-                    this.prototype = new bridge ;//¼Ì³ĞÔ­ĞÍ³ÉÔ±
-                    this._super = parent;//Ö¸¶¨¸¸Àà
+                    this.prototype = new bridge ;//ç»§æ‰¿åŸå‹æˆå‘˜
+                    this._super = parent;//æŒ‡å®šçˆ¶ç±»
                 }
                 this._init = (this._init || []).concat();
                 if( init ){
@@ -528,7 +528,7 @@
                     return (init || bridge) + ''
                 };
                 var proto = this.prototype;
-                // FIXME(wuhf): ÔİÊ±²»ĞèÒª ±¸×¢Ò»ÏÂ
+                // FIXME(wuhf): æš‚æ—¶ä¸éœ€è¦ å¤‡æ³¨ä¸€ä¸‹
                 /*
                  proto.setOptions = function(first){
                  if( typeof first === 'string' ){
@@ -553,7 +553,7 @@
                 }
                 return this;
             },
-            extend: function(){//À©Õ¹Àà³ÉÔ±
+            extend: function(){//æ‰©å±•ç±»æˆå‘˜
                 var bridge = {};
                 for(var i = 0, module; module = arguments[i++]; ){
                     $.extend( bridge, module );
@@ -568,9 +568,9 @@
         };
         $.factory = function( obj ){
             obj = obj || {};
-            var parent = obj.inherit; //¸¸Àà
-            var init = obj.init ;    //¹¹ÔìÆ÷
-            var extend = obj.extend; //¾²Ì¬³ÉÔ±
+            var parent = obj.inherit; //çˆ¶ç±»
+            var init = obj.init ;    //æ„é€ å™¨
+            var extend = obj.extend; //é™æ€æˆå‘˜
             delete obj.inherit;
             delete obj.init;
             var klass = function () {
@@ -579,18 +579,18 @@
                 }
             };
 
-            $.extend( klass, mutators ).inherit( parent, init );//Ìí¼Ó¸ü¶àÀà·½·¨
+            $.extend( klass, mutators ).inherit( parent, init );//æ·»åŠ æ›´å¤šç±»æ–¹æ³•
             return expand( klass, obj ).implement( obj );
         }
     })();
 
 
-    //¹¹½¨ËÄ¸ö¹¤¾ß·½·¨:$.String, $.Array, $.Number, $.Object, $.Function
+    //æ„å»ºå››ä¸ªå·¥å…·æ–¹æ³•:$.String, $.Array, $.Number, $.Object, $.Function
     "String,Array,Number,Object,Function,Date".replace($.rword, function(Type) {
         var mix = $[Type];
         $[Type] = function(pack) {
             var isNative = typeof pack == "string",
-            //È¡µÃ·½·¨Ãû
+            //å–å¾—æ–¹æ³•å
                 methods = isNative ? pack.match($.rword) : Object.keys(pack);
             methods.forEach(function(method) {
                 $[Type][method] = isNative ?
@@ -603,45 +603,45 @@
     });
     $.String({
         byteLen: function(target) {
-            /*È¡µÃÒ»¸ö×Ö·û´®ËùÓĞ×Ö½ÚµÄ³¤¶È¡£ÕâÊÇÒ»¸öºó¶Ë¹ıÀ´µÄ·½·¨£¬Èç¹û½«Ò»¸öÓ¢ÎÄ×Ö·û²å
-             *ÈëÊı¾İ¿â char¡¢varchar¡¢text ÀàĞÍµÄ×Ö¶ÎÊ±Õ¼ÓÃÒ»¸ö×Ö½Ú£¬¶øÒ»¸öÖĞÎÄ×Ö·û²åÈë
-             *Ê±Õ¼ÓÃÁ½¸ö×Ö½Ú£¬ÎªÁË±ÜÃâ²åÈëÒç³ö£¬¾ÍĞèÒªÊÂÏÈÅĞ¶Ï×Ö·û´®µÄ×Ö½Ú³¤¶È¡£ÔÚÇ°¶Ë£¬
-             *Èç¹ûÎÒÃÇÒªÓÃ»§Ìî¿ÕµÄÎÄ±¾£¬ĞèÒª×Ö½ÚÉÏµÄ³¤¶ÌÏŞÖÆ£¬±ÈÈç·¢¶ÌĞÅ£¬Ò²ÒªÓÃµ½´Ë·½·¨¡£
-             *Ëæ×Åä¯ÀÀÆ÷ÆÕ¼°¶Ô¶ş½øÖÆµÄ²Ù×÷£¬Õâ·½·¨Ò²Ô½À´Ô½³£ÓÃ¡£
+            /*å–å¾—ä¸€ä¸ªå­—ç¬¦ä¸²æ‰€æœ‰å­—èŠ‚çš„é•¿åº¦ã€‚è¿™æ˜¯ä¸€ä¸ªåç«¯è¿‡æ¥çš„æ–¹æ³•ï¼Œå¦‚æœå°†ä¸€ä¸ªè‹±æ–‡å­—ç¬¦æ’
+             *å…¥æ•°æ®åº“ charã€varcharã€text ç±»å‹çš„å­—æ®µæ—¶å ç”¨ä¸€ä¸ªå­—èŠ‚ï¼Œè€Œä¸€ä¸ªä¸­æ–‡å­—ç¬¦æ’å…¥
+             *æ—¶å ç”¨ä¸¤ä¸ªå­—èŠ‚ï¼Œä¸ºäº†é¿å…æ’å…¥æº¢å‡ºï¼Œå°±éœ€è¦äº‹å…ˆåˆ¤æ–­å­—ç¬¦ä¸²çš„å­—èŠ‚é•¿åº¦ã€‚åœ¨å‰ç«¯ï¼Œ
+             *å¦‚æœæˆ‘ä»¬è¦ç”¨æˆ·å¡«ç©ºçš„æ–‡æœ¬ï¼Œéœ€è¦å­—èŠ‚ä¸Šçš„é•¿çŸ­é™åˆ¶ï¼Œæ¯”å¦‚å‘çŸ­ä¿¡ï¼Œä¹Ÿè¦ç”¨åˆ°æ­¤æ–¹æ³•ã€‚
+             *éšç€æµè§ˆå™¨æ™®åŠå¯¹äºŒè¿›åˆ¶çš„æ“ä½œï¼Œè¿™æ–¹æ³•ä¹Ÿè¶Šæ¥è¶Šå¸¸ç”¨ã€‚
              */
             return target.replace(/[^\x00-\xff]/g, 'ci').length;
         },
         underscored: function(target) {
-            //×ª»»ÎªÏÂ»®Ïß·ç¸ñ
+            //è½¬æ¢ä¸ºä¸‹åˆ’çº¿é£æ ¼
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/\-/g, "_").toLowerCase();
         },
         capitalize: function(target) {
-            //Ê××ÖÄ¸´óĞ´
+            //é¦–å­—æ¯å¤§å†™
             return target.charAt(0).toUpperCase() + target.substring(1).toLowerCase();
         },
         stripTags: function(target) {
-            //ÒÆ³ı×Ö·û´®ÖĞµÄhtml±êÇ©£¬µ«Õâ·½·¨ÓĞÈ±Ïİ£¬ÈçÀïÃæÓĞscript±êÇ©£¬»á°ÑÕâĞ©²»¸ÃÏÔÊ¾³öÀ´µÄ½Å±¾Ò²ÏÔÊ¾³öÀ´ÁË
+            //ç§»é™¤å­—ç¬¦ä¸²ä¸­çš„htmlæ ‡ç­¾ï¼Œä½†è¿™æ–¹æ³•æœ‰ç¼ºé™·ï¼Œå¦‚é‡Œé¢æœ‰scriptæ ‡ç­¾ï¼Œä¼šæŠŠè¿™äº›ä¸è¯¥æ˜¾ç¤ºå‡ºæ¥çš„è„šæœ¬ä¹Ÿæ˜¾ç¤ºå‡ºæ¥äº†
             return target.replace(/<[^>]+>/g, "");
         },
         stripScripts: function(target) {
-            //ÒÆ³ı×Ö·û´®ÖĞËùÓĞµÄ script ±êÇ©¡£ÃÖ²¹stripTags·½·¨µÄÈ±Ïİ¡£´Ë·½·¨Ó¦ÔÚstripTagsÖ®Ç°µ÷ÓÃ¡£
+            //ç§»é™¤å­—ç¬¦ä¸²ä¸­æ‰€æœ‰çš„ script æ ‡ç­¾ã€‚å¼¥è¡¥stripTagsæ–¹æ³•çš„ç¼ºé™·ã€‚æ­¤æ–¹æ³•åº”åœ¨stripTagsä¹‹å‰è°ƒç”¨ã€‚
             return target.replace(/<script[^>]*>([\S\s]*?)<\/script>/img, '');
         },
         unescapeHTML: function(target) {
-            //»¹Ô­Îª¿É±»ÎÄµµ½âÎöµÄHTML±êÇ©
-            return target.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&") //´¦Àí×ªÒåµÄÖĞÎÄºÍÊµÌå×Ö·û
+            //è¿˜åŸä¸ºå¯è¢«æ–‡æ¡£è§£æçš„HTMLæ ‡ç­¾
+            return target.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&") //å¤„ç†è½¬ä¹‰çš„ä¸­æ–‡å’Œå®ä½“å­—ç¬¦
                 .replace(/&#([\d]+);/g, function($0, $1) {
                     return String.fromCharCode(parseInt($1, 10));
                 });
         },
         escapeRegExp: function(target) {
             //http://stevenlevithan.com/regex/xregexp/
-            //½«×Ö·û´®°²È«¸ñÊ½»¯ÎªÕıÔò±í´ïÊ½µÄÔ´Âë
+            //å°†å­—ç¬¦ä¸²å®‰å…¨æ ¼å¼åŒ–ä¸ºæ­£åˆ™è¡¨è¾¾å¼çš„æºç 
             return(target + "").replace(/([-.*+?^${}()|[\]\/\\])/g, "\\$1");
         },
         pad: function(target, n, filling, right, radix) {
             //http://www.cnblogs.com/rubylouvre/archive/2010/02/09/1666165.html
-            //ÔÚ×ó±ß²¹ÉÏÒ»Ğ©×Ö·û,Ä¬ÈÏÎª0
+            //åœ¨å·¦è¾¹è¡¥ä¸Šä¸€äº›å­—ç¬¦,é»˜è®¤ä¸º0
             var num = target.toString(radix || 10);
             filling = filling || "0";
             while (num.length < n) {
@@ -654,16 +654,16 @@
             return num;
         }
     });
-    //×Ö·û´®µÄÔ­ÉúÔ­ĞÍ·½·¨
+    //å­—ç¬¦ä¸²çš„åŸç”ŸåŸå‹æ–¹æ³•
     $.String("charAt,charCodeAt,concat,indexOf,lastIndexOf,localeCompare,match," + "contains,endsWith,startsWith,repeat," + //es6
         "replace,search,slice,split,substring,toLowerCase,toLocaleLowerCase,toUpperCase,trim,toJSON");
     $.Array({
         contains: function(target, item) {
-            //ÅĞ¶¨Êı×éÊÇ·ñ°üº¬Ö¸¶¨Ä¿±ê¡£
+            //åˆ¤å®šæ•°ç»„æ˜¯å¦åŒ…å«æŒ‡å®šç›®æ ‡ã€‚
             return !!~target.indexOf(item);
         },
         shuffle: function(target) {
-            //¶ÔÊı×é½øĞĞÏ´ÅÆ¡£Èô²»ÏëÓ°ÏìÔ­Êı×é£¬¿ÉÒÔÏÈ¿½±´Ò»·İ³öÀ´²Ù×÷¡£
+            //å¯¹æ•°ç»„è¿›è¡Œæ´—ç‰Œã€‚è‹¥ä¸æƒ³å½±å“åŸæ•°ç»„ï¼Œå¯ä»¥å…ˆæ‹·è´ä¸€ä»½å‡ºæ¥æ“ä½œã€‚
             var ret = [],
                 i = target.length,
                 n;
@@ -676,11 +676,11 @@
             return ret;
         },
         random: function(target) {
-            //´ÓÊı×éÖĞËæ»ú³éÑ¡Ò»¸öÔªËØ³öÀ´¡£
+            //ä»æ•°ç»„ä¸­éšæœºæŠ½é€‰ä¸€ä¸ªå…ƒç´ å‡ºæ¥ã€‚
             return $.Array.shuffle(target.concat())[0];
         },
         flatten: function(target) {
-            //¶ÔÊı×é½øĞĞÆ½Ì¹»¯´¦Àí£¬·µ»ØÒ»¸öÒ»Î¬µÄĞÂÊı×é¡£
+            //å¯¹æ•°ç»„è¿›è¡Œå¹³å¦åŒ–å¤„ç†ï¼Œè¿”å›ä¸€ä¸ªä¸€ç»´çš„æ–°æ•°ç»„ã€‚
             var result = [],
                 self = $.Array.flatten;
             target.forEach(function(item) {
@@ -693,14 +693,14 @@
             return result;
         },
         compact: function(target) {
-            // ¹ıÂËÊı×éÖĞµÄnullÓëundefined£¬µ«²»Ó°ÏìÔ­Êı×é¡£
+            // è¿‡æ»¤æ•°ç»„ä¸­çš„nullä¸undefinedï¼Œä½†ä¸å½±å“åŸæ•°ç»„ã€‚
             return target.filter(function(el) {
                 return el != null;
             });
         },
         /**
-         * ¶ÔÊı×é½øĞĞÈ¥ÖØ²Ù×÷£¬·µ»ØÒ»¸öÃ»ÓĞÖØ¸´ÔªËØµÄĞÂÊı×é¡£
-         * @param {Array} target Ä¿±êÊı×é
+         * å¯¹æ•°ç»„è¿›è¡Œå»é‡æ“ä½œï¼Œè¿”å›ä¸€ä¸ªæ²¡æœ‰é‡å¤å…ƒç´ çš„æ–°æ•°ç»„ã€‚
+         * @param {Array} target ç›®æ ‡æ•°ç»„
          * @returns {Array}
          */
         unique: function(target) {
@@ -716,13 +716,13 @@
             return ret;
         },
         /**
-         * ºÏ²¢Á½¸öÊı×é
-         * @param {Array} first µÚÒ»¸öÊı×é
-         * @param {Array} second µÚ¶ş¸öÊı×é
+         * åˆå¹¶ä¸¤ä¸ªæ•°ç»„
+         * @param {Array} first ç¬¬ä¸€ä¸ªæ•°ç»„
+         * @param {Array} second ç¬¬äºŒä¸ªæ•°ç»„
          * @returns {Array}
          */
         merge: function(first, second) {
-            //ºÏ²¢²ÎÊı¶şµ½²ÎÊıÒ»
+            //åˆå¹¶å‚æ•°äºŒåˆ°å‚æ•°ä¸€
             var i = ~~first.length,
                 j = 0;
             for (var n = second.length; j < n; j++) {
@@ -732,18 +732,18 @@
             return first;
         },
         /**
-         * ¶ÔÁ½¸öÊı×éÈ¡²¢¼¯¡£
-         * @param {Array} target µÚÒ»¸öÊı×é
-         * @param {Array} array µÚ¶ş¸öÊı×é
+         * å¯¹ä¸¤ä¸ªæ•°ç»„å–å¹¶é›†ã€‚
+         * @param {Array} target ç¬¬ä¸€ä¸ªæ•°ç»„
+         * @param {Array} array ç¬¬äºŒä¸ªæ•°ç»„
          * @returns {Array}
          */
         union: function(target, array) {
             return $.Array.unique($.Array.merge(target, array));
         },
         /**
-         * ¶ÔÁ½¸öÊı×éÈ¡½»¼¯
-         * @param {Array} target µÚÒ»¸öÊı×é
-         * @param {Array} array µÚ¶ş¸öÊı×é
+         * å¯¹ä¸¤ä¸ªæ•°ç»„å–äº¤é›†
+         * @param {Array} target ç¬¬ä¸€ä¸ªæ•°ç»„
+         * @param {Array} array ç¬¬äºŒä¸ªæ•°ç»„
          * @returns {Array}
          */
         intersect: function(target, array) {
@@ -752,9 +752,9 @@
             });
         },
         /**
-         * ¶ÔÁ½¸öÊı×éÈ¡²î¼¯(²¹¼¯)
-         * @param {Array} target µÚÒ»¸öÊı×é
-         * @param {Array} array µÚ¶ş¸öÊı×é
+         * å¯¹ä¸¤ä¸ªæ•°ç»„å–å·®é›†(è¡¥é›†)
+         * @param {Array} target ç¬¬ä¸€ä¸ªæ•°ç»„
+         * @param {Array} array ç¬¬äºŒä¸ªæ•°ç»„
          * @returns {Array}
          */
         diff: function(target, array) {
@@ -771,24 +771,24 @@
             return result;
         },
         /**
-         * ·µ»ØÊı×éÖĞµÄ×îĞ¡Öµ£¬ÓÃÓÚÊı×ÖÊı×é¡£
-         * @param {Array} target Ä¿±êÊı×é
+         * è¿”å›æ•°ç»„ä¸­çš„æœ€å°å€¼ï¼Œç”¨äºæ•°å­—æ•°ç»„ã€‚
+         * @param {Array} target ç›®æ ‡æ•°ç»„
          * @returns {Number}
          */
         min: function(target) {
             return Math.min.apply(0, target);
         },
         /**
-         * ·µ»ØÊı×éÖĞµÄ×î´óÖµ£¬ÓÃÓÚÊı×ÖÊı×é¡£
-         * @param {Array} target Ä¿±êÊı×é
+         * è¿”å›æ•°ç»„ä¸­çš„æœ€å¤§å€¼ï¼Œç”¨äºæ•°å­—æ•°ç»„ã€‚
+         * @param {Array} target ç›®æ ‡æ•°ç»„
          * @returns {Number}
          */
         max: function(target) {
             return Math.max.apply(0, target);
         },
         /**
-         * Éî¿½±´µ±Ç°Êı×é
-         * @param {Array} target Ä¿±êÊı×é
+         * æ·±æ‹·è´å½“å‰æ•°ç»„
+         * @param {Array} target ç›®æ ‡æ•°ç»„
          * @returns {Array}
          */
         clone: function(target) {
@@ -803,8 +803,8 @@
             if (i>=0) target.splice(i, 1);
         },
         inGroupsOf: function(target, number, fillWith) {
-            //½«Êı×é»®·Ö³ÉN¸ö·Ö×é£¬ÆäÖĞĞ¡×éÓĞnumber¸öÊı£¬×îºóÒ»×é¿ÉÄÜĞ¡ÓÚnumber¸öÊı,
-            //µ«Èç¹ûµÚÈı¸ö²ÎÊı²»ÎªundefineÊ±,ÎÒÃÇ¿ÉÒÔÄÃËüÀ´Ìî¿Õ×îºóÒ»×é
+            //å°†æ•°ç»„åˆ’åˆ†æˆNä¸ªåˆ†ç»„ï¼Œå…¶ä¸­å°ç»„æœ‰numberä¸ªæ•°ï¼Œæœ€åä¸€ç»„å¯èƒ½å°äºnumberä¸ªæ•°,
+            //ä½†å¦‚æœç¬¬ä¸‰ä¸ªå‚æ•°ä¸ä¸ºundefineæ—¶,æˆ‘ä»¬å¯ä»¥æ‹¿å®ƒæ¥å¡«ç©ºæœ€åä¸€ç»„
             var t = target.length,
                 n = Math.ceil(t / number),
                 fill = fillWith !== void 0,
@@ -829,7 +829,7 @@
     $.Array("concat,join,pop,push,shift,slice,sort,reverse,splice,unshift," + "indexOf,lastIndexOf,every,some,filter,reduce,reduceRight");
     var NumberPack = {
         limit: function(target, n1, n2) {
-            //È·±£ÊıÖµÔÚ[n1,n2]±ÕÇø¼äÖ®ÄÚ,Èç¹û³¬³öÏŞ½ç,ÔòÖÃ»»ÎªÀëËü×î½üµÄ×î´óÖµ»ò×îĞ¡Öµ
+            //ç¡®ä¿æ•°å€¼åœ¨[n1,n2]é—­åŒºé—´ä¹‹å†…,å¦‚æœè¶…å‡ºé™ç•Œ,åˆ™ç½®æ¢ä¸ºç¦»å®ƒæœ€è¿‘çš„æœ€å¤§å€¼æˆ–æœ€å°å€¼
             var a = [n1, n2].sort();
             if (target < a[0])
                 target = a[0];
@@ -838,7 +838,7 @@
             return target;
         },
         nearer: function(target, n1, n2) {
-            //Çó³ö¾àÀëÖ¸¶¨ÊıÖµ×î½üµÄÄÇ¸öÊı
+            //æ±‚å‡ºè·ç¦»æŒ‡å®šæ•°å€¼æœ€è¿‘çš„é‚£ä¸ªæ•°
             var diff1 = Math.abs(target - n1),
                 diff2 = Math.abs(target - n2);
             return diff1 < diff2 ? n1 : n2
@@ -872,8 +872,8 @@
 
 
     function mergeOne(source, key, current) {
-        //Ê¹ÓÃÉî¿½±´·½·¨½«¶à¸ö¶ÔÏó»òÊı×éºÏ²¢³ÉÒ»¸ö
-        if ($.isPlainObject(source[key])) { //Ö»´¦Àí´¿JS¶ÔÏó£¬²»´¦ÀíwindowÓë½Úµã
+        //ä½¿ç”¨æ·±æ‹·è´æ–¹æ³•å°†å¤šä¸ªå¯¹è±¡æˆ–æ•°ç»„åˆå¹¶æˆä¸€ä¸ª
+        if ($.isPlainObject(source[key])) { //åªå¤„ç†çº¯JSå¯¹è±¡ï¼Œä¸å¤„ç†windowä¸èŠ‚ç‚¹
             $.Object.merge(source[key], current);
         } else {
             source[key] = cloneOf(current)
@@ -883,10 +883,10 @@
 
     $.Object({
         /**
-         * ¹ıÂËÊı×éÖĞ²»ºÏÒªÇóµÄÔªËØ
+         * è¿‡æ»¤æ•°ç»„ä¸­ä¸åˆè¦æ±‚çš„å…ƒç´ 
          * @param {Object} obj
-         * @param {Function} fn Èç¹û·µ»ØtrueÔò·Å½ø½á¹û¼¯ÖĞ
-         * @param {*} scope ? Ä¬ÈÏÎªµ±Ç°±éÀúµÄÔªËØ»òÊôĞÔÖµ
+         * @param {Function} fn å¦‚æœè¿”å›trueåˆ™æ”¾è¿›ç»“æœé›†ä¸­
+         * @param {*} scope ? é»˜è®¤ä¸ºå½“å‰éå†çš„å…ƒç´ æˆ–å±æ€§å€¼
          * @return {array}
          */
         filter: function(obj, fn, scope) {
@@ -899,27 +899,27 @@
             return ret;
         },
         subset: function(target, props) {
-            //¸ù¾İ´«ÈëÊı×éÈ¡µ±Ç°¶ÔÏóÏà¹ØµÄ¼üÖµ¶Ô×é³ÉÒ»¸öĞÂ¶ÔÏó·µ»Ø
+            //æ ¹æ®ä¼ å…¥æ•°ç»„å–å½“å‰å¯¹è±¡ç›¸å…³çš„é”®å€¼å¯¹ç»„æˆä¸€ä¸ªæ–°å¯¹è±¡è¿”å›
             var result = {};
             props.forEach(function(prop) {
                 result[prop] = target[prop];
             });
             return result;
         },
-        //½«²ÎÊıÒ»µÄ¼üÖµ¶¼·ÅÈë»Øµ÷ÖĞÖ´ĞĞ£¬Èç¹û»Øµ÷·µ»ØfalseÖĞÖ¹±éÀú
+        //å°†å‚æ•°ä¸€çš„é”®å€¼éƒ½æ”¾å…¥å›è°ƒä¸­æ‰§è¡Œï¼Œå¦‚æœå›è°ƒè¿”å›falseä¸­æ­¢éå†
         forEach: function(obj, fn) {
             Object.keys(obj).forEach(function(name) {
                 fn(obj[name], name)
             })
         },
-        //½«²ÎÊıÒ»µÄ¼üÖµ¶¼·ÅÈë»Øµ÷ÖĞÖ´ĞĞ£¬ÊÕ¼¯Æä½á¹û·µ»Ø
+        //å°†å‚æ•°ä¸€çš„é”®å€¼éƒ½æ”¾å…¥å›è°ƒä¸­æ‰§è¡Œï¼Œæ”¶é›†å…¶ç»“æœè¿”å›
         map: function(obj, fn) {
             return  Object.keys(obj).map(function(name) {
                 return fn(obj[name], name)
             })
         },
         clone: function(target) {
-            //½øĞĞÉî¿½±´£¬·µ»ØÒ»¸öĞÂ¶ÔÏó£¬Èç¹ûÊÇÇ³¿½±´ÇëÊ¹ÓÃ$.extend
+            //è¿›è¡Œæ·±æ‹·è´ï¼Œè¿”å›ä¸€ä¸ªæ–°å¯¹è±¡ï¼Œå¦‚æœæ˜¯æµ…æ‹·è´è¯·ä½¿ç”¨$.extend
             var clone = {};
             for (var key in target) {
                 clone[key] = cloneOf(target[key]);
@@ -927,12 +927,12 @@
             return clone;
         },
         merge: function(target, k, v) {
-            //½«¶à¸ö¶ÔÏóºÏ²¢µ½µÚÒ»¸ö²ÎÊıÖĞ»ò½«ºóÁ½¸ö²ÎÊıµ±×÷¼üÓëÖµ¼ÓÈëµ½µÚÒ»¸ö²ÎÊı
+            //å°†å¤šä¸ªå¯¹è±¡åˆå¹¶åˆ°ç¬¬ä¸€ä¸ªå‚æ•°ä¸­æˆ–å°†åä¸¤ä¸ªå‚æ•°å½“ä½œé”®ä¸å€¼åŠ å…¥åˆ°ç¬¬ä¸€ä¸ªå‚æ•°
             var obj, key;
-            //ÎªÄ¿±ê¶ÔÏóÌí¼ÓÒ»¸ö¼üÖµ¶Ô
+            //ä¸ºç›®æ ‡å¯¹è±¡æ·»åŠ ä¸€ä¸ªé”®å€¼å¯¹
             if (typeof k === "string")
                 return mergeOne(target, k, v);
-            //ºÏ²¢¶à¸ö¶ÔÏó
+            //åˆå¹¶å¤šä¸ªå¯¹è±¡
             for (var i = 1, n = arguments.length; i < n; i++) {
                 obj = arguments[i];
                 for (key in obj) {
@@ -1047,43 +1047,43 @@
     };
     var locate = {
         AMPMS: {
-            0: "ÉÏÎç",
-            1: "ÏÂÎç"
+            0: "ä¸Šåˆ",
+            1: "ä¸‹åˆ"
         },
         DAY: {
-            0: "ĞÇÆÚÈÕ",
-            1: "ĞÇÆÚÒ»",
-            2: "ĞÇÆÚ¶ş",
-            3: "ĞÇÆÚÈı",
-            4: "ĞÇÆÚËÄ",
-            5: "ĞÇÆÚÎå",
-            6: "ĞÇÆÚÁù"
+            0: "æ˜ŸæœŸæ—¥",
+            1: "æ˜ŸæœŸä¸€",
+            2: "æ˜ŸæœŸäºŒ",
+            3: "æ˜ŸæœŸä¸‰",
+            4: "æ˜ŸæœŸå››",
+            5: "æ˜ŸæœŸäº”",
+            6: "æ˜ŸæœŸå…­"
         },
         MONTH: {
-            0: "1ÔÂ",
-            1: "2ÔÂ",
-            2: "3ÔÂ",
-            3: "4ÔÂ",
-            4: "5ÔÂ",
-            5: "6ÔÂ",
-            6: "7ÔÂ",
-            7: "8ÔÂ",
-            8: "9ÔÂ",
-            9: "10ÔÂ",
-            10: "11ÔÂ",
-            11: "12ÔÂ"
+            0: "1æœˆ",
+            1: "2æœˆ",
+            2: "3æœˆ",
+            3: "4æœˆ",
+            4: "5æœˆ",
+            5: "6æœˆ",
+            6: "7æœˆ",
+            7: "8æœˆ",
+            8: "9æœˆ",
+            9: "10æœˆ",
+            10: "11æœˆ",
+            11: "12æœˆ"
         },
         SHORTDAY: {
-            "0": "ÖÜÈÕ",
-            "1": "ÖÜÒ»",
-            "2": "ÖÜ¶ş",
-            "3": "ÖÜÈı",
-            "4": "ÖÜËÄ",
-            "5": "ÖÜÎå",
-            "6": "ÖÜÁù"
+            "0": "å‘¨æ—¥",
+            "1": "å‘¨ä¸€",
+            "2": "å‘¨äºŒ",
+            "3": "å‘¨ä¸‰",
+            "4": "å‘¨å››",
+            "5": "å‘¨äº”",
+            "6": "å‘¨å…­"
         },
-        fullDate: "yÄêMÔÂdÈÕEEEE",
-        longDate: "yÄêMÔÂdÈÕ",
+        fullDate: "yå¹´Mæœˆdæ—¥EEEE",
+        longDate: "yå¹´Mæœˆdæ—¥",
         medium: "yyyy-M-d ah:mm:ss",
         mediumDate: "yyyy-M-d",
         mediumTime: "ah:mm:ss",
@@ -1156,7 +1156,7 @@
         return paddedZone
     }
 
-    //È¡µÃÉÏÎçÏÂÎç
+    //å–å¾—ä¸Šåˆä¸‹åˆ
     function ampmGetter(date, formats) {
         return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
     }

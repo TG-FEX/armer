@@ -1,6 +1,6 @@
 $.UI = {};
 //==============================
-//   TODO(wuhf): UI¼¶±ğµÄ·½·¨
+//   TODO(wuhf): UIçº§åˆ«çš„æ–¹æ³•
 //==============================
 (function(support){
     if (!support) {
@@ -53,7 +53,7 @@ $.UI = {};
     try {
         $('<input/>').attr('placeholder')
     } catch(e) {
-        //IE10Äã¿ÉÒÔÈ¥ËÀÁË...
+        //IE10ä½ å¯ä»¥å»æ­»äº†...
         support = true;
     }
 
@@ -68,7 +68,7 @@ $.UI = {};
                 $this.removeClass('placeholder');
             });
 
-        //ÖØĞ´val
+        //é‡å†™val
         $.fn.val = function(val){
             if (val == null && !val)
                 return this.each(function(){
@@ -95,7 +95,7 @@ $.UI = {};
     }
 
     if (!support) {
-        //ÖØĞ´val
+        //é‡å†™val
         $.fn.val = function(val){
             var $this = $(this);
             if (!!val && !!$this.attr('placeholder')) {
@@ -112,7 +112,7 @@ $.UI = {};
     }
 
 })($.support.placeHolder =  'placeholder' in document.createElement('input'));
-/*¿É½ØÈ¡¶àĞĞÏÔÊ¾Ê¡ÂÔºÅ*/
+/*å¯æˆªå–å¤šè¡Œæ˜¾ç¤ºçœç•¥å·*/
 $.fn.ellipsis = function() {
     function loop ($container, maxHeight, str) {
         if ($container.height() <= maxHeight) return;
@@ -133,16 +133,16 @@ $.fn.ellipsis = function() {
     }
     return function(str, container){
         return this.each(function(){
-            // ¸´ÖÆÒÔÏÂÕâ¸öµØÖ·
+            // å¤åˆ¶ä»¥ä¸‹è¿™ä¸ªåœ°å€
             var container = container;
             var oldH, str = str || '<span class="ellipsis">...</span>'
             container = container || this;
-            // »ñÈ¡max-heightÓÃÀ´¼ÆËãĞĞÊı
+            // è·å–max-heightç”¨æ¥è®¡ç®—è¡Œæ•°
             var maxHeight = window.getComputedStyle ? (getComputedStyle(container)['max-height'] || getComputedStyle(container)['maxHeight']) : container.currentStyle['max-height'];
             var match = maxHeight.match(/(0?\.?\d*)px$/);
             if (match) maxHeight = oldH = match[1];
             else return;
-            // ÓÃÒ»¸ö¿ÕÔªËØ²âÁ¿Ò»ÏÂĞĞ¸ß£¬È»ºóÈ¥µô
+            // ç”¨ä¸€ä¸ªç©ºå…ƒç´ æµ‹é‡ä¸€ä¸‹è¡Œé«˜ï¼Œç„¶åå»æ‰
             var s = $('<span></span>', {
                 html: 'o',
                 css: {
@@ -161,7 +161,7 @@ $.fn.ellipsis = function() {
             console.log(line)
             maxHeight = line * lineHeight;
 
-            // È¥µôÒ»Ğ©ÑùÊ½£¬ÈÃÆä³¬³ö·¶Î§
+            // å»æ‰ä¸€äº›æ ·å¼ï¼Œè®©å…¶è¶…å‡ºèŒƒå›´
             container.style.maxHeight = 'none';
             container.style.overflowY = 'auto';
             container.style.height = 'auto';
@@ -175,7 +175,7 @@ $.fn.ellipsis = function() {
             } else loop.call($(this), $(container), maxHeight, str);
 
 
-            // ¸²¸ÇÑùÊ½
+            // è¦†ç›–æ ·å¼
             container.style.overflowY = 'hidden';
             container.style.maxHeight = oldH + 'px';
         })

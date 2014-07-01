@@ -9,9 +9,9 @@
         hashPrefix: "!",
         interval: 50
     }
-    var rthimSlant = /^\/+|\/+$/g  // È¥×î×óÓÒÁ½±ßµÄĞ±Ïß
-    var rleftSlant = /^\//         //×î×óµÄĞ±Ïß
-    var rhashBang = /^#(!)?\//   //Æ¥Åä/#/ »ò /#!/
+    var rthimSlant = /^\/+|\/+$/g  // å»æœ€å·¦å³ä¸¤è¾¹çš„æ–œçº¿
+    var rleftSlant = /^\//         //æœ€å·¦çš„æ–œçº¿
+    var rhashBang = /^#(!)?\//   //åŒ¹é…/#/ æˆ– /#!/
     var rhashIE = /^[^#]*(#.+)$/
     var anchorElement = document.createElement('a')
 
@@ -33,17 +33,17 @@
             History.started = true
             this.options = $.mix({}, defaults, this.options, options)
 
-            //IE6²»Ö§³ÖmaxHeight, IE7Ö§³ÖXMLHttpRequest, IE8Ö§³Öwindow.Element£¬querySelector,
-            //IE9Ö§³Öwindow.Node, window.HTMLElement, IE10²»Ö§³ÖÌõ¼ş×¢ÊÍ
+            //IE6ä¸æ”¯æŒmaxHeight, IE7æ”¯æŒXMLHttpRequest, IE8æ”¯æŒwindow.Elementï¼ŒquerySelector,
+            //IE9æ”¯æŒwindow.Node, window.HTMLElement, IE10ä¸æ”¯æŒæ¡ä»¶æ³¨é‡Š
 
             var oldIE = window.VBArray && History.IEVersion <= 7
-            //ÑÓ³Ù¼ì²â
+            //å»¶è¿Ÿæ£€æµ‹
             this.supportPushState = !!(window.history.pushState)
             this.supportHashChange = !!('onhashchange' in window && (!window.VBArray || !oldIE))
 
             this.html5Mode = !!this.options.html5Mode
             if (!this.supportPushState) {
-                $.log("Èç¹ûä¯ÀÀÆ÷²»Ö§³ÖHTML5 pushState£¬Ç¿ÖÆÊ¹ÓÃhash hack!")
+                $.log("å¦‚æœæµè§ˆå™¨ä¸æ”¯æŒHTML5 pushStateï¼Œå¼ºåˆ¶ä½¿ç”¨hash hack!")
                 this.html5Mode = false
             }
 
@@ -67,7 +67,7 @@
                 html = html.replace("<body>", "<script>document.domain =" + this.options.domain + "</script><body>")
             }
             if (oldIE && !this.html5Mode) {
-                //IE6,7ÔÚhash¸Ä±äÊ±²»»á²úÉúÀúÊ·£¬ĞèÒªÓÃÒ»¸öiframeÀ´¹²ÏíÀúÊ·
+                //IE6,7åœ¨hashæ”¹å˜æ—¶ä¸ä¼šäº§ç”Ÿå†å²ï¼Œéœ€è¦ç”¨ä¸€ä¸ªiframeæ¥å…±äº«å†å²
                 $.ready(function() {
                     var iframe = $.parseHTML('<iframe src="javascript:0"  tabindex="-1" style="display:none" />').firstChild
                     document.body.appendChild(iframe)
@@ -80,9 +80,9 @@
                 var startedWithHash = !!History.getHash(location.href)
             }
 
-            // Ö§³Öpopstate ¾Í¼àÌıpopstate
-            // Ö§³Öhashchange ¾Í¼àÌıhashchange
-            // ·ñÔòµÄ»°Ö»ÄÜÃ¿¸ôÒ»¶ÎÊ±¼ä½øĞĞ¼ì²âÁË
+            // æ”¯æŒpopstate å°±ç›‘å¬popstate
+            // æ”¯æŒhashchange å°±ç›‘å¬hashchange
+            // å¦åˆ™çš„è¯åªèƒ½æ¯éš”ä¸€æ®µæ—¶é—´è¿›è¡Œæ£€æµ‹äº†
             var lastLocation = location.href
             function checkUrl() {
                 var currLocation = location.href
@@ -112,17 +112,17 @@
                 var documentHash = proxy.location2hash[ document.URL ] || ""
 
                 var iframeHash = proxy.location2hash[ idoc.URL ] || ""
-                if (documentHash !== lastDocumentHash) {//Èç¹ûÊÇÓÃ»§µã»÷Ò³ÃæµÄÁ´½Ó´¥·¢
+                if (documentHash !== lastDocumentHash) {//å¦‚æœæ˜¯ç”¨æˆ·ç‚¹å‡»é¡µé¢çš„é“¾æ¥è§¦å‘
                     lastDocumentHash = documentHash
                     if (iframeHash !== documentHash) {
                         lastIframeHash = iframeHash = documentHash
-                        idoc.open()//´´½¨ÀúÊ·¼ÇÂ¼
+                        idoc.open()//åˆ›å»ºå†å²è®°å½•
                         idoc.write(html)
                         idoc.close()
                         idoc.location.hash = documentHash
                     }
                     execRouter(documentHash)
-                } else if (iframeHash !== lastIframeHash) {//Èç¹ûÊÇºóÍË°´Å¥´¥·¢hash²»Ò»ÖÂ
+                } else if (iframeHash !== lastIframeHash) {//å¦‚æœæ˜¯åé€€æŒ‰é’®è§¦å‘hashä¸ä¸€è‡´
                     lastIframeHash = iframeHash
                     if (startedWithHash && iframeHash === '') {
                         history.go(-1)
@@ -135,9 +135,9 @@
             if (this.html5Mode) {
                 this.checkUrl = $.event.add(window, 'popstate', checkUrl)
                 this._fireLocationChange = checkUrl
-            } else if (this.supportHashChange) {//IE 8, 9ÓëÆäËû²»Ö§³Öpush stateµÄä¯ÀÀÆ÷Ê¹ÓÃhashchange
+            } else if (this.supportHashChange) {//IE 8, 9ä¸å…¶ä»–ä¸æ”¯æŒpush stateçš„æµè§ˆå™¨ä½¿ç”¨hashchange
                 this.checkUrl = $.event.add(window, 'hashchange', checkUrl)
-            } else {//IE 6 7ÏÂÊ¹ÓÃ¶¨Ê±Æ÷¼àÌıURLµÄ±ä¶¯"
+            } else {//IE 6 7ä¸‹ä½¿ç”¨å®šæ—¶å™¨ç›‘å¬URLçš„å˜åŠ¨"
                 this.checkUrl = setInterval(checkUrlIE, this.options.interval)
             }
             if (this.html5Mode === false && location.href.indexOf("#!") !== -1) {
@@ -146,7 +146,7 @@
                 execRouter(RegExp.rightContext)
             }
         },
-        // ÖĞ¶ÏURLµÄ¼àÌı
+        // ä¸­æ–­URLçš„ç›‘å¬
         stop: function() {
             $.event.remove(window, "popstate", this.checkUrl)
             $.event.remove(window, "hashchange", this.checkUrl)
@@ -158,7 +158,7 @@
         },
         setLocation: function(path, hash) {
             var prefix = "#" + this.options.hashPrefix + "/"
-            if (!this.html5Mode) {//Èç¹ûÖ§³ÖHTML5 history ĞÂAPI
+            if (!this.html5Mode) {//å¦‚æœæ”¯æŒHTML5 history æ–°API
                 var IEhash = prefix + hash.replace(rleftSlant, "")
             }
 
@@ -166,7 +166,7 @@
                 if (this.html5Mode && rleftSlant.test(path)) {
                     history.pushState({path: path}, window.title, path)
                     this.location2hash[ location.href ] = hash
-                    $.nextTick(proxy._fireLocationChange) //ÓÉÓÚÃ»ÓĞhashchange, setInterval»Øµ÷×öµîºó£¬ĞèÒª×Ô¼º²ÁÆ¨¹É
+                    $.nextTick(proxy._fireLocationChange) //ç”±äºæ²¡æœ‰hashchange, setIntervalå›è°ƒåšæ®¿åï¼Œéœ€è¦è‡ªå·±æ“¦å±è‚¡
                 } else {
                     window.location.hash = IEhash
                     this.location2hash[ location.href ] = IEhash
@@ -196,7 +196,7 @@
         }*/
     }
 
-    //ÅĞ¶¨A±êÇ©µÄtargetÊôĞÔÊÇ·ñÖ¸Ïò×ÔÉí
+    //åˆ¤å®šAæ ‡ç­¾çš„targetå±æ€§æ˜¯å¦æŒ‡å‘è‡ªèº«
     //thanks https://github.com/quirkey/sammy/blob/master/lib/sammy.js#L219
     History.targetIsThisWindow = function targetIsThisWindow(targetWindow) {
         if (!targetWindow || targetWindow === window.name || targetWindow === '_self' || (targetWindow === 'top' && window == window.top)) {
@@ -204,14 +204,14 @@
         }
         return false
     }
-    // IE6Ö±½ÓÓÃlocation.hashÈ¡hash£¬¿ÉÄÜ»áÈ¡ÉÙÒ»²¿·ÖÄÚÈİ
-    // ±ÈÈç http://www.cnblogs.com/rubylouvre#stream/xxxxx?lang=zh_c
+    // IE6ç›´æ¥ç”¨location.hashå–hashï¼Œå¯èƒ½ä¼šå–å°‘ä¸€éƒ¨åˆ†å†…å®¹
+    // æ¯”å¦‚ http://www.cnblogs.com/rubylouvre#stream/xxxxx?lang=zh_c
     // ie6 => location.hash = #stream/xxxxx
-    // ÆäËûä¯ÀÀÆ÷ => location.hash = #stream/xxxxx?lang=zh_c
-    // firefox »á×Ô×÷¶àÇé¶Ôhash½øĞĞdecodeURIComponent
-    // ÓÖ±ÈÈç http://www.cnblogs.com/rubylouvre/#!/home/q={%22thedate%22:%2220121010~20121010%22}
+    // å…¶ä»–æµè§ˆå™¨ => location.hash = #stream/xxxxx?lang=zh_c
+    // firefox ä¼šè‡ªä½œå¤šæƒ…å¯¹hashè¿›è¡ŒdecodeURIComponent
+    // åˆæ¯”å¦‚ http://www.cnblogs.com/rubylouvre/#!/home/q={%22thedate%22:%2220121010~20121010%22}
     // firefox 15 => #!/home/q={"thedate":"20121010~20121010"}
-    // ÆäËûä¯ÀÀÆ÷ => #!/home/q={%22thedate%22:%2220121010~20121010%22}
+    // å…¶ä»–æµè§ˆå™¨ => #!/home/q={%22thedate%22:%2220121010~20121010%22}
     History.getHash = function(url) {
         var matches = url.toString().match(rhashIE)
         return matches ? matches[1] : ""
@@ -265,12 +265,12 @@
                 return result;
             }
         }
-        //±íµÄ½á¹¹£ºmethod+segments.length ÆÕÍ¨×Ö¶Î
+        //è¡¨çš„ç»“æ„ï¼šmethod+segments.length æ™®é€šå­—æ®µ
         function _tokenize(pathStr) {
             var stack = [''];
             for (var i = 0; i < pathStr.length; i++) {
                 var chr = pathStr.charAt(i);
-                if (chr === '/') {//ÓÃÓÚÈÃºóÃæµÄ×Ö·û´®Ïà¼Ó
+                if (chr === '/') {//ç”¨äºè®©åé¢çš„å­—ç¬¦ä¸²ç›¸åŠ 
                     stack.push('');
                     continue;
                 } else if (chr === '(') {
@@ -284,7 +284,7 @@
                 }
             }
             return stack.filter(function(str) {
-                return str.length !== 0;// È¥µô¿Õ×Ö·û
+                return str.length !== 0;// å»æ‰ç©ºå­—ç¬¦
             });
         }
 
@@ -328,7 +328,7 @@
                 return combine([combination].concat(list), func);
             }
         }
-        // ½«Ò»¸öÂ·ÓÉ¹æÔò×ª»»ÎªÒ»¸öÊı×é
+        // å°†ä¸€ä¸ªè·¯ç”±è§„åˆ™è½¬æ¢ä¸ºä¸€ä¸ªæ•°ç»„
         // "/users/:user/apps/:app/:id"   -->   ["users",":user","apps",":app",":id"]
         // "/items/:item(/type/:type)"   --> ["items", ":item", ["type", ":type"] ]
         function parse(rule) {
@@ -366,11 +366,11 @@
 
         Router.prototype = {
             _set: function(table, query, value) {
-                var nextKey = query.shift();//¹¹½¨Ò»¸öÇ°×ºÊ÷£¬ÓÃÓÚ¸ßËÙÆ¥¶Ô¸ø¶¨µÄURL
+                var nextKey = query.shift();//æ„å»ºä¸€ä¸ªå‰ç¼€æ ‘ï¼Œç”¨äºé«˜é€ŸåŒ¹å¯¹ç»™å®šçš„URL
                 if (nextKey.length <= 0) {
-                    $.error('¹¹½¨Ê§°Ü');
+                    $.error('æ„å»ºå¤±è´¥');
                 }
-                if (nextKey.charAt && nextKey.charAt(0) === ':') {//Èç¹ûÅöµ½²ÎÊı
+                if (nextKey.charAt && nextKey.charAt(0) === ':') {//å¦‚æœç¢°åˆ°å‚æ•°
                     var n = nextKey.substring(1);
                     if (table.hasOwnProperty('^n') && table['^n'] !== n) {
                         return false;
@@ -391,12 +391,12 @@
             error: function(callback) {
                 this.errorback = callback
             },
-            //Ìí¼ÓÒ»¸öÂ·ÓÉ¹æÔò
+            //æ·»åŠ ä¸€ä¸ªè·¯ç”±è§„åˆ™
             add: function(method, path, value) {
 
-                var ast = parse(path); //×ª»»Îª³éÏóÓï·¨Ê÷
+                var ast = parse(path); //è½¬æ¢ä¸ºæŠ½è±¡è¯­æ³•æ ‘
 
-                var patterns = this._expandRules(ast);//½øĞĞÈ«ÅÅÁĞ£¬Ó¦¶Ô¿ÉÑ¡µÄfragment
+                var patterns = this._expandRules(ast);//è¿›è¡Œå…¨æ’åˆ—ï¼Œåº”å¯¹å¯é€‰çš„fragment
 
                 if (patterns.length === 0) {
                     var query = [method, 0];
@@ -419,7 +419,7 @@
                     return ret;
                 }
             },
-            route: function(method, path) {//½«µ±Ç°URLÓë
+            route: function(method, path) {//å°†å½“å‰URLä¸
                 path = path.trim();
                 var splitted = path.split('/'),
                     query = Array(splitted.length),
@@ -473,14 +473,14 @@
                     } else if (Array.isArray(val)) {
                         return self._expandRules(val).concat([[]]);
                     } else {
-                        throw new Error('ÕâÀïµÄÖµÖ»ÄÜÊÇ×Ö·û´®»òÊı×é {{' + val + '}}');
+                        throw new Error('è¿™é‡Œçš„å€¼åªèƒ½æ˜¯å­—ç¬¦ä¸²æˆ–æ•°ç»„ {{' + val + '}}');
                     }
                 }), function(a, b) {
                     return a.concat(b);
                 });
                 return result;
             },
-            navigate: function(url) {//´«ÈëÒ»¸öURL£¬´¥·¢Ô¤¶¨ÒåµÄ»Øµ÷
+            navigate: function(url) {//ä¼ å…¥ä¸€ä¸ªURLï¼Œè§¦å‘é¢„å®šä¹‰çš„å›è°ƒ
                 var match = this.routeWithQuery("GET", url);
                 if (match) {
                     var fn = match.value;
@@ -500,12 +500,12 @@
 
 
         $.router = new Router
-        // ÏÈÌí¼ÓÂ·ÓÉ¹æÔòÓë¶ÔÓ¦µÄ´¦Àíº¯Êı
+        // å…ˆæ·»åŠ è·¯ç”±è§„åˆ™ä¸å¯¹åº”çš„å¤„ç†å‡½æ•°
         // router.add("GET","/aaa", function(){}) //{GET:{1:{aaa: function(){}}}}
         // router.add("GET","/aaa/bbb", function(){}) //{GET:{1:{aaa:{bbb: function(){}} }}}
         // router.add("GET","/aaa/:bbb", function(){}) //{GET:{1:{aaa: {"^n": "bbb", "^v": function(){}}}}}
         // router.add("GET","/aaa(/:bbb)", function(){}) //{GET:{1:{aaa: {"^n": "bbb", "^v": function(){}}}}}
-        // ÔÙÆô¶¯ÀúÊ·¹ÜÀíÆ÷
+        // å†å¯åŠ¨å†å²ç®¡ç†å™¨
         // require("ready!", function(bind){
         //     $.history.start();
         // })

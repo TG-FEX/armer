@@ -1,8 +1,8 @@
 (function(){
 
     /**
-     * CSS Transform ¹ı¶ÉÀà
-     * Ö÷ÒªÓÃÓÚĞòÁĞ·´ĞòÁĞtransform×Ö·û´®£¬Éú³ÉtransformµÄ¼üÖµ±í£¬ÓÃÓÚ$.fn.css»òÕß$.fn.transit, $.fn.css({ transform: '...' })
+     * CSS Transform è¿‡æ¸¡ç±»
+     * ä¸»è¦ç”¨äºåºåˆ—ååºåˆ—transformå­—ç¬¦ä¸²ï¼Œç”Ÿæˆtransformçš„é”®å€¼è¡¨ï¼Œç”¨äº$.fn.cssæˆ–è€…$.fn.transit, $.fn.css({ transform: '...' })
      * @param {string} transValue
      * @returns {Transform}
      * @constructor
@@ -11,11 +11,11 @@
      * t.rotate             //=> "90deg"
      * t.scale              //=> "4,4"
      *
-     * ÕâÑùsetºÍget
+     * è¿™æ ·setå’Œget
      * t.set('rotate', 4)
      * t.rotate             //=> "4deg"
      *
-     * Ê¹ÓÃtoStringÀ´½øĞĞĞòÁĞ»¯£¬toString²ÎÊıÎªtrueÊ±£¬Îªwebkit°æ±¾.
+     * ä½¿ç”¨toStringæ¥è¿›è¡Œåºåˆ—åŒ–ï¼ŒtoStringå‚æ•°ä¸ºtrueæ—¶ï¼Œä¸ºwebkitç‰ˆæœ¬.
      * t.toString()         //=> "rotate(90deg) scale(4,4)"
      * t.toString(true)     //=> "rotate(90deg) scale3d(4,4,0)" (WebKit version)
      */
@@ -27,10 +27,10 @@
 
     Transform.prototype = {
         /**
-         * Í¨¹ı×Ö·û´®·´ĞòÁĞ»¯
-         * @param prop ĞèÒªÉèÖÃµÄÊôĞÔ
-         * @param val ĞèÒªÉèÖÃµÄÖµ
-         * @example  t.setFromString('scale', '2,4'); Ïàµ±ÓÚ set('scale', '2', '4');
+         * é€šè¿‡å­—ç¬¦ä¸²ååºåˆ—åŒ–
+         * @param prop éœ€è¦è®¾ç½®çš„å±æ€§
+         * @param val éœ€è¦è®¾ç½®çš„å€¼
+         * @example  t.setFromString('scale', '2,4'); ç›¸å½“äº set('scale', '2', '4');
          */
         setFromString: function(prop, val) {
             var args =
@@ -43,8 +43,8 @@
             Transform.prototype.set.apply(this, args);
         },
         /**
-         * ÉèÖÃÒ»¸öÊôĞÔ
-         * @param prop ÊôĞÔÃû
+         * è®¾ç½®ä¸€ä¸ªå±æ€§
+         * @param prop å±æ€§å
          * @example t.set('scale', 2, 4);
          */
         set: function(prop) {
@@ -66,8 +66,8 @@
 
         setter: {
             /**
-             * Ğı×ª
-             * @param theta ½Ç¶È
+             * æ—‹è½¬
+             * @param theta è§’åº¦
              * @example
              * .css({ rotate: 30 })
              * .css({ rotate: "30" })
@@ -83,7 +83,7 @@
                 this.rotateY = unit(theta, 'deg');
             },
             /**
-             * Ëõ·Å
+             * ç¼©æ”¾
              * @param x
              * @param y
              * @example
@@ -101,11 +101,11 @@
             skewY: function(y) {
                 this.skewY = unit(y, 'deg');
             },
-            // Í¸ÊÓ
+            // é€è§†
             perspective: function(dist) {
                 this.perspective = unit(dist, 'px');
             },
-            // Ïàµ±ÓÚÆ½ÒÆµÄXY
+            // ç›¸å½“äºå¹³ç§»çš„XY
             x: function(x) {
                 this.set('translate', x, null);
             },
@@ -113,7 +113,7 @@
                 this.set('translate', null, y);
             },
             /**
-             * Æ½ÒÆ
+             * å¹³ç§»
              * @param x
              * @param y
              * @example
@@ -158,8 +158,8 @@
                 return s;
             }
         },
-        // ×ª»»transform
-        // ×ª»»£¬ÓÉ¹¹ÔìÌåµ÷ÓÃ
+        // è½¬æ¢transform
+        // è½¬æ¢ï¼Œç”±æ„é€ ä½“è°ƒç”¨
         parse: function(str) {
             var self = this;
             str.replace(/([a-zA-Z0-9]+)\((.*?)\)/g, function(x, prop, val) {
@@ -168,9 +168,9 @@
         },
 
         /**
-         * ĞòÁĞ»¯
-         * ½«·´ĞòÁĞ»¯¹ıµÄtransformĞòÁĞ»¯
-         * @param use3d ÊÇ·ñÊ¹ÓÃ3D
+         * åºåˆ—åŒ–
+         * å°†ååºåˆ—åŒ–è¿‡çš„transformåºåˆ—åŒ–
+         * @param use3d æ˜¯å¦ä½¿ç”¨3D
          * @returns {string}
          */
         toString: function(use3d) {
@@ -178,7 +178,7 @@
 
             for (var i in this) {
                 if (this.hasOwnProperty(i)) {
-                    // Èç¹ûä¯ÀÀÆ÷²»Ö§³Ö3D transform£¬Ôò²»Ê¹ÓÃ
+                    // å¦‚æœæµè§ˆå™¨ä¸æ”¯æŒ3D transformï¼Œåˆ™ä¸ä½¿ç”¨
                     if ((!support.transform3d) && (
                         (i === 'rotateX') ||
                             (i === 'rotateY') ||
@@ -206,7 +206,7 @@
     var support = {};
     var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
-// Ò»¸öCSS¶ÔÓ¦transition-propertyµÄ¶ÔÓ¦±í
+// ä¸€ä¸ªCSSå¯¹åº”transition-propertyçš„å¯¹åº”è¡¨
 // https://developer.mozilla.org/en/CSS/CSS_transitions#Properties_that_can_be_animated
     var propertyMap = $.transitionPropertyMap = {
         marginLeft    : 'margin',
@@ -219,7 +219,7 @@
         paddingTop    : 'padding'
     }
 
-// »ñÈ¡ÊôĞÔ´øÇ°×ºµÄ¼ü
+// è·å–å±æ€§å¸¦å‰ç¼€çš„é”®
 // transition` => `WebkitTransition
     function getVendorPropertyName(prop) {
         // Handle unprefixed versions (FF16+, for example)
@@ -233,33 +233,33 @@
         }
     }
 
-// ¼ì²éÊÇ·ñÖ§³Ötransform3D
-// ÀíÂÛÉÏÓ¦¸Ãµ±WebkitºÍFirefox 10+ ·µ»Øtrue
+// æ£€æŸ¥æ˜¯å¦æ”¯æŒtransform3D
+// ç†è®ºä¸Šåº”è¯¥å½“Webkitå’ŒFirefox 10+ è¿”å›true
     function checkTransform3dSupport() {
         div.style[support.transform] = '';
         div.style[support.transform] = 'rotateY(90deg)';
         return div.style[support.transform] !== '';
     }
 
-// ¼ì²éä¯ÀÀÆ÷¶Ôtransition¸÷¸öÊôĞÔµÄ¼æÈİÇé¿ö
+// æ£€æŸ¥æµè§ˆå™¨å¯¹transitionå„ä¸ªå±æ€§çš„å…¼å®¹æƒ…å†µ
     support.transition      = getVendorPropertyName('transition');
     support.transitionDelay = getVendorPropertyName('transitionDelay');
     support.transform       = getVendorPropertyName('transform');
     support.transformOrigin = getVendorPropertyName('transformOrigin');
     support.transform3d     = checkTransform3dSupport();
 
-// À©Õ¹½ø$.support
+// æ‰©å±•è¿›$.support
     for (var key in support) {
         if (support.hasOwnProperty(key) && typeof $.support[key] === 'undefined') {
             $.support[key] = support[key];
         }
     }
 
-// ±ÜÃâIEµÄÄÚ´æĞ¹Â©
+// é¿å…IEçš„å†…å­˜æ³„æ¼
     div = null;
 
     function registerCssHook(prop, isPixels) {
-        // ¶ÔÓÚÄ³Ğ©ÊôĞÔ£¬²»Ó¦¸Ã°üº¬'px'
+        // å¯¹äºæŸäº›å±æ€§ï¼Œä¸åº”è¯¥åŒ…å«'px'
         if (!isPixels) { $.cssNumber[prop] = true; }
         propertyMap[prop] = support.transform;
         $.cssHooks[prop] = {
@@ -275,19 +275,19 @@
         };
     }
 
-// 'transform' CSS ¹³×Ó
-// ÔÊĞíÄãÍ¨¹ı$.fn.cssÀ´ĞŞ¸Ätransition
+// 'transform' CSS é’©å­
+// å…è®¸ä½ é€šè¿‡$.fn.cssæ¥ä¿®æ”¹transition
 //
 // $("#hello").css({ transform: "rotate(90deg)" });
 // $("#hello").css('transform');
 // => { rotate: '90deg' }
 //
     $.cssHooks['transit:transform'] = {
-        // getter»á·µ»ØÒ»¸öTransition¶ÔÏó
+        // getterä¼šè¿”å›ä¸€ä¸ªTransitionå¯¹è±¡
         get: function(elem) {
             return $(elem).data('transform') || new Transform();
         },
-        // setter»á½ÓÊÕÒ»¸öTransform¶ÔÏó»òÕßÒ»¸ö×Ö·û´®
+        // setterä¼šæ¥æ”¶ä¸€ä¸ªTransformå¯¹è±¡æˆ–è€…ä¸€ä¸ªå­—ç¬¦ä¸²
         set: function(elem, v) {
             var value = v;
 
@@ -295,8 +295,8 @@
                 value = new Transform(value);
             }
 
-            // ÔÚChrome£¬µ±ÔªËØÔÚviewportÍâËõ·ÅµÄÊ±ºò3D°æ±¾µÄËõ·Å²»»á´ÕĞ§£¬ÎªÁË²»Ã°ÏÕ£¬
-            // ¾ö¶¨¹Ø±Õ3DËõ·Å
+            // åœ¨Chromeï¼Œå½“å…ƒç´ åœ¨viewportå¤–ç¼©æ”¾çš„æ—¶å€™3Dç‰ˆæœ¬çš„ç¼©æ”¾ä¸ä¼šå‡‘æ•ˆï¼Œä¸ºäº†ä¸å†’é™©ï¼Œ
+            // å†³å®šå…³é—­3Dç¼©æ”¾
             // http://davidwalsh.name/detecting-google-chrome-javascript
             if (support.transform === 'WebkitTransform' && !isChrome) {
                 elem.style[support.transform] = value.toString(true);
@@ -308,14 +308,14 @@
         }
     };
 
-// Îª.css({ transform: '...' })Ìí¼ÓCSS¹³×Ó
-// ¶ÔÓÚjQuery 1.8+£¬¿ÌÒâ¸²¸ÇÄ¬ÈÏtransform
+// ä¸º.css({ transform: '...' })æ·»åŠ CSSé’©å­
+// å¯¹äºjQuery 1.8+ï¼Œåˆ»æ„è¦†ç›–é»˜è®¤transform
     $.cssHooks.transform = {
         set: $.cssHooks['transit:transform'].set
     };
 
-// ÆäËû¹³×Ó
-// ÔÊĞíÊ¹ÓÃrotate, scaleµÈ
+// å…¶ä»–é’©å­
+// å…è®¸ä½¿ç”¨rotate, scaleç­‰
     registerCssHook('scale');
     registerCssHook('translate');
     registerCssHook('rotate');
@@ -332,7 +332,7 @@
 
 
 $.fn.bgiframe = function(){
-    if(this.children('bgiframe').length == 0){   //Èç¹û²»´æÔÚ²Å²å½øÈ¥
+    if(this.children('bgiframe').length == 0){   //å¦‚æœä¸å­˜åœ¨æ‰æ’è¿›å»
         return this.prepend($(document.createElement('bgiframe')).html('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>').css({
             position: 'absolute',
             width: '100%',
@@ -343,7 +343,7 @@ $.fn.bgiframe = function(){
     }
 };
 
-// .position ¸ÄÔì;
+// .position æ”¹é€ ;
 (function( $, undefined ) {
     var cachedScrollbarWidth,
         max = Math.max,

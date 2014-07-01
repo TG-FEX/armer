@@ -1,6 +1,6 @@
-// TODO(wuhf): Ç¿»¯$.ajaxÈÃËüÖ§³ÖstyleÀàĞÍ(ÔİÊ±²»Ö§³Öonerror)imageÀàĞÍºÍĞŞ¸´script.onerror
-// Ê¹ÓÃÇ°£¬±ØĞëĞŞ¸ÄjQÒ»¸öbug£¬·ñÔòIE6²»ÉúĞ§
-// ²éÕÒ dataType[0] === "+" ĞŞ¸ÄÎª dataType.charAt(0) === "+"
+// TODO(wuhf): å¼ºåŒ–$.ajaxè®©å®ƒæ”¯æŒstyleç±»å‹(æš‚æ—¶ä¸æ”¯æŒonerror)imageç±»å‹å’Œä¿®å¤script.onerror
+// ä½¿ç”¨å‰ï¼Œå¿…é¡»ä¿®æ”¹jQä¸€ä¸ªbugï¼Œå¦åˆ™IE6ä¸ç”Ÿæ•ˆ
+// æŸ¥æ‰¾ dataType[0] === "+" ä¿®æ”¹ä¸º dataType.charAt(0) === "+"
 ;(function ($) {
     var DOC = document, script,
         HEAD = document.head || document.getElementsByTagName('head')[0];
@@ -13,14 +13,14 @@
         HEAD.insertBefore(script, HEAD.firstChild);
         return script;
     };
-    // Ïú»Ùscript±êÇ©
+    // é”€æ¯scriptæ ‡ç­¾
     var destoryScript = function(s){
         s.onerror = s.onreadystatechange = s.onload = null;
         if (s.parentNode) {
             s.parentNode.removeChild(s)
         }
     };
-    // Ìí¼ÓÅäÖÃ
+    // æ·»åŠ é…ç½®
     jQuery.ajaxSetup({
         predictType: true,
         retry: 5,
@@ -49,7 +49,7 @@
     });
 
 
-    // Ôö¼ÓpredictType²ÎÊı
+    // å¢åŠ predictTypeå‚æ•°
     var rExt = /\.([^.?#/]*)(?:[?#]|$)/;
     function getType(url){
         if (rExt.test(url)) return $.ajax.ext2Type[RegExp.$1];
@@ -57,12 +57,12 @@
     }
     $.ajaxPrefilter(function(s){
         if (s.predictType && s.dataType == null) {
-            //Èç¹ûÎªtrueÇÒdataTypeÎª¿ÕÔò¶Ôurl·ÖÎö²¢Ô¤²âÀàĞÍ
+            //å¦‚æœä¸ºtrueä¸”dataTypeä¸ºç©ºåˆ™å¯¹urlåˆ†æå¹¶é¢„æµ‹ç±»å‹
             return getType(s.url);
         }
     });
 
-    // ¶Ôstyle½øĞĞ´¦Àí
+    // å¯¹styleè¿›è¡Œå¤„ç†
     $.ajaxPrefilter('style', function(s) {
         if ( s.crossDomain ) {
             s.type = "GET";
@@ -102,7 +102,7 @@
     $.ajaxPrefilter('file', function(s){
         s.mimeType = 'text/plain; charset=x-user-defined';
     });
-    // ¶Ôimage ½øĞĞ´¦Àí
+    // å¯¹image è¿›è¡Œå¤„ç†
     $.ajaxTransport('image', function(s){
         var image;
         //if (s.crossDomain)
@@ -138,7 +138,7 @@
         }
     });
 
-    // ĞŞ¸´script onloadµÄbug
+    // ä¿®å¤script onloadçš„bug
     $.ajaxTransport('+script', function(s){
         var src = s.url;
         if (s.crossDomain) {
@@ -146,7 +146,7 @@
                 send: function(_, complete){
                     var handler;
                     if (DOC.dispatchEvent) {
-                        // ¶ÔÓÚw3c±ê×¼ä¯ÀÀÆ÷£¬²ÉÓÃonerrorºÍonloadÅĞ¶Ï½Å±¾¼ÓÔØÇé¿ö
+                        // å¯¹äºw3cæ ‡å‡†æµè§ˆå™¨ï¼Œé‡‡ç”¨onerrorå’Œonloadåˆ¤æ–­è„šæœ¬åŠ è½½æƒ…å†µ
                         handler = function(){
                             var s = this;
                             s.onload = function(){
@@ -161,19 +161,19 @@
                             };
                         };
                     } else {
-                        // ¶ÔÓÚ¶ñĞÄµÄIE8-£¬ÎÒÃÇÍ¨¹ıÒ»¸övbscriptÔªËØ£¬À´¼ì²â½Å±¾ÊÇ·ñ¼ÓÔØ³É¹¦
+                        // å¯¹äºæ¶å¿ƒçš„IE8-ï¼Œæˆ‘ä»¬é€šè¿‡ä¸€ä¸ªvbscriptå…ƒç´ ï¼Œæ¥æ£€æµ‹è„šæœ¬æ˜¯å¦åŠ è½½æˆåŠŸ
                         handler = function(){
                             var vbtest = this, flag = 0;
                             vbtest.language = 'vbscript';
                             var errorHandler = function(){
-                                // ´íÎóÊ±£¬ÅĞ¶Ï½Å±¾ÊÇ·ñÕıÔÚ½âÊÍ£¬ÊÇÔò±êÖ¾¼ÓÔØ³É¹¦
+                                // é”™è¯¯æ—¶ï¼Œåˆ¤æ–­è„šæœ¬æ˜¯å¦æ­£åœ¨è§£é‡Šï¼Œæ˜¯åˆ™æ ‡å¿—åŠ è½½æˆåŠŸ
                                 if (vbtest.readyState == 'interactive') {
                                     flag = 1;
                                 }
                             };
                             vbtest.onreadystatechange = function(_, isAbort){
                                 if (isAbort || /loaded|complete/.test(this.readyState)) {
-                                    // ±êÖ¾Î»£¬µ±¼ÓÔØ³É¹¦£¬ÖÃ1£»
+                                    // æ ‡å¿—ä½ï¼Œå½“åŠ è½½æˆåŠŸï¼Œç½®1ï¼›
                                     if (!isAbort) {
                                         if (flag == 1)
                                             injectScript(src, function(){
@@ -194,7 +194,7 @@
                                     vbtest = null;
                                 }
                             };
-                            // Îªwindow°ó¶¨Ò»¸ö´íÎó£¬µ±js±»Îó¼ÓÔØ³ÉvbµÄÊ±ºò£¬»á·¢Éú´íÎó£¬À´ÅĞ¶ÏÊÇ·ñ¼ÓÔØ³É¹¦
+                            // ä¸ºwindowç»‘å®šä¸€ä¸ªé”™è¯¯ï¼Œå½“jsè¢«è¯¯åŠ è½½æˆvbçš„æ—¶å€™ï¼Œä¼šå‘ç”Ÿé”™è¯¯ï¼Œæ¥åˆ¤æ–­æ˜¯å¦åŠ è½½æˆåŠŸ
                             window.attachEvent('onerror', errorHandler);
                         };
                     }

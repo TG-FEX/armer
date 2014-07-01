@@ -1,6 +1,6 @@
-// À©Õ¹ÄÚ½¨jQuery css easing
+// æ‰©å±•å†…å»ºjQuery css easing
 ;(function () {
-    // »ùÓÚRobert PennerµÄ»º¶¯¹«Ê½ (http://www.robertpenner.com/easing)
+    // åŸºäºRobert Pennerçš„ç¼“åŠ¨å…¬å¼ (http://www.robertpenner.com/easing)
     var baseEasings = {};
     $.each(['Quad', 'Cubic', 'Quart', 'Quint', 'Expo'], function (i, name) {
         baseEasings[ name ] = function (p) {
@@ -41,7 +41,7 @@
         };
     });
 
-    // À©Õ¹Ò»Ğ©CSStransition-timing-functionµÄjsµ÷ÓÃ
+    // æ‰©å±•ä¸€äº›CSStransition-timing-functionçš„jsè°ƒç”¨
     $.cssEasing = {
         linear: 'linear',
         easeIn: 'ease-in',
@@ -76,7 +76,7 @@
     $.cssEasing._default = 'cubic-bezier(.02,.01,.47,1)';
 
     var support = $.support;
-    // ¼ì²âĞèÒªµÄtransitionend
+    // æ£€æµ‹éœ€è¦çš„transitionend
     var eventNames = {
         'transition':       'transitionend',
         'MozTransition':    'transitionend',
@@ -84,10 +84,10 @@
         'WebkitTransition': 'webkitTransitionEnd',
         'msTransition':     'MSTransitionEnd'
     };
-    // ¸ù¾İsupportµ÷ÓÃ²»Í¬µÄÊÂ¼ş
+    // æ ¹æ®supportè°ƒç”¨ä¸åŒçš„äº‹ä»¶
     var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
 
-    // ÓÉÓÚtransitionEndµÄ±íÏÖ²»Ò»ÖÂ£¬ËùÒÔ²»ÊÊÓÃËü×÷ÎªÅĞ¶Ï¶¯»­Íê³ÉµÄÊ±»ú
+    // ç”±äºtransitionEndçš„è¡¨ç°ä¸ä¸€è‡´ï¼Œæ‰€ä»¥ä¸é€‚ç”¨å®ƒä½œä¸ºåˆ¤æ–­åŠ¨ç”»å®Œæˆçš„æ—¶æœº
     //$.Transition.useTransitionEnd = true;
     Transition = function(elem, properties, options){
         var transition,
@@ -101,14 +101,14 @@
             handler = function(){
                 deferred.resolveWith(elem, [transition]);
             };
-        // Ä¬ÈÏ¶¯»­Îªswing
+        // é»˜è®¤åŠ¨ç”»ä¸ºswing
         options.easing = options.easing || 'swing';
         oldTransitions = elem.style[support.transition];
         if ($.Transition.useTransitionEnd) {
             bound = true;
             elem.addEventListener(transitionEnd, handler);
         } else window.setTimeout(handler, options.duration);
-        // webkitÍâ±ØĞëÇ¿ÆÈÖØ»æ²ÅÄÜ´¥·¢
+        // webkitå¤–å¿…é¡»å¼ºè¿«é‡ç»˜æ‰èƒ½è§¦å‘
         var s = elem.offsetWidth;
 
         elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
@@ -140,9 +140,9 @@
             .always( transition.opts.always );
     };
     $.Transition = $.extend(Transition, {
-        // ÁÙÊ±¹Ø±ÕtransitionĞ§¹û
+        // ä¸´æ—¶å…³é—­transitionæ•ˆæœ
         enabled: true,
-        // ÉèÖÃÊÇ·ñÍ¨¹ıtransitionEndÀ´´¥·¢¶¯»­µÄcallback
+        // è®¾ç½®æ˜¯å¦é€šè¿‡transitionEndæ¥è§¦å‘åŠ¨ç”»çš„callback
         useTransitionEnd: false
     });
     $.fn.transit = function(prop, speed, easing, callback){
@@ -159,9 +159,9 @@
     };
 
     /**
-     * ¸ù¾İCSSÊôĞÔ»ñÈ¡TransitionÊôĞÔ
-     * @param props CSSÊôĞÔ
-     * @returns {Array} ·µ»ØÒ»¸öÓÃÓÚtransition-propertyµÄÊôĞÔÊı×é
+     * æ ¹æ®CSSå±æ€§è·å–Transitionå±æ€§
+     * @param props CSSå±æ€§
+     * @returns {Array} è¿”å›ä¸€ä¸ªç”¨äºtransition-propertyçš„å±æ€§æ•°ç»„
      */
     function getProperties(props) {
         var re = [];
@@ -178,27 +178,27 @@
     }
 
     /**
-     * Éú³ÉĞòÁĞ»¯µÄtransition
-     * @param properties ÊôĞÔ
-     * @param duration ³ÖĞøÊ±¼ä
-     * @param easing ¹ı³¡¶¯»­
-     * @param delay ÑÓÊ±
+     * ç”Ÿæˆåºåˆ—åŒ–çš„transition
+     * @param properties å±æ€§
+     * @param duration æŒç»­æ—¶é—´
+     * @param easing è¿‡åœºåŠ¨ç”»
+     * @param delay å»¶æ—¶
      * @returns {string}
      * @exaple
      * getTransition({ opacity: 1, rotate: 30 }, 500, 'ease');  => 'opacity 500ms ease, -webkit-transform 500ms ease'
      */
     function getTransition(properties, duration, easing, delay) {
-        // »ñÈ¡ĞèÒªµÄTransitionÊôĞÔ
+        // è·å–éœ€è¦çš„Transitionå±æ€§
         var props = getProperties(properties);
 
-        // Í¨¹ı±ğ³Æ»ñÈ¡¾ßÌåµÄtimming-function
+        // é€šè¿‡åˆ«ç§°è·å–å…·ä½“çš„timming-function
         if ($.cssEasing[easing]) { easing = $.cssEasing[easing]; }
 
-        // ´´½¨duration/easing/delayÊôĞÔ
+        // åˆ›å»ºduration/easing/delayå±æ€§
         var attribs = '' + toMS(duration) + ' ' + easing;
         if (parseInt(delay, 10) > 0) { attribs += ' ' + toMS(delay); }
 
-        // ×éºÏ²»Í¬µÄCSSÊôĞÔ
+        // ç»„åˆä¸åŒçš„CSSå±æ€§
         // "margin 200ms ease, padding 200ms ease, ..."
         var transitions = [];
         $.each(props, function(i, name) {
@@ -208,7 +208,7 @@
         return transitions.join(', ');
     }
     /**
-     * ½«ËÙ¶È×ª»»ÎªºÁÃë
+     * å°†é€Ÿåº¦è½¬æ¢ä¸ºæ¯«ç§’
      * @param duration
      * @returns {*}
      * @example
@@ -217,21 +217,21 @@
      */
     function toMS(duration) {
         var i = duration;
-        // ×ª»»ÀàËÆ 'fast' µÄ×Ö·û´®.
+        // è½¬æ¢ç±»ä¼¼ 'fast' çš„å­—ç¬¦ä¸².
         if ($.fx.speeds[i]) { i = $.fx.speeds[i]; }
         return $.unit(i, 'ms');
     }
 
-    // ±©Â¶Ò»¸ö²âÊÔÓÃµÄ·½·¨
+    // æš´éœ²ä¸€ä¸ªæµ‹è¯•ç”¨çš„æ–¹æ³•
     $.Transition.getTransitionValue = getTransition;
 
     if (!$.support.transition)
         $.fn.transit = $.fn.transition = $.fn.animate;
 
 
-    // TODO: classAnimation ÈÃJS·ÖÎötransition½øĞĞjs¶¯»­¹ı¶ÉÄ£ÄâtansitionCSS¶¯»­
+    // TODO: classAnimation è®©JSåˆ†ætransitionè¿›è¡ŒjsåŠ¨ç”»è¿‡æ¸¡æ¨¡æ‹ŸtansitionCSSåŠ¨ç”»
 
-    // ×ª»»Îªms£¬ÀıÈç£º½«'2000ms'¡¢'2s' ×ª»»Îª 2000;
+    // è½¬æ¢ä¸ºmsï¼Œä¾‹å¦‚ï¼šå°†'2000ms'ã€'2s' è½¬æ¢ä¸º 2000;
     function toMS(duration) {
         if (typeof duration == 'number') return duration;
         if (duration.indexOf('ms') > -1) return parseInt(duration);
@@ -254,7 +254,7 @@
             }
         }
     };
-    // ¹ıÂË£¬»òÕß¹ıÂË²¢ÇÒÇó²î¼¯
+    // è¿‡æ»¤ï¼Œæˆ–è€…è¿‡æ»¤å¹¶ä¸”æ±‚å·®é›†
     var getStyles = function(elem, filter, diff){
         var style = elem.currentStyle, styles = {}, key, value;
         for (key in filter) {
@@ -265,10 +265,10 @@
         }
         return styles;
     };
-    // Í¨¹ıcurrentStyle»ñÈ¡transition
+    // é€šè¿‡currentStyleè·å–transition
     var getTransition = function(currentStyle){
         var i, tLeng = 0, t = [], property = [], duration = [], timingFunction = [], delay = [], transition = {};
-        // ±ØĞëÔÚtryÔËĞĞ£¬·ñÔòÈ¡×Ô¶¨ÒåÊôĞÔ¿ÉÄÜµ¼ÖÂ³ÌĞò²»ÄÜ¼ÌĞøÔËĞĞ
+        // å¿…é¡»åœ¨tryè¿è¡Œï¼Œå¦åˆ™å–è‡ªå®šä¹‰å±æ€§å¯èƒ½å¯¼è‡´ç¨‹åºä¸èƒ½ç»§ç»­è¿è¡Œ
         try {
             t = currentStyle['transition'].split(rC);
             for(i = t.length; i--;) {
@@ -281,12 +281,12 @@
             timingFunction = currentStyle['transition-timing-function'].split(rC);
             delay = currentStyle['transition-delay'].split(rC);
         } catch(e) {}
-        // ÕûºÏ³ÉÒ»¸öÊı×é
+        // æ•´åˆæˆä¸€ä¸ªæ•°ç»„
         for (i = 0; i < property.length; i++) {
             //alert(property[i]);
             t[i + tLeng] = {property: property[i], duration: duration[i] || duration[0], timingFunction: timingFunction[i] || timingFunction[0], delay: delay[i] || delay[0]};
         }
-        // È¥ÖØºÏ²¢
+        // å»é‡åˆå¹¶
         for (i = 0; i < t.length; i++) {
             var item = transition[t[i].property];
             if (!item) item = transition[t[i].property] = {};
@@ -313,7 +313,7 @@
         if (doAnimate) {
             var baseClass = animated.attr( "class" ) || "";
             allAnimations = animated.find($.trim(children).replace(/^["']/, '').replace(/['"]$/, '')).addBack();
-            // ±éÀúĞèÒª×ö¶¯»­µÄÔªËØ£¬³éÈ¡³öÔ­À´ÑùÊ½
+            // éå†éœ€è¦åšåŠ¨ç”»çš„å…ƒç´ ï¼ŒæŠ½å–å‡ºåŸæ¥æ ·å¼
             allAnimations = allAnimations.map(function(){
                 var t = getTransition(this.currentStyle), el = $(this);
                 return {
@@ -323,7 +323,7 @@
                 }
             });
             applyClassChange();
-            // ÔÙ´Î±éÀúĞèÒª£¬¼ÆËã³öÑùÊ½µÄ²îÒì
+            // å†æ¬¡éå†éœ€è¦ï¼Œè®¡ç®—å‡ºæ ·å¼çš„å·®å¼‚
             allAnimations = allAnimations.map(function() {
                 this.diff = getStyles(this.el[0], this.start, true);
                 return this;
@@ -331,7 +331,7 @@
             animated.attr( "class", baseClass );
             allAnimations = allAnimations.map(function(){
                 var i = firstVal(this.transitions);
-                // Ö»³éÈ¡µÚÒ»¸öduration¡¢timingFunction¡¢delayÀ´¼ò»¯Á÷³Ì
+                // åªæŠ½å–ç¬¬ä¸€ä¸ªdurationã€timingFunctionã€delayæ¥ç®€åŒ–æµç¨‹
                 var styleInfo = this,
                     dfd = $.Deferred(),
                     opts = $.extend({
@@ -347,10 +347,10 @@
             });
             $.when.apply($, allAnimations.get()).done(function() {
 
-                // ÉèÖÃĞÂÀà
+                // è®¾ç½®æ–°ç±»
                 applyClassChange();
 
-                // ±éÀúËùÓĞ¶¯»­µÄÔªËØ£¬Çå³ıËùÓĞcssÊôĞÔ
+                // éå†æ‰€æœ‰åŠ¨ç”»çš„å…ƒç´ ï¼Œæ¸…é™¤æ‰€æœ‰csså±æ€§
                 $.each( arguments, function() {
                     var el = this.el;
                     $.each( this.diff, function(key) {
@@ -364,7 +364,7 @@
     $.each(classAnimationActions, function(__, action){
         var orig = $.fn[action + 'Class'];
         $.fn[action + 'Class'] = $.support.transition ? orig : function(classes) {
-            // TODO: ÅĞ¶ÏÊÇ·ñ×ö¶¯»­..
+            // TODO: åˆ¤æ–­æ˜¯å¦åšåŠ¨ç”»..
             var withAnimation = true;
             if (withAnimation) classAnimation.call(this, {add: {classes: classes, orig: orig}})
             else orig.apply(this, arguments);

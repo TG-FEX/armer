@@ -6,7 +6,7 @@
         HEAD = document.head || document.getElementsByTagName('head')[0];
     var injectScript = function(src, beforeInject, charset){
         var script = document.createElement('script');
-        if (charset) script.scriptCharset = charset;
+        if (charset) script.charset = charset;
         script.async = true;
         beforeInject.call(script);
         script.src = src;

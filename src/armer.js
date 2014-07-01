@@ -332,7 +332,8 @@ armer = window.jQuery || window.Zepto;
                             key = splits[0],
                             value = splits[1];
                         var aSplits, aResult = [];
-                        if (value.indexOf(arrSeparator) > -1) {
+                        if (!value) return;
+                        else if (value.indexOf(arrSeparator) > -1) {
                             aSplits = value.split(arrSeparator);
                             $.each(aSplits, function(__, value){
                                 aResult.push(assume(value));
@@ -819,7 +820,11 @@ armer = window.jQuery || window.Zepto;
 
 
         function getExports(mods){
-            return $.map(mods, function(item){return item.exports})
+            var arr = [], i;
+            for (i = 0; i < mods.length; i++) {
+                arr.push(mods[i].exports);
+            }
+            return arr;
         }
 
         function parseDep(config) {
@@ -877,7 +882,7 @@ armer = window.jQuery || window.Zepto;
                             var options = {
                                 url: mod.url,
                                 cache: true,
-                                //crossDomain: true,
+                                crossDomain: defaults.charset ? true : undefined,
                                 dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                                 scriptCharset: defaults.charset,
                                 success: function(data) {

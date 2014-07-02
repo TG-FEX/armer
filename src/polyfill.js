@@ -345,7 +345,7 @@
                 return ''.indexOf.call(this, s, position >> 0) !== -1;
             }
         });
-        mix(Number[p], {
+        mix(Number[P], {
             isFinite: function(num){
                 if (typeof num != 'number') return false;
                 else if (!isFinite(num)) return false;

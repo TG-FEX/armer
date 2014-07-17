@@ -220,8 +220,9 @@ armer = window.jQuery || window.Zepto;
                         continue
                     // 不允许一般数组
                     result[obj[i].name] = result[obj[i].name] || [];
-                    if (ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked))
+                    if (ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked)) {
                         result[obj[i].name].push(obj[i].value);
+                    }
                 }
                 if (separator) {
                     for (var i in result) {

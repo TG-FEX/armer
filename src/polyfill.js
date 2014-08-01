@@ -390,7 +390,7 @@
         window.Set.prototype = {
             size: function(){},
             add: function(){},
-            delete: function(){},
+            "delete": function(){},
             has: function(){},
             clear: function(){}
         }

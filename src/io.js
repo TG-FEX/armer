@@ -184,7 +184,7 @@
                                                         complete(200, 'success');
                                                     }
                                                 };
-                                            });
+                                            }, s.scriptCharset);
                                         else {
                                             complete(404, 'fail');
                                         }

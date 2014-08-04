@@ -724,12 +724,25 @@ armer = window.jQuery || window.Zepto;
     // TODO(wuhf): AMD/CMD加载器
     // ========================================================
     (function () {
+
+        var mRequire = {exports: require};
+        mRequire.dfd = $.when(mRequire);
+        var mExports = {};
+        mExports.dfd = $.when(mExports);
+        var mModule = {};
+        mModule.dfd = $.when(mModule);
+
+
         var modules = {
-            'armer': {
+            armer: {
                 exports: $
-            }
+            },
+            require: mRequire,
+            exports: mExports,
+            module: mModule
         };
-        var currentMod = null;
+
+
         var currentParent = null;
         var currentUrl = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
@@ -753,22 +766,14 @@ armer = window.jQuery || window.Zepto;
                     },
                     callback: function(){
                         var that = this;
-                        // 没有factory 证明没有通过define，返回原始数据;
-                        if (!this.factory) this.factory = function(){return that.originData};
-                        var fn = this.factory.toString(), ret;
-                        // 如果factory不是function
-                        if (typeof this.factory !== 'function') {
-                            //JSONP 形式
-                            this.exports = this.factory;
-                        } else if (!!~fn.indexOf('exports') || !!~fn.indexOf('require')) {
-                            // CMD 如果factory包含exports
-                            ret = this.factory.apply(this, [require, this.exports, this]);
-                            if (ret)
-                                this.exports = ret;
-                        } else {
-                            // AMD
-                            this.exports = this.factory.apply(this, getExports(arguments));
+
+                        if (this.type !== 'js'){
+                            this.exports = this.originData;
+                        } else if (this.factory) {
+                            var exports = this.factory.apply(this, getExports(arguments))
+                            this.exports = exports || this.exports || modules.exports.exports;
                         }
+
                         this.dfd.resolveWith(this, [this]);
                     }
                 }
@@ -778,12 +783,11 @@ armer = window.jQuery || window.Zepto;
         // 构造模块
         require.Model = function Model(config){
             $.extend(this, config);
-            if (this.id) modules[this.id] = this;
             if (this.url) modules[this.method + this.url] = this;
-            this.exports = {};
+            else if (this.id) modules[this.id] = this;
         };
         require.Model.prototype = {
-            // 处理factory
+            // 处理模块
             fire: function(data){
                 // 使用shim模式
                 var mod = this;
@@ -792,14 +796,17 @@ armer = window.jQuery || window.Zepto;
                     shim = {
                         deps: shim
                     }
-                mod.deps = mod.deps || shim.deps
+                mod.deps = mod.deps || shim.deps;
                 mod.originData = data;
-                if (shim.exports)
-                    mod.factory = mod.factory || eval('(function(){return ' + shim.exports + '})')
                 var success = function(){
-                    currentMod = mod;
+                    modules.module.exports = mod;
+                    modules.exports.exports = {};
+                    currentParent = mod.url;
+                    if (shim.exports)
+                        modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
                     defaults.plusin[mod.method].callback.apply(mod, arguments);
-                    currentMod = null;
+                    modules.module.exports = null;
+                    currentParent = null;
                 }
                 if (mod.deps && mod.deps.length) {
                     currentParent = mod.url;
@@ -874,13 +881,14 @@ armer = window.jQuery || window.Zepto;
             var mDps = [], mod;
             for (var i = 0; i < deps.length; i++) {
                 mod = parseDep(deps[i]);
+                // 当不存在dfd的时候证明这个模块没有初始化
                 if (!mod.dfd) {
-                    // 处理新建的模块
                     mod.dfd = $.Deferred();
-                    requesting[mod.url] = mod;
-                    // 如果模块factory没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
-                    if (!mod.factory)
+                    // 如果factory或者exports没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
+                    // TODO:这个判断貌似不太准确
+                    if (!mod.factory  && !('exports' in mod))
                         (function(mod){
+                            requesting[mod.url || mod.id] = mod;
                             var options = {
                                 url: mod.url,
                                 cache: true,
@@ -888,11 +896,13 @@ armer = window.jQuery || window.Zepto;
                                 dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                                 scriptCharset: defaults.charset,
                                 success: function(data) {
-                                    var bmod
+                                    var bmod;
                                     if (requesting[mod.url]) {
                                         if (bmod = requesting[mod.url].bmod) {
                                             mod.deps = bmod.deps;
                                             mod.factory = bmod.factory;
+                                            mod.exports = bmod.exports;
+                                            mod.type = bmod.type;
                                         }
                                         delete requesting[mod.url]
                                     }
@@ -913,7 +923,7 @@ armer = window.jQuery || window.Zepto;
                             };
                             $.ajax(options);
                         })(mod);
-                    // 如果factory已经定义过，那么就直接处理该模块
+                    // 如果factory或者exports已经定义过，那么就直接处理该模块
                     else mod.fire();
                 }
                 mDps.push(mod.dfd);
@@ -924,10 +934,12 @@ armer = window.jQuery || window.Zepto;
         function require(deps, callback, errorCallback){
             // 兼容CMD模式
             if (!callback) {
-                if (typeof modules[deps] == 'object')
-                    return modules[deps].exports;
+                var mod,
+                    config = analysisPath(deps, currentParent);
+                if (mod = modules[config.method + config.url] || modules[config.id])
+                    return mod.exports;
                 else {
-                    throw Error('this modules is not define');
+                    throw Error('this module is not define');
                 }
             }
             return innerRequire(deps).done(function(){
@@ -950,7 +962,7 @@ armer = window.jQuery || window.Zepto;
             }
             if (factory === undefined) {
                 factory = deps;
-                deps = [];
+                deps = ['require', 'exports', 'module'];
             }
             var mod, url;
 
@@ -959,17 +971,41 @@ armer = window.jQuery || window.Zepto;
             if (mod = requesting[url]) {
                 if (id && id !== mod.id) {
                     // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(config(id, url));
+                    mod = new require.Model(config(id, location.href));
                     requesting[url].bmod = mod;
                 } else {
+                    // define()这种形式默认是这个模块
                     delete mod.bmod;
                     delete requesting[url]
                 }
             } else //如果没有请求这个js
-                mod = new require.Model(config(id, url));
+                mod = new require.Model(s = config(id, location.href));
+            var withCMD = -1, i;
+            for (i = 0; i < deps.length; i++) {
+                // 看deps里是否有require，是则找出其index
+                if (deps[i] == 'require') {
+                    withCMD = i;
+                }
+            }
 
             mod.deps = deps;
-            mod.factory = factory;
+            mod.type = 'js';
+
+            // CMD分析require
+            if (typeof factory == "function" && !!~withCMD) {
+                var fn = factory.toString(), requireS;
+                var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
+                requireS = $.trim(args[withCMD]);
+                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    dep = eval.call(null, dep);
+                    if (typeof dep == 'string') mod.deps.push(dep);
+                })
+            }
+
+            if (typeof factory == 'function')
+                mod.factory = factory;
+            else
+                mod.exports = factory;
             return mod;
         }
 
@@ -1060,7 +1096,7 @@ armer = window.jQuery || window.Zepto;
         // CMD的async方法实际是就是AMD的require
         require.async = require;
         require.resolve = function(url){
-            return currentMod.resolve(url);
+            return modules.module.exports.resolve(url);
         };
         require.requesting = requesting;
         global.require = require;

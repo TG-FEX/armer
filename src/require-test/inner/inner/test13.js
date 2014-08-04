@@ -1,4 +1,4 @@
-//Õâ¸öÊÇCMDÄ£¿é
+//ï¿½ï¿½ï¿½ï¿½ï¿½CMDÄ£ï¿½ï¿½
 define(function(require, exports, mod){
-    mod.exports = 'EEEE';
+    mod.exports = 'EEEE' + require('../test14');
 });

@@ -725,21 +725,13 @@ armer = window.jQuery || window.Zepto;
     // ========================================================
     (function () {
 
-        var mRequire = {exports: require};
-        mRequire.dfd = $.when(mRequire);
-        var mExports = {};
-        mExports.dfd = $.when(mExports);
-        var mModule = {};
-        mModule.dfd = $.when(mModule);
-
-
         var modules = {
             armer: {
                 exports: $
             },
-            require: mRequire,
-            exports: mExports,
-            module: mModule
+            require: {exports: require},
+            exports: {exports: {}},
+            module: {exports: {}}
         };
 
 
@@ -754,7 +746,8 @@ armer = window.jQuery || window.Zepto;
             paths : {},
             shim: {},
             map: {},
-            defaultMethod: 'auto',
+            method: 'auto',
+            namespace: 'default',
             plusin: {
                 auto: {
                     config: function(config){
@@ -767,7 +760,7 @@ armer = window.jQuery || window.Zepto;
                     callback: function(){
                         var that = this;
 
-                        if (this.type !== 'js'){
+                        if (this.type !== 'script'){
                             this.exports = this.originData;
                         } else if (this.factory) {
                             var exports = this.factory.apply(this, getExports(arguments))
@@ -783,8 +776,9 @@ armer = window.jQuery || window.Zepto;
         // 构造模块
         require.Model = function Model(config){
             $.extend(this, config);
-            if (this.url) modules[this.method + this.url] = this;
-            else if (this.id) modules[this.id] = this;
+            modules[this.fullname] = this;
+            //if (this.url) modules[this.method + this.url] = this;
+            //else if (this.id) modules[this.id] = this;
         };
         require.Model.prototype = {
             // 处理模块
@@ -796,7 +790,7 @@ armer = window.jQuery || window.Zepto;
                     shim = {
                         deps: shim
                     }
-                mod.deps = mod.deps || shim.deps;
+                mod.deps = mod.deps || shim.deps
                 mod.originData = data;
                 var success = function(){
                     modules.module.exports = mod;
@@ -840,9 +834,9 @@ armer = window.jQuery || window.Zepto;
             var mod;
             if (typeof config == 'string') {
                 // 存在同名模块
-                if (!(mod = modules[config])) {
+                if (!(mod = modules[config] || modules[(config = id2Config(config)).fullname])) {
                     // 不存在则是新的模块
-                    config = analysisPath(config, currentParent || defaults.baseUrl);
+                    config = idOrUrl2Config(config);
                 }
             }
             if (mod) {
@@ -861,7 +855,7 @@ armer = window.jQuery || window.Zepto;
             }
             else if (typeof config == 'object') {
                 // 处理同样地址同样方式加载但不同id的模块
-                if (!(mod = modules[config.method + config.url]))
+                if (!(mod = modules[config.fullname]))
                     mod = new require.Model(config);
                 // 模块作为参数情况
             } else if (typeof config == 'string')
@@ -888,7 +882,7 @@ armer = window.jQuery || window.Zepto;
                     // TODO:这个判断貌似不太准确
                     if (!mod.factory  && !('exports' in mod))
                         (function(mod){
-                            requesting[mod.url || mod.id] = mod;
+                            requesting[mod.url] = mod;
                             var options = {
                                 url: mod.url,
                                 cache: true,
@@ -924,7 +918,9 @@ armer = window.jQuery || window.Zepto;
                             $.ajax(options);
                         })(mod);
                     // 如果factory或者exports已经定义过，那么就直接处理该模块
-                    else mod.fire();
+                    else if (mod.fire)
+                        mod.fire();
+                    else mod.dfd.resolveWith(mod, [mod])
                 }
                 mDps.push(mod.dfd);
             }
@@ -935,8 +931,8 @@ armer = window.jQuery || window.Zepto;
             // 兼容CMD模式
             if (!callback) {
                 var mod,
-                    config = analysisPath(deps, currentParent);
-                if (mod = modules[config.method + config.url] || modules[config.id])
+                    config = id2Config(deps);
+                if (mod = modules[config.fullname] || modules[idOrUrl2Config(config).fullname])
                     return mod.exports;
                 else {
                     throw Error('this module is not define');
@@ -971,7 +967,7 @@ armer = window.jQuery || window.Zepto;
             if (mod = requesting[url]) {
                 if (id && id !== mod.id) {
                     // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(config(id, location.href));
+                    mod = new require.Model(id2Config(id), url);
                     requesting[url].bmod = mod;
                 } else {
                     // define()这种形式默认是这个模块
@@ -979,7 +975,7 @@ armer = window.jQuery || window.Zepto;
                     delete requesting[url]
                 }
             } else //如果没有请求这个js
-                mod = new require.Model(s = config(id, location.href));
+                mod = new require.Model(id2Config(id), url);
             var withCMD = -1, i;
             for (i = 0; i < deps.length; i++) {
                 // 看deps里是否有require，是则找出其index
@@ -989,7 +985,7 @@ armer = window.jQuery || window.Zepto;
             }
 
             mod.deps = deps;
-            mod.type = 'js';
+            mod.type = 'script';
 
             // CMD分析require
             if (typeof factory == "function" && !!~withCMD) {
@@ -1059,35 +1055,44 @@ armer = window.jQuery || window.Zepto;
                 return stack.replace(/(:\d+)?:\d+$/i, "");
             }
         }
-        function config(id, url, mod){
-            if (url) return {id: id, url: url == location.href ? null : url, method: mod || defaults.defaultMethod};
-            var c = {id: id};
-            c.url = id.split('!');
+        function id2Config(idOrPath) {
+            var c = {id: idOrPath};
+            idOrPath = idOrPath.split('!');
             // 分析处理方法
-            if (c.url.length == 2) {
-                c.method = c.url[0];
-                c.url = c.url[1];
+            if (idOrPath.length == 2) {
+                c.method = idOrPath[0];
+                c.url = idOrPath[1];
             } else {
-                c.method = defaults.defaultMethod;
-                c.url = c.url[0];
+                c.method = defaults.method;
+                c.url = idOrPath[0];
             }
+            idOrPath = c.url.split(':');
+            if (idOrPath.length > 1)
+                c.namespace = idOrPath.shift();
+            else
+                c.namespace = defaults.namespace;
+            c.url = idOrPath.join(':');
+            c.fullname = c.method + '!' + c.namespace + ':' + c.id
             return c;
         }
-        function analysisPath(id, parent) {
-            var c = $.extend({parent: parent}, config(id))
-            if (defaults.paths[id]) {
-                //别名机制
-                c.url = defaults.paths[id];
-                if (typeof c.url === "object") {
-                    //paths
-                    c.url = c.url.src;
+        function idOrUrl2Config(c, url) {
+            if (url) {
+                c.url = url;
+            } else {
+                c.parent = currentParent;
+                if (defaults.paths[c.id]) {
+                    //别名机制
+                    c.url = defaults.paths[c.id];
+                    if (typeof c.url === "object") {
+                        //paths
+                        c.url = c.url.src;
+                    }
                 }
-                return c;
+                c = defaults.plusin[c.method].config.call(c) || c;
             }
-            return defaults.plusin[c.method].config.call(c) || c;
-
+            c.fullname = c.method + '!' + c.namespace + ':' + c.url
+            return c
         }
-
         define.amd = define.cmd = modules;
         require.defaults = defaults;
         require.config = function(options){

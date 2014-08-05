@@ -2,6 +2,7 @@
 <html>
 <head>
     <title></title>
+    <meta charset="utf-8">
 <!--
     <script src="../../../require.js"></script>
 -->
@@ -34,7 +35,8 @@
     <a href="a.html">a.html</a>
     <div style=""></div>
     <script>
-        define('test0', function(){
+        define('test0', ['test.css', 'require'], function(_, require){
+            $(require('./test.png')).appendTo('div');
             return '0000';
         });
 
@@ -49,12 +51,17 @@
         require(['test7'], function(test7){
             alert(test7)
         })
-*/
-        define('test9', ['domready!', 'test7', 'test8'], function(_, ts7, ts8){
+*/      // 命名空间测试
+        define('default:test9', ['domready!', 'test7', 'test8'], function(_, ts7, ts8){
             return ts7 + ts8 + '9999'
         });
 
-        require(['test0', 'test.css', 'test1','test2','test3', 'test9', 'inner/test10'], function(){
+        define('test19', ['test.jpg', 'test.gif'], function(jpg, gif){
+            $('div').append(jpg).append(gif);
+            return 'KKK'
+        });
+
+        require(['test0', 'test1','test2','test3', 'default:test9', 'inner/test10', 'test19'], function(){
             alert([].slice.call(arguments).join(''));
         }, function(){
             console.log(arguments);

@@ -1,5 +1,5 @@
 /*!
- * ArmerJS - v0.1.0 - 2014-06-30 
+ * ArmerJS - v0.1.0 - 2014-08-05 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10313,13 +10313,13 @@ return jQuery;
 
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
-    // TODO(wuhf): 核心工具集
+    // TODO(wuhf): 鏍稿績宸ュ叿闆  
     // ========================================================
     (function(){
-        var rword = /[^, |]+/g; //用于分割单词
-        var html = DOC.documentElement; //HTML元素
-        var head = DOC.head || DOC.getElementsByTagName("head")[0]; //HEAD元素
-        var W3C = DOC.dispatchEvent; //IE9开始支持W3C的事件模型与getComputedStyle取样式值
+        var rword = /[^, |]+/g; //鐢ㄤ簬鍒嗗壊鍗曡瘝
+        var html = DOC.documentElement; //HTML鍏冪礌
+        var head = DOC.head || DOC.getElementsByTagName("head")[0]; //HEAD鍏冪礌
+        var W3C = DOC.dispatchEvent; //IE9寮  鏀寔W3C鐨勪簨浠舵ā鍨嬩笌getComputedStyle鍙栨牱寮忓  
         var hasOwn = Object.prototype.hasOwnProperty;
         var emptyObj = {};
         var rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
@@ -10335,7 +10335,7 @@ armer = window.jQuery || window.Zepto;
 
 
             /**
-         * 判断对象类型
+         * 鍒ゆ柇瀵硅薄绫诲瀷
          * @param obj
          * @param [type]
          * @returns {boolean|string}
@@ -10359,15 +10359,15 @@ armer = window.jQuery || window.Zepto;
         }
 
         /**
-         * 计算类似array[-1]为最后一位的算法
-         * 用于模拟slice, splice的效果
-         * @param a 下标值
-         * @param [n] 总长度
-         * @param [end] 非整数的处理方式，如果为true则取n值
+         * 璁＄畻绫讳技array[-1]涓烘渶鍚庝竴浣嶇殑绠楁硶
+         * 鐢ㄤ簬妯℃嫙slice, splice鐨勬晥鏋  
+         * @param a 涓嬫爣鍊  
+         * @param [n] 鎬婚暱搴  
+         * @param [end] 闈炴暣鏁扮殑澶勭悊鏂瑰紡锛屽鏋滀负true鍒欏彇n鍊  
          * @returns {number}
          */
         function resetNumber(a, n, end) {
-            if ((a === +a) && !(a % 1)) { //如果是整数
+            if ((a === +a) && !(a % 1)) { //濡傛灉鏄暣鏁  
                 if (a < 0) {
                     a = a * -1 >= n ? 0 : a + n
                 } else {
@@ -10386,10 +10386,10 @@ armer = window.jQuery || window.Zepto;
         $.stringType = toStringType;
 
         /**
-         * 数组化
-         * @param {ArrayLike} nodes 要处理的类数组对象
-         * @param {number} start 可选。要抽取的片断的起始下标。如果是负数，从后面取起
-         * @param {number} end  可选。规定从何处结束选取
+         * 鏁扮粍鍖  
+         * @param {ArrayLike} nodes 瑕佸鐞嗙殑绫绘暟缁勫璞  
+         * @param {number} start 鍙  銆傝鎶藉彇鐨勭墖鏂殑璧峰涓嬫爣銆傚鏋滄槸璐熸暟锛屼粠鍚庨潰鍙栬捣
+         * @param {number} end  鍙  銆傝瀹氫粠浣曞缁撴潫閫夊彇
          * @returns {array}
          */
         $.slice = W3C ? function(nodes, start, end) {
@@ -10409,30 +10409,30 @@ armer = window.jQuery || window.Zepto;
         $.fn.mix = $.mix = $.extend;
 
         $.extend($, {
-            // ---补充一些全局变量---
+            // ---琛ュ厖涓  簺鍏ㄥ眬鍙橀噺---
 
-            // 规定那些方法不被列举
+            // 瑙勫畾閭ｄ簺鏂规硶涓嶈鍒椾妇
             DONT_ENUM: "propertyIsEnumerable,isPrototypeOf,hasOwnProperty,toLocaleString,toString,valueOf,constructor".split(","),
-            // HTML元素和HEAD元素
+            // HTML鍏冪礌鍜孒EAD鍏冪礌
             html: html,
             head: head,
-            // 两个正则
+            // 涓や釜姝ｅ垯
             rword: rword,
             rmapper: /(\w+)_(\w+)/g,
 
-            // ---补充一些工具方法---
-            //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+            // ---琛ュ厖涓  簺宸ュ叿鏂规硶---
+            //鐢熸垚UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
             /**
-             * 生成一个全局唯一ID
+             * 鐢熸垚涓  釜鍏ㄥ眬鍞竴ID
              * @returns {string}
              */
             generateID: function () {
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             /**
-             * 生成随机数
-             * @param {Number} upper 上限值
-             * @param {Number} [lower] 下限值
+             * 鐢熸垚闅忔満鏁  
+             * @param {Number} upper 涓婇檺鍊  
+             * @param {Number} [lower] 涓嬮檺鍊  
              * @returns {Number}
              */
             random: function(upper, lower){
@@ -10440,9 +10440,9 @@ armer = window.jQuery || window.Zepto;
                 return parseInt(Math.random() * (upper - lower + 1)+ lower);
             },
             /**
-             * 生成键值统一的对象，用于高速化判定
-             * @param {array|string} array 如果是字符串，请用","或空格分开
-             * @param {number} [val] 默认为1
+             * 鐢熸垚閿  缁熶竴鐨勫璞★紝鐢ㄤ簬楂橀  鍖栧垽瀹  
+             * @param {array|string} array 濡傛灉鏄瓧绗︿覆锛岃鐢  ,"鎴栫┖鏍煎垎寮  
+             * @param {number} [val] 榛樿涓  
              * @returns {Object}
              */
             oneObject: oneObject,
@@ -10461,22 +10461,22 @@ armer = window.jQuery || window.Zepto;
                 return this;
             },
             /**
-             *  将调试信息打印到控制台或页面
+             *  灏嗚皟璇曚俊鎭墦鍗板埌鎺у埗鍙版垨椤甸潰
              *  $.trace(str, page, level )
-             *  @param {*} str 用于打印的信息，不是字符串将转换为字符串
-             *  @param {Boolean} page ? 是否打印到页面
-             *  @param {number} level ? 通过它来过滤显示到控制台的日志数量。
-             *          0为最少，只显示最致命的错误；7，则连普通的调试消息也打印出来。
-             *          显示算法为 level <= $.config.level。
-             *          这个$.config.level默认为9。下面是level各代表的含义。
-             *          0 EMERGENCY 致命错误,框架崩溃
-             *          1 ALERT 需要立即采取措施进行修复
-             *          2 CRITICAL 危急错误
-             *          3 ERROR 异常
-             *          4 WARNING 警告
-             *          5 NOTICE 通知用户已经进行到方法
-             *          6 INFO 更一般化的通知
-             *          7 DEBUG 调试消息
+             *  @param {*} str 鐢ㄤ簬鎵撳嵃鐨勪俊鎭紝涓嶆槸瀛楃涓插皢杞崲涓哄瓧绗︿覆
+             *  @param {Boolean} page ? 鏄惁鎵撳嵃鍒伴〉闈  
+             *  @param {number} level ? 閫氳繃瀹冩潵杩囨护鏄剧ず鍒版帶鍒跺彴鐨勬棩蹇楁暟閲忋  
+             *          0涓烘渶灏戯紝鍙樉绀烘渶鑷村懡鐨勯敊璇紱7锛屽垯杩炴櫘閫氱殑璋冭瘯娑堟伅涔熸墦鍗板嚭鏉ャ  
+             *          鏄剧ず绠楁硶涓  level <= $.config.level銆  
+             *          杩欎釜$.config.level榛樿涓  銆備笅闈㈡槸level鍚勪唬琛ㄧ殑鍚箟銆  
+             *          0 EMERGENCY 鑷村懡閿欒,妗嗘灦宕╂簝
+             *          1 ALERT 闇  绔嬪嵆閲囧彇鎺柦杩涜淇
+             *          2 CRITICAL 鍗辨  閿欒
+             *          3 ERROR 寮傚父
+             *          4 WARNING 璀﹀憡
+             *          5 NOTICE 閫氱煡鐢ㄦ埛宸茬粡杩涜鍒版柟娉  
+             *          6 INFO 鏇翠竴鑸寲鐨勯  鐭  
+             *          7 DEBUG 璋冭瘯娑堟伅
              *  @returns {string}
              *  @api public
              */
@@ -10494,7 +10494,7 @@ armer = window.jQuery || window.Zepto;
                         $(function() {
                             var div = DOC.createElement("pre");
                             div.className = "mass_sys_log";
-                            div.innerHTML = str + ""; //确保为字符串
+                            div.innerHTML = str + ""; //纭繚涓哄瓧绗︿覆
                             DOC.body.appendChild(div);
                         });
                     } else if (global.opera) {
@@ -10515,9 +10515,11 @@ armer = window.jQuery || window.Zepto;
                 for (var i = 0; i <= obj.length; i++) {
                     if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
                         continue
-                    // 不允许一般数组
+                    // 涓嶅厑璁镐竴鑸暟缁  
                     result[obj[i].name] = result[obj[i].name] || [];
-                    result[obj[i].name].push(ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked) ? obj[i].value : '');
+                    if (ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked)) {
+                        result[obj[i].name].push(obj[i].value);
+                    }
                 }
                 if (separator) {
                     for (var i in result) {
@@ -10527,15 +10529,15 @@ armer = window.jQuery || window.Zepto;
                 return result
             },
             /**
-             * 序列化通过对象或数组产生类似cookie、get等字符串
+             * 搴忓垪鍖栭  杩囧璞℃垨鏁扮粍浜х敓绫讳技cookie銆乬et绛夊瓧绗︿覆
              * @param {Object|Array.Object} obj
-             * @param {string} [separator] 分割符，默认&
-             * @param {string} [assignment] 赋值符，默认=
-             * @param {boolean} [encode] 是否进行编码, 默认true
+             * @param {string} [separator] 鍒嗗壊绗︼紝榛樿&
+             * @param {string} [assignment] 璧嬪  绗︼紝榛樿=
+             * @param {boolean} [encode] 鏄惁杩涜缂栫爜, 榛樿true
              * @returns {string}
              */
             serialize: function(){
-                // 猜测值返回不同结果
+                // 鐚滄祴鍊艰繑鍥炰笉鍚岀粨鏋  
                 function assume(value){
                     if ('undefined' == typeof value) return;
                     else if (null == value) return '';
@@ -10586,23 +10588,23 @@ armer = window.jQuery || window.Zepto;
                 }
             }(),
             /**
-             * 反序列化通过对象
+             * 鍙嶅簭鍒楀寲閫氳繃瀵硅薄
              * @param {String} str
-             * @param {String} [separator] 分割符，默认&
-             * @param {String} [assignment] 赋值符，默认=
+             * @param {String} [separator] 鍒嗗壊绗︼紝榛樿&
+             * @param {String} [assignment] 璧嬪  绗︼紝榛樿=
              * @returns {Object|Array}
              */
             unserialize: function () {
                 var r = /[\n\r\s]/g
                 function assume (value){
                     if (value.indexOf('{') == 0) {
-                        // 预测是对象或者数组
+                        // 棰勬祴鏄璞℃垨鑰呮暟缁  
                         return decodeURIComponent(JSON.parse(value));
                     } else if (value == '') {
-                        //为空
+                        //涓虹┖
                         return null
                     }/* else if (!isNaN(Number(value).valueOf())) {
-                        //数字
+                        //鏁板瓧
                         return Number(value).valueOf();
                     }*/ else if (value == 'true') {
                         return true
@@ -10629,7 +10631,8 @@ armer = window.jQuery || window.Zepto;
                             key = splits[0],
                             value = splits[1];
                         var aSplits, aResult = [];
-                        if (value.indexOf(arrSeparator) > -1) {
+                        if (!value) return;
+                        else if (value.indexOf(arrSeparator) > -1) {
                             aSplits = value.split(arrSeparator);
                             $.each(aSplits, function(__, value){
                                 aResult.push(assume(value));
@@ -10642,18 +10645,18 @@ armer = window.jQuery || window.Zepto;
                     return result;
                 }
             }(),
-            // 判断一个对象是不是jQuery.Deferred
+            // 鍒ゆ柇涓  釜瀵硅薄鏄笉鏄痡Query.Deferred
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
             },
             /**
-             * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
-             * 如果第二个参数为true,则包含有字符串
+             * 鏄惁涓虹被鏁扮粍锛圓rray, Arguments, NodeList涓庢嫢鏈夐潪璐熸暣鏁扮殑length灞炴  鐨凮bject瀵硅薄锛  
+             * 濡傛灉绗簩涓弬鏁颁负true,鍒欏寘鍚湁瀛楃涓  
              * @param {Object} obj
              * @param {Boolean} [includeString]
              * @returns {Boolean}
              */
-            isArrayLike: function(obj, includeString) { //是否包含字符串
+            isArrayLike: function(obj, includeString) { //鏄惁鍖呭惈瀛楃涓  
                 var type = $.stringType(obj);
                 if (includeString && type === "String") {
                     return true;
@@ -10668,16 +10671,16 @@ armer = window.jQuery || window.Zepto;
                 }
                 if (type === "Object") {
                     var i = obj.length;
-                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && hasOwn.call(obj, '0'); //非负整数
+                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && hasOwn.call(obj, '0'); //闈炶礋鏁存暟
                 }
                 return false;
             },
 
             /**
-             * 生成一个整数数组
-             * @param {number} [start] 默认为0
-             * @param {number} [end] 默认为0
-             * @param {number} [step] 默认为1
+             * 鐢熸垚涓  釜鏁存暟鏁扮粍
+             * @param {number} [start] 榛樿涓  
+             * @param {number} [end] 榛樿涓  
+             * @param {number} [step] 榛樿涓  
              * @returns {array}
              */
             range: function(start, end, step) {
@@ -10698,7 +10701,7 @@ armer = window.jQuery || window.Zepto;
             },
             parseFragment: function(html){return $.buildFragment([html], document)},
             /**
-             * 修改node的innerHTML（确保老式IE使用）
+             * 淇敼node鐨刬nnerHTML锛堢‘淇濊  寮廔E浣跨敤锛  
              * @param node
              * @param html
              */
@@ -10714,7 +10717,7 @@ armer = window.jQuery || window.Zepto;
                 this.clearChild(node).appendChild(a)
             },
             /**
-             * 清除node里边所有子元素
+             * 娓呴櫎node閲岃竟鎵  湁瀛愬厓绱  
              * @param node
              * @returns {*}
              */
@@ -10725,8 +10728,8 @@ armer = window.jQuery || window.Zepto;
                 return node
             },
             /**
-             * 计算默认display
-             * @param {string} nodeName 节点名字
+             * 璁＄畻榛樿display
+             * @param {string} nodeName 鑺傜偣鍚嶅瓧
              * @returns {string}
              */
             defaultDisplay: (function(){
@@ -10734,7 +10737,7 @@ armer = window.jQuery || window.Zepto;
                 $.extend(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
                 return function parseDisplay(nodeName, val) {
-                    //用于取得此类标签的默认display值
+                    //鐢ㄤ簬鍙栧緱姝ょ被鏍囩鐨勯粯璁isplay鍊  
                     nodeName = nodeName.toLowerCase()
                     if (!cacheDisplay[nodeName]) {
                         var node = DOC.createElement(nodeName)
@@ -10753,15 +10756,15 @@ armer = window.jQuery || window.Zepto;
             })()
         });
 
-        // TODO(wuhf): 缓存器
-        //视浏览器情况采用最快的异步回调
+        // TODO(wuhf): 缂撳瓨鍣  
+        //瑙嗘祻瑙堝櫒鎯呭喌閲囩敤鏈  揩鐨勫紓姝ュ洖璋  
         $.nextTick = global.setImmediate ? setImmediate.bind(global) : function(callback) {
             setTimeout(callback, 0)//IE10-11 or W3C
         };
 
     })();
 
-    // TODO(wuhf): 增加ajax文件后缀与类型的映射
+    // TODO(wuhf): 澧炲姞ajax鏂囦欢鍚庣紑涓庣被鍨嬬殑鏄犲皠
     // ========================================================
     $.ajax.ext2Type = {
         js: 'script',
@@ -10775,11 +10778,11 @@ armer = window.jQuery || window.Zepto;
         swf: 'flash'
     };
 
-    // TODO(wuhf): URL解释器
+    // TODO(wuhf): URL瑙ｉ噴鍣  
     // ========================================================
     (function(){
-        // url解释规范
-        // 参考RFC3986 http://tools.ietf.org/html/rfc3986
+        // url瑙ｉ噴瑙勮寖
+        // 鍙傝  RFC3986 http://tools.ietf.org/html/rfc3986
         var rHash = /#[^#?]*/;
         var rSearch = /\?[^#?]*/;
         var rProtocol = /^\w*:/;
@@ -10794,7 +10797,7 @@ armer = window.jQuery || window.Zepto;
         };
         var setProtocol = function(parent, self){
             parent = parent.replace(rProtocol, function(protocol){
-                //设置protocol;
+                //璁剧疆protocol;
                 self._protocol = protocol;
                 return '';
             });
@@ -10808,7 +10811,7 @@ armer = window.jQuery || window.Zepto;
                 self._port = protocol2port[self._protocol];
             } else {
                 if (tmp = str.match(rPort)) {
-                    // 如果有端口号
+                    // 濡傛灉鏈夌鍙ｅ彿
                     self._hostname = str.substr(0, str.indexOf(tmp[0]));
                     self._port = tmp[1];
                 } else {
@@ -10822,19 +10825,19 @@ armer = window.jQuery || window.Zepto;
             }
         };
         /**
-         * 生成一个URL对象
-         * @param url 一个绝对地址或者一个相对地址
-         * @param [parent] 相对地址的情况，可以设置它的父路径
+         * 鐢熸垚涓  釜URL瀵硅薄
+         * @param url 涓  釜缁濆鍦板潃鎴栬  涓  釜鐩稿鍦板潃
+         * @param [parent] 鐩稿鍦板潃鐨勬儏鍐碉紝鍙互璁剧疆瀹冪殑鐖惰矾寰  
          * @param [basePath]
          * @returns {URL}
          * @constructor
          */
         $.URL = function(url, parent){
             var URL = arguments.callee;
-            // 先将parent路径转行为绝对路径
+            // 鍏堝皢parent璺緞杞涓虹粷瀵硅矾寰  
             parent = parent ? URL.absolutize(parent) : null;
             if (!(this instanceof URL)) return new URL(url, parent);
-            // 分析url
+            // 鍒嗘瀽url
             this.init(url, parent);
         };
         $.URL.prototype = {
@@ -10842,7 +10845,7 @@ armer = window.jQuery || window.Zepto;
             init: function(path, parent){
                 //alert(basePath);
                 var self = this, tmp;
-                // 获取 search
+                // 鑾峰彇 search
                 path = path.replace(rSearch, function(search){
                     search = search.replace('?', '');
                     search = $.unserialize(search);
@@ -10851,26 +10854,26 @@ armer = window.jQuery || window.Zepto;
                 });
                 self._search = self._search || {};
                 self._search.toString = function(){var s = $.serialize(this); return s == '' ? '' : '?' + s};
-                // 获取 hash
+                // 鑾峰彇 hash
                 path = path.replace(rHash, function(hash){
                     self._hash = hash;
                     return '';
                 });
                 self._hash = self._hash || '';
-                // 获取 protocol
+                // 鑾峰彇 protocol
                 path = path.replace(rProtocol, function(protocol){
                     self._protocol = protocol;
                     return '';
                 });
-                // 如果木有协议
+                // 濡傛灉鏈ㄦ湁鍗忚
                 if (!self._protocol) {
-                    // 如果没有parent那么parent就是location
+                    // 濡傛灉娌℃湁parent閭ｄ箞parent灏辨槸location
                     parent = parent || location.href;
                     //http://p.tgnet.com/Office/MyInfo.aspx
                     var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
                     //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
-                    // 则获取协议
-                    // 如果木有域名后缀，则判断为相对地址
+                    // 鍒欒幏鍙栧崗璁  
+                    // 濡傛灉鏈ㄦ湁鍩熷悕鍚庣紑锛屽垯鍒ゆ柇涓虹浉瀵瑰湴鍧  
                     if (!rSuffix.test(path)) {
                         /*
                          alert(path)
@@ -10878,20 +10881,20 @@ armer = window.jQuery || window.Zepto;
                          alert(basePath)
                          */
                         tmp = path.charAt(0);
-                        // ./css css 这种情况 相对于【当前路径】的兄弟路径
-                        // /css 这两种情况 相对于【根路径】
-                        // ../css 这种情况 相对于【当前路径】的父路径
+                        // ./css css 杩欑鎯呭喌 鐩稿浜庛  褰撳墠璺緞銆戠殑鍏勫紵璺緞
+                        // /css 杩欎袱绉嶆儏鍐  鐩稿浜庛  鏍硅矾寰勩  
+                        // ../css 杩欑鎯呭喌 鐩稿浜庛  褰撳墠璺緞銆戠殑鐖惰矾寰  
 
                         if (path.slice(0, 2) === './') {
-                            //相对于兄弟路径
+                            //鐩稿浜庡厔寮熻矾寰  
                             path = setProtocol(parent, self) + path.slice(1);
                         } else if (tmp !== "." && tmp !== '/') {
-                            //相对于兄弟路径
+                            //鐩稿浜庡厔寮熻矾寰  
                             path = setProtocol(parent, self) + '/' + path;
                         } else if (tmp == "/") {
                             path = setProtocol(basePath, self) + path;
                         } else if (path.slice(0, 2) === '..') {
-                            //相对于父路径
+                            //鐩稿浜庣埗璺緞
                             var arr = setProtocol(parent, self).split('/');
                             tmp = path.replace(/\.\.\//g, function() {
                                 arr.pop();
@@ -10956,7 +10959,7 @@ armer = window.jQuery || window.Zepto;
                 return r;
             },
             /**
-             * 获取路径，返回
+             * 鑾峰彇璺緞锛岃繑鍥  
              * @param index
              * @param value
              * @returns {*}
@@ -10993,8 +10996,8 @@ armer = window.jQuery || window.Zepto;
             },
             href: function(url){},
             /**
-             * 将URL对象转换为一个HTMLAnchorElement对象
-             * @param {string=} innerHTML 作为anchor元素的innerHTML内容
+             * 灏哢RL瀵硅薄杞崲涓轰竴涓狧TMLAnchorElement瀵硅薄
+             * @param {string=} innerHTML 浣滀负anchor鍏冪礌鐨刬nnerHTML鍐呭
              * @returns {HTMLElement}
              */
             anchor: function(innerHTML){
@@ -11015,27 +11018,33 @@ armer = window.jQuery || window.Zepto;
         }
     })();
 
-    // TODO(wuhf): AMD/CMD加载器
+    // TODO(wuhf): AMD/CMD鍔犺浇鍣  
     // ========================================================
     (function () {
+
         var modules = {
-            'armer': {
+            armer: {
                 exports: $
-            }
+            },
+            require: {exports: require},
+            exports: {exports: {}},
+            module: {exports: {}}
         };
-        var currentMod = null;
+
+
         var currentParent = null;
         var currentUrl = null;
-        // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
+        // 杩欎釜鍙橀噺鐢ㄤ簬鍌ㄥ瓨require鐨勬椂鍊欏綋鍓嶈姹傜殑浣嶇疆鏉ョ‘瀹氫緷璧栫殑浣嶇疆
         var requesting = {};
-        // 通过require正在请求的模块
+        // 閫氳繃require姝ｅ湪璇锋眰鐨勬ā鍧  
         var defaults = {
             baseUrl : location.href,
             ext : 'js',
             paths : {},
             shim: {},
             map: {},
-            defaultMethod: 'auto',
+            method: 'auto',
+            namespace: 'default',
             plusin: {
                 auto: {
                     config: function(config){
@@ -11047,39 +11056,31 @@ armer = window.jQuery || window.Zepto;
                     },
                     callback: function(){
                         var that = this;
-                        // 没有factory 证明没有通过define，返回原始数据;
-                        if (!this.factory) this.factory = function(){return that.originData};
-                        var fn = this.factory.toString(), ret;
-                        // 如果factory不是function
-                        if (typeof this.factory !== 'function') {
-                            //JSONP 形式
-                            this.exports = this.factory;
-                        } else if (!!~fn.indexOf('exports') || !!~fn.indexOf('require')) {
-                            // CMD 如果factory包含exports
-                            ret = this.factory.apply(this, [require, this.exports, this]);
-                            if (ret)
-                                this.exports = ret;
-                        } else {
-                            // AMD
-                            this.exports = this.factory.apply(this, getExports(arguments));
+
+                        if (this.type !== 'script'){
+                            this.exports = this.originData;
+                        } else if (this.factory) {
+                            var exports = this.factory.apply(this, getExports(arguments))
+                            this.exports = exports || this.exports || modules.exports.exports;
                         }
+
                         this.dfd.resolveWith(this, [this]);
                     }
                 }
             }
         };
 
-        // 构造模块
+        // 鏋勯  妯″潡
         require.Model = function Model(config){
             $.extend(this, config);
-            if (this.id) modules[this.id] = this;
-            if (this.url) modules[this.method + this.url] = this;
-            this.exports = {};
+            modules[this.fullname] = this;
+            //if (this.url) modules[this.method + this.url] = this;
+            //else if (this.id) modules[this.id] = this;
         };
         require.Model.prototype = {
-            // 处理factory
+            // 澶勭悊妯″潡
             fire: function(data){
-                // 使用shim模式
+                // 浣跨敤shim妯″紡
                 var mod = this;
                 var shim = defaults.shim[mod.id] || {};
                 if ($.isArray(shim))
@@ -11088,12 +11089,15 @@ armer = window.jQuery || window.Zepto;
                     }
                 mod.deps = mod.deps || shim.deps
                 mod.originData = data;
-                if (shim.exports)
-                    mod.factory = mod.factory || eval('(function(){return ' + shim.exports + '})')
                 var success = function(){
-                    currentMod = mod;
+                    modules.module.exports = mod;
+                    modules.exports.exports = {};
+                    currentParent = mod.url;
+                    if (shim.exports)
+                        modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
                     defaults.plusin[mod.method].callback.apply(mod, arguments);
-                    currentMod = null;
+                    modules.module.exports = null;
+                    currentParent = null;
                 }
                 if (mod.deps && mod.deps.length) {
                     currentParent = mod.url;
@@ -11103,7 +11107,7 @@ armer = window.jQuery || window.Zepto;
                     currentParent = null;
                 } else success();
 
-                // 这两个是为CMD服务的，只读
+                // 杩欎袱涓槸涓篊MD鏈嶅姟鐨勶紝鍙
                 mod.dependencies = mod.deps;
                 mod.uri = mod.url;
             },
@@ -11116,46 +11120,50 @@ armer = window.jQuery || window.Zepto;
 
 
         function getExports(mods){
-            return $.map(mods, function(item){return item.exports})
+            var arr = [], i;
+            for (i = 0; i < mods.length; i++) {
+                arr.push(mods[i].exports);
+            }
+            return arr;
         }
 
         function parseDep(config) {
             var mod;
             if (typeof config == 'string') {
-                // 存在同名模块
-                if (!(mod = modules[config])) {
-                    // 不存在则是新的模块
-                    config = analysisPath(config, currentParent || defaults.baseUrl);
+                // 瀛樺湪鍚屽悕妯″潡
+                if (!(mod = modules[config] || modules[(config = id2Config(config)).fullname])) {
+                    // 涓嶅瓨鍦ㄥ垯鏄柊鐨勬ā鍧  
+                    config = idOrUrl2Config(config);
                 }
             }
             if (mod) {
                 1;
-                //如果有mod证明已经通过同名模块的if分支
+                //濡傛灉鏈塵od璇佹槑宸茬粡閫氳繃鍚屽悕妯″潡鐨刬f鍒嗘敮
             } else if ($.isDeferred(config)) {
                 var id;
                 if (config.modelName && modules[config.modelName])
                     mod = modules[config.modelName];
                 else {
-                    // 如果是一个dfd，则通过dfd产生一个匿名模块
+                    // 濡傛灉鏄竴涓猟fd锛屽垯閫氳繃dfd浜х敓涓  釜鍖垮悕妯″潡
                     id = 'anonymousModel' + $.now();
                     mod = new require.Model({dfd: config, id: id});
                     config.modelName = id;
                 }
             }
             else if (typeof config == 'object') {
-                // 处理同样地址同样方式加载但不同id的模块
-                if (!(mod = modules[config.method + config.url]))
+                // 澶勭悊鍚屾牱鍦板潃鍚屾牱鏂瑰紡鍔犺浇浣嗕笉鍚宨d鐨勬ā鍧  
+                if (!(mod = modules[config.fullname]))
                     mod = new require.Model(config);
-                // 模块作为参数情况
+                // 妯″潡浣滀负鍙傛暟鎯呭喌
             } else if (typeof config == 'string')
                 mod = new require.Model({url: config})
 
             return mod;
         }
         /**
-         * 请求模块
-         * @param deps 依赖列表
-         * @param callback 依赖加载成功后执行的回调函数
+         * 璇锋眰妯″潡
+         * @param deps 渚濊禆鍒楄〃
+         * @param callback 渚濊禆鍔犺浇鎴愬姛鍚庢墽琛岀殑鍥炶皟鍑芥暟
          * @returns {$.Deferred.promise}
          */
 
@@ -11164,25 +11172,28 @@ armer = window.jQuery || window.Zepto;
             var mDps = [], mod;
             for (var i = 0; i < deps.length; i++) {
                 mod = parseDep(deps[i]);
+                // 褰撲笉瀛樺湪dfd鐨勬椂鍊欒瘉鏄庤繖涓ā鍧楁病鏈夊垵濮嬪寲
                 if (!mod.dfd) {
-                    // 处理新建的模块
                     mod.dfd = $.Deferred();
-                    requesting[mod.url] = mod;
-                    // 如果模块factory没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
-                    if (!mod.factory)
+                    // 濡傛灉factory鎴栬  exports娌℃湁瀹氫箟锛岄偅涔堝彲浠ュ垽鏂嚭鏄  杩囧紓姝ュ姞杞藉凡瀛樺湪浣嗘湭璇锋眰鎴愬姛鐨勬ā鍧  
+                    // TODO:杩欎釜鍒ゆ柇璨屼技涓嶅お鍑嗙‘
+                    if (!mod.factory  && !('exports' in mod))
                         (function(mod){
+                            requesting[mod.url] = mod;
                             var options = {
                                 url: mod.url,
                                 cache: true,
-                                //crossDomain: true,
+                                crossDomain: defaults.charset ? true : undefined,
                                 dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                                 scriptCharset: defaults.charset,
                                 success: function(data) {
-                                    var bmod
+                                    var bmod;
                                     if (requesting[mod.url]) {
                                         if (bmod = requesting[mod.url].bmod) {
                                             mod.deps = bmod.deps;
                                             mod.factory = bmod.factory;
+                                            mod.exports = bmod.exports;
+                                            mod.type = bmod.type;
                                         }
                                         delete requesting[mod.url]
                                     }
@@ -11203,8 +11214,10 @@ armer = window.jQuery || window.Zepto;
                             };
                             $.ajax(options);
                         })(mod);
-                    // 如果factory已经定义过，那么就直接处理该模块
-                    else mod.fire();
+                    // 濡傛灉factory鎴栬  exports宸茬粡瀹氫箟杩囷紝閭ｄ箞灏辩洿鎺ュ鐞嗚妯″潡
+                    else if (mod.fire)
+                        mod.fire();
+                    else mod.dfd.resolveWith(mod, [mod])
                 }
                 mDps.push(mod.dfd);
             }
@@ -11212,12 +11225,14 @@ armer = window.jQuery || window.Zepto;
         }
 
         function require(deps, callback, errorCallback){
-            // 兼容CMD模式
+            // 鍏煎CMD妯″紡
             if (!callback) {
-                if (typeof modules[deps] == 'object')
-                    return modules[deps].exports;
+                var mod,
+                    config = id2Config(deps);
+                if (mod = modules[config.fullname] || modules[idOrUrl2Config(config).fullname])
+                    return mod.exports;
                 else {
-                    throw Error('this modules is not define');
+                    throw Error('this module is not define');
                 }
             }
             return innerRequire(deps).done(function(){
@@ -11227,9 +11242,9 @@ armer = window.jQuery || window.Zepto;
         }
         /**
          *
-         * @param id 模块id用于记录缓存这个模块
-         * @param [deps] 依赖列表，这个模块需要依赖那些模块
-         * @param factory 工厂，用于处理返回的模块
+         * @param id 妯″潡id鐢ㄤ簬璁板綍缂撳瓨杩欎釜妯″潡
+         * @param [deps] 渚濊禆鍒楄〃锛岃繖涓ā鍧楅渶瑕佷緷璧栭偅浜涙ā鍧  
+         * @param factory 宸ュ巶锛岀敤浜庡鐞嗚繑鍥炵殑妯″潡
          * @returns {Model}
          */
         function define(id, deps, factory){
@@ -11240,39 +11255,63 @@ armer = window.jQuery || window.Zepto;
             }
             if (factory === undefined) {
                 factory = deps;
-                deps = [];
+                deps = ['require', 'exports', 'module'];
             }
             var mod, url;
 
             url = currentUrl || currentScriptURL();
-            // 如果正在请求这个js
+            // 濡傛灉姝ｅ湪璇锋眰杩欎釜js
             if (mod = requesting[url]) {
                 if (id && id !== mod.id) {
-                    // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(config(id, url));
+                    // 濡傛灉define鐨勫悕瀛椾笉涓  牱锛岃褰昩mod浣滀负鍚庡妯″潡锛屽綋鏂囦欢璇锋眰瀹屾瘯浠嶇劧娌℃湁鍚屽悕妯″潡锛屽垯鏈  悗涓  釜鍚庡妯″潡涓鸿妯″潡
+                    mod = new require.Model(id2Config(id), url);
                     requesting[url].bmod = mod;
                 } else {
+                    // define()杩欑褰㈠紡榛樿鏄繖涓ā鍧  
                     delete mod.bmod;
                     delete requesting[url]
                 }
-            } else //如果没有请求这个js
-                mod = new require.Model(config(id, url));
+            } else //濡傛灉娌℃湁璇锋眰杩欎釜js
+                mod = new require.Model(id2Config(id), url);
+            var withCMD = -1, i;
+            for (i = 0; i < deps.length; i++) {
+                // 鐪媎eps閲屾槸鍚︽湁require锛屾槸鍒欐壘鍑哄叾index
+                if (deps[i] == 'require') {
+                    withCMD = i;
+                }
+            }
 
             mod.deps = deps;
-            mod.factory = factory;
+            mod.type = 'script';
+
+            // CMD鍒嗘瀽require
+            if (typeof factory == "function" && !!~withCMD) {
+                var fn = factory.toString(), requireS;
+                var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
+                requireS = $.trim(args[withCMD]);
+                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    dep = eval.call(null, dep);
+                    if (typeof dep == 'string') mod.deps.push(dep);
+                })
+            }
+
+            if (typeof factory == 'function')
+                mod.factory = factory;
+            else
+                mod.exports = factory;
             return mod;
         }
 
         /**
-         * 获取运行此代码所在的js的url
+         * 鑾峰彇杩愯姝や唬鐮佹墍鍦ㄧ殑js鐨剈rl
          * @returns {string}
          */
         function currentScriptURL(){
-            //取得正在解析的script节点
+            //鍙栧緱姝ｅ湪瑙ｆ瀽鐨剆cript鑺傜偣
             if(document.currentScript) { //firefox 4+
                 return document.currentScript.src || location.href;
             }
-            //只在head标签中寻找
+            //鍙湪head鏍囩涓鎵  
             var nodes = document.getElementsByTagName("script");
             for(var i = 0, node; node = nodes[i++];) {
                 if(node.readyState === "interactive") {
@@ -11281,22 +11320,22 @@ armer = window.jQuery || window.Zepto;
                     else return location.href
                 }
             }
-            // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // 鍙傝   https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack;
             try {
-                //强制报错,以便捕获e.stack
+                //寮哄埗鎶ラ敊,浠ヤ究鎹曡幏e.stack
                 throw new Error();
             } catch(e) {
-                //safari的错误对象只有line,sourceId,sourceURL
+                //safari鐨勯敊璇璞″彧鏈塴ine,sourceId,sourceURL
                 stack = e.stack;
 
                 if(!stack && window.opera){
-                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
+                    //opera 9娌℃湁e.stack,浣嗘湁e.Backtrace,浣嗕笉鑳界洿鎺ュ彇寰  闇  瀵筫瀵硅薄杞瓧绗︿覆杩涜鎶藉彇
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
                 }
             }
             if(stack) {
-                /**e.stack最后一行在所有支持的浏览器大致如下:
+                /**e.stack鏈  悗涓  鍦ㄦ墍鏈夋敮鎸佺殑娴忚鍣ㄥぇ鑷村涓  
                  *chrome23:
                  * at http://113.93.50.63/data.js:4:1
                  *firefox17:
@@ -11306,57 +11345,66 @@ armer = window.jQuery || window.Zepto;
                  *IE10:
                  *  at Global code (http://113.93.50.63/data.js:4:1)
                  */
-                    //取得最后一行,最后一个空格或@之后的部分
+                    //鍙栧緱鏈  悗涓  ,鏈  悗涓  釜绌烘牸鎴朄涔嬪悗鐨勯儴鍒  
                 stack = stack.split( /[@ ]/g).pop();
                 stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
-                //去掉行号与或许存在的出错字符起始位置
+                //鍘绘帀琛屽彿涓庢垨璁稿瓨鍦ㄧ殑鍑洪敊瀛楃璧峰浣嶇疆
                 return stack.replace(/(:\d+)?:\d+$/i, "");
             }
         }
-        function config(id, url, mod){
-            if (url) return {id: id, url: url == location.href ? null : url, method: mod || defaults.defaultMethod};
-            var c = {id: id};
-            c.url = id.split('!');
-            // 分析处理方法
-            if (c.url.length == 2) {
-                c.method = c.url[0];
-                c.url = c.url[1];
+        function id2Config(idOrPath) {
+            var c = {id: idOrPath};
+            idOrPath = idOrPath.split('!');
+            // 鍒嗘瀽澶勭悊鏂规硶
+            if (idOrPath.length == 2) {
+                c.method = idOrPath[0];
+                c.url = idOrPath[1];
             } else {
-                c.method = defaults.defaultMethod;
-                c.url = c.url[0];
+                c.method = defaults.method;
+                c.url = idOrPath[0];
             }
+            idOrPath = c.url.split(':');
+            if (idOrPath.length > 1)
+                c.namespace = idOrPath.shift();
+            else
+                c.namespace = defaults.namespace;
+            c.url = idOrPath.join(':');
+            c.fullname = c.method + '!' + c.namespace + ':' + c.id
             return c;
         }
-        function analysisPath(id, parent) {
-            var c = $.extend({parent: parent}, config(id))
-            if (defaults.paths[id]) {
-                //别名机制
-                c.url = defaults.paths[id];
-                if (typeof c.url === "object") {
-                    //paths
-                    c.url = c.url.src;
+        function idOrUrl2Config(c, url) {
+            if (url) {
+                c.url = url;
+            } else {
+                c.parent = currentParent;
+                if (defaults.paths[c.id]) {
+                    //鍒悕鏈哄埗
+                    c.url = defaults.paths[c.id];
+                    if (typeof c.url === "object") {
+                        //paths
+                        c.url = c.url.src;
+                    }
                 }
-                return c;
+                c = defaults.plusin[c.method].config.call(c) || c;
             }
-            return defaults.plusin[c.method].config.call(c) || c;
-
+            c.fullname = c.method + '!' + c.namespace + ':' + c.url
+            return c
         }
-
         define.amd = define.cmd = modules;
         require.defaults = defaults;
         require.config = function(options){
             $.extend(require.defaults, options)
         };
-        // CMD的async方法实际是就是AMD的require
+        // CMD鐨刟sync鏂规硶瀹為檯鏄氨鏄疉MD鐨剅equire
         require.async = require;
         require.resolve = function(url){
-            return currentMod.resolve(url);
+            return modules.module.exports.resolve(url);
         };
         require.requesting = requesting;
         global.require = require;
         global.define = define;
 
-        // domready 插件
+        // domready 鎻掍欢
         defaults.plusin['domready'] = {
             config: function(){
                 var mod = {
@@ -11377,10 +11425,10 @@ armer = window.jQuery || window.Zepto;
         if (dataMain) require([dataMain], $.noop);
     })();
 
-    // 基本语言扩充
+    // 鍩烘湰璇█鎵╁厖
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
-            //根据指定条件进行排序，通常用于对象数组。
+            //鏍规嵁鎸囧畾鏉′欢杩涜鎺掑簭锛岄  甯哥敤浜庡璞℃暟缁勩  
             trend = typeof trend === "boolean" ? trend : false;
             var array = target.map(function(item, index) {
                 return {
@@ -11396,9 +11444,9 @@ armer = window.jQuery || window.Zepto;
             return $.Array.pluck(array, 'el');
         },
         /**
-         * 取得对象数组的每个元素的指定属性，组成数组返回。
-         * @param {Array} target 目标数组
-         * @param {string} name 需要抽取的值的键名
+         * 鍙栧緱瀵硅薄鏁扮粍鐨勬瘡涓厓绱犵殑鎸囧畾灞炴  锛岀粍鎴愭暟缁勮繑鍥炪  
+         * @param {Array} target 鐩爣鏁扮粍
+         * @param {string} name 闇  鎶藉彇鐨勫  鐨勯敭鍚  
          * @returns {Array}
          */
         pluck: function(target, name) {
@@ -11407,9 +11455,9 @@ armer = window.jQuery || window.Zepto;
             });
         },
         /**
-         * 只有当前数组不存在此元素时只添加它
-         * @param {Array} target 目标数组
-         * @param {*} el 元素
+         * 鍙湁褰撳墠鏁扮粍涓嶅瓨鍦ㄦ鍏冪礌鏃跺彧娣诲姞瀹  
+         * @param {Array} target 鐩爣鏁扮粍
+         * @param {*} el 鍏冪礌
          * @returns {Array}
          */
         ensure: function(target, el) {
@@ -11422,22 +11470,22 @@ armer = window.jQuery || window.Zepto;
             return target;
         },
         /**
-         * 移除数组指定下标的成员
-         * @param target 目标数组
-         * @param index 下标
-         * @returns {boolean} 是否移除成功
+         * 绉婚櫎鏁扮粍鎸囧畾涓嬫爣鐨勬垚鍛  
+         * @param target 鐩爣鏁扮粍
+         * @param index 涓嬫爣
+         * @returns {boolean} 鏄惁绉婚櫎鎴愬姛
          */
         removeAt: function(target, index) {
             return !!target.splice(index, 1).length
         },
         /**
-         * 移除数组里对应元素
-         * @param target 目标数组
-         * @param item 对应的元素
-         * @returns {boolean} 是否删除成功
+         * 绉婚櫎鏁扮粍閲屽搴斿厓绱  
+         * @param target 鐩爣鏁扮粍
+         * @param item 瀵瑰簲鐨勫厓绱  
+         * @returns {boolean} 鏄惁鍒犻櫎鎴愬姛
          */
         remove: function(target, item) {
-            //移除数组中第一个匹配传参的那个元素，返回布尔表示成功与否。
+            //绉婚櫎鏁扮粍涓涓  釜鍖归厤浼犲弬鐨勯偅涓厓绱狅紝杩斿洖甯冨皵琛ㄧず鎴愬姛涓庡惁銆  
             var index = target.indexOf(item);
             if (~index)
                 return $.Array.removeAt(target, index);
@@ -11446,10 +11494,10 @@ armer = window.jQuery || window.Zepto;
     }
     $.String = {
         /**
-         * 截取字符串
-         * @param target 目标字符串
-         * @param length 新字符串长度
-         * @param [truncation] 新字符串的结尾的字段
+         * 鎴彇瀛楃涓  
+         * @param target 鐩爣瀛楃涓  
+         * @param length 鏂板瓧绗︿覆闀垮害
+         * @param [truncation] 鏂板瓧绗︿覆鐨勭粨灏剧殑瀛楁
          * @returns {string}
          */
         truncate: function(target, length, truncation) {
@@ -11458,8 +11506,8 @@ armer = window.jQuery || window.Zepto;
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target);
         },
         /**
-         * 将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt;
-         * @param target 目标字符串
+         * 灏嗗瓧绗︿覆缁忚繃 html 杞箟寰楀埌閫傚悎鍦ㄩ〉闈腑鏄剧ず鐨勫唴瀹   渚嬪鏇挎崲 < 涓  &lt;
+         * @param target 鐩爣瀛楃涓  
          * @returns {string}
          */
         escapeHTML: function(target) {
@@ -11468,11 +11516,11 @@ armer = window.jQuery || window.Zepto;
     };
     $.Number = {
         /**
-         * 与PHP的number_format完全兼容
-         * @param number 要格式化的数字
-         * @param [decimals] 规定多少个小数位
-         * @param [decPoint] 规定用作小数点的字符串（默认为 . ）
-         * @param [thousandsSep] 可选，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必需的
+         * 涓嶱HP鐨刵umber_format瀹屽叏鍏煎
+         * @param number 瑕佹牸寮忓寲鐨勬暟瀛  
+         * @param [decimals] 瑙勫畾澶氬皯涓皬鏁颁綅
+         * @param [decPoint] 瑙勫畾鐢ㄤ綔灏忔暟鐐圭殑瀛楃涓诧紙榛樿涓  . 锛  
+         * @param [thousandsSep] 鍙  锛岃瀹氱敤浣滃崈浣嶅垎闅旂鐨勫瓧绗︿覆锛堥粯璁や负 , 锛夛紝濡傛灉璁剧疆浜嗚鍙傛暟锛岄偅涔堟墍鏈夊叾浠栧弬鏁伴兘鏄繀闇  殑
          * @returns {string}
          * http://kevin.vanzonneveld.net
          */
@@ -11532,8 +11580,8 @@ armer = window.jQuery || window.Zepto;
     }) {
         DONT_ENUM = false;
     }
-    //IE8的Object.defineProperty只对DOM有效
-    // 判断是否支持defineProperty
+    //IE8鐨凮bject.defineProperty鍙DOM鏈夋晥
+    // 鍒ゆ柇鏄惁鏀寔defineProperty
     var defineProperty = Object.defineProperty;
     try {
         defineProperty({}, 'a', {
@@ -11568,20 +11616,20 @@ armer = window.jQuery || window.Zepto;
     if (!Array.isArray) {
 
         //=====================
-        // TODO: 修复各种bug
+        // TODO: 淇鍚勭bug
         //=====================
         //------------------------------------------------
-        //修正IE67下unshift不返回数组长度的问题
+        //淇IE67涓媢nshift涓嶈繑鍥炴暟缁勯暱搴︾殑闂
         //http://www.cnblogs.com/rubylouvre/archive/2010/01/14/1647751.html
         if ([].unshift(1) !== 1) {
             var _unshift = Array[P].unshift;
             Array[P].unshift = function () {
                 _unshift.apply(this, arguments);
-                return this.length; //返回新数组的长度
+                return this.length; //杩斿洖鏂版暟缁勭殑闀垮害
             }
         }
 
-        //修复IE splice必须有第二个参数的bug
+        //淇IE splice蹇呴』鏈夌浜屼釜鍙傛暟鐨刡ug
         //http://www.zhuwenbo.net/?p=52
         if ([1, 2, 3].splice(1).length === 0) {
             var _splice = Array[P].splice;
@@ -11594,7 +11642,7 @@ armer = window.jQuery || window.Zepto;
             }
         }
 
-        // 修复 Date.get/setYear() (IE5-7)
+        // 淇 Date.get/setYear() (IE5-7)
         if ((new Date).getYear() > 1900) {
             //http://stackoverflow.com/questions/5763107/javascript-date-getyear-returns-different-result-between-ie-and-firefox-how-to
             Date[P].getYear = function () {
@@ -11605,7 +11653,7 @@ armer = window.jQuery || window.Zepto;
             };
         }
 
-        // 修复IE6 toFixed Bug
+        // 淇IE6 toFixed Bug
         // http://stackoverflow.com/questions/10470810/javascript-tofixed-bug-in-ie6
         if (0.9.toFixed(0) !== '1') {
             Number.prototype.toFixed = function (n) {
@@ -11622,8 +11670,8 @@ armer = window.jQuery || window.Zepto;
             };
         }
 
-        //  string.substr(start, length)参考 start
-        //  要抽取的子串的起始下标。如果是一个负数，那么该参数声明从字符串的尾部开始算起的位置。也就是说，-1指定字符串中的最后一个字符，-2指倒数第二个字符，以此类推。
+        //  string.substr(start, length)鍙傝   start
+        //  瑕佹娊鍙栫殑瀛愪覆鐨勮捣濮嬩笅鏍囥  濡傛灉鏄竴涓礋鏁帮紝閭ｄ箞璇ュ弬鏁板０鏄庝粠瀛楃涓茬殑灏鹃儴寮  绠楄捣鐨勪綅缃  涔熷氨鏄锛  1鎸囧畾瀛楃涓蹭腑鐨勬渶鍚庝竴涓瓧绗︼紝-2鎸囧  鏁扮浜屼釜瀛楃锛屼互姝ょ被鎺ㄣ  
         var substr = String.prototype.substr;
         if ('ab'.substr(-1) != 'b') {
             String.prototype.substr = function (start, length) {
@@ -11653,13 +11701,13 @@ armer = window.jQuery || window.Zepto;
             return false;
         }
 
-        //safari5+是把contains方法放在Element.prototype上而不是Node.prototype
+        //safari5+鏄妸contains鏂规硶鏀惧湪Element.prototype涓婅  涓嶆槸Node.prototype
         if (!document.documentElement) {
             Node.prototype.contains = function(arg) {
                 return !!(this.compareDocumentPosition(arg) & 16)
             }
         }
-        if (!document.contains) { //IE6-11的文档对象没有contains
+        if (!document.contains) { //IE6-11鐨勬枃妗ｅ璞℃病鏈塩ontains
             document.contains = function(b) {
                 return fixContains(this, b)
             }
@@ -11667,13 +11715,13 @@ armer = window.jQuery || window.Zepto;
 
 
         //=====================================
-        // TODO: ES5补充部分
+        // TODO: ES5琛ュ厖閮ㄥ垎
         //=====================================
 
         //=====================
         // TODO: Object
         //=====================
-        //第二个参数仅在浏览器支持Object.defineProperties时可用
+        //绗簩涓弬鏁颁粎鍦ㄦ祻瑙堝櫒鏀寔Object.defineProperties鏃跺彲鐢  
         mix(Object, {
             create: function (o) {
                 if (arguments.length > 1) {
@@ -11686,7 +11734,7 @@ armer = window.jQuery || window.Zepto;
                 bridge.prototype = o;
                 return new bridge();
             },
-            //取得其所有键名以数组形式返回
+            //鍙栧緱鍏舵墍鏈夐敭鍚嶄互鏁扮粍褰㈠紡杩斿洖
             keys: function (obj) { //ecma262v5 15.2.3.14
                 var result = [];
                 for (var key in obj)
@@ -11715,7 +11763,7 @@ armer = window.jQuery || window.Zepto;
         // TODO: Array
         //=====================
 
-        //用于创建javascript1.6 Array的迭代器
+        //鐢ㄤ簬鍒涘缓javascript1.6 Array鐨勮凯浠ｅ櫒
 
         function iterator(vars, body, ret) {
             var fun = 'for(var ' + vars + 'i=0,n = this.length;i < n;i++){' + body.replace('_', '((i in this) && fn.call(scope,this[i],i,this))') + '}' + ret;
@@ -11727,7 +11775,7 @@ armer = window.jQuery || window.Zepto;
         };
 
         mix(Array[P], {
-            //定位操作，返回数组中第一个等于给定参数的元素的索引值。
+            //瀹氫綅鎿嶄綔锛岃繑鍥炴暟缁勪腑绗竴涓瓑浜庣粰瀹氬弬鏁扮殑鍏冪礌鐨勭储寮曞  銆  
             indexOf: function (item, index) {
                 var n = this.length,
                     i = ~~index;
@@ -11738,7 +11786,7 @@ armer = window.jQuery || window.Zepto;
                         return i;
                 return -1;
             },
-            //定位引操作，同上，不过是从后遍历。
+            //瀹氫綅寮曟搷浣滐紝鍚屼笂锛屼笉杩囨槸浠庡悗閬嶅巻銆  
             lastIndexOf: function (item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index;
@@ -11749,17 +11797,17 @@ armer = window.jQuery || window.Zepto;
                         return i;
                 return -1;
             },
-            //迭代操作，将数组的元素挨个儿传入一个函数中执行。Ptototype.js的对应名字为each。
+            //杩唬鎿嶄綔锛屽皢鏁扮粍鐨勫厓绱犳尐涓効浼犲叆涓  釜鍑芥暟涓墽琛屻  Ptototype.js鐨勫搴斿悕瀛椾负each銆  
             forEach: iterator('', '_', ''),
-            //迭代类 在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数组
+            //杩唬绫  鍦ㄦ暟缁勪腑鐨勬瘡涓」涓婅繍琛屼竴涓嚱鏁帮紝濡傛灉姝ゅ嚱鏁扮殑鍊间负鐪燂紝鍒欐鍏冪礌浣滀负鏂版暟缁勭殑鍏冪礌鏀堕泦璧锋潵锛屽苟杩斿洖鏂版暟缁  
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //收集操作，将数组的元素挨个儿传入一个函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect。
+            //鏀堕泦鎿嶄綔锛屽皢鏁扮粍鐨勫厓绱犳尐涓効浼犲叆涓  釜鍑芥暟涓墽琛岋紝鐒跺悗鎶婂畠浠殑杩斿洖鍊肩粍鎴愪竴涓柊鏁扮粍杩斿洖銆侾tototype.js鐨勫搴斿悕瀛椾负collect銆  
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //只要数组中有一个元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any。
+            //鍙鏁扮粍涓湁涓  釜鍏冪礌婊¤冻鏉′欢锛堟斁杩涚粰瀹氬嚱鏁拌繑鍥瀟rue锛夛紝閭ｄ箞瀹冨氨杩斿洖true銆侾tototype.js鐨勫搴斿悕瀛椾负any銆  
             some: iterator('', 'if(_)return true', 'return false'),
-            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all。
+            //鍙湁鏁扮粍涓殑鍏冪礌閮芥弧瓒虫潯浠讹紙鏀捐繘缁欏畾鍑芥暟杩斿洖true锛夛紝瀹冩墠杩斿洖true銆侾tototype.js鐨勫搴斿悕瀛椾负all銆  
             every: iterator('', 'if(!_)return false', 'return true'),
-            //归化类 javascript1.8  将该数组的每个元素和前一次调用的结果运行一个函数，返回最后的结果。
+            //褰掑寲绫  javascript1.8  灏嗚鏁扮粍鐨勬瘡涓厓绱犲拰鍓嶄竴娆¤皟鐢ㄧ殑缁撴灉杩愯涓  釜鍑芥暟锛岃繑鍥炴渶鍚庣殑缁撴灉銆  
             reduce: function (fn, lastResult, scope) {
                 if (this.length == 0)
                     return lastResult;
@@ -11769,7 +11817,7 @@ armer = window.jQuery || window.Zepto;
                     result = fn.call(scope, result, this[i], i, this);
                 return result;
             },
-            //归化类 javascript1.8 同上，但从右向左执行。
+            //褰掑寲绫  javascript1.8 鍚屼笂锛屼絾浠庡彸鍚戝乏鎵ц銆  
             reduceRight: function (fn, lastResult, scope) {
                 var array = this.concat().reverse();
                 return array.reduce(fn, lastResult, scope);
@@ -11784,7 +11832,7 @@ armer = window.jQuery || window.Zepto;
         // TODO: String
         //=====================
 
-        //String扩展
+        //String鎵╁睍
         mix(String[P], {
             //ecma262v5 15.5.4.20
             //http://www.cnblogs.com/rubylouvre/archive/2009/09/18/1568794.html
@@ -11823,11 +11871,11 @@ armer = window.jQuery || window.Zepto;
     if (!String[P].repeat) {
 
         //=====================================
-        // TODO: ES6补充部分
+        // TODO: ES6琛ュ厖閮ㄥ垎
         //=====================================
         mix(String[P], {
             repeat: function (n) {
-                //将字符串重复n遍
+                //灏嗗瓧绗︿覆閲嶅n閬  
                 var result = "",
                     target = this;
                 while (n > 0) {
@@ -11839,19 +11887,19 @@ armer = window.jQuery || window.Zepto;
                 return result;
             },
             startsWith: function (str) {
-                //判定是否以给定字符串开头
+                //鍒ゅ畾鏄惁浠ョ粰瀹氬瓧绗︿覆寮  ご
                 return this.indexOf(str) === 0;
             },
             endsWith: function (str) {
-                //判定是否以给定字符串结尾
+                //鍒ゅ畾鏄惁浠ョ粰瀹氬瓧绗︿覆缁撳熬
                 return this.lastIndexOf(str) === this.length - str.length;
             },
             contains: function (s, position) {
-                //判断一个字符串是否包含另一个字符
+                //鍒ゆ柇涓  釜瀛楃涓叉槸鍚﹀寘鍚彟涓  釜瀛楃
                 return ''.indexOf.call(this, s, position >> 0) !== -1;
             }
         });
-        mix(Number[p], {
+        mix(Number[P], {
             isFinite: function(num){
                 if (typeof num != 'number') return false;
                 else if (!isFinite(num)) return false;
@@ -11896,7 +11944,7 @@ armer = window.jQuery || window.Zepto;
         window.Set.prototype = {
             size: function(){},
             add: function(){},
-            delete: function(){},
+            "delete": function(){},
             has: function(){},
             clear: function(){}
         }
@@ -11904,28 +11952,28 @@ armer = window.jQuery || window.Zepto;
 
 
     //TODO: fix localStorage
-    // 本地存储的兼容方案
+    // 鏈湴瀛樺偍鐨勫吋瀹规柟妗  
     // http://www.cnblogs.com/zjcn/archive/2012/07/03/2575026.html#2607520
     // https://github.com/marcuswestin/store.js
     (function (win, doc) {
         if(!($.support.localStorage = !!win.localStorage) && doc.documentElement.addBehavior){
             var storage, store, box, container;
-            //存储文件名（单文件小于128k，足够普通情况下使用了）
-            //cookie大小4096, 0.4K X 50个大概20K，可见userdata大的多
+            //瀛樺偍鏂囦欢鍚嶏紙鍗曟枃浠跺皬浜  28k锛岃冻澶熸櫘閫氭儏鍐典笅浣跨敤浜嗭級
+            //cookie澶у皬4096, 0.4K X 50涓ぇ姒  0K锛屽彲瑙乽serdata澶х殑澶  
             var FILENAME = win.location.hostname || 'localStorage';
             try{
-                //由于#userData的存储仅适用于特定的路径，
-                //我们需要以某种方式关联我们的数据到一个特定的路径。我们选择/favicon.ico作为一个非常安全的目标，
-                //因为所有的浏览器都发出这个URL请求，而且这个请求即使是404也不会有危险。
-                //我们可以通过一个ActiveXObject(htmlfile)对象的文档来干这事。
-                //(参见:http://msdn.microsoft.com/en-us/library/aa752574(v = VS.85). aspx)
-                //因为iframe的访问规则允许直接访问和操纵文档中的元素，即使是404。
-                //这文档可以用来代替当前文档（这被限制在当前路径）执行#userData的存储。
+                //鐢变簬#userData鐨勫瓨鍌ㄤ粎閫傜敤浜庣壒瀹氱殑璺緞锛  
+                //鎴戜滑闇  浠ユ煇绉嶆柟寮忓叧鑱旀垜浠殑鏁版嵁鍒颁竴涓壒瀹氱殑璺緞銆傛垜浠  鎷  favicon.ico浣滀负涓  釜闈炲父瀹夊叏鐨勭洰鏍囷紝
+                //鍥犱负鎵  湁鐨勬祻瑙堝櫒閮藉彂鍑鸿繖涓猆RL璇锋眰锛岃  涓旇繖涓姹傚嵆浣挎槸404涔熶笉浼氭湁鍗遍櫓銆  
+                //鎴戜滑鍙互閫氳繃涓  釜ActiveXObject(htmlfile)瀵硅薄鐨勬枃妗ｆ潵骞茶繖浜嬨  
+                //(鍙傝:http://msdn.microsoft.com/en-us/library/aa752574(v = VS.85). aspx)
+                //鍥犱负iframe鐨勮闂鍒欏厑璁哥洿鎺ヨ闂拰鎿嶇旱鏂囨。涓殑鍏冪礌锛屽嵆浣挎槸404銆  
+                //杩欐枃妗ｅ彲浠ョ敤鏉ヤ唬鏇垮綋鍓嶆枃妗ｏ紙杩欒闄愬埗鍦ㄥ綋鍓嶈矾寰勶級鎵ц#userData鐨勫瓨鍌ㄣ  
                 container = new ActiveXObject('htmlfile');
                 container.open();
                 container.write('<script>document.w=window</script><iframe src="/favicon.ico"></iframe>');
                 container.close();
-                //container返回的是htmlfile的document
+                //container杩斿洖鐨勬槸htmlfile鐨刣ocument
                 box = doc = container.w.frames[0].document;
             } catch(e) {
                 box = document.body || document.getElementsByTagName("head")[0] || document.documentElement
@@ -12035,7 +12083,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 return r.join('');
             },
-            //好吧，这里复制了一遍jQ的，以免递归出错
+            //濂藉惂锛岃繖閲屽鍒朵簡涓  亶jQ鐨勶紝浠ュ厤閫掑綊鍑洪敊
             parse : function(data){
                 if (typeof data != 'string') data = data.toString();
                 if ( data === null ) {
@@ -12076,7 +12124,7 @@ armer = window.jQuery || window.Zepto;
                     $.fn[ hashchange ].domain +"</script><body>" )
             }
 
-            function getHash ( url) {//用于取得当前窗口或iframe窗口的hash值
+            function getHash ( url) {//鐢ㄤ簬鍙栧緱褰撳墠绐楀彛鎴杋frame绐楀彛鐨刪ash鍊  
                 url = url || DOC.URL
                 return '#' + url.replace( /^[^#]*#?(.*)$/, '$1' );
             }
@@ -12085,8 +12133,8 @@ armer = window.jQuery || window.Zepto;
             }
             function setHistory(hash, history_hash){
                 var doc = iframe.document;
-                if (  hash !== history_hash ) {//只有当新hash不等于iframe中的hash才重写
-                    //用于产生历史
+                if (  hash !== history_hash ) {//鍙湁褰撴柊hash涓嶇瓑浜巌frame涓殑hash鎵嶉噸鍐  
+                    //鐢ㄤ簬浜х敓鍘嗗彶
                     doc.open();
                     doc.write($.format(html, hash));
                     doc.close();
@@ -12098,8 +12146,8 @@ armer = window.jQuery || window.Zepto;
                 setup: function(desc) {
                     $(function(){
                         if (!iframe) {
-                            //创建一个隐藏的iframe，使用这博文提供的技术 http://www.paciellogroup.com/blog/?p=604.
-                            //iframe是直接加载父页面，为了防止死循环，在DOM树未建完之前就擦入新的内容
+                            //鍒涘缓涓  釜闅愯棌鐨刬frame锛屼娇鐢ㄨ繖鍗氭枃鎻愪緵鐨勬妧鏈  http://www.paciellogroup.com/blog/?p=604.
+                            //iframe鏄洿鎺ュ姞杞界埗椤甸潰锛屼负浜嗛槻姝㈡寰幆锛屽湪DOM鏍戞湭寤哄畬涔嬪墠灏辨摝鍏ユ柊鐨勫唴瀹  
                             var el = $('<iframe tabindex="-1" style="display:none" widht=0 height=0 title="empty" />').appendTo( document.body )[0], fn
                             iframe = el.contentWindow
                             $.event.add(el, "load", fn = function(){
@@ -12111,12 +12159,12 @@ armer = window.jQuery || window.Zepto;
                                 timeoutID = setInterval(poll,  $.fn[ hashchange ].delay)
                             });
                             function poll() {
-                                var hash = getHash(),//取得主窗口中的hash
-                                    history_hash = iframe.document.body.innerText;//取得现在iframe中的hash
-                                if(hash !== last_hash){//如果是主窗口的hash发生变化
+                                var hash = getHash(),//鍙栧緱涓荤獥鍙ｄ腑鐨刪ash
+                                    history_hash = iframe.document.body.innerText;//鍙栧緱鐜板湪iframe涓殑hash
+                                if(hash !== last_hash){//濡傛灉鏄富绐楀彛鐨刪ash鍙戠敓鍙樺寲
                                     setHistory(last_hash = hash, history_hash )
                                     $(desc.currentTarget).fire(hashchange)
-                                }else if(history_hash !== last_hash){//如果按下回退键，
+                                }else if(history_hash !== last_hash){//濡傛灉鎸変笅鍥為  閿紝
                                     location.href = location.href.replace( /#.*/, '' ) + history_hash;
                                 }
                             }
@@ -12137,14 +12185,14 @@ armer = window.jQuery || window.Zepto;
 })();
 
 ;(function(DOC, $) {
-    var Registry = {} //将函数曝光到此对象上，方便访问器收集依赖
+    var Registry = {} //灏嗗嚱鏁版洕鍏夊埌姝ゅ璞′笂锛屾柟渚胯闂櫒鏀堕泦渚濊禆
     var expose = new Date - 0
     var subscribers = "$" + expose
     var window = this || (0, eval)('this')
     //var otherRequire = window.require
     //var otherDefine = window.define
     var stopRepeatAssign = false
-    //var rword = /[^, ]+/g //切割字符串为一个个小块，以空格或豆号分开它们，结合replace实现字符串的forEach
+    //var rword = /[^, ]+/g //鍒囧壊瀛楃涓蹭负涓  釜涓皬鍧楋紝浠ョ┖鏍兼垨璞嗗彿鍒嗗紑瀹冧滑锛岀粨鍚坮eplace瀹炵幇瀛楃涓茬殑forEach
     //var class2type = {}
     var oproto = Object.prototype
     var ohasOwn = oproto.hasOwnProperty
@@ -12154,7 +12202,7 @@ armer = window.jQuery || window.Zepto;
     //var serialize = oproto.toString
     var ap = Array.prototype
     var aslice = ap.slice
-    var head = DOC.head || DOC.getElementsByTagName("head")[0] //HEAD元素
+    var head = DOC.head || DOC.getElementsByTagName("head")[0] //HEAD鍏冪礌
     var documentFragment = DOC.createDocumentFragment()
     //var DONT_ENUM = "propertyIsEnumerable,isPrototypeOf,hasOwnProperty,toLocaleString,toString,valueOf,constructor".split(",")
     /*
@@ -12181,7 +12229,7 @@ armer = window.jQuery || window.Zepto;
 */
 
     /*********************************************************************
-     *                    命名空间与工具函数                               *
+     *                    鍛藉悕绌洪棿涓庡伐鍏峰嚱鏁                                *
      **********************************************************************/
     var getType = $.type;
     var resetNumber = $.slice.resetNumber;
@@ -12213,7 +12261,7 @@ armer = window.jQuery || window.Zepto;
     avalon.Array = $.Array;
 
 /*
-    avalon = function(el) { //创建jQuery式的无new 实例化结构
+    avalon = function(el) { //鍒涘缓jQuery寮忕殑鏃爊ew 瀹炰緥鍖栫粨鏋  
         return new avalon.init(el)
     }
 
@@ -12221,13 +12269,13 @@ armer = window.jQuery || window.Zepto;
         this[0] = this.element = el
     }
     avalon.fn = avalon.prototype = avalon.init.prototype
-    //率先添加三个判定类型的方法
+    //鐜囧厛娣诲姞涓変釜鍒ゅ畾绫诲瀷鐨勬柟娉  
 
-    function getType(obj) { //取得类型
+    function getType(obj) { //鍙栧緱绫诲瀷
         if (obj == null) {
             return String(obj)
         }
-        // 早期的webkit内核浏览器实现了已废弃的ecma262v4标准，可以将正则字面量当作函数使用，因此typeof在判定正则时会返回function
+        // 鏃╂湡鐨剋ebkit鍐呮牳娴忚鍣ㄥ疄鐜颁簡宸插簾寮冪殑ecma262v4鏍囧噯锛屽彲浠ュ皢姝ｅ垯瀛楅潰閲忓綋浣滃嚱鏁颁娇鐢紝鍥犳typeof鍦ㄥ垽瀹氭鍒欐椂浼氳繑鍥瀎unction
         return typeof obj === "object" || typeof obj === "function" ?
             class2type[serialize.call(obj)] || "object" :
             typeof obj
@@ -12237,8 +12285,8 @@ armer = window.jQuery || window.Zepto;
     avalon.isWindow = function(obj) {
         if (!obj)
             return false
-        // 利用IE678 window == document为true,document == window竟然为false的神奇特性
-        // 标准浏览器及IE9，IE10等使用 正则检测
+        // 鍒╃敤IE678 window == document涓簍rue,document == window绔熺劧涓篺alse鐨勭濂囩壒鎬  
+        // 鏍囧噯娴忚鍣ㄥ強IE9锛孖E10绛変娇鐢  姝ｅ垯妫  祴
         return obj == obj.document && obj.document != obj
     }
 
@@ -12248,7 +12296,7 @@ armer = window.jQuery || window.Zepto;
     if (isWindow(window)) {
         avalon.isWindow = isWindow
     }
-    //判定是否是一个朴素的javascript对象（Object），不是DOM对象，不是BOM对象，不是自定义类的实例。
+    //鍒ゅ畾鏄惁鏄竴涓湸绱犵殑javascript瀵硅薄锛圤bject锛夛紝涓嶆槸DOM瀵硅薄锛屼笉鏄疊OM瀵硅薄锛屼笉鏄嚜瀹氫箟绫荤殑瀹炰緥銆  
     avalon.isPlainObject = function(obj) {
         if (getType(obj) !== "object" || obj.nodeType || this.isWindow(obj)) {
             return false
@@ -12275,32 +12323,32 @@ armer = window.jQuery || window.Zepto;
             length = arguments.length,
             deep = false
 
-        // 如果第一个参数为布尔,判定是否深拷贝
+        // 濡傛灉绗竴涓弬鏁颁负甯冨皵,鍒ゅ畾鏄惁娣辨嫹璐  
         if (typeof target === "boolean") {
             deep = target
             target = arguments[1] || {}
             i++
         }
 
-        //确保接受方为一个复杂的数据类型
+        //纭繚鎺ュ彈鏂逛负涓  釜澶嶆潅鐨勬暟鎹被鍨  
         if (typeof target !== "object" && getType(target) !== "function") {
             target = {}
         }
 
-        //如果只有一个参数，那么新成员添加于mix所在的对象上
+        //濡傛灉鍙湁涓  釜鍙傛暟锛岄偅涔堟柊鎴愬憳娣诲姞浜巑ix鎵  湪鐨勫璞′笂
         if (i === length) {
             target = this
             i--
         }
 
         for (; i < length; i++) {
-            //只处理非空参数
+            //鍙鐞嗛潪绌哄弬鏁  
             if ((options = arguments[i]) != null) {
                 for (name in options) {
                     src = target[name]
                     copy = options[name]
 
-                    // 防止环引用
+                    // 闃叉鐜紩鐢  
                     if (target === copy) {
                         continue
                     }
@@ -12342,8 +12390,8 @@ armer = window.jQuery || window.Zepto;
     /*
     var eventMap = avalon.eventMap = {}
 
-    function resetNumber(a, n, end) { //用于模拟slice, splice的效果
-        if ((a === +a) && !(a % 1)) { //如果是整数
+    function resetNumber(a, n, end) { //鐢ㄤ簬妯℃嫙slice, splice鐨勬晥鏋  
+        if ((a === +a) && !(a % 1)) { //濡傛灉鏄暣鏁  
             if (a < 0) {
                 a = a * -1 >= n ? 0 : a + n
             } else {
@@ -12386,7 +12434,7 @@ armer = window.jQuery || window.Zepto;
             return ret
         },
         noop: noop,
-        error: function(str, e) { //如果不用Error对象封装一下，str在控制台下可能会乱码
+        error: function(str, e) { //濡傛灉涓嶇敤Error瀵硅薄灏佽涓  笅锛宻tr鍦ㄦ帶鍒跺彴涓嬪彲鑳戒細涔辩爜
             throw new (e || Error)(str)
         },
         oneObject: oneObject,
@@ -12400,7 +12448,7 @@ armer = window.jQuery || window.Zepto;
         // => [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
         // avalon.range(0)
         // => []
-        range: function(start, end, step) { // 用于生成整数数组
+        range: function(start, end, step) { // 鐢ㄤ簬鐢熸垚鏁存暟鏁扮粍
             step || (step = 1)
             if (end == null) {
                 end = start || 0
@@ -12415,7 +12463,7 @@ armer = window.jQuery || window.Zepto;
             }
             return result
         },
-        bind: function(el, type, fn, phase) { // 绑定事件
+        bind: function(el, type, fn, phase) { // 缁戝畾浜嬩欢
             var callback = W3C ? fn : function(e) {
                 return fn.call(el, fixEvent(e))
             }
@@ -12426,7 +12474,7 @@ armer = window.jQuery || window.Zepto;
             }
             return callback
         },
-        unbind: W3C ? function(el, type, fn, phase) { //卸载事件
+        unbind: W3C ? function(el, type, fn, phase) { //鍗歌浇浜嬩欢
             el.removeEventListener(eventMap[type] || type, fn || noop, !!phase)
         } : function(el, type, fn) {
             el.detachEvent("on" + type, fn || noop)
@@ -12437,13 +12485,13 @@ armer = window.jQuery || window.Zepto;
             }
             var prop = /[_-]/.test(name) ? camelize(name) : name
             name = avalon.cssName(prop) || prop
-            if (value === void 0 || typeof value === "boolean") { //获取样式
+            if (value === void 0 || typeof value === "boolean") { //鑾峰彇鏍峰紡
                 var fn = cssHooks[prop + ":get"] || cssHooks["@:get"]
                 var val = fn(node, name)
                 return value === true ? parseFloat(val) || 0 : val
-            } else if (value === "") { //请除样式
+            } else if (value === "") { //璇烽櫎鏍峰紡
                 node.style[name] = ""
-            } else { //设置样式
+            } else { //璁剧疆鏍峰紡
                 if (value == null || value !== value) {
                     return
                 }
@@ -12455,7 +12503,7 @@ armer = window.jQuery || window.Zepto;
             }
         },
         each: function(obj, fn) {
-            if (obj) { //排除null, undefined
+            if (obj) { //鎺掗櫎null, undefined
                 var i = 0
                 if (isArrayLike(obj)) {
                     for (var n = obj.length; i < n; i++) {
@@ -12472,18 +12520,18 @@ armer = window.jQuery || window.Zepto;
         },
         Array: {
             ensure: function(target, item) {
-                //只有当前数组不存在此元素时只添加它
+                //鍙湁褰撳墠鏁扮粍涓嶅瓨鍦ㄦ鍏冪礌鏃跺彧娣诲姞瀹  
                 if (target.indexOf(item) === -1) {
                     target.push(item)
                 }
                 return target
             },
             removeAt: function(target, index) {
-                //移除数组中指定位置的元素，返回布尔表示成功与否。
+                //绉婚櫎鏁扮粍涓寚瀹氫綅缃殑鍏冪礌锛岃繑鍥炲竷灏旇〃绀烘垚鍔熶笌鍚︺  
                 return !!target.splice(index, 1).length
             },
             remove: function(target, item) {
-                //移除数组中第一个匹配传参的那个元素，返回布尔表示成功与否。
+                //绉婚櫎鏁扮粍涓涓  釜鍖归厤浼犲弬鐨勯偅涓厓绱狅紝杩斿洖甯冨皵琛ㄧず鎴愬姛涓庡惁銆  
                 var index = target.indexOf(item)
                 if (~index)
                     return avalon.Array.removeAt(target, index)
@@ -12493,29 +12541,29 @@ armer = window.jQuery || window.Zepto;
     })
 
     function generateID() {
-        //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+        //鐢熸垚UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
         return "avalon" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     }
 
-    //只让节点集合，纯数组，arguments与拥有非负整数的length属性的纯JS对象通过
+    //鍙鑺傜偣闆嗗悎锛岀函鏁扮粍锛宎rguments涓庢嫢鏈夐潪璐熸暣鏁扮殑length灞炴  鐨勭函JS瀵硅薄閫氳繃
 
     function isArrayLike(obj) {
         if (obj && typeof obj === "object" && !avalon.isWindow(obj)) {
             var n = obj.length
-            if (+n === n && !(n % 1) && n >= 0) { //检测length属性是否为非负整数
+            if (+n === n && !(n % 1) && n >= 0) { //妫  祴length灞炴  鏄惁涓洪潪璐熸暣鏁  
                 try {
-                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //如果是原生对象
+                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //濡傛灉鏄師鐢熷璞  
                         return Array.isArray(obj) || /^\s?function/.test(obj.item || obj.callee)
                     }
                     return true
-                } catch (e) { //IE的NodeList直接抛错
+                } catch (e) { //IE鐨凬odeList鐩存帴鎶涢敊
                     return true
                 }
             }
         }
         return false
     }
-    //视浏览器情况采用最快的异步回调(在avalon.ready里，还有一个分支，用于处理IE6-9)
+    //瑙嗘祻瑙堝櫒鎯呭喌閲囩敤鏈  揩鐨勫紓姝ュ洖璋  鍦╝valon.ready閲岋紝杩樻湁涓  釜鍒嗘敮锛岀敤浜庡鐞咺E6-9)
     avalon.nextTick = window.setImmediate ? setImmediate.bind(window) : function(callback) {
         setTimeout(callback, 0) //IE10-11 or W3C
     }
@@ -12526,16 +12574,16 @@ armer = window.jQuery || window.Zepto;
     var VMODELS = avalon.vmodels = {}
     avalon.define = function(name, factory) {
         if (typeof name !== "string") {
-            avalon.error("必须指定ID")
+            avalon.error("蹇呴』鎸囧畾ID")
         }
         if (typeof factory !== "function") {
-            avalon.error("factory必须是函数")
+            avalon.error("factory蹇呴』鏄嚱鏁  )
         }
         var scope = {
             $watch: noop
         }
-        factory(scope) //得到所有定义
-        var model = modelFactory(scope) //偷天换日，将scope换为model
+        factory(scope) //寰楀埌鎵  湁瀹氫箟
+        var model = modelFactory(scope) //鍋峰ぉ鎹㈡棩锛屽皢scope鎹负model
         stopRepeatAssign = true
         factory(model)
         stopRepeatAssign = false
@@ -12545,7 +12593,7 @@ armer = window.jQuery || window.Zepto;
 
     function modelFactory(scope, model) {
         if (Array.isArray(scope)) {
-            var arr = scope.concat() //原数组的作为新生成的监控数组的$model而存在
+            var arr = scope.concat() //鍘熸暟缁勭殑浣滀负鏂扮敓鎴愮殑鐩戞帶鏁扮粍鐨  model鑰屽瓨鍦  
             scope.length = 0
             var collection = Collection(scope)
             collection.push.apply(collection, arr)
@@ -12554,13 +12602,13 @@ armer = window.jQuery || window.Zepto;
         if (typeof scope.nodeType === "number") {
             return scope
         }
-        var vmodel = {} //要返回的对象
-        model = model || {} //放置$model上的属性
-        var accessingProperties = {} //监控属性
-        var normalProperties = {} //普通属性
-        var computedProperties = [] //计算属性
-        var watchProperties = arguments[2] || {} //强制要监听的属性
-        var skipArray = scope.$skipArray //要忽略监控的属性
+        var vmodel = {} //瑕佽繑鍥炵殑瀵硅薄
+        model = model || {} //鏀剧疆$model涓婄殑灞炴  
+        var accessingProperties = {} //鐩戞帶灞炴  
+        var normalProperties = {} //鏅  灞炴  
+        var computedProperties = [] //璁＄畻灞炴  
+        var watchProperties = arguments[2] || {} //寮哄埗瑕佺洃鍚殑灞炴  
+        var skipArray = scope.$skipArray //瑕佸拷鐣ョ洃鎺х殑灞炴  
         for (var i = 0, name; name = skipProperties[i++]; ) {
             delete scope[name]
             normalProperties[name] = true
@@ -12573,7 +12621,7 @@ armer = window.jQuery || window.Zepto;
         for (var i in scope) {
             loopModel(i, scope[i], model, normalProperties, accessingProperties, computedProperties, watchProperties)
         }
-        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //生成一个空的ViewModel
+        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //鐢熸垚涓  釜绌虹殑ViewModel
         for (var name in normalProperties) {
             vmodel[name] = normalProperties[name]
         }
@@ -12585,7 +12633,7 @@ armer = window.jQuery || window.Zepto;
         vmodel[subscribers] = []
         for (var i in Observable) {
             var fn = Observable[i]
-            if (!W3C) { //在IE6-8下，VB对象的方法里的this并不指向自身，需要用bind处理一下
+            if (!W3C) { //鍦↖E6-8涓嬶紝VB瀵硅薄鐨勬柟娉曢噷鐨則his骞朵笉鎸囧悜鑷韩锛岄渶瑕佺敤bind澶勭悊涓  笅
                 fn = fn.bind(vmodel)
             }
             vmodel[i] = fn
@@ -12593,7 +12641,7 @@ armer = window.jQuery || window.Zepto;
         vmodel.hasOwnProperty = function(name) {
             return name in vmodel.$model
         }
-        for (var i = 0, fn; fn = computedProperties[i++]; ) { //最后强逼计算属性 计算自己的值
+        for (var i = 0, fn; fn = computedProperties[i++]; ) { //鏈  悗寮洪  璁＄畻灞炴   璁＄畻鑷繁鐨勫  
             Registry[expose] = fn
             fn()
             collectSubscribers(fn)
@@ -12636,21 +12684,21 @@ armer = window.jQuery || window.Zepto;
 
     function loopModel(name, val, model, normalProperties, accessingProperties, computedProperties, watchProperties) {
         model[name] = val
-        if (normalProperties[name] || (val && val.nodeType)) { //如果是指明不用监控的系统属性或元素节点，或放到 $skipArray里面
+        if (normalProperties[name] || (val && val.nodeType)) { //濡傛灉鏄寚鏄庝笉鐢ㄧ洃鎺х殑绯荤粺灞炴  鎴栧厓绱犺妭鐐癸紝鎴栨斁鍒  $skipArray閲岄潰
             return normalProperties[name] = val
         }
-        if (name.charAt(0) === "$" && !watchProperties[name]) { //如果是$开头，并且不在watchMore里面的
+        if (name.charAt(0) === "$" && !watchProperties[name]) { //濡傛灉鏄  寮  ご锛屽苟涓斾笉鍦╳atchMore閲岄潰鐨  
             return normalProperties[name] = val
         }
         var valueType = getType(val)
-        if (valueType === "function") { //如果是函数，也不用监控
+        if (valueType === "function") { //濡傛灉鏄嚱鏁帮紝涔熶笉鐢ㄧ洃鎺  
             return normalProperties[name] = val
         }
         var accessor, oldArgs
         if (valueType === "object" && typeof val.get === "function" && Object.keys(val).length <= 2) {
             var setter = val.set,
                 getter = val.get
-            accessor = function(newValue) { //创建计算属性，因变量，基本上由其他监控属性触发其改变
+            accessor = function(newValue) { //鍒涘缓璁＄畻灞炴  锛屽洜鍙橀噺锛屽熀鏈笂鐢卞叾浠栫洃鎺у睘鎬цЕ鍙戝叾鏀瑰彉
                 var vmodel = watchProperties.vmodel
                 var value = model[name],
                     preValue = value
@@ -12660,19 +12708,19 @@ armer = window.jQuery || window.Zepto;
                     }
                     if (typeof setter === "function") {
                         var backup = vmodel.$events[name]
-                        vmodel.$events[name] = [] //清空回调，防止内部冒泡而触发多次$fire
+                        vmodel.$events[name] = [] //娓呯┖鍥炶皟锛岄槻姝㈠唴閮ㄥ啋娉¤  瑙﹀彂澶氭$fire
                         setter.call(vmodel, newValue)
                         vmodel.$events[name] = backup
                     }
                     if (!isEqual(oldArgs, newValue)) {
                         oldArgs = newValue
-                        newValue = model[name] = getter.call(vmodel)//同步$model
-                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//同步循环绑定中的代理VM
-                        notifySubscribers(accessor) //通知顶层改变
-                        safeFire(vmodel, name, newValue, preValue)//触发$watch回调
+                        newValue = model[name] = getter.call(vmodel)//鍚屾$model
+                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//鍚屾寰幆缁戝畾涓殑浠ｇ悊VM
+                        notifySubscribers(accessor) //閫氱煡椤跺眰鏀瑰彉
+                        safeFire(vmodel, name, newValue, preValue)//瑙﹀彂$watch鍥炶皟
                     }
                 } else {
-                    if (avalon.openComputedCollect) { // 收集视图刷新函数
+                    if (avalon.openComputedCollect) { // 鏀堕泦瑙嗗浘鍒锋柊鍑芥暟
                         collectSubscribers(accessor)
                     }
                     newValue = model[name] = getter.call(vmodel)
@@ -12685,7 +12733,7 @@ armer = window.jQuery || window.Zepto;
             }
             computedProperties.push(accessor)
         } else if (rchecktype.test(valueType)) {
-            accessor = function(newValue) { //子ViewModel或监控数组
+            accessor = function(newValue) { //瀛怴iewModel鎴栫洃鎺ф暟缁  
                 var realAccessor = accessor.$vmodel, preValue = realAccessor.$model
                 if (arguments.length) {
                     if (stopRepeatAssign) {
@@ -12694,42 +12742,42 @@ armer = window.jQuery || window.Zepto;
                     if (!isEqual(preValue, newValue)) {
                         newValue = accessor.$vmodel = updateVModel(realAccessor, newValue, valueType)
                         var fn = rebindings[newValue.$id]
-                        fn && fn()//更新视图
+                        fn && fn()//鏇存柊瑙嗗浘
                         var parent = watchProperties.vmodel
-                        // withProxyCount && updateWithProxy(parent.$id, name, newValue)//同步循环绑定中的代理VM
-                        model[name] = newValue.$model//同步$model
-                        notifySubscribers(realAccessor)   //通知顶层改变
-                        safeFire(parent, name, model[name], preValue)   //触发$watch回调
+                        // withProxyCount && updateWithProxy(parent.$id, name, newValue)//鍚屾寰幆缁戝畾涓殑浠ｇ悊VM
+                        model[name] = newValue.$model//鍚屾$model
+                        notifySubscribers(realAccessor)   //閫氱煡椤跺眰鏀瑰彉
+                        safeFire(parent, name, model[name], preValue)   //瑙﹀彂$watch鍥炶皟
                     }
                 } else {
-                    collectSubscribers(realAccessor) //收集视图函数
+                    collectSubscribers(realAccessor) //鏀堕泦瑙嗗浘鍑芥暟
                     return realAccessor
                 }
             }
             accessor.$vmodel = val.$model ? val : modelFactory(val, val)
             model[name] = accessor.$vmodel.$model
         } else {
-            accessor = function(newValue) { //简单的数据类型
+            accessor = function(newValue) { //绠  崟鐨勬暟鎹被鍨  
                 var preValue = model[name]
                 if (arguments.length) {
                     if (!isEqual(preValue, newValue)) {
-                        model[name] = newValue //同步$model
+                        model[name] = newValue //鍚屾$model
                         var vmodel = watchProperties.vmodel
-                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//同步循环绑定中的代理VM
-                        notifySubscribers(accessor) //通知顶层改变
-                        safeFire(vmodel, name, newValue, preValue)//触发$watch回调
+                        withProxyCount && updateWithProxy(vmodel.$id, name, newValue)//鍚屾寰幆缁戝畾涓殑浠ｇ悊VM
+                        notifySubscribers(accessor) //閫氱煡椤跺眰鏀瑰彉
+                        safeFire(vmodel, name, newValue, preValue)//瑙﹀彂$watch鍥炶皟
                     }
                 } else {
-                    collectSubscribers(accessor) //收集视图函数
+                    collectSubscribers(accessor) //鏀堕泦瑙嗗浘鍑芥暟
                     return preValue
                 }
             }
             model[name] = val
         }
-        accessor[subscribers] = [] //订阅者数组
+        accessor[subscribers] = [] //璁㈤槄鑰呮暟缁  
         accessingProperties[name] = accessor
     }
-    //with绑定生成的代理对象储存池
+    //with缁戝畾鐢熸垚鐨勪唬鐞嗗璞″偍瀛樻睜
     var withProxyPool = {}
     var withProxyCount = 0
     var rebindings = {}
@@ -12742,7 +12790,7 @@ armer = window.jQuery || window.Zepto;
     }
 
     function updateVModel(a, b, valueType) {
-        //a为原来的VM， b为新数组或新对象
+        //a涓哄師鏉ョ殑VM锛  b涓烘柊鏁扮粍鎴栨柊瀵硅薄
         if (valueType === "array") {
             if (!Array.isArray(b)) {
                 return a //fix https://github.com/RubyLouvre/avalon/issues/261
@@ -12758,13 +12806,13 @@ armer = window.jQuery || window.Zepto;
                 delete withProxyPool[a.$id]
             }
             iterators.forEach(function(data) {
-                data.rollback && data.rollback() //还原 vm-with vm-on
+                data.rollback && data.rollback() //杩樺師 vm-with vm-on
             })
             var ret = modelFactory(b)
             rebindings[ret.$id] = function(data) {
                 while (data = iterators.shift()) {
                     (function(el) {
-                        if (el.type) { //重新绑定
+                        if (el.type) { //閲嶆柊缁戝畾
                             avalon.nextTick(function() {
                                 bindingHandlers[el.type](el, el.vmodels)
                             })
@@ -12777,10 +12825,10 @@ armer = window.jQuery || window.Zepto;
         }
     }
 
-    //===================修复浏览器对Object.defineProperties的支持=================
+    //===================淇娴忚鍣ㄥObject.defineProperties鐨勬敮鎸  ================
     var defineProperty = Object.defineProperty
-    //如果浏览器不支持ecma262v5的Object.defineProperties或者存在BUG，比如IE8
-    //标准浏览器使用__defineGetter__, __defineSetter__实现
+    //濡傛灉娴忚鍣ㄤ笉鏀寔ecma262v5鐨凮bject.defineProperties鎴栬  瀛樺湪BUG锛屾瘮濡侷E8
+    //鏍囧噯娴忚鍣ㄤ娇鐢╛_defineGetter__, __defineSetter__瀹炵幇
     try {
         defineProperty({}, "_", {
             value: "x"
@@ -12810,7 +12858,7 @@ armer = window.jQuery || window.Zepto;
             }
         }
     }
-    //IE6-8使用VBScript类的set get语句实现
+    //IE6-8浣跨敤VBScript绫荤殑set get璇彞瀹炵幇
     if (!defineProperties && window.VBArray) {
         window.execScript([
             "Function parseVB(code)",
@@ -12834,18 +12882,18 @@ armer = window.jQuery || window.Zepto;
                 "\tPrivate [__data__], [__proxy__]",
                 "\tPublic Default Function [__const__](d, p)",
                 "\t\tSet [__data__] = d: set [__proxy__] = p",
-                "\t\tSet [__const__] = Me", //链式调用
+                "\t\tSet [__const__] = Me", //閾惧紡璋冪敤
                 "\tEnd Function")
-            //添加普通属性,因为VBScript对象不能像JS那样随意增删属性，必须在这里预先定义好
+            //娣诲姞鏅  灞炴  ,鍥犱负VBScript瀵硅薄涓嶈兘鍍廕S閭ｆ牱闅忔剰澧炲垹灞炴  锛屽繀椤诲湪杩欓噷棰勫厛瀹氫箟濂  
             for (name in normalProperties) {
                 buffer.push("\tPublic [" + name + "]")
             }
             buffer.push("\tPublic [" + 'hasOwnProperty' + "]")
-            //添加访问器属性 
+            //娣诲姞璁块棶鍣ㄥ睘鎬  
             for (name in accessingProperties) {
-                if (!(name in normalProperties)) { //防止重复定义
+                if (!(name in normalProperties)) { //闃叉閲嶅瀹氫箟
                     buffer.push(
-                        //由于不知对方会传入什么,因此set, let都用上
+                        //鐢变簬涓嶇煡瀵规柟浼氫紶鍏ヤ粈涔  鍥犳set, let閮界敤涓  
                         "\tPublic Property Let [" + name + "](val" + expose + ")", //setter
                         "\t\tCall [__proxy__]([__data__], \"" + name + "\", val" + expose + ")",
                         "\tEnd Property",
@@ -12853,7 +12901,7 @@ armer = window.jQuery || window.Zepto;
                         "\t\tCall [__proxy__]([__data__], \"" + name + "\", val" + expose + ")",
                         "\tEnd Property",
                         "\tPublic Property Get [" + name + "]", //getter
-                        "\tOn Error Resume Next", //必须优先使用set语句,否则它会误将数组当字符串返回
+                        "\tOn Error Resume Next", //蹇呴』浼樺厛浣跨敤set璇彞,鍚﹀垯瀹冧細璇皢鏁扮粍褰撳瓧绗︿覆杩斿洖
                         "\t\tSet[" + name + "] = [__proxy__]([__data__],\"" + name + "\")",
                         "\tIf Err.Number <> 0 Then",
                         "\t\t[" + name + "] = [__proxy__]([__data__],\"" + name + "\")",
@@ -12862,22 +12910,22 @@ armer = window.jQuery || window.Zepto;
                         "\tEnd Property")
                 }
             }
-            buffer.push("End Class") //类定义完毕
+            buffer.push("End Class") //绫诲畾涔夊畬姣  
             buffer.push(
-                "Function " + className + "Factory(a, b)", //创建实例并传入两个关键的参数
+                "Function " + className + "Factory(a, b)", //鍒涘缓瀹炰緥骞朵紶鍏ヤ袱涓叧閿殑鍙傛暟
                 "\tDim o",
                 "\tSet o = (New " + className + ")(a, b)",
                 "\tSet " + className + "Factory = o",
                 "End Function")
-            window.parseVB(buffer.join("\r\n")) //先创建一个VB类工厂
-            return window[className + "Factory"](accessingProperties, VBMediator) //得到其产品
+            window.parseVB(buffer.join("\r\n")) //鍏堝垱寤轰竴涓猇B绫诲伐鍘  
+            return window[className + "Factory"](accessingProperties, VBMediator) //寰楀埌鍏朵骇鍝  
         }
     }
     /*********************************************************************
-     *                           ecma262 v5语法补丁                   *
+     *                           ecma262 v5璇硶琛ヤ竵                   *
      **********************************************************************/
     /*
-    if (!"司徒正美".trim) {
+    if (!"鍙稿緬姝ｇ編".trim) {
         var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g
         String.prototype.trim = function() {
             return this.replace(rtrim, "")
@@ -12935,7 +12983,7 @@ armer = window.jQuery || window.Zepto;
     }
     if (!rnative.test([].map)) {
         avalon.mix(ap, {
-            //定位操作，返回数组中第一个等于给定参数的元素的索引值。
+            //瀹氫綅鎿嶄綔锛岃繑鍥炴暟缁勪腑绗竴涓瓑浜庣粰瀹氬弬鏁扮殑鍏冪礌鐨勭储寮曞  銆  
             indexOf: function(item, index) {
                 var n = this.length,
                     i = ~~index
@@ -12946,7 +12994,7 @@ armer = window.jQuery || window.Zepto;
                         return i
                 return -1
             },
-            //定位引操作，同上，不过是从后遍历。
+            //瀹氫綅寮曟搷浣滐紝鍚屼笂锛屼笉杩囨槸浠庡悗閬嶅巻銆  
             lastIndexOf: function(item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index
@@ -12957,15 +13005,15 @@ armer = window.jQuery || window.Zepto;
                         return i
                 return -1
             },
-            //迭代操作，将数组的元素挨个儿传入一个函数中执行。Ptototype.js的对应名字为each。
+            //杩唬鎿嶄綔锛屽皢鏁扮粍鐨勫厓绱犳尐涓効浼犲叆涓  釜鍑芥暟涓墽琛屻  Ptototype.js鐨勫搴斿悕瀛椾负each銆  
             forEach: iterator("", '_', ""),
-            //迭代类 在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数组
+            //杩唬绫  鍦ㄦ暟缁勪腑鐨勬瘡涓」涓婅繍琛屼竴涓嚱鏁帮紝濡傛灉姝ゅ嚱鏁扮殑鍊间负鐪燂紝鍒欐鍏冪礌浣滀负鏂版暟缁勭殑鍏冪礌鏀堕泦璧锋潵锛屽苟杩斿洖鏂版暟缁  
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //收集操作，将数组的元素挨个儿传入一个函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect。
+            //鏀堕泦鎿嶄綔锛屽皢鏁扮粍鐨勫厓绱犳尐涓効浼犲叆涓  釜鍑芥暟涓墽琛岋紝鐒跺悗鎶婂畠浠殑杩斿洖鍊肩粍鎴愪竴涓柊鏁扮粍杩斿洖銆侾tototype.js鐨勫搴斿悕瀛椾负collect銆  
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //只要数组中有一个元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any。
+            //鍙鏁扮粍涓湁涓  釜鍏冪礌婊¤冻鏉′欢锛堟斁杩涚粰瀹氬嚱鏁拌繑鍥瀟rue锛夛紝閭ｄ箞瀹冨氨杩斿洖true銆侾tototype.js鐨勫搴斿悕瀛椾负any銆  
             some: iterator("", 'if(_)return true', 'return false'),
-            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all。
+            //鍙湁鏁扮粍涓殑鍏冪礌閮芥弧瓒虫潯浠讹紙鏀捐繘缁欏畾鍑芥暟杩斿洖true锛夛紝瀹冩墠杩斿洖true銆侾tototype.js鐨勫搴斿悕瀛椾负all銆  
             every: iterator("", 'if(!_)return false', 'return true')
         })
     }
@@ -12980,17 +13028,17 @@ armer = window.jQuery || window.Zepto;
         }
         return false;
     }
-    if (!root.contains) { //safari5+是把contains方法放在Element.prototype上而不是Node.prototype
+    if (!root.contains) { //safari5+鏄妸contains鏂规硶鏀惧湪Element.prototype涓婅  涓嶆槸Node.prototype
         Node.prototype.contains = function(arg) {
             return !!(this.compareDocumentPosition(arg) & 16)
         }
     }
-    if (!DOC.contains) { //IE6-11的文档对象没有contains
+    if (!DOC.contains) { //IE6-11鐨勬枃妗ｅ璞℃病鏈塩ontains
         DOC.contains = function(b) {
             return fixContains(this, b)
         }
     }
-    if (!root.outerHTML && window.HTMLElement) {//firefox 到11时才有outerHTML
+    if (!root.outerHTML && window.HTMLElement) {//firefox 鍒  1鏃舵墠鏈塷uterHTML
         HTMLElement.prototype.__defineGetter__("outerHTML", function() {
             domParser.textContent = ""
             domParser.appendChild(this)
@@ -13000,7 +13048,7 @@ armer = window.jQuery || window.Zepto;
         });
     }
     /*********************************************************************
-     *                           配置模块                                  *
+     *                           閰嶇疆妯″潡                                  *
      **********************************************************************/
 
     function kernel(settings) {
@@ -13022,13 +13070,13 @@ armer = window.jQuery || window.Zepto;
 
     function escapeRegExp(target) {
         //http://stevenlevithan.com/regex/xregexp/
-        //将字符串安全格式化为正则表达式的源码
+        //灏嗗瓧绗︿覆瀹夊叏鏍煎紡鍖栦负姝ｅ垯琛ㄨ揪寮忕殑婧愮爜
         return (target + "").replace(rregexp, "\\$&")
     }
     /*
     var plugins = {
         alias: function(val) {
-            log("Warning: alias方法已废弃，请用paths, shim配置项")
+            log("Warning: alias鏂规硶宸插簾寮冿紝璇风敤paths, shim閰嶇疆椤  )
             for (var c in val) {
                 if (ohasOwn.call(val, c)) {
                     var currValue = val[c]
@@ -13089,19 +13137,19 @@ armer = window.jQuery || window.Zepto;
         }
     }
     /*********************************************************************
-     *                      DOM API的高级封装                           *
+     *                      DOM API鐨勯珮绾у皝瑁                            *
      **********************************************************************/
 
     /*
     function hyphen(target) {
-        //转换为连字符线风格
+        //杞崲涓鸿繛瀛楃绾块鏍  
         return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase()
     }
 
     function camelize(target) {
-        //转换为驼峰风格
+        //杞崲涓洪┘宄伴鏍  
         if (target.indexOf("-") < 0 && target.indexOf("_") < 0) {
-            return target //提前判断，提高getStyle等的效率
+            return target //鎻愬墠鍒ゆ柇锛屾彁楂榞etStyle绛夌殑鏁堢巼
         }
         return target.replace(/[-_][^-_]/g, function(match) {
             return match.charAt(1).toUpperCase()
@@ -13217,8 +13265,8 @@ armer = window.jQuery || window.Zepto;
             if (this.css("position") === "fixed") {
                 offset = elem.getBoundingClientRect()
             } else {
-                offsetParent = this.offsetParent() //得到真正的offsetParent
-                offset = this.offset() // 得到正确的offsetParent
+                offsetParent = this.offsetParent() //寰楀埌鐪熸鐨刼ffsetParent
+                offset = this.offset() // 寰楀埌姝ｇ‘鐨刼ffsetParent
                 if (offsetParent[0].tagName !== "HTML") {
                     parentOffset = offsetParent.offset()
                 }
@@ -13238,7 +13286,7 @@ armer = window.jQuery || window.Zepto;
             return avalon(offsetParent || root)
         },
         bind: function(type, fn, phase) {
-            if (this[0]) { //此方法不会链
+            if (this[0]) { //姝ゆ柟娉曚笉浼氶摼
                 return avalon.bind(this[0], type, fn, phase)
             }
         },
@@ -13294,7 +13342,7 @@ armer = window.jQuery || window.Zepto;
         }
     }
 
-    //生成avalon.fn.scrollLeft, avalon.fn.scrollTop方法
+    //鐢熸垚avalon.fn.scrollLeft, avalon.fn.scrollTop鏂规硶
     avalon.each({
         scrollLeft: "pageXOffset",
         scrollTop: "pageYOffset"
@@ -13317,7 +13365,7 @@ armer = window.jQuery || window.Zepto;
     function getWindow(node) {
         return node.window && node.document ? node : node.nodeType === 9 ? node.defaultView || node.parentWindow : false;
     }
-    //=============================css相关=======================
+    //=============================css鐩稿叧=======================
     var cssHooks = avalon.cssHooks = {}
     var prefixes = ["", "-webkit-", "-o-", "-moz-", "-vm-"]
     var cssMap = {
@@ -13340,7 +13388,7 @@ armer = window.jQuery || window.Zepto;
         return null
     }
     cssHooks["@:set"] = function(node, name, value) {
-        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine 在旧式IE下会抛异常
+        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine 鍦ㄦ棫寮廔E涓嬩細鎶涘紓甯  
             node.style[name] = value
         } catch (e) {
         }
@@ -13351,7 +13399,7 @@ armer = window.jQuery || window.Zepto;
             if (styles) {
                 ret = name === "filter" ? styles.getPropertyValue(name) : styles[name]
                 if (ret === "") {
-                    ret = node.style[name] //其他浏览器需要我们手动取内联样式
+                    ret = node.style[name] //鍏朵粬娴忚鍣ㄩ渶瑕佹垜浠墜鍔ㄥ彇鍐呰仈鏍峰紡
                 }
             }
             return ret
@@ -13371,29 +13419,29 @@ armer = window.jQuery || window.Zepto;
             thick: ie8 ? '5px' : '6px'
         }
         cssHooks["@:get"] = function(node, name) {
-            //取得精确值，不过它有可能是带em,pc,mm,pt,%等单位
+            //鍙栧緱绮剧‘鍊硷紝涓嶈繃瀹冩湁鍙兘鏄甫em,pc,mm,pt,%绛夊崟浣  
             var currentStyle = node.currentStyle
             var ret = currentStyle[name]
             if ((rnumnonpx.test(ret) && !rposition.test(ret))) {
-                //①，保存原有的style.left, runtimeStyle.left,
+                //鈶狅紝淇濆瓨鍘熸湁鐨剆tyle.left, runtimeStyle.left,
                 var style = node.style,
                     left = style.left,
                     rsLeft = node.runtimeStyle.left
-                //②由于③处的style.left = xxx会影响到currentStyle.left，
-                //因此把它currentStyle.left放到runtimeStyle.left，
-                //runtimeStyle.left拥有最高优先级，不会style.left影响
+                //鈶＄敱浜庘憿澶勭殑style.left = xxx浼氬奖鍝嶅埌currentStyle.left锛  
+                //鍥犳鎶婂畠currentStyle.left鏀惧埌runtimeStyle.left锛  
+                //runtimeStyle.left鎷ユ湁鏈  珮浼樺厛绾э紝涓嶄細style.left褰卞搷
                 node.runtimeStyle.left = currentStyle.left
-                //③将精确值赋给到style.left，然后通过IE的另一个私有属性 style.pixelLeft
-                //得到单位为px的结果；fontSize的分支见http://bugs.jquery.com/ticket/760
+                //鈶㈠皢绮剧‘鍊艰祴缁欏埌style.left锛岀劧鍚庨  杩嘔E鐨勫彟涓  釜绉佹湁灞炴   style.pixelLeft
+                //寰楀埌鍗曚綅涓簆x鐨勭粨鏋滐紱fontSize鐨勫垎鏀http://bugs.jquery.com/ticket/760
                 style.left = name === 'fontSize' ? '1em' : (ret || 0)
                 ret = style.pixelLeft + "px"
-                //④还原 style.left，runtimeStyle.left
+                //鈶ｈ繕鍘  style.left锛宺untimeStyle.left
                 style.left = left
                 node.runtimeStyle.left = rsLeft
             }
             if (ret === "medium") {
                 name = name.replace("Width", "Style")
-                //border width 默认值为medium，即使其为0"
+                //border width 榛樿鍊间负medium锛屽嵆浣垮叾涓  "
                 if (currentStyle[name] === "none") {
                     ret = "0px"
                 }
@@ -13405,12 +13453,12 @@ armer = window.jQuery || window.Zepto;
             node.style.zoom = 1
         }
         cssHooks["opacity:get"] = function(node) {
-            //这是最快的获取IE透明值的方式，不需要动用正则了！
+            //杩欐槸鏈  揩鐨勮幏鍙朓E閫忔槑鍊肩殑鏂瑰紡锛屼笉闇  鍔ㄧ敤姝ｅ垯浜嗭紒
             var alpha = node.filters.alpha || node.filters[salpha],
                 op = alpha ? alpha.opacity : 100
-            return (op / 100) + "" //确保返回的是字符串
+            return (op / 100) + "" //纭繚杩斿洖鐨勬槸瀛楃涓  
         }
-        //旧式IE无法通过currentStyle取得没有定义在样式表中的width, height值
+        //鏃у紡IE鏃犳硶閫氳繃currentStyle鍙栧緱娌℃湁瀹氫箟鍦ㄦ牱寮忚〃涓殑width, height鍊  
         "width,height".replace(rword, function(name) {
             cssHooks[name + ":get"] = function(node) {
                 if (name === "width") {
@@ -13439,7 +13487,7 @@ armer = window.jQuery || window.Zepto;
 
     function showHidden(node, array) {
         //http://www.cnblogs.com/rubylouvre/archive/2012/10/27/2742529.html
-        if (node.offsetWidth <= 0) { //opera.offsetWidth可能小于0
+        if (node.offsetWidth <= 0) { //opera.offsetWidth鍙兘灏忎簬0
             if (rdisplayswap.test(cssHooks["@:get"](node, "display"))) {
                 var obj = {
                     node: node
@@ -13478,14 +13526,14 @@ armer = window.jQuery || window.Zepto;
         avalon.fn[method] = function(value) {
             var node = this[0]
             if (arguments.length === 0) {
-                if (node.setTimeout) { //取得窗口尺寸,IE9后可以用node.innerWidth /innerHeight代替
+                if (node.setTimeout) { //鍙栧緱绐楀彛灏哄,IE9鍚庡彲浠ョ敤node.innerWidth /innerHeight浠ｆ浛
                     return node["inner" + name] || node.document.documentElement[clientProp]
                 }
-                if (node.nodeType === 9) { //取得页面尺寸
+                if (node.nodeType === 9) { //鍙栧緱椤甸潰灏哄
                     var doc = node.documentElement
                     //FF chrome    html.scrollHeight< body.scrollHeight
-                    //IE 标准模式 : html.scrollHeight> body.scrollHeight
-                    //IE 怪异模式 : html.scrollHeight 最大等于可视窗口多一点？
+                    //IE 鏍囧噯妯″紡 : html.scrollHeight> body.scrollHeight
+                    //IE 鎬紓妯″紡 : html.scrollHeight 鏈  ぇ绛変簬鍙绐楀彛澶氫竴鐐癸紵
                     return Math.max(node.body[scrollProp], doc[scrollProp], node.body[offsetProp], doc[offsetProp], doc[clientProp])
                 }
                 return cssHooks[method + "::get"](node)
@@ -13495,7 +13543,7 @@ armer = window.jQuery || window.Zepto;
         }
 
     })
-    avalon.fn.offset = function() { //取得距离页面左右角的坐标
+    avalon.fn.offset = function() { //鍙栧緱璺濈椤甸潰宸﹀彸瑙掔殑鍧愭爣
         var node = this[0],
             doc = node && node.ownerDocument
         var pos = {
@@ -13505,8 +13553,8 @@ armer = window.jQuery || window.Zepto;
         if (!doc) {
             return pos
         }
-        //http://hkom.blog1.fc2.com/?mode=m&no=750 body的偏移量是不包含margin的
-        //我们可以通过getBoundingClientRect来获得元素相对于client的rect.
+        //http://hkom.blog1.fc2.com/?mode=m&no=750 body鐨勫亸绉婚噺鏄笉鍖呭惈margin鐨  
+        //鎴戜滑鍙互閫氳繃getBoundingClientRect鏉ヨ幏寰楀厓绱犵浉瀵逛簬client鐨剅ect.
         //http://msdn.microsoft.com/en-us/library/ms536433.aspx
         var box = node.getBoundingClientRect(),
         //chrome1+, firefox3+, ie4+, opera(yes) safari4+
@@ -13516,15 +13564,15 @@ armer = window.jQuery || window.Zepto;
             clientLeft = root.clientLeft >> 0,
             scrollTop = win.pageYOffset || root.scrollTop,
             scrollLeft = win.pageXOffset || root.scrollLeft
-        // 把滚动距离加到left,top中去。
-        // IE一些版本中会自动为HTML元素加上2px的border，我们需要去掉它
+        // 鎶婃粴鍔ㄨ窛绂诲姞鍒發eft,top涓幓銆  
+        // IE涓  簺鐗堟湰涓細鑷姩涓篐TML鍏冪礌鍔犱笂2px鐨刡order锛屾垜浠渶瑕佸幓鎺夊畠
         // http://msdn.microsoft.com/en-us/library/ms533564(VS.85).aspx
         pos.top = box.top + scrollTop - clientTop
         pos.left = box.left + scrollLeft - clientLeft
         return pos
     }
 
-    //==================================val相关============================
+    //==================================val鐩稿叧============================
 
     function getValType(el) {
         var ret = el.tagName.toLowerCase()
@@ -13533,11 +13581,11 @@ armer = window.jQuery || window.Zepto;
     var roption = /^<option(?:\s+\w+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*\s+value[\s=]/i
     var valHooks = {
         "option:get": function(node) {
-            //在IE11及W3C，如果没有指定value，那么node.value默认为node.text（存在trim作），但IE9-10则是取innerHTML(没trim操作)
+            //鍦↖E11鍙奧3C锛屽鏋滄病鏈夋寚瀹歷alue锛岄偅涔坣ode.value榛樿涓簄ode.text锛堝瓨鍦╰rim浣滐級锛屼絾IE9-10鍒欐槸鍙杋nnerHTML(娌rim鎿嶄綔)
             if (node.hasAttribute) {
                 return node.hasAttribute("value") ? node.value : node.text
             }
-            //specified并不可靠，因此通过分析outerHTML判定用户有没有显示定义value
+            //specified骞朵笉鍙潬锛屽洜姝ら  杩囧垎鏋恛uterHTML鍒ゅ畾鐢ㄦ埛鏈夋病鏈夋樉绀哄畾涔塿alue
             return roption.test(node.outerHTML) ? node.value : node.text
         },
         "select:get": function(node, value) {
@@ -13550,22 +13598,22 @@ armer = window.jQuery || window.Zepto;
                 i = index < 0 ? max : one ? index : 0
             for (; i < max; i++) {
                 option = options[i]
-                //旧式IE在reset后不会改变selected，需要改用i === index判定
-                //我们过滤所有disabled的option元素，但在safari5下，如果设置select为disable，那么其所有孩子都disable
-                //因此当一个元素为disable，需要检测其是否显式设置了disable及其父节点的disable情况
+                //鏃у紡IE鍦╮eset鍚庝笉浼氭敼鍙榮elected锛岄渶瑕佹敼鐢╥ === index鍒ゅ畾
+                //鎴戜滑杩囨护鎵  湁disabled鐨刼ption鍏冪礌锛屼絾鍦╯afari5涓嬶紝濡傛灉璁剧疆select涓篸isable锛岄偅涔堝叾鎵  湁瀛╁瓙閮絛isable
+                //鍥犳褰撲竴涓厓绱犱负disable锛岄渶瑕佹娴嬪叾鏄惁鏄惧紡璁剧疆浜哾isable鍙婂叾鐖惰妭鐐圭殑disable鎯呭喌
                 if ((option.selected || i === index) && !option.disabled) {
                     value = getter(option)
                     if (one) {
                         return value
                     }
-                    //收集所有selected值组成数组返回
+                    //鏀堕泦鎵  湁selected鍊肩粍鎴愭暟缁勮繑鍥  
                     values.push(value)
                 }
             }
             return values
         },
         "select:set": function(node, values, optionSet) {
-            values = [].concat(values) //强制转换为数组
+            values = [].concat(values) //寮哄埗杞崲涓烘暟缁  
             var getter = valHooks["option:get"]
             for (var i = 0, el; el = node.options[i++]; ) {
                 if ((el.selected = values.indexOf(getter(el)) >= 0)) {
@@ -13584,13 +13632,13 @@ armer = window.jQuery || window.Zepto;
      ************************************************************************/
     /*
     var rtagName = /<([\w:]+)/,
-    //取得其tagName
+    //鍙栧緱鍏秚agName
         rxhtml = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
         rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
         scriptTypes = oneObject("text/javascript", "text/ecmascript", "application/ecmascript", "application/javascript", "text/vbscript"),
-    //需要处理套嵌关系的标签
+    //闇  澶勭悊濂楀祵鍏崇郴鐨勬爣绛  
         rnest = /<(?:tb|td|tf|th|tr|col|opt|leg|cap|area)/
-    //parseHTML的辅助变量
+    //parseHTML鐨勮緟鍔╁彉閲  
     var tagHooks = {
         area: [1, "<map>"],
         param: [1, "<object>"],
@@ -13600,8 +13648,8 @@ armer = window.jQuery || window.Zepto;
         thead: [1, "<table>", "</table>"],
         tr: [2, "<table><tbody>"],
         td: [3, "<table><tbody><tr>"],
-        //IE6-8在用innerHTML生成节点时，不能直接创建no-scope元素与HTML5的新标签
-        _default: W3C ? [0, ""] : [1, "X<div>"] //div可以不用闭合
+        //IE6-8鍦ㄧ敤innerHTML鐢熸垚鑺傜偣鏃讹紝涓嶈兘鐩存帴鍒涘缓no-scope鍏冪礌涓嶩TML5鐨勬柊鏍囩
+        _default: W3C ? [0, ""] : [1, "X<div>"] //div鍙互涓嶇敤闂悎
     }
     tagHooks.optgroup = tagHooks.option
     tagHooks.tbody = tagHooks.tfoot = tagHooks.colgroup = tagHooks.caption = tagHooks.thead
@@ -13614,31 +13662,31 @@ armer = window.jQuery || window.Zepto;
         }
         html = html.replace(rxhtml, "<$1></$2>").trim()
         var tag = (rtagName.exec(html) || ["", ""])[1].toLowerCase(),
-        //取得其标签名
+        //鍙栧緱鍏舵爣绛惧悕
             wrap = tagHooks[tag] || tagHooks._default,
             fragment = documentFragment.cloneNode(false),
             wrapper = domParser,
             firstChild, neo
         if (!W3C) { //fix IE
-            html = html.replace(rcreate, "<br class=msNoScope>$1") //在link style script等标签之前添加一个补丁
+            html = html.replace(rcreate, "<br class=msNoScope>$1") //鍦╨ink style script绛夋爣绛句箣鍓嶆坊鍔犱竴涓ˉ涓  
         }
         wrapper.innerHTML = wrap[1] + html + (wrap[2] || "")
         var els = wrapper.getElementsByTagName("script")
-        if (els.length) { //使用innerHTML生成的script节点不会发出请求与执行text属性
+        if (els.length) { //浣跨敤innerHTML鐢熸垚鐨剆cript鑺傜偣涓嶄細鍙戝嚭璇锋眰涓庢墽琛宼ext灞炴  
             for (var i = 0, el; el = els[i++]; ) {
-                if (!el.type || scriptTypes[el.type]) { //如果script节点的MIME能让其执行脚本
-                    neo = script.cloneNode(false) //FF不能省略参数
+                if (!el.type || scriptTypes[el.type]) { //濡傛灉script鑺傜偣鐨凪IME鑳借鍏舵墽琛岃剼鏈  
+                    neo = script.cloneNode(false) //FF涓嶈兘鐪佺暐鍙傛暟
                     for (var j = 0, attr; attr = el.attributes[j++]; ) {
-                        if (attr.specified) { //复制其属性
+                        if (attr.specified) { //澶嶅埗鍏跺睘鎬  
                             neo[attr.name] = attr.value
                         }
                     }
-                    neo.text = el.text //必须指定,因为无法在attributes中遍历出来
-                    el.parentNode.replaceChild(neo, el) //替换节点
+                    neo.text = el.text //蹇呴』鎸囧畾,鍥犱负鏃犳硶鍦╝ttributes涓亶鍘嗗嚭鏉  
+                    el.parentNode.replaceChild(neo, el) //鏇挎崲鑺傜偣
                 }
             }
         }
-        //移除我们为了符合套嵌关系而添加的标签
+        //绉婚櫎鎴戜滑涓轰簡绗﹀悎濂楀祵鍏崇郴鑰屾坊鍔犵殑鏍囩
         for (i = wrap[0]; i--; wrapper = wrapper.lastChild) {
         }
         if (!W3C) { //fix IE
@@ -13648,7 +13696,7 @@ armer = window.jQuery || window.Zepto;
                 }
             }
         }
-        while (firstChild = wrapper.firstChild) { // 将wrapper上的节点转移到文档碎片上！
+        while (firstChild = wrapper.firstChild) { // 灏唚rapper涓婄殑鑺傜偣杞Щ鍒版枃妗ｇ鐗囦笂锛  
             fragment.appendChild(firstChild)
         }
         return fragment
@@ -13683,14 +13731,14 @@ armer = window.jQuery || window.Zepto;
                 } else {
                     this.$events[type] = [callback]
                 }
-            } else { //重新开始监听此VM的第一重简单属性的变动
+            } else { //閲嶆柊寮  鐩戝惉姝M鐨勭涓  噸绠  崟灞炴  鐨勫彉鍔  
                 this.$events = this.$watch.backup
             }
             return this
         },
         $unwatch: function(type, callback) {
             var n = arguments.length
-            if (n === 0) { //让此VM的所有$watch回调无效化
+            if (n === 0) { //璁╂VM鐨勬墍鏈  watch鍥炶皟鏃犳晥鍖  
                 this.$watch.backup = this.$events
                 this.$events = {}
             } else if (n === 1) {
@@ -13720,34 +13768,34 @@ armer = window.jQuery || window.Zepto;
     }
 
     /*********************************************************************
-     *                           依赖收集与触发                                *
+     *                           渚濊禆鏀堕泦涓庤Е鍙                                 *
      **********************************************************************/
 
     function registerSubscriber(data) {
-        Registry[expose] = data //暴光此函数,方便collectSubscribers收集
+        Registry[expose] = data //鏆村厜姝ゅ嚱鏁  鏂逛究collectSubscribers鏀堕泦
         avalon.openComputedCollect = true
         var fn = data.evaluator
-        if (fn) { //如果是求值函数
+        if (fn) { //濡傛灉鏄眰鍊煎嚱鏁  
             if (data.type === "duplex") {
                 data.handler()
             } else {
                 data.handler(fn.apply(0, data.args), data.element, data)
             }
-        } else { //如果是计算属性的accessor
+        } else { //濡傛灉鏄绠楀睘鎬х殑accessor
             data()
         }
         avalon.openComputedCollect = false
         delete Registry[expose]
     }
 
-    function collectSubscribers(accessor) { //收集依赖于这个访问器的订阅者
+    function collectSubscribers(accessor) { //鏀堕泦渚濊禆浜庤繖涓闂櫒鐨勮闃呰  
         if (Registry[expose]) {
             var list = accessor[subscribers]
-            list && avalon.Array.ensure(list, Registry[expose]) //只有数组不存在此元素才push进去
+            list && avalon.Array.ensure(list, Registry[expose]) //鍙湁鏁扮粍涓嶅瓨鍦ㄦ鍏冪礌鎵峱ush杩涘幓
         }
     }
 
-    function notifySubscribers(accessor) { //通知依赖于这个访问器的订阅者更新自身
+    function notifySubscribers(accessor) { //閫氱煡渚濊禆浜庤繖涓闂櫒鐨勮闃呰  鏇存柊鑷韩
         var list = accessor[subscribers]
         if (list && list.length) {
             var args = aslice.call(arguments, 1)
@@ -13760,15 +13808,15 @@ armer = window.jQuery || window.Zepto;
                     } else {
                         remove = !avalon.contains(root, el)
                     }
-                    if (remove) { //如果它没有在DOM树
+                    if (remove) { //濡傛灉瀹冩病鏈夊湪DOM鏍  
                         list.splice(i, 1)
                         log("Debug: remove " + fn.name)
                     }
                 }
                 if (typeof fn === "function") {
-                    fn.apply(0, args) //强制重新计算自身
+                    fn.apply(0, args) //寮哄埗閲嶆柊璁＄畻鑷韩
                 } else if (fn.getter) {
-                    fn.handler.apply(fn, args) //处理监控数组的方法
+                    fn.handler.apply(fn, args) //澶勭悊鐩戞帶鏁扮粍鐨勬柟娉  
                 } else {
                     fn.handler(fn.evaluator.apply(0, fn.args || []), el, fn)
                 }
@@ -13777,7 +13825,7 @@ armer = window.jQuery || window.Zepto;
     }
 
     /*********************************************************************
-     *                           扫描系统                                 *
+     *                           鎵弿绯荤粺                                 *
      **********************************************************************/
     avalon.scan = function(elem, vmodel) {
         elem = elem || root
@@ -13788,7 +13836,7 @@ armer = window.jQuery || window.Zepto;
     //http://www.w3.org/TR/html5/syntax.html#void-elements
     var stopScan = oneObject("area,base,basefont,br,col,command,embed,hr,img,input,link,meta,param,source,track,wbr,noscript,script,style,textarea".toUpperCase())
 
-    //确保元素的内容被完全扫描渲染完毕才调用回调
+    //纭繚鍏冪礌鐨勫唴瀹硅瀹屽叏鎵弿娓叉煋瀹屾瘯鎵嶈皟鐢ㄥ洖璋  
     var interval = W3C ? 15 : 50
 
     function checkScan(elem, callback) {
@@ -13806,8 +13854,8 @@ armer = window.jQuery || window.Zepto;
 
 
     function scanTag(elem, vmodels, node) {
-        //扫描顺序  vm-skip(0) --> vm-important(1) --> vm-controller(2) --> vm-if(10) --> vm-repeat(100) 
-        //--> vm-if-loop(110) --> vm-attr(970) ...--> vm-each(1400)-->vm-with(1500)--〉vm-duplex(2000)垫后
+        //鎵弿椤哄簭  vm-skip(0) --> vm-important(1) --> vm-controller(2) --> vm-if(10) --> vm-repeat(100) 
+        //--> vm-if-loop(110) --> vm-attr(970) ...--> vm-each(1400)-->vm-with(1500)--銆塿m-duplex(2000)鍨悗
         var a = elem.getAttribute(prefix + "skip")
         var b = elem.getAttributeNode(prefix + "important")
         var c = elem.getAttributeNode(prefix + "controller")
@@ -13818,12 +13866,12 @@ armer = window.jQuery || window.Zepto;
             if (!newVmodel) {
                 return
             }
-            //vm-important不包含父VM，vm-controller相反
+            //vm-important涓嶅寘鍚埗VM锛寁m-controller鐩稿弽
             vmodels = node === b ? [newVmodel] : [newVmodel].concat(vmodels)
-            elem.removeAttribute(node.name) //removeAttributeNode不会刷新[vm-controller]样式规则
-            avalon(elem).removeClass(node.name) //处理IE6
+            elem.removeAttribute(node.name) //removeAttributeNode涓嶄細鍒锋柊[vm-controller]鏍峰紡瑙勫垯
+            avalon(elem).removeClass(node.name) //澶勭悊IE6
         }
-        scanAttr(elem, vmodels) //扫描特性节点
+        scanAttr(elem, vmodels) //鎵弿鐗规  鑺傜偣
     }
 
     function scanNodes(parent, vmodels) {
@@ -13832,9 +13880,9 @@ armer = window.jQuery || window.Zepto;
         while (node) {
             var nextNode = node.nextSibling
             if (node.nodeType === 1) {
-                scanTag(node, vmodels) //扫描元素节点
+                scanTag(node, vmodels) //鎵弿鍏冪礌鑺傜偣
             } else if (node.nodeType === 3 && rexpr.test(node.nodeValue)) {
-                scanText(node, vmodels) //扫描文本节点
+                scanText(node, vmodels) //鎵弿鏂囨湰鑺傜偣
             }
             node = nextNode
         }
@@ -13845,7 +13893,7 @@ armer = window.jQuery || window.Zepto;
             tokens = scanExpr(textNode.nodeValue)
         if (tokens.length) {
             for (var i = 0, token; token = tokens[i++]; ) {
-                var node = DOC.createTextNode(token.value) //将文本转换为文本节点，并替换原来的文本节点
+                var node = DOC.createTextNode(token.value) //灏嗘枃鏈浆鎹负鏂囨湰鑺傜偣锛屽苟鏇挎崲鍘熸潵鐨勬枃鏈妭鐐  
                 if (token.expr) {
                     var filters = token.filters
                     var binding = {
@@ -13863,7 +13911,7 @@ armer = window.jQuery || window.Zepto;
                             delete bindings.filters
                         }
                     }
-                    bindings.push(binding) //收集带有插值表达式的文本
+                    bindings.push(binding) //鏀堕泦甯︽湁鎻掑  琛ㄨ揪寮忕殑鏂囨湰
                 }
                 documentFragment.appendChild(node)
             }
@@ -13890,7 +13938,7 @@ armer = window.jQuery || window.Zepto;
         for (var i = 0, attr; attr = attributes[i++]; ) {
             if (attr.specified) {
                 if (match = attr.name.match(rmsAttr)) {
-                    //如果是以指定前缀命名的
+                    //濡傛灉鏄互鎸囧畾鍓嶇紑鍛藉悕鐨  
                     var type = match[1]
                     msData[attr.name] = attr.value
                     if (typeof bindingHandlers[type] === "function") {
@@ -13921,7 +13969,7 @@ armer = window.jQuery || window.Zepto;
             return a.priority - b.priority
         })
         if (msData["vm-checked"] && msData["vm-duplex"]) {
-            log("warning!一个元素上不能同时定义vm-checked与vm-duplex")
+            log("warning!涓  釜鍏冪礌涓婁笉鑳藉悓鏃跺畾涔塿m-checked涓巚m-duplex")
         }
         var firstBinding = bindings[0] || {}
         switch (firstBinding.type) {
@@ -13932,7 +13980,7 @@ armer = window.jQuery || window.Zepto;
             default:
                 executeBindings(bindings, vmodels)
                 if (!stopScan[elem.tagName] && rbind.test(elem.innerHTML)) {
-                    scanNodes(elem, vmodels) //扫描子孙元素
+                    scanNodes(elem, vmodels) //鎵弿瀛愬瓩鍏冪礌
                 }
                 break;
         }
@@ -13943,15 +13991,15 @@ armer = window.jQuery || window.Zepto;
         }
 
     }
-    //IE67下，在循环绑定中，一个节点如果是通过cloneNode得到，自定义属性的specified为false，无法进入里面的分支，
-    //但如果我们去掉scanAttr中的attr.specified检测，一个元素会有80+个特性节点（因为它不区分固有属性与自定义属性），很容易卡死页面
+    //IE67涓嬶紝鍦ㄥ惊鐜粦瀹氫腑锛屼竴涓妭鐐瑰鏋滄槸閫氳繃cloneNode寰楀埌锛岃嚜瀹氫箟灞炴  鐨剆pecified涓篺alse锛屾棤娉曡繘鍏ラ噷闈㈢殑鍒嗘敮锛  
+    //浣嗗鏋滄垜浠幓鎺塻canAttr涓殑attr.specified妫  祴锛屼竴涓厓绱犱細鏈  0+涓壒鎬ц妭鐐癸紙鍥犱负瀹冧笉鍖哄垎鍥烘湁灞炴  涓庤嚜瀹氫箟灞炴  锛夛紝寰堝鏄撳崱姝婚〉闈  
     if (!"1" [0]) {
         var cacheAttr = createCache(512)
         var rattrs = /\s+(vm-[^=\s]+)(?:=("[^"]*"|'[^']*'|[^\s>]+))?/g,
             rquote = /^['"]/,
             rtag = /<\w+\b(?:(["'])[^"]*?(\1)|[^>])*>/i
         var getAttributes = function(elem) {
-            if (elem.outerHTML.slice(0, 2) == "</") { //处理旧式IE模拟HTML5新元素带来的伪标签
+            if (elem.outerHTML.slice(0, 2) == "</") { //澶勭悊鏃у紡IE妯℃嫙HTML5鏂板厓绱犲甫鏉ョ殑浼爣绛  
                 return []
             }
             var str = elem.outerHTML.match(rtag)[0]
@@ -13981,8 +14029,8 @@ armer = window.jQuery || window.Zepto;
             data.vmodels = vmodels
             bindingHandlers[data.type](data, vmodels)
 
-            if (data.evaluator && data.name) { //移除数据绑定，防止被二次解析
-                //chrome使用removeAttributeNode移除不存在的特性节点时会报错 https://github.com/RubyLouvre/avalon/issues/99
+            if (data.evaluator && data.name) { //绉婚櫎鏁版嵁缁戝畾锛岄槻姝㈣浜屾瑙ｆ瀽
+                //chrome浣跨敤removeAttributeNode绉婚櫎涓嶅瓨鍦ㄧ殑鐗规  鑺傜偣鏃朵細鎶ラ敊 https://github.com/RubyLouvre/avalon/issues/99
                 data.element.removeAttribute(data.name)
             }
         }
@@ -14004,7 +14052,7 @@ armer = window.jQuery || window.Zepto;
                 break
             }
             value = str.slice(start, stop)
-            if (value) { // {{ 左边的文本
+            if (value) { // {{ 宸﹁竟鐨勬枃鏈  
                 tokens.push({
                     value: value,
                     expr: false
@@ -14016,15 +14064,15 @@ armer = window.jQuery || window.Zepto;
                 break
             }
             value = str.slice(start, stop)
-            if (value) { //处理{{ }}插值表达式
+            if (value) { //澶勭悊{{ }}鎻掑  琛ㄨ揪寮  
                 var leach = []
-                if (value.indexOf("|") > 0) { // 抽取过滤器 先替换掉所有短路与
+                if (value.indexOf("|") > 0) { // 鎶藉彇杩囨护鍣  鍏堟浛鎹㈡帀鎵  湁鐭矾涓  
                     value = value.replace(r11a, "U2hvcnRDaXJjdWl0") //btoa("ShortCircuit")
                     value = value.replace(rfilters, function(c, d, e) {
                         leach.push(d + (e || ""))
                         return ""
                     })
-                    value = value.replace(r11b, "||") //还原短路与
+                    value = value.replace(r11b, "||") //杩樺師鐭矾涓  
                 }
                 tokens.push({
                     value: value,
@@ -14035,7 +14083,7 @@ armer = window.jQuery || window.Zepto;
             start = stop + closeTag.length
         } while (1)
         value = str.slice(start)
-        if (value) { //}} 右边的文本
+        if (value) { //}} 鍙宠竟鐨勬枃鏈  
             tokens.push({
                 value: value,
                 expr: false
@@ -14045,13 +14093,13 @@ armer = window.jQuery || window.Zepto;
         return tokens
     }
     /*********************************************************************
-     *                          编译模块                                  *
+     *                          缂栬瘧妯″潡                                  *
      **********************************************************************/
 
     var keywords =
-        // 关键字
+        // 鍏抽敭瀛  
         "break,case,catch,continue,debugger,default,delete,do,else,false" + ",finally,for,function,if,in,instanceof,new,null,return,switch,this" + ",throw,true,try,typeof,var,void,while,with"
-            // 保留字
+            // 淇濈暀瀛  
             + ",abstract,boolean,byte,char,class,const,double,enum,export,extends" + ",final,float,goto,implements,import,int,interface,long,native" + ",package,private,protected,public,short,static,super,synchronized" + ",throws,transient,volatile"
 
             // ECMA 5 - use strict
@@ -14074,13 +14122,13 @@ armer = window.jQuery || window.Zepto;
         return code ? code.split(/,+/) : []
     }
 
-    //添加赋值语句
+    //娣诲姞璧嬪  璇彞
 
     function addAssign(vars, scope, name, duplex) {
         var ret = [],
             prefix = " = " + name + "."
         for (var i = vars.length, prop; prop = vars[--i]; ) {
-            if (scope.hasOwnProperty && scope.hasOwnProperty(prop)) { //IE6下节点没有hasOwnProperty
+            if (scope.hasOwnProperty && scope.hasOwnProperty(prop)) { //IE6涓嬭妭鐐规病鏈塰asOwnProperty
                 ret.push(prop + prefix + prop)
                 if (duplex === "duplex") {
                     vars.get = name + "." + prop
@@ -14108,7 +14156,7 @@ armer = window.jQuery || window.Zepto;
             return false
         })
     }
-    //缓存求值函数，以便多次利用
+    //缂撳瓨姹傚  鍑芥暟锛屼互渚垮娆″埄鐢  
 
     function createCache(maxLength) {
         var keys = []
@@ -14122,7 +14170,7 @@ armer = window.jQuery || window.Zepto;
         return cache;
     }
     var cacheExpr = createCache(256)
-    //取得求值函数及其传参
+    //鍙栧緱姹傚  鍑芥暟鍙婂叾浼犲弬
     var rduplex = /\w\[.*\]|\w\.\w/
     var rproxy = /(\$proxy\$[a-z]+)\d+$/
     function parseExpr(code, scopes, data, four) {
@@ -14136,7 +14184,7 @@ armer = window.jQuery || window.Zepto;
             names = [],
             args = [],
             prefix = ""
-        //args 是一个对象数组， names 是将要生成的求值函数的参数
+        //args 鏄竴涓璞℃暟缁勶紝 names 鏄皢瑕佺敓鎴愮殑姹傚  鍑芥暟鐨勫弬鏁  
         vars = uniqArray(vars), scopes = uniqArray(scopes, 1)
         for (var i = 0, sn = scopes.length; i < sn; i++) {
             if (vars.length) {
@@ -14152,7 +14200,7 @@ armer = window.jQuery || window.Zepto;
         }
         data.args = args
         //---------------cache----------------
-        var fn = cacheExpr[exprId] //直接从缓存，免得重复生成
+        var fn = cacheExpr[exprId] //鐩存帴浠庣紦瀛橈紝鍏嶅緱閲嶅鐢熸垚
         if (fn) {
             data.evaluator = fn
             return
@@ -14161,7 +14209,7 @@ armer = window.jQuery || window.Zepto;
         if (prefix) {
             prefix = "var " + prefix
         }
-        if (filters) {//文本绑定，双工绑定才有过滤器
+        if (filters) {//鏂囨湰缁戝畾锛屽弻宸ョ粦瀹氭墠鏈夎繃婊ゅ櫒
             code = "\nvar ret" + expose + " = " + code
             var textBuffer = [],
                 fargs
@@ -14181,7 +14229,7 @@ armer = window.jQuery || window.Zepto;
             code = textBuffer.join("")
             code += "\nreturn ret" + expose
             names.push("filters" + expose)
-        } else if (dataType === "duplex") {//双工绑定
+        } else if (dataType === "duplex") {//鍙屽伐缁戝畾
             var _body = "'use strict';\nreturn function(vvv){\n\t" +
                 prefix +
                 ";\n\tif(!arguments.length){\n\t\treturn " +
@@ -14194,18 +14242,18 @@ armer = window.jQuery || window.Zepto;
             } catch (e) {
             }
             return
-        } else if (dataType === "on") {//事件绑定
+        } else if (dataType === "on") {//浜嬩欢缁戝畾
             code = code.replace("(", ".call(this,")
             if (four === "$event") {
                 names.push(four)
             }
-            code = "\nreturn " + code + ";" //IE全家 Function("return ")出错，需要Function("return ;")
+            code = "\nreturn " + code + ";" //IE鍏ㄥ Function("return ")鍑洪敊锛岄渶瑕丗unction("return ;")
             var lastIndex = code.lastIndexOf("\nreturn")
             var header = code.slice(0, lastIndex)
             var footer = code.slice(lastIndex)
             code = header + "\nif(avalon.openComputedCollect) return ;" + footer
-        } else {//其他绑定
-            code = "\nreturn " + code + ";" //IE全家 Function("return ")出错，需要Function("return ;")
+        } else {//鍏朵粬缁戝畾
+            code = "\nreturn " + code + ";" //IE鍏ㄥ Function("return ")鍑洪敊锛岄渶瑕丗unction("return ;")
         }
         try {
             fn = Function.apply(noop, names.concat("'use strict';\n" + prefix + code))
@@ -14216,11 +14264,11 @@ armer = window.jQuery || window.Zepto;
         } catch (e) {
             log("Debug:" + e.message)
         } finally {
-            vars = textBuffer = names = null //释放内存
+            vars = textBuffer = names = null //閲婃斁鍐呭瓨
         }
     }
 
-    //parseExpr的智能引用代理
+    //parseExpr鐨勬櫤鑳藉紩鐢ㄤ唬鐞  
 
     function parseExprProxy(code, scopes, data, tokens) {
         if (Array.isArray(tokens)) {
@@ -14244,22 +14292,22 @@ armer = window.jQuery || window.Zepto;
             data.evaluator.toString = function() {
                 return data.type + " binding to eval(" + code + ")"
             }
-            //方便调试
-            //这里非常重要,我们通过判定视图刷新函数的element是否在DOM树决定
-            //将它移出订阅者列表
+            //鏂逛究璋冭瘯
+            //杩欓噷闈炲父閲嶈,鎴戜滑閫氳繃鍒ゅ畾瑙嗗浘鍒锋柊鍑芥暟鐨別lement鏄惁鍦―OM鏍戝喅瀹  
+            //灏嗗畠绉诲嚭璁㈤槄鑰呭垪琛  
             registerSubscriber(data)
         }
     }
     avalon.parseExprProxy = parseExprProxy
     /*********************************************************************
-     *绑定模块（实现“操作数据即操作DOM”的关键，将DOM操作放逐出前端开发人员的视野，让它交由框架自行处理，开发人员专致于业务本身） *                                 *
+     *缁戝畾妯″潡锛堝疄鐜扳  鎿嶄綔鏁版嵁鍗虫搷浣淒OM鈥濈殑鍏抽敭锛屽皢DOM鎿嶄綔鏀鹃  鍑哄墠绔紑鍙戜汉鍛樼殑瑙嗛噹锛岃瀹冧氦鐢辨鏋惰嚜琛屽鐞嗭紝寮  彂浜哄憳涓撹嚧浜庝笟鍔℃湰韬級 *                                 *
      **********************************************************************/
     /*
     var cacheDisplay = oneObject("a,abbr,b,span,strong,em,font,i,kbd", "inline")
     avalon.mix(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
     function parseDisplay(nodeName, val) {
-        //用于取得此类标签的默认display值
+        //鐢ㄤ簬鍙栧緱姝ょ被鏍囩鐨勯粯璁isplay鍊  
         nodeName = nodeName.toLowerCase()
         if (!cacheDisplay[nodeName]) {
             var node = DOC.createElement(nodeName)
@@ -14291,8 +14339,8 @@ armer = window.jQuery || window.Zepto;
     var rdash = /\(([^)]*)\)/
 
     var styleEl = '<style id="avalonStyle">.avalonHide{ display: none!important }</style>'
-    styleEl = avalon.parseHTML(styleEl).firstChild //IE6-8 head标签的innerHTML是只读的
-    head.insertBefore(styleEl, null) //避免IE6 base标签BUG
+    styleEl = avalon.parseHTML(styleEl).firstChild //IE6-8 head鏍囩鐨刬nnerHTML鏄彧璇荤殑
+    head.insertBefore(styleEl, null) //閬垮厤IE6 base鏍囩BUG
     var rnoscripts = /<noscript.*?>(?:[\s\S]+?)<\/noscript>/img
     var rnoscriptText = /<noscript.*?>([\s\S]+?)<\/noscript>/im
 
@@ -14322,7 +14370,7 @@ armer = window.jQuery || window.Zepto;
         avalon.contains = fixContains
     }
 */
-    //这里的函数每当VM发生改变后，都会被执行（操作方为notifySubscribers）
+    //杩欓噷鐨勫嚱鏁版瘡褰揤M鍙戠敓鏀瑰彉鍚庯紝閮戒細琚墽琛岋紙鎿嶄綔鏂逛负notifySubscribers锛  
     var bindingExecutors = avalon.bindingExecutors = {
         "attr": function(val, elem, data) {
             var method = data.type,
@@ -14330,9 +14378,9 @@ armer = window.jQuery || window.Zepto;
             if (method === "css") {
                 avalon(elem).css(attrName, val)
             } else if (method === "attr") {
-                // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"将元素的className设置为aaa bbb ccc
-                // vm-attr-class="xxx" vm.xxx=false  清空元素的所有类名
-                // vm-attr-name="yyy"  vm.yyy="ooo" 为元素设置name属性
+                // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"灏嗗厓绱犵殑className璁剧疆涓篴aa bbb ccc
+                // vm-attr-class="xxx" vm.xxx=false  娓呯┖鍏冪礌鐨勬墍鏈夌被鍚  
+                // vm-attr-name="yyy"  vm.yyy="ooo" 涓哄厓绱犺缃畁ame灞炴  
                 var toRemove = (val === false) || (val === null) || (val === void 0)
                 if (toRemove)
                     elem.removeAttribute(attrName)
@@ -14382,13 +14430,13 @@ armer = window.jQuery || window.Zepto;
                         xhr.send(null)
                     }
                 } else {
-                    //IE系列与够新的标准浏览器支持通过ID取得元素（firefox14+）
+                    //IE绯诲垪涓庡鏂扮殑鏍囧噯娴忚鍣ㄦ敮鎸侀  杩嘔D鍙栧緱鍏冪礌锛坒irefox14+锛  
                     //http://tjvantoll.com/2012/07/19/dom-element-references-as-global-variables/
                     var el = val && val.nodeType == 1 ? val : DOC.getElementById(val)
                     if (el) {
-                        if (el.tagName === "NOSCRIPT" && !(el.innerHTML || el.fixIE78)) { //IE7-8 innerText,innerHTML都无法取得其内容，IE6能取得其innerHTML
-                            var xhr = getXHR() //IE9-11与chrome的innerHTML会得到转义的内容，它们的innerText可以
-                            xhr.open("GET", location, false) //谢谢Nodejs 乱炖群 深圳-纯属虚构
+                        if (el.tagName === "NOSCRIPT" && !(el.innerHTML || el.fixIE78)) { //IE7-8 innerText,innerHTML閮芥棤娉曞彇寰楀叾鍐呭锛孖E6鑳藉彇寰楀叾innerHTML
+                            var xhr = getXHR() //IE9-11涓巆hrome鐨刬nnerHTML浼氬緱鍒拌浆涔夌殑鍐呭锛屽畠浠殑innerText鍙互
+                            xhr.open("GET", location, false) //璋㈣阿Nodejs 涔辩倴缇  娣卞湷-绾睘铏氭瀯
                             xhr.send(null)
                             //http://bbs.csdn.net/topics/390349046?page=1#post-393492653
                             var noscripts = DOC.getElementsByTagName("noscript")
@@ -14396,7 +14444,7 @@ armer = window.jQuery || window.Zepto;
                             var n = array.length
                             for (var i = 0; i < n; i++) {
                                 var tag = noscripts[i]
-                                if (tag) { //IE6-8中noscript标签的innerHTML,innerText是只读的
+                                if (tag) { //IE6-8涓璶oscript鏍囩鐨刬nnerHTML,innerText鏄彧璇荤殑
                                     tag.style.display = "none" //http://haslayout.net/css/noscript-Ghost-Bug
                                     tag.fixIE78 = (array[i].match(rnoscriptText) || ["", "&nbsp;"])[1]
                                 }
@@ -14409,7 +14457,7 @@ armer = window.jQuery || window.Zepto;
                 }
             } else {
                 if (!root.hasAttribute && typeof val === "string" && (method === "src" || method === "href")) {
-                    val = val.replace(/&amp;/g, "&") //处理IE67自动转义的问题
+                    val = val.replace(/&amp;/g, "&") //澶勭悊IE67鑷姩杞箟鐨勯棶棰  
                 }
                 elem[method] = val
             }
@@ -14417,7 +14465,7 @@ armer = window.jQuery || window.Zepto;
         "class": function(val, elem, data) {
             var $elem = avalon(elem),
                 method = data.type
-            if (method === "class" && data.param) { //如果是旧风格
+            if (method === "class" && data.param) { //濡傛灉鏄棫椋庢牸
                 $elem.toggleClass(data.param, !!val)
             } else {
                 var toggle = data._evaluator ? !!data._evaluator.apply(elem, data._args) : true
@@ -14432,11 +14480,11 @@ armer = window.jQuery || window.Zepto;
                         break;
                     case "hover":
                     case "active":
-                        if (!data.init) { //确保只绑定一次
-                            if (method === "hover") { //在移出移入时切换类名
+                        if (!data.init) { //纭繚鍙粦瀹氫竴娆  
+                            if (method === "hover") { //鍦ㄧЩ鍑虹Щ鍏ユ椂鍒囨崲绫诲悕
                                 var event1 = "mouseenter",
                                     event2 = "mouseleave"
-                            } else { //在聚焦失焦中切换类名
+                            } else { //鍦ㄨ仛鐒﹀け鐒︿腑鍒囨崲绫诲悕
                                 elem.tabIndex = elem.tabIndex || -1
                                 event1 = "mousedown", event2 = "mouseup"
                                 $elem.bind("mouseleave", function() {
@@ -14486,7 +14534,7 @@ armer = window.jQuery || window.Zepto;
                     var locatedNode = getLocatedNode(parent, data, pos)
                 }
                 switch (method) {
-                    case "add": //在pos位置后添加el数组（pos为数字，el为数组）
+                    case "add": //鍦╬os浣嶇疆鍚庢坊鍔爀l鏁扮粍锛坧os涓烘暟瀛楋紝el涓烘暟缁勶級
                         var arr = el
                         var last = data.getter().length - 1
                         var transation = documentFragment.cloneNode(false)
@@ -14507,11 +14555,11 @@ armer = window.jQuery || window.Zepto;
                         }
                         spans = null
                         break
-                    case "del": //将pos后的el个元素删掉(pos, el都是数字)
-                        proxies.splice(pos, el) //移除对应的子VM
+                    case "del": //灏唒os鍚庣殑el涓厓绱犲垹鎺  pos, el閮芥槸鏁板瓧)
+                        proxies.splice(pos, el) //绉婚櫎瀵瑰簲鐨勫瓙VM
                         removeFromSanctuary(removeView(locatedNode, group, el))
                         break
-                    case "index": //将proxies中的第pos个起的所有元素重新索引（pos为数字，el用作循环变量）
+                    case "index": //灏唒roxies涓殑绗琾os涓捣鐨勬墍鏈夊厓绱犻噸鏂扮储寮曪紙pos涓烘暟瀛楋紝el鐢ㄤ綔寰幆鍙橀噺锛  
                         var last = proxies.length - 1
                         for (; el = proxies[pos]; pos++) {
                             el.$index = pos
@@ -14538,7 +14586,7 @@ armer = window.jQuery || window.Zepto;
                         removeFromSanctuary(deleteFragment)
                         proxies.length = 0
                         break
-                    case "move": //将proxies中的第pos个元素移动el位置上(pos, el都是数字)
+                    case "move": //灏唒roxies涓殑绗琾os涓厓绱犵Щ鍔╡l浣嶇疆涓  pos, el閮芥槸鏁板瓧)
                         var t = proxies.splice(pos, 1)[0]
                         if (t) {
                             proxies.splice(el, 0, t)
@@ -14547,25 +14595,25 @@ armer = window.jQuery || window.Zepto;
                             parent.insertBefore(moveNode, locatedNode)
                         }
                         break
-                    case "set": //将proxies中的第pos个元素的VM设置为el（pos为数字，el任意）
+                    case "set": //灏唒roxies涓殑绗琾os涓厓绱犵殑VM璁剧疆涓篹l锛坧os涓烘暟瀛楋紝el浠绘剰锛  
                         var proxy = proxies[pos]
                         if (proxy) {
                             proxy[proxy.$itemName] = el
                         }
                         break
-                    case "append": //将pos的键值对从el中取出（pos为一个普通对象，el为预先生成好的代理VM对象池）
+                    case "append": //灏唒os鐨勯敭鍊煎浠巈l涓彇鍑猴紙pos涓轰竴涓櫘閫氬璞★紝el涓洪鍏堢敓鎴愬ソ鐨勪唬鐞哣M瀵硅薄姹狅級
                         var pool = el
                         var transation = documentFragment.cloneNode(false)
                         var callback = getBindingCallback(data.callbackElement, "data-with-sorted", data.vmodels)
                         var keys = [],
                             spans = [],
                             lastFn = {}
-                        for (var key in pos) { //得到所有键名
+                        for (var key in pos) { //寰楀埌鎵  湁閿悕
                             if (pos.hasOwnProperty(key) && key !== "hasOwnProperty") {
                                 keys.push(key)
                             }
                         }
-                        if (callback) { //如果有回调，则让它们排序
+                        if (callback) { //濡傛灉鏈夊洖璋冿紝鍒欒瀹冧滑鎺掑簭
                             var keys2 = callback.call(parent, keys)
                             if (keys2 && Array.isArray(keys2) && keys2.length) {
                                 keys = keys2
@@ -14607,7 +14655,7 @@ armer = window.jQuery || window.Zepto;
                     fragment = avalon.parseHTML(val)
                 }
                 var replaceNodes = avalon.slice(fragment.childNodes)
-                elem.insertBefore(fragment, data.replaceNodes[0] || null) //fix IE6-8 insertBefore的第2个参数只能为节点或null
+                elem.insertBefore(fragment, data.replaceNodes[0] || null) //fix IE6-8 insertBefore鐨勭2涓弬鏁板彧鑳戒负鑺傜偣鎴杗ull
                 for (var i = 0, node; node = data.replaceNodes[i++]; ) {
                     elem.removeChild(node)
                 }
@@ -14621,7 +14669,7 @@ armer = window.jQuery || window.Zepto;
         },
         "if": function(val, elem, data) {
             var placehoder = data.placehoder
-            if (val) { //插回DOM树
+            if (val) { //鎻掑洖DOM鏍  
                 if (!data.msInDocument) {
                     data.msInDocument = true
                     try {
@@ -14636,7 +14684,7 @@ armer = window.jQuery || window.Zepto;
 //                        data.handler = noop
 //                    }
                 }
-            } else { //移出DOM树，放进ifSanctuary DIV中，并用注释节点占据原位置
+            } else { //绉诲嚭DOM鏍戯紝鏀捐繘ifSanctuary DIV涓紝骞剁敤娉ㄩ噴鑺傜偣鍗犳嵁鍘熶綅缃  
 
                 if (data.msInDocument) {
                     data.msInDocument = false
@@ -14676,10 +14724,10 @@ armer = window.jQuery || window.Zepto;
             data.evaluator = data.handler = noop
         },
         "text": function(val, elem, data) {
-            val = val == null ? "" : val //不在页面上显示undefined null
-            if (data.nodeType === 3) { //绑定在文本节点上
+            val = val == null ? "" : val //涓嶅湪椤甸潰涓婃樉绀簎ndefined null
+            if (data.nodeType === 3) { //缁戝畾鍦ㄦ枃鏈妭鐐逛笂
                 data.node.data = val
-            } else { //绑定在特性节点上
+            } else { //缁戝畾鍦ㄧ壒鎬ц妭鐐逛笂
                 if (!elem) {
                     elem = data.element = data.node.parentNode
                 }
@@ -14696,9 +14744,9 @@ armer = window.jQuery || window.Zepto;
         "widget": noop
     }
     var rwhitespace = /^\s+$/
-    //这里的函数只会在第一次被扫描后被执行一次，并放进行对应VM属性的subscribers数组内（操作方为registerSubscriber）
+    //杩欓噷鐨勫嚱鏁板彧浼氬湪绗竴娆¤鎵弿鍚庤鎵ц涓  锛屽苟鏀捐繘琛屽搴擵M灞炴  鐨剆ubscribers鏁扮粍鍐咃紙鎿嶄綔鏂逛负registerSubscriber锛  
     var bindingHandlers = avalon.bindingHandlers = {
-        //这是一个字符串属性绑定的范本, 方便你在title, alt,  src, href, include, css添加插值表达式
+        //杩欐槸涓  釜瀛楃涓插睘鎬х粦瀹氱殑鑼冩湰, 鏂逛究浣犲湪title, alt,  src, href, include, css娣诲姞鎻掑  琛ㄨ揪寮  
         //<a vm-href="{{url.hostname}}/{{url.pathname}}.html">
         "attr": function(data, vmodels) {
             var text = data.value.trim(),
@@ -14710,14 +14758,14 @@ armer = window.jQuery || window.Zepto;
                     text = RegExp.$1
                 }
             }
-            data.handlerName = "attr" //handleName用于处理多种绑定共用同一种bindingExecutor的情况
+            data.handlerName = "attr" //handleName鐢ㄤ簬澶勭悊澶氱缁戝畾鍏辩敤鍚屼竴绉峛indingExecutor鐨勬儏鍐  
             parseExprProxy(text, vmodels, data, (simple ? null : scanExpr(data.value)))
         },
         "checked": function(data, vmodels) {
             data.handlerName = "checked"
             parseExprProxy(data.value, vmodels, data)
         },
-        //根据VM的属性值或表达式的值切换类名，vm-class="xxx yyy zzz:flag" 
+        //鏍规嵁VM鐨勫睘鎬у  鎴栬〃杈惧紡鐨勫  鍒囨崲绫诲悕锛寁m-class="xxx yyy zzz:flag" 
         //http://www.cnblogs.com/rubylouvre/archive/2012/12/17/2818540.html
         "class": function(data, vmodels) {
             var oldStyle = data.param,
@@ -14725,26 +14773,26 @@ armer = window.jQuery || window.Zepto;
                 rightExpr
             data.handlerName = "class"
             if (!oldStyle || isFinite(oldStyle)) {
-                data.param = "" //去掉数字
+                data.param = "" //鍘绘帀鏁板瓧
                 var noExpr = text.replace(rexprg, function(a) {
-                    return Math.pow(10, a.length - 1) //将插值表达式插入10的N-1次方来占位
+                    return Math.pow(10, a.length - 1) //灏嗘彃鍊艰〃杈惧紡鎻掑叆10鐨凬-1娆℃柟鏉ュ崰浣  
                 })
-                var colonIndex = noExpr.indexOf(":") //取得第一个冒号的位置
-                if (colonIndex === -1) { // 比如 vm-class="aaa bbb ccc" 的情况
+                var colonIndex = noExpr.indexOf(":") //鍙栧緱绗竴涓啋鍙风殑浣嶇疆
+                if (colonIndex === -1) { // 姣斿 vm-class="aaa bbb ccc" 鐨勬儏鍐  
                     var className = text
-                } else { // 比如 vm-class-1="ui-state-active:checked" 的情况 
+                } else { // 姣斿 vm-class-1="ui-state-active:checked" 鐨勬儏鍐  
                     className = text.slice(0, colonIndex)
                     rightExpr = text.slice(colonIndex + 1)
-                    parseExpr(rightExpr, vmodels, data) //决定是添加还是删除
+                    parseExpr(rightExpr, vmodels, data) //鍐冲畾鏄坊鍔犺繕鏄垹闄  
                     if (!data.evaluator) {
-                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' 不存在于VM中")
+                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' 涓嶅瓨鍦ㄤ簬VM涓  )
                         return false
                     } else {
                         data._evaluator = data.evaluator
                         data._args = data.args
                     }
                 }
-                var hasExpr = rexpr.test(className) //比如vm-class="width{{w}}"的情况
+                var hasExpr = rexpr.test(className) //姣斿vm-class="width{{w}}"鐨勬儏鍐  
                 if (!hasExpr) {
                     data._class = className
                 }
@@ -14758,7 +14806,7 @@ armer = window.jQuery || window.Zepto;
                 tagName = elem.tagName
             if (typeof modelBinding[tagName] === "function") {
                 data.changed = getBindingCallback(elem, "data-duplex-changed", vmodels) || noop
-                //由于情况特殊，不再经过parseExprProxy
+                //鐢变簬鎯呭喌鐗规畩锛屼笉鍐嶇粡杩噋arseExprProxy
                 parseExpr(data.value, vmodels, data, "duplex")
                 if (data.evaluator && data.args) {
                     var form = elem.form
@@ -14780,7 +14828,7 @@ armer = window.jQuery || window.Zepto;
             data.handler = bindingExecutors.each
             data.callbackName = "data-" + (type || "each") + "-rendered"
             if (type !== "repeat") {
-                avalon.log("Warning:建议使用vm-repeat代替vm-each, vm-with, vm-repeat只占用一个标签并且性能更好")
+                avalon.log("Warning:寤鸿浣跨敤vm-repeat浠ｆ浛vm-each, vm-with, vm-repeat鍙崰鐢ㄤ竴涓爣绛惧苟涓旀  鑳芥洿濂  )
             }
             data.callbackElement = data.parent = elem
             var freturn = true
@@ -14883,7 +14931,7 @@ armer = window.jQuery || window.Zepto;
                 four = "$event"
             if (value.indexOf("(") > 0 && value.indexOf(")") > -1) {
                 var matched = (value.match(rdash) || ["", ""])[1].trim()
-                if (matched === "" || matched === "$event") { // aaa() aaa($event)当成aaa处理
+                if (matched === "" || matched === "$event") { // aaa() aaa($event)褰撴垚aaa澶勭悊
                     four = void 0
                     value = value.replace(rdash, "")
                 }
@@ -14897,7 +14945,7 @@ armer = window.jQuery || window.Zepto;
         },
         "visible": function(data, vmodels) {
             var elem = data.element
-            if (!supportDisplay && !root.contains(elem)) { //fuck firfox 全家！
+            if (!supportDisplay && !root.contains(elem)) { //fuck firfox 鍏ㄥ锛  
                 var display = parseDisplay(elem.tagName)
             }
             display = display || avalon(elem).css("display")
@@ -14921,12 +14969,12 @@ armer = window.jQuery || window.Zepto;
             if (typeof constructor === "function") { //vm-widget="tabs,tabsAAA,optname"
                 vmodels = element.vmodels || vmodels
                 for (var i = 0, v; v = vmodels[i++]; ) {
-                    if (VMODELS[v.$id]) { //取得离它最近由用户定义的VM
+                    if (VMODELS[v.$id]) { //鍙栧緱绂诲畠鏈  繎鐢辩敤鎴峰畾涔夌殑VM
                         var nearestVM = v
                         break
                     }
                 }
-                var optName = args[2] || widget //尝试获得配置项的名字，没有则取widget的名字
+                var optName = args[2] || widget //灏濊瘯鑾峰緱閰嶇疆椤圭殑鍚嶅瓧锛屾病鏈夊垯鍙杦idget鐨勫悕瀛  
                 if (nearestVM && typeof nearestVM[optName] === "object") {
                     vmOptions = nearestVM[optName]
                     vmOptions = vmOptions.$model || vmOptions
@@ -14935,7 +14983,7 @@ armer = window.jQuery || window.Zepto;
                         args[1] = id
                     }
                 }
-                var widgetData = avalon.getWidgetData(element, args[0]) //抽取data-tooltip-text、data-tooltip-attr属性，组成一个配置对象
+                var widgetData = avalon.getWidgetData(element, args[0]) //鎶藉彇data-tooltip-text銆乨ata-tooltip-attr灞炴  锛岀粍鎴愪竴涓厤缃璞  
                 data[widget + "Id"] = args[1]
                 data[widget + "Options"] = avalon.mix({}, constructor.defaults, vmOptions, widgetData)
                 element.removeAttribute("vm-widget")
@@ -14945,7 +14993,7 @@ armer = window.jQuery || window.Zepto;
                 if (callback) {
                     callback.call(element, widgetVM)
                 }
-            } else if (vmodels.length) { //如果该组件还没有加载，那么保存当前的vmodels
+            } else if (vmodels.length) { //濡傛灉璇ョ粍浠惰繕娌℃湁鍔犺浇锛岄偅涔堜繚瀛樺綋鍓嶇殑vmodels
                 element.vmodels = vmodels
             }
             return true
@@ -14967,16 +15015,16 @@ armer = window.jQuery || window.Zepto;
     })
     bindingHandlers.data = bindingHandlers.text = bindingHandlers.html
     //============================= string preperty binding =======================
-    //与href绑定器 用法差不多的其他字符串属性的绑定器
-    //建议不要直接在src属性上修改，这样会发出无效的请求，请使用vm-src
+    //涓巋ref缁戝畾鍣  鐢ㄦ硶宸笉澶氱殑鍏朵粬瀛楃涓插睘鎬х殑缁戝畾鍣  
+    //寤鸿涓嶈鐩存帴鍦╯rc灞炴  涓婁慨鏀癸紝杩欐牱浼氬彂鍑烘棤鏁堢殑璇锋眰锛岃浣跨敤vm-src
     "title,alt,src,value,css,include,href".replace(rword, function(name) {
         bindingHandlers[name] = bindingHandlers.attr
     })
     //============================= model binding =======================
-    //将模型中的字段与input, textarea的value值关联在一起
+    //灏嗘ā鍨嬩腑鐨勫瓧娈典笌input, textarea鐨剉alue鍊煎叧鑱斿湪涓  捣
     var modelBinding = bindingHandlers.duplex
-    //如果一个input标签添加了model绑定。那么它对应的字段将与元素的value连结在一起
-    //字段变，value就变；value变，字段也跟着变。默认是绑定input事件，
+    //濡傛灉涓  釜input鏍囩娣诲姞浜唌odel缁戝畾銆傞偅涔堝畠瀵瑰簲鐨勫瓧娈靛皢涓庡厓绱犵殑value杩炵粨鍦ㄤ竴璧  
+    //瀛楁鍙橈紝value灏卞彉锛泇alue鍙橈紝瀛楁涔熻窡鐫  彉銆傞粯璁ゆ槸缁戝畾input浜嬩欢锛  
     modelBinding.INPUT = function(element, evaluator, data) {
         var fixType = data.param,
             type = element.type,
@@ -14987,7 +15035,7 @@ armer = window.jQuery || window.Zepto;
         if (type === "checkbox" && fixType === "radio") {
             type = "radio"
         }
-        //当value变化时改变model的值
+        //褰搗alue鍙樺寲鏃舵敼鍙榤odel鐨勫  
         var updateVModel = function() {
             var val = element.oldValue = element.value
             if ($elem.data("duplex-observe") !== false) {
@@ -14995,7 +15043,7 @@ armer = window.jQuery || window.Zepto;
                 callback.call(element, val)
             }
         }
-        //当model变化时,它就会改变value的值
+        //褰搈odel鍙樺寲鏃  瀹冨氨浼氭敼鍙榲alue鐨勫  
         data.handler = function() {
             var val = evaluator()
             if (val !== element.value) {
@@ -15004,7 +15052,7 @@ armer = window.jQuery || window.Zepto;
         }
         if (type === "radio") {
             data.handler = function() {
-                //IE6是通过defaultChecked来实现打勾效果
+                //IE6鏄  杩嘾efaultChecked鏉ュ疄鐜版墦鍕炬晥鏋  
                 element.defaultChecked = (element.checked = /bool|text/.test(fixType) ? evaluator() + "" === element.value : !!evaluator())
             }
             updateVModel = function() {
@@ -15035,13 +15083,13 @@ armer = window.jQuery || window.Zepto;
                     if (Array.isArray(array)) {
                         avalon.Array[method](array, element.value)
                     } else {
-                        avalon.error("vm-duplex位于checkbox时要求对应一个数组")
+                        avalon.error("vm-duplex浣嶄簬checkbox鏃惰姹傚搴斾竴涓暟缁  )
                     }
                     callback.call(element, array)
                 }
             }
             data.handler = function() {
-                var array = [].concat(evaluator()) //强制转换为数组
+                var array = [].concat(evaluator()) //寮哄埗杞崲涓烘暟缁  
                 element.checked = array.indexOf(element.value) >= 0
             }
             removeFn = $elem.bind("click", updateVModel) //IE6-8
@@ -15054,7 +15102,7 @@ armer = window.jQuery || window.Zepto;
             if (event === "change") {
                 avalon.bind(element, event, updateVModel)
             } else {
-                if (W3C) { //先执行W3C
+                if (W3C) { //鍏堟墽琛學3C
                     element.addEventListener("input", updateVModel)
                     data.rollback = function() {
                         element.removeEventListener("input", updateVModel)
@@ -15071,7 +15119,7 @@ armer = window.jQuery || window.Zepto;
                     }
                 }
 
-                if (DOC.documentMode === 9) { // IE9 无法在切剪中同步VM
+                if (DOC.documentMode === 9) { // IE9 鏃犳硶鍦ㄥ垏鍓腑鍚屾VM
                     var selectionchange = function(e) {
                         if (e.type === "focus") {
                             DOC.addEventListener("selectionchange", updateVModel)
@@ -15122,7 +15170,7 @@ armer = window.jQuery || window.Zepto;
     }
     //http://msdn.microsoft.com/en-us/library/dd229916(VS.85).aspx
     //https://docs.google.com/document/d/1jwA8mtClwxI-QJuHT7872Z0pxpZz8PBkf2bGAbsUtqs/edit?pli=1
-    if (Object.getOwnPropertyNames) { //屏蔽IE8
+    if (Object.getOwnPropertyNames) { //灞忚斀IE8
         try {
             var inputProto = HTMLInputElement.prototype,
                 oldSetter
@@ -15135,7 +15183,7 @@ armer = window.jQuery || window.Zepto;
                     this.dispatchEvent(event)
                 }
             }
-            oldSetter = Object.getOwnPropertyDescriptor(inputProto, "value").set //屏蔽chrome, safari,opera
+            oldSetter = Object.getOwnPropertyDescriptor(inputProto, "value").set //灞忚斀chrome, safari,opera
             Object.defineProperty(inputProto, "value", {
                 set: newSetter
             })
@@ -15147,7 +15195,7 @@ armer = window.jQuery || window.Zepto;
         var $elem = avalon(element)
         function updateVModel() {
             if ($elem.data("duplex-observe") !== false) {
-                var val = $elem.val() //字符串或字符串数组
+                var val = $elem.val() //瀛楃涓叉垨瀛楃涓叉暟缁  
                 if (val + "" !== oldValue) {
                     evaluator(val)
                     oldValue = val + ""
@@ -15173,7 +15221,7 @@ armer = window.jQuery || window.Zepto;
             var currHTML = element.innerHTML
             if (currHTML === innerHTML) {
                 clearInterval(id)
-                //先等到select里的option元素被扫描后，才根据model设置selected属性  
+                //鍏堢瓑鍒皊elect閲岀殑option鍏冪礌琚壂鎻忓悗锛屾墠鏍规嵁model璁剧疆selected灞炴    
                 registerSubscriber(data)
             } else {
                 innerHTML = currHTML
@@ -15211,10 +15259,10 @@ armer = window.jQuery || window.Zepto;
         }
         ret.timeStamp = new Date - 0
         ret.originalEvent = event
-        ret.preventDefault = function() { //阻止默认行为
+        ret.preventDefault = function() { //闃绘榛樿琛屼负
             event.returnValue = false
         }
-        ret.stopPropagation = function() { //阻止事件在DOM树中的传播
+        ret.stopPropagation = function() { //闃绘浜嬩欢鍦―OM鏍戜腑鐨勪紶鎾  
             event.cancelBubble = true
         }
         return ret
@@ -15264,7 +15312,7 @@ armer = window.jQuery || window.Zepto;
         }
     }
     /*********************************************************************
-     *          监控数组（与vm-each, vm-repeat配合使用）                     *
+     *          鐩戞帶鏁扮粍锛堜笌vm-each, vm-repeat閰嶅悎浣跨敤锛                      *
      **********************************************************************/
 
     function Collection(model) {
@@ -15272,7 +15320,7 @@ armer = window.jQuery || window.Zepto;
         array.$id = generateID()
         array[subscribers] = []
         array.$model = model // model.concat()
-        array.$events = {} //VB对象的方法里的this并不指向自身，需要使用bind处理一下
+        array.$events = {} //VB瀵硅薄鐨勬柟娉曢噷鐨則his骞朵笉鎸囧悜鑷韩锛岄渶瑕佷娇鐢╞ind澶勭悊涓  笅
         array._ = modelFactory({
             length: model.length
         })
@@ -15289,7 +15337,7 @@ armer = window.jQuery || window.Zepto;
     var _splice = ap.splice
     var CollectionPrototype = {
         _splice: _splice,
-        _add: function(arr, pos) { //在第pos个位置上，添加一组元素
+        _add: function(arr, pos) { //鍦ㄧpos涓綅缃笂锛屾坊鍔犱竴缁勫厓绱  
             var oldLength = this.length
             pos = typeof pos === "number" ? pos : oldLength
             var added = []
@@ -15302,7 +15350,7 @@ armer = window.jQuery || window.Zepto;
                 return this._.length = this.length
             }
         },
-        _del: function(pos, n) { //在第pos个位置上，删除N个元素
+        _del: function(pos, n) { //鍦ㄧpos涓綅缃笂锛屽垹闄涓厓绱  
             var ret = this._splice(pos, n)
             if (ret.length) {
                 notifySubscribers(this, "del", pos, n)
@@ -15320,7 +15368,7 @@ armer = window.jQuery || window.Zepto;
         },
         unshift: function() {
             ap.unshift.apply(this.$model, arguments)
-            var ret = this._add(arguments, 0) //返回长度
+            var ret = this._add(arguments, 0) //杩斿洖闀垮害
             notifySubscribers(this, "index", arguments.length)
             return ret
         },
@@ -15328,22 +15376,22 @@ armer = window.jQuery || window.Zepto;
             var el = this.$model.shift()
             this._del(0, 1)
             notifySubscribers(this, "index", 0)
-            return el //返回被移除的元素
+            return el //杩斿洖琚Щ闄ょ殑鍏冪礌
         },
         pop: function() {
             var el = this.$model.pop()
             this._del(this.length - 1, 1)
-            return el //返回被移除的元素
+            return el //杩斿洖琚Щ闄ょ殑鍏冪礌
         },
         splice: function(a, b) {
-            // 必须存在第一个参数，需要大于-1, 为添加或删除元素的基点
+            // 蹇呴』瀛樺湪绗竴涓弬鏁帮紝闇  澶т簬-1, 涓烘坊鍔犳垨鍒犻櫎鍏冪礌鐨勫熀鐐  
             a = resetNumber(a, this.length)
             var removed = _splice.apply(this.$model, arguments),
                 ret = []
-            this._stopFireLength = true //确保在这个方法中 , $watch("length",fn)只触发一次
+            this._stopFireLength = true //纭繚鍦ㄨ繖涓柟娉曚腑 , $watch("length",fn)鍙Е鍙戜竴娆  
             if (removed.length) {
                 ret = this._del(a, removed.length)
-                if (arguments.length <= 2) { //如果没有执行添加操作，需要手动resetIndex
+                if (arguments.length <= 2) { //濡傛灉娌℃湁鎵ц娣诲姞鎿嶄綔锛岄渶瑕佹墜鍔╮esetIndex
                     notifySubscribers(this, "index", a)
                 }
             }
@@ -15352,29 +15400,29 @@ armer = window.jQuery || window.Zepto;
             }
             this._stopFireLength = false
             this._.length = this.length
-            return ret //返回被移除的元素
+            return ret //杩斿洖琚Щ闄ょ殑鍏冪礌
         },
-        contains: function(el) { //判定是否包含
+        contains: function(el) { //鍒ゅ畾鏄惁鍖呭惈
             return this.indexOf(el) !== -1
         },
-        size: function() { //取得数组长度，这个函数可以同步视图，length不能
+        size: function() { //鍙栧緱鏁扮粍闀垮害锛岃繖涓嚱鏁板彲浠ュ悓姝ヨ鍥撅紝length涓嶈兘
             return this._.length
         },
-        remove: function(el) { //移除第一个等于给定值的元素
+        remove: function(el) { //绉婚櫎绗竴涓瓑浜庣粰瀹氬  鐨勫厓绱  
             var index = this.indexOf(el)
             if (index >= 0) {
                 return this.removeAt(index)
             }
         },
-        removeAt: function(index) { //移除指定索引上的元素
+        removeAt: function(index) { //绉婚櫎鎸囧畾绱㈠紩涓婄殑鍏冪礌
             this.splice(index, 1)
         },
         clear: function() {
-            this.$model.length = this.length = this._.length = 0 //清空数组
+            this.$model.length = this.length = this._.length = 0 //娓呯┖鏁扮粍
             notifySubscribers(this, "clear", 0)
             return this
         },
-        removeAll: function(all) { //移除N个元素
+        removeAll: function(all) { //绉婚櫎N涓厓绱  
             if (Array.isArray(all)) {
                 all.forEach(function(el) {
                     this.remove(el)
@@ -15391,7 +15439,7 @@ armer = window.jQuery || window.Zepto;
             }
         },
         ensure: function(el) {
-            if (!this.contains(el)) { //只有不存在才push
+            if (!this.contains(el)) { //鍙湁涓嶅瓨鍦ㄦ墠push
                 this.push(el)
             }
             return this
@@ -15424,7 +15472,7 @@ armer = window.jQuery || window.Zepto;
             var aaa = this.$model,
                 bbb = aaa.slice(0),
                 sorted = false
-            ap[method].apply(aaa, arguments) //先移动model
+            ap[method].apply(aaa, arguments) //鍏堢Щ鍔╩odel
             for (var i = 0, n = bbb.length; i < n; i++) {
                 var a = aaa[i],
                     b = bbb[i]
@@ -15454,7 +15502,7 @@ armer = window.jQuery || window.Zepto;
         return val
     }
 
-    //取得el在array的位置
+    //鍙栧緱el鍦╝rray鐨勪綅缃  
 
     function getIndex(a, array, start) {
         for (var i = start, n = array.length; i < n; i++) {
@@ -15464,8 +15512,8 @@ armer = window.jQuery || window.Zepto;
         }
         return -1
     }
-    //============ each/repeat/with binding 用到的辅助函数与对象 ======================
-    //得到某一元素节点或文档碎片对象下的所有注释节点
+    //============ each/repeat/with binding 鐢ㄥ埌鐨勮緟鍔╁嚱鏁颁笌瀵硅薄 ======================
+    //寰楀埌鏌愪竴鍏冪礌鑺傜偣鎴栨枃妗ｇ鐗囧璞′笅鐨勬墍鏈夋敞閲婅妭鐐  
     var queryComments = DOC.createTreeWalker ? function(parent) {
         var tw = DOC.createTreeWalker(parent, NodeFilter.SHOW_COMMENT, null, null),
             comment, ret = []
@@ -15476,7 +15524,7 @@ armer = window.jQuery || window.Zepto;
     } : function(parent) {
         return parent.getElementsByTagName("!")
     }
-    //将通过vm-if移出DOM树放进ifSanctuary的元素节点移出来，以便垃圾回收
+    //灏嗛  杩噕m-if绉诲嚭DOM鏍戞斁杩沬fSanctuary鐨勫厓绱犺妭鐐圭Щ鍑烘潵锛屼互渚垮瀮鍦惧洖鏀  
 
     function removeFromSanctuary(parent) {
         var comments = queryComments(parent)
@@ -15500,7 +15548,7 @@ armer = window.jQuery || window.Zepto;
             })
         }
     }
-    //为vm-each, vm-with, vm-repeat要循环的元素外包一个msloop临时节点，vm-controller的值为代理VM的$id
+    //涓簐m-each, vm-with, vm-repeat瑕佸惊鐜殑鍏冪礌澶栧寘涓  釜msloop涓存椂鑺傜偣锛寁m-controller鐨勫  涓轰唬鐞哣M鐨  id
     function shimController(data, transation, spans, proxy) {
         var tview = data.template.cloneNode(true)
         var id = proxy.$id
@@ -15530,10 +15578,10 @@ armer = window.jQuery || window.Zepto;
         }
         return span.patchRepeat = fn
     }
-    // 取得用于定位的节点。在绑定了vm-each, vm-with属性的元素里，它的整个innerHTML都会视为一个子模板先行移出DOM树，
-    // 然后如果它的元素有多少个（vm-each）或键值对有多少双（vm-with），就将它复制多少份(多少为N)，再经过扫描后，重新插入该元素中。
-    // 这时该元素的孩子将分为N等分，每等份的第一个节点就是这个用于定位的节点，
-    // 方便我们根据它算出整个等分的节点们，然后整体移除或移动它们。
+    // 鍙栧緱鐢ㄤ簬瀹氫綅鐨勮妭鐐广  鍦ㄧ粦瀹氫簡vm-each, vm-with灞炴  鐨勫厓绱犻噷锛屽畠鐨勬暣涓猧nnerHTML閮戒細瑙嗕负涓  釜瀛愭ā鏉垮厛琛岀Щ鍑篋OM鏍戯紝
+    // 鐒跺悗濡傛灉瀹冪殑鍏冪礌鏈夊灏戜釜锛坴m-each锛夋垨閿  瀵规湁澶氬皯鍙岋紙vm-with锛夛紝灏卞皢瀹冨鍒跺灏戜唤(澶氬皯涓篘)锛屽啀缁忚繃鎵弿鍚庯紝閲嶆柊鎻掑叆璇ュ厓绱犱腑銆  
+    // 杩欐椂璇ュ厓绱犵殑瀛╁瓙灏嗗垎涓篘绛夊垎锛屾瘡绛変唤鐨勭涓  釜鑺傜偣灏辨槸杩欎釜鐢ㄤ簬瀹氫綅鐨勮妭鐐癸紝
+    // 鏂逛究鎴戜滑鏍规嵁瀹冪畻鍑烘暣涓瓑鍒嗙殑鑺傜偣浠紝鐒跺悗鏁翠綋绉婚櫎鎴栫Щ鍔ㄥ畠浠  
 
     function getLocatedNode(parent, data, pos) {
         if (data.startRepeat) {
@@ -15564,7 +15612,7 @@ armer = window.jQuery || window.Zepto;
         }
         return view
     }
-    // 为vm-each, vm-repeat创建一个代理对象，通过它们能使用一些额外的属性与功能（$index,$first,$last,$remove,$key,$val,$outer）
+    // 涓簐m-each, vm-repeat鍒涘缓涓  釜浠ｇ悊瀵硅薄锛岄  杩囧畠浠兘浣跨敤涓  簺棰濆鐨勫睘鎬т笌鍔熻兘锛  index,$first,$last,$remove,$key,$val,$outer锛  
     var watchEachOne = oneObject("$index,$first,$last")
 
     function createWithProxy(key, val, $outer) {
@@ -15598,7 +15646,7 @@ armer = window.jQuery || window.Zepto;
         return proxy
     }
     /*********************************************************************
-     *                  文本绑定里默认可用的过滤器                          *
+     *                  鏂囨湰缁戝畾閲岄粯璁ゅ彲鐢ㄧ殑杩囨护鍣                           *
      **********************************************************************/
     var filters = avalon.filters = {
         uppercase: function(str) {
@@ -15622,14 +15670,14 @@ armer = window.jQuery || window.Zepto;
             return str.toLowerCase()
         },
         truncate: function(target, length, truncation) {
-            //length，新字符串长度，truncation，新字符串的结尾的字段,返回新字符串
+            //length锛屾柊瀛楃涓查暱搴︼紝truncation锛屾柊瀛楃涓茬殑缁撳熬鐨勫瓧娈  杩斿洖鏂板瓧绗︿覆
             length = length || 30
             truncation = truncation === void(0) ? "..." : truncation
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target)
         },
         camelize: camelize,
         escape: function(html) {
-            //将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt 
+            //灏嗗瓧绗︿覆缁忚繃 html 杞箟寰楀埌閫傚悎鍦ㄩ〉闈腑鏄剧ず鐨勫唴瀹   渚嬪鏇挎崲 < 涓  &lt 
             return String(html)
                 .replace(/&(?!\w+;)/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -15637,15 +15685,15 @@ armer = window.jQuery || window.Zepto;
                 .replace(/"/g, '&quot;')
         },
         currency: function(number, symbol) {
-            symbol = symbol || "￥"
+            symbol = symbol || "锟  
             return symbol + avalon.filters.number(number)
         },
         number: function(number, decimals, dec_point, thousands_sep) {
-            //与PHP的number_format完全兼容
-            //number	必需，要格式化的数字
-            //decimals	可选，规定多少个小数位。
-            //dec_point	可选，规定用作小数点的字符串（默认为 . ）。
-            //thousands_sep	可选，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必需的。
+            //涓嶱HP鐨刵umber_format瀹屽叏鍏煎
+            //number	蹇呴渶锛岃鏍煎紡鍖栫殑鏁板瓧
+            //decimals	鍙  锛岃瀹氬灏戜釜灏忔暟浣嶃  
+            //dec_point	鍙  锛岃瀹氱敤浣滃皬鏁扮偣鐨勫瓧绗︿覆锛堥粯璁や负 . 锛夈  
+            //thousands_sep	鍙  锛岃瀹氱敤浣滃崈浣嶅垎闅旂鐨勫瓧绗︿覆锛堥粯璁や负 , 锛夛紝濡傛灉璁剧疆浜嗚鍙傛暟锛岄偅涔堟墍鏈夊叾浠栧弬鏁伴兘鏄繀闇  殑銆  
             // http://kevin.vanzonneveld.net
             number = (number + "").replace(/[^0-9+\-Ee.]/g, "")
             var n = !isFinite(+number) ? 0 : +number,
@@ -15749,7 +15797,7 @@ armer = window.jQuery || window.Zepto;
             paddedZone += padNumber(Math[zone > 0 ? "floor" : "ceil"](zone / 60), 2) + padNumber(Math.abs(zone % 60), 2)
             return paddedZone
         }
-        //取得上午下午
+        //鍙栧緱涓婂崍涓嬪崍
 
         function ampmGetter(date, formats) {
             return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
@@ -15850,43 +15898,43 @@ armer = window.jQuery || window.Zepto;
         }
         var locate = {
             AMPMS: {
-                0: "上午",
-                1: "下午"
+                0: "涓婂崍",
+                1: "涓嬪崍"
             },
             DAY: {
-                0: "星期日",
-                1: "星期一",
-                2: "星期二",
-                3: "星期三",
-                4: "星期四",
-                5: "星期五",
-                6: "星期六"
+                0: "鏄熸湡鏃  ,
+                1: "鏄熸湡涓  ,
+                2: "鏄熸湡浜  ,
+                3: "鏄熸湡涓  ,
+                4: "鏄熸湡鍥  ,
+                5: "鏄熸湡浜  ,
+                6: "鏄熸湡鍏  
             },
             MONTH: {
-                0: "1月",
-                1: "2月",
-                2: "3月",
-                3: "4月",
-                4: "5月",
-                5: "6月",
-                6: "7月",
-                7: "8月",
-                8: "9月",
-                9: "10月",
-                10: "11月",
-                11: "12月"
+                0: "1鏈  ,
+                1: "2鏈  ,
+                2: "3鏈  ,
+                3: "4鏈  ,
+                4: "5鏈  ,
+                5: "6鏈  ,
+                6: "7鏈  ,
+                7: "8鏈  ,
+                8: "9鏈  ,
+                9: "10鏈  ,
+                10: "11鏈  ,
+                11: "12鏈  
             },
             SHORTDAY: {
-                "0": "周日",
-                "1": "周一",
-                "2": "周二",
-                "3": "周三",
-                "4": "周四",
-                "5": "周五",
-                "6": "周六"
+                "0": "鍛ㄦ棩",
+                "1": "鍛ㄤ竴",
+                "2": "鍛ㄤ簩",
+                "3": "鍛ㄤ笁",
+                "4": "鍛ㄥ洓",
+                "5": "鍛ㄤ簲",
+                "6": "鍛ㄥ叚"
             },
-            fullDate: "y年M月d日EEEE",
-            longDate: "y年M月d日",
+            fullDate: "y骞碝鏈坉鏃EEE",
+            longDate: "y骞碝鏈坉鏃  ,
             medium: "yyyy-M-d ah:mm:ss",
             mediumDate: "yyyy-M-d",
             mediumTime: "ah:mm:ss",
@@ -15916,8 +15964,8 @@ armer = window.jQuery || window.Zepto;
 
 
     new function() {
-        var loadings = [] //正在加载中的模块列表
-        var factorys = [] //储存需要绑定ID与factory对应关系的模块（标准浏览器下，先parse的script节点会先onload）
+        var loadings = [] //姝ｅ湪鍔犺浇涓殑妯″潡鍒楄〃
+        var factorys = [] //鍌ㄥ瓨闇  缁戝畾ID涓巉actory瀵瑰簲鍏崇郴鐨勬ā鍧楋紙鏍囧噯娴忚鍣ㄤ笅锛屽厛parse鐨剆cript鑺傜偣浼氬厛onload锛  
         var basepath
 
         function cleanUrl(url) {
@@ -15926,13 +15974,13 @@ armer = window.jQuery || window.Zepto;
 
         plugins.js = function(url, shim) {
             var id = cleanUrl(url)
-            if (!modules[id]) { //如果之前没有加载过
+            if (!modules[id]) { //濡傛灉涔嬪墠娌℃湁鍔犺浇杩  
                 modules[id] = {
                     id: id,
                     parent: parent,
                     exports: {}
                 }
-                if (shim) { //shim机制
+                if (shim) { //shim鏈哄埗
                     innerRequire(shim.deps || "", function() {
                         loadJS(url, id, function() {
                             modules[id].state = 2
@@ -15949,7 +15997,7 @@ armer = window.jQuery || window.Zepto;
             return id
         }
         plugins.css = function(url) {
-            var id = url.replace(/(#.+|\W)/g, "") ////用于处理掉href中的hash与所有特殊符号
+            var id = url.replace(/(#.+|\W)/g, "") ////鐢ㄤ簬澶勭悊鎺塰ref涓殑hash涓庢墍鏈夌壒娈婄鍙  
             if (!DOC.getElementById(id)) {
                 var node = DOC.createElement("link")
                 node.rel = "stylesheet"
@@ -15961,26 +16009,26 @@ armer = window.jQuery || window.Zepto;
         plugins.css.ext = ".css"
         plugins.js.ext = ".js"
         var cur = getCurrentScript(true)
-        if (!cur) { //处理window safari的Error没有stack的问题
+        if (!cur) { //澶勭悊window safari鐨凟rror娌℃湁stack鐨勯棶棰  
             cur = avalon.slice(DOC.scripts).pop().src
         }
         var url = cleanUrl(cur)
         basepath = kernel.base = url.slice(0, url.lastIndexOf("/") + 1)
 
         function getCurrentScript(base) {
-            // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // 鍙傝   https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack
             try {
-                a.b.c() //强制报错,以便捕获e.stack
-            } catch (e) { //safari的错误对象只有line,sourceId,sourceURL
+                a.b.c() //寮哄埗鎶ラ敊,浠ヤ究鎹曡幏e.stack
+            } catch (e) { //safari鐨勯敊璇璞″彧鏈塴ine,sourceId,sourceURL
                 stack = e.stack
                 if (!stack && window.opera) {
-                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
+                    //opera 9娌℃湁e.stack,浣嗘湁e.Backtrace,浣嗕笉鑳界洿鎺ュ彇寰  闇  瀵筫瀵硅薄杞瓧绗︿覆杩涜鎶藉彇
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ")
                 }
             }
             if (stack) {
-                //e.stack最后一行在所有支持的浏览器大致如下:
+                //e.stack鏈  悗涓  鍦ㄦ墍鏈夋敮鎸佺殑娴忚鍣ㄥぇ鑷村涓  
                 //chrome23:
                 //at http://113.93.50.63/data.js:4:1
                 //firefox17:
@@ -15989,12 +16037,12 @@ armer = window.jQuery || window.Zepto;
                 //@http://113.93.50.63/data.js:4
                 //IE10:
                 //at Global code (http://113.93.50.63/data.js:4:1)
-                //firefox4+ 可以用document.currentScript
-                stack = stack.split(/[@ ]/g).pop() //取得最后一行,最后一个空格或@之后的部分
-                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //去掉换行符
-                return stack.replace(/(:\d+)?:\d+$/i, "") //去掉行号与或许存在的出错字符起始位置
+                //firefox4+ 鍙互鐢╠ocument.currentScript
+                stack = stack.split(/[@ ]/g).pop() //鍙栧緱鏈  悗涓  ,鏈  悗涓  釜绌烘牸鎴朄涔嬪悗鐨勯儴鍒  
+                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //鍘绘帀鎹㈣绗  
+                return stack.replace(/(:\d+)?:\d+$/i, "") //鍘绘帀琛屽彿涓庢垨璁稿瓨鍦ㄧ殑鍑洪敊瀛楃璧峰浣嶇疆
             }
-            var nodes = (base ? DOC : head).getElementsByTagName("script") //只在head标签中寻找
+            var nodes = (base ? DOC : head).getElementsByTagName("script") //鍙湪head鏍囩涓鎵  
             for (var i = nodes.length, node; node = nodes[--i]; ) {
                 if ((base || node.className === subscribers) && node.readyState === "interactive") {
                     return node.className = node.src
@@ -16003,16 +16051,16 @@ armer = window.jQuery || window.Zepto;
         }
 
         function checkCycle(deps, nick) {
-            //检测是否存在循环依赖
+            //妫  祴鏄惁瀛樺湪寰幆渚濊禆
             for (var id in deps) {
-                if (deps[id] === "司徒正美" && modules[id].state !== 2 && (id === nick || checkCycle(modules[id].deps, nick))) {
+                if (deps[id] === "鍙稿緬姝ｇ編" && modules[id].state !== 2 && (id === nick || checkCycle(modules[id].deps, nick))) {
                     return true
                 }
             }
         }
 
         function checkDeps() {
-            //检测此JS模块的依赖是否都已安装完毕,是则安装自身
+            //妫  祴姝S妯″潡鐨勪緷璧栨槸鍚﹂兘宸插畨瑁呭畬姣  鏄垯瀹夎鑷韩
             loop: for (var i = loadings.length, id; id = loadings[--i]; ) {
 
                 var obj = modules[id],
@@ -16022,24 +16070,24 @@ armer = window.jQuery || window.Zepto;
                         continue loop
                     }
                 }
-                //如果deps是空对象或者其依赖的模块的状态都是2
+                //濡傛灉deps鏄┖瀵硅薄鎴栬  鍏朵緷璧栫殑妯″潡鐨勭姸鎬侀兘鏄  
                 if (obj.state !== 2) {
-                    loadings.splice(i, 1) //必须先移除再安装，防止在IE下DOM树建完后手动刷新页面，会多次执行它
+                    loadings.splice(i, 1) //蹇呴』鍏堢Щ闄ゅ啀瀹夎锛岄槻姝㈠湪IE涓婦OM鏍戝缓瀹屽悗鎵嬪姩鍒锋柊椤甸潰锛屼細澶氭鎵ц瀹  
                     fireFactory(obj.id, obj.args, obj.factory)
-                    checkDeps() //如果成功,则再执行一次,以防有些模块就差本模块没有安装好
+                    checkDeps() //濡傛灉鎴愬姛,鍒欏啀鎵ц涓  ,浠ラ槻鏈変簺妯″潡灏卞樊鏈ā鍧楁病鏈夊畨瑁呭ソ
                 }
             }
         }
 
         function checkFail(node, onError, fuckIE) {
-            var id = cleanUrl(node.src) //检测是否死链
+            var id = cleanUrl(node.src) //妫  祴鏄惁姝婚摼
             node.onload = node.onreadystatechange = node.onerror = null
             if (onError || (fuckIE && !modules[id].state)) {
                 setTimeout(function() {
                     head.removeChild(node)
-                    node = null // 处理旧式IE下的循环引用问题
+                    node = null // 澶勭悊鏃у紡IE涓嬬殑寰幆寮曠敤闂
                 })
-                log("加载 " + id + " 失败" + onError + " " + (!modules[id].state))
+                log("鍔犺浇 " + id + " 澶辫触" + onError + " " + (!modules[id].state))
             } else {
                 return true
             }
@@ -16047,18 +16095,18 @@ armer = window.jQuery || window.Zepto;
         var rdeuce = /\/\w+\/\.\./
 
         function loadResources(url, parent, ret, shim) {
-            //1. 特别处理mass|ready标识符
+            //1. 鐗瑰埆澶勭悊mass|ready鏍囪瘑绗  
             if (url === "ready!" || (modules[url] && modules[url].state === 2)) {
                 return url
             }
-            //2. 转化为完整路径
+            //2. 杞寲涓哄畬鏁磋矾寰  
             if (typeof kernel.shim[url] === "object") {
                 shim = kernel.shim[url]
             }
-            if (kernel.paths[url]) { //别名机制
+            if (kernel.paths[url]) { //鍒悕鏈哄埗
                 url = kernel.paths[url]
             }
-            //3.  处理text!  css! 等资源
+            //3.  澶勭悊text!  css! 绛夎祫婧  
             var plugin
             url = url.replace(/^\w+!/, function(a) {
                 plugin = a.slice(0, -1)
@@ -16066,29 +16114,29 @@ armer = window.jQuery || window.Zepto;
             })
             plugin = plugin || "js"
             plugin = plugins[plugin] || noop
-            //4. 补全路径
+            //4. 琛ュ叏璺緞
             if (/^(\w+)(\d)?:.*/
             /*.test(url)) {
                 ret = url
             } else {
                 parent = parent.substr(0, parent.lastIndexOf("/"))
                 var tmp = url.charAt(0)
-                if (tmp !== "." && tmp !== "/") { //相对于根路径
+                if (tmp !== "." && tmp !== "/") { //鐩稿浜庢牴璺緞
                     ret = basepath + url
-                } else if (url.slice(0, 2) === "./") { //相对于兄弟路径
+                } else if (url.slice(0, 2) === "./") { //鐩稿浜庡厔寮熻矾寰  
                     ret = parent + url.slice(1)
-                } else if (url.slice(0, 2) === "..") { //相对于父路径
+                } else if (url.slice(0, 2) === "..") { //鐩稿浜庣埗璺緞
                     ret = parent + "/" + url
                     while (rdeuce.test(ret)) {
                         ret = ret.replace(rdeuce, "")
                     }
                 } else if (tmp === "/") {
-                    ret = parent + url //相对于兄弟路径
+                    ret = parent + url //鐩稿浜庡厔寮熻矾寰  
                 } else {
-                    avalon.error("不符合模块标识规则: " + url)
+                    avalon.error("涓嶇鍚堟ā鍧楁爣璇嗚鍒   " + url)
                 }
             }
-            //5. 补全扩展名
+            //5. 琛ュ叏鎵╁睍鍚  
             url = cleanUrl(ret)
             var ext = plugin.ext
             if (ext) {
@@ -16096,7 +16144,7 @@ armer = window.jQuery || window.Zepto;
                     ret += ext
                 }
             }
-            //6. 缓存处理
+            //6. 缂撳瓨澶勭悊
             if (kernel.nocache) {
                 ret += (ret.indexOf("?") === -1 ? "?" : "&") + (new Date - 0)
             }
@@ -16104,38 +16152,38 @@ armer = window.jQuery || window.Zepto;
         }
 
         function loadJS(url, id, callback) {
-            //通过script节点加载目标模块
+            //閫氳繃script鑺傜偣鍔犺浇鐩爣妯″潡
             var node = DOC.createElement("script")
-            node.className = subscribers //让getCurrentScript只处理类名为subscribers的script节点
+            node.className = subscribers //璁ゞetCurrentScript鍙鐞嗙被鍚嶄负subscribers鐨剆cript鑺傜偣
             node[W3C ? "onload" : "onreadystatechange"] = function() {
                 if (W3C || /loaded|complete/i.test(node.readyState)) {
-                    //mass Framework会在_checkFail把它上面的回调清掉，尽可能释放回存，尽管DOM0事件写法在IE6下GC无望
+                    //mass Framework浼氬湪_checkFail鎶婂畠涓婇潰鐨勫洖璋冩竻鎺夛紝灏藉彲鑳介噴鏀惧洖瀛橈紝灏界DOM0浜嬩欢鍐欐硶鍦↖E6涓婫C鏃犳湜
                     var factory = factorys.pop()
                     factory && factory.delay(id)
                     if (callback) {
                         callback()
                     }
                     if (checkFail(node, false, !W3C)) {
-                        log("Debug: 已成功加载 " + url)
+                        log("Debug: 宸叉垚鍔熷姞杞  " + url)
                     }
                 }
             }
             node.onerror = function() {
                 checkFail(node, true)
             }
-            node.src = url //插入到head的第一个节点前，防止IE6下head标签没闭合前使用appendChild抛错
-            head.insertBefore(node, head.firstChild) //chrome下第二个参数不能为null
-            log("Debug: 正准备加载 " + url) //更重要的是IE6下可以收窄getCurrentScript的寻找范围
+            node.src = url //鎻掑叆鍒癶ead鐨勭涓  釜鑺傜偣鍓嶏紝闃叉IE6涓媓ead鏍囩娌￠棴鍚堝墠浣跨敤appendChild鎶涢敊
+            head.insertBefore(node, head.firstChild) //chrome涓嬬浜屼釜鍙傛暟涓嶈兘涓簄ull
+            log("Debug: 姝ｅ噯澶囧姞杞  " + url) //鏇撮噸瑕佺殑鏄疘E6涓嬪彲浠ユ敹绐刧etCurrentScript鐨勫鎵捐寖鍥  
         }
 
         innerRequire = avalon.require = function(list, factory, parent) {
-            // 用于检测它的依赖是否都为2
+            // 鐢ㄤ簬妫  祴瀹冪殑渚濊禆鏄惁閮戒负2
             var deps = {},
-            // 用于保存依赖模块的返回值
+            // 鐢ㄤ簬淇濆瓨渚濊禆妯″潡鐨勮繑鍥炲  
                 args = [],
-            // 需要安装的模块数
+            // 闇  瀹夎鐨勬ā鍧楁暟
                 dn = 0,
-            // 已安装完的模块数
+            // 宸插畨瑁呭畬鐨勬ā鍧楁暟
                 cn = 0,
                 id = parent || "callback" + setTimeout("1")
             parent = parent || basepath
@@ -16148,34 +16196,34 @@ armer = window.jQuery || window.Zepto;
                     }
                     if (!deps[url]) {
                         args.push(url)
-                        deps[url] = "司徒正美" //去重
+                        deps[url] = "鍙稿緬姝ｇ編" //鍘婚噸
                     }
                 }
             })
-            modules[id] = {//创建一个对象,记录模块的加载情况与其他信息
+            modules[id] = {//鍒涘缓涓  釜瀵硅薄,璁板綍妯″潡鐨勫姞杞芥儏鍐典笌鍏朵粬淇℃伅
                 id: id,
                 factory: factory,
                 deps: deps,
                 args: args,
                 state: 1
             }
-            if (dn === cn) { //如果需要安装的等于已安装好的
-                fireFactory(id, args, factory) //安装到框架中
+            if (dn === cn) { //濡傛灉闇  瀹夎鐨勭瓑浜庡凡瀹夎濂界殑
+                fireFactory(id, args, factory) //瀹夎鍒版鏋朵腑
             } else {
-                //放到检测列队中,等待checkDeps处理
+                //鏀惧埌妫  祴鍒楅槦涓  绛夊緟checkDeps澶勭悊
                 loadings.unshift(id)
             }
             checkDeps()
         }
         */
         /**
-         * 定义模块
-         * @param {String} id ? 模块ID
-         * @param {Array} deps ? 依赖列表
-         * @param {Function} factory 模块工厂
+         * 瀹氫箟妯″潡
+         * @param {String} id ? 妯″潡ID
+         * @param {Array} deps ? 渚濊禆鍒楄〃
+         * @param {Function} factory 妯″潡宸ュ巶
          * @api public
          *//*
-        innerRequire.define = function(id, deps, factory) { //模块名,依赖列表,模块本身
+        innerRequire.define = function(id, deps, factory) { //妯″潡鍚  渚濊禆鍒楄〃,妯″潡鏈韩
             var args = aslice.call(arguments)
 
             if (typeof id === "string") {
@@ -16183,9 +16231,9 @@ armer = window.jQuery || window.Zepto;
             }
             if (typeof args[0] === "function") {
                 args.unshift([])
-            } //上线合并后能直接得到模块ID,否则寻找当前正在解析中的script节点的src作为模块ID
-            //现在除了safari外，我们都能直接通过getCurrentScript一步到位得到当前执行的script节点，
-            //safari可通过onload+delay闭包组合解决
+            } //涓婄嚎鍚堝苟鍚庤兘鐩存帴寰楀埌妯″潡ID,鍚﹀垯瀵绘壘褰撳墠姝ｅ湪瑙ｆ瀽涓殑script鑺傜偣鐨剆rc浣滀负妯″潡ID
+            //鐜板湪闄や簡safari澶栵紝鎴戜滑閮借兘鐩存帴閫氳繃getCurrentScript涓  鍒颁綅寰楀埌褰撳墠鎵ц鐨剆cript鑺傜偣锛  
+            //safari鍙  杩噊nload+delay闂寘缁勫悎瑙ｅ喅
             var name = modules[_id] && modules[_id].state >= 1 ? _id : cleanUrl(getCurrentScript())
             if (!modules[name] && _id) {
                 modules[name] = {
@@ -16195,7 +16243,7 @@ armer = window.jQuery || window.Zepto;
                 }
             }
             factory = args[1]
-            factory.id = _id //用于调试
+            factory.id = _id //鐢ㄤ簬璋冭瘯
             factory.delay = function(d) {
                 args.push(d)
                 var isCycle = true
@@ -16204,15 +16252,15 @@ armer = window.jQuery || window.Zepto;
                 } catch (e) {
                 }
                 if (isCycle) {
-                    avalon.error(d + "模块与之前的某些模块存在循环依赖")
+                    avalon.error(d + "妯″潡涓庝箣鍓嶇殑鏌愪簺妯″潡瀛樺湪寰幆渚濊禆")
                 }
-                delete factory.delay //释放内存
+                delete factory.delay //閲婃斁鍐呭瓨
                 innerRequire.apply(null, args) //0,1,2 --> 1,2,0
             }
 
             if (name) {
                 factory.delay(name, args)
-            } else { //先进先出
+            } else { //鍏堣繘鍏堝嚭
                 factorys.push(factory)
             }
         }
@@ -16241,15 +16289,15 @@ armer = window.jQuery || window.Zepto;
     var ready = W3C ? "DOMContentLoaded" : "readystatechange"
 
     function fireReady() {
-        if (DOC.body) { //  在IE8 iframe中doScrollCheck可能不正确
+        if (DOC.body) { //  鍦↖E8 iframe涓璬oScrollCheck鍙兘涓嶆纭  
             modules["ready!"].state = 2
             innerRequire.checkDeps()
-            fireReady = noop //隋性函数，防止IE9二次调用_checkDeps
+            fireReady = noop //闅嬫  鍑芥暟锛岄槻姝E9浜屾璋冪敤_checkDeps
         }
     }
 
     function doScrollCheck() {
-        try { //IE下通过doScrollCheck检测DOM树是否建完
+        try { //IE涓嬮  杩嘾oScrollCheck妫  祴DOM鏍戞槸鍚﹀缓瀹  
             root.doScroll("left")
             fireReady()
         } catch (e) {
@@ -16258,7 +16306,7 @@ armer = window.jQuery || window.Zepto;
     }
 
     if (DOC.readyState === "complete") {
-        setTimeout(fireReady) //如果在domReady之外加载
+        setTimeout(fireReady) //濡傛灉鍦╠omReady涔嬪鍔犺浇
     } else if (W3C) {
         DOC.addEventListener(ready, fireReady)
         window.addEventListener("load", fireReady)
@@ -16282,7 +16330,7 @@ armer = window.jQuery || window.Zepto;
     })
     */
     avalon.ready(function() {
-        //IE6-9下这个通常只要1ms,而且没有副作用，不会发出请求，setImmediate如果只执行一次，与setTimeout一样要140ms上下
+        //IE6-9涓嬭繖涓  甯稿彧瑕  ms,鑰屼笖娌℃湁鍓綔鐢紝涓嶄細鍙戝嚭璇锋眰锛宻etImmediate濡傛灉鍙墽琛屼竴娆★紝涓巗etTimeout涓  牱瑕  40ms涓婁笅
         if (window.VBArray && !window.setImmediate) {
             var handlerQueue = []
 
@@ -16301,7 +16349,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 var node = DOC.createElement("script")
                 node.onreadystatechange = function() {
-                    drainQueue() //在interactive阶段就触发
+                    drainQueue() //鍦╥nteractive闃舵灏辫Е鍙  
                     node.onreadystatechange = null
                     head.removeChild(node)
                     node = null
@@ -16354,7 +16402,7 @@ if (window.define) {
 }
 
 //=========================================
-//  TODO(wuhf): lang.extend模块
+//  TODO(wuhf): lang.extend妯″潡
 //==========================================
 ;(function($){
     var global = window, DOC = global.document;
@@ -16438,8 +16486,8 @@ if (window.define) {
 
     $.extend($, {
         /**
-         * 为hash选项对象添加默认成员
-         * @param {object} obj 需要
+         * 涓篽ash閫夐」瀵硅薄娣诲姞榛樿鎴愬憳
+         * @param {object} obj 闇  
          * @returns {*}
          */
         defaults: function(obj) {
@@ -16456,7 +16504,7 @@ if (window.define) {
 
 
         /*
-           ============= is 系列 ================
+           ============= is 绯诲垪 ================
          */
         isBlank: function (target) {
             return /^\s*$/.test(target);
@@ -16465,9 +16513,9 @@ if (window.define) {
             return $.type(obj) == 'string';
         },
         /**
-         * 判定method是否为obj的原生方法，如$.isNative("JSON",window)
+         * 鍒ゅ畾method鏄惁涓簅bj鐨勫師鐢熸柟娉曪紝濡  .isNative("JSON",window)
          * @param {String} methodKey
-         * @param {*} obj 对象
+         * @param {*} obj 瀵硅薄
          * @return {Boolean}
          */
         isNative: function(methodKey, obj) {
@@ -16476,7 +16524,7 @@ if (window.define) {
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
         },
         /**
-         * 是否为空对象
+         * 鏄惁涓虹┖瀵硅薄
          * @param {Object} obj
          * @return {Boolean}
          */
@@ -16498,61 +16546,61 @@ if (window.define) {
         isObjectLike : function(obj) {
             return typeof obj == 'object' || typeof obj == 'function';
         },
-        // 判断字符串，对象，数组是否为空
+        // 鍒ゆ柇瀛楃涓诧紝瀵硅薄锛屾暟缁勬槸鍚︿负绌  
         isEmpty : function(obj) {
             if (obj == null) return true;
             if ($.isArray(obj) || $.isString(obj)) return obj.length === 0;
             for (var key in obj) if (obj.hasOwnProperty(key)) return false;
             return true;
         },
-        // 判断一个对象是不是jQ对象
+        // 鍒ゆ柇涓  釜瀵硅薄鏄笉鏄痡Q瀵硅薄
         isQuaryElement : function(obj){
             return typeof obj == 'object' && obj.constructor == $;
         },
         isDefined: function(obj){
             return obj !== null && obj !== undefined
         },
-        // 判断是否DOM元素
+        // 鍒ゆ柇鏄惁DOM鍏冪礌
         isElement : function(obj){
             return !!(obj && obj.nodeType == 1);
         },
-        // 判断是否无穷大
+        // 鍒ゆ柇鏄惁鏃犵┓澶  
         isFinite : function(obj){
             return $.isNumeric(obj) && isFinite(obj);
         },
         isEmptyJson: function(str){return str == '[]' || str == '{}'},
         /**
-         * 比较两个变量是否相等
-         * @param {*} a 比较对象1
-         * @param {*} b 比较对象2
-         * @return {boolean} 是否相等
+         * 姣旇緝涓や釜鍙橀噺鏄惁鐩哥瓑
+         * @param {*} a 姣旇緝瀵硅薄1
+         * @param {*} b 姣旇緝瀵硅薄2
+         * @return {boolean} 鏄惁鐩哥瓑
          */
         isEqual: function(){
             var eq = function(a, b, aStack, bStack) {
-                // 0 === -0 为true，但实际上不应该相等
+                // 0 === -0 涓簍rue锛屼絾瀹為檯涓婁笉搴旇鐩哥瓑
                 // http://wiki.ecmascript.org/doku.php?id=harmony:egal
                 // http://www.w3.org/TR/xmlschema11-2/
                 if (a === b) return a !== 0 || 1 / a == 1 / b;
-                // 在a或b为null的时候，需要严格判断，因为null == undefined
+                // 鍦╝鎴朾涓簄ull鐨勬椂鍊欙紝闇  涓ユ牸鍒ゆ柇锛屽洜涓簄ull == undefined
                 if (a == null || b == null) return a === b;
-                // 比较类型（类名）
+                // 姣旇緝绫诲瀷锛堢被鍚嶏級
                 var className = $.stringType(a);
                 if (className != $.stringType(b)) return false;
                 switch (className) {
-                    // 字符串，数字，日期，布尔比较值.
+                    // 瀛楃涓诧紝鏁板瓧锛屾棩鏈燂紝甯冨皵姣旇緝鍊  
                     case '[object String]':
-                        // 通过包装对象解决 '5' 实际上等于 String(5) 的情况
+                        // 閫氳繃鍖呰瀵硅薄瑙ｅ喅 '5' 瀹為檯涓婄瓑浜  String(5) 鐨勬儏鍐  
                         return a == String(b);
                     case '[object Number]':
-                        // 比较数字
-                        // NaN实际上是相等的，但不然，但通过以下方式仍可比较
+                        // 姣旇緝鏁板瓧
+                        // NaN瀹為檯涓婃槸鐩哥瓑鐨勶紝浣嗕笉鐒讹紝浣嗛  杩囦互涓嬫柟寮忎粛鍙瘮杈  
                         return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
                     case '[object Date]':
                     case '[object Boolean]':
-                        // 日期和布尔量强行转换成数字进行比较
-                        // 非法日期转换将为NaN，所以仍然保持不相等
+                        // 鏃ユ湡鍜屽竷灏旈噺寮鸿杞崲鎴愭暟瀛楄繘琛屾瘮杈  
+                        // 闈炴硶鏃ユ湡杞崲灏嗕负NaN锛屾墍浠ヤ粛鐒朵繚鎸佷笉鐩哥瓑
                         return +a == +b;
-                    // 正则则比较其表达式以及标记
+                    // 姝ｅ垯鍒欐瘮杈冨叾琛ㄨ揪寮忎互鍙婃爣璁  
                     case '[object RegExp]':
                         return a.source == b.source &&
                             a.global == b.global &&
@@ -16562,41 +16610,41 @@ if (window.define) {
                 if (typeof a != 'object' || typeof b != 'object') return false;
                 var length = aStack.length;
                 while (length--) {
-                    // 线性搜索
+                    // 绾挎  鎼滅储
                     if (aStack[length] == a) return bStack[length] == b;
                 }
-                // 将第一个对象堆到遍历堆栈中
+                // 灏嗙涓  釜瀵硅薄鍫嗗埌閬嶅巻鍫嗘爤涓  
                 aStack.push(a);
                 bStack.push(b);
                 var size = 0, result = true;
-                // 递归比较数组和对象
+                // 閫掑綊姣旇緝鏁扮粍鍜屽璞  
                 if (className == '[object Array]') {
-                    // 比较数组长度是否相同确定是否深度比较
+                    // 姣旇緝鏁扮粍闀垮害鏄惁鐩稿悓纭畾鏄惁娣卞害姣旇緝
                     size = a.length;
                     result = size == b.length;
                     if (result) {
-                        // 深度比较，忽略key非数字的成员
+                        // 娣卞害姣旇緝锛屽拷鐣ey闈炴暟瀛楃殑鎴愬憳
                         while (size--) {
                             if (!(result = eq(a[size], b[size], aStack, bStack))) break;
                         }
                     }
                 } else {
-                    // 构造体不同的对象将被认为不相等
+                    // 鏋勯  浣撲笉鍚岀殑瀵硅薄灏嗚璁や负涓嶇浉绛  
                     var aCtor = a.constructor, bCtor = b.constructor;
                     if (aCtor !== bCtor && !($.isFunction(aCtor) && (aCtor instanceof aCtor) &&
                         $.isFunction(bCtor) && (bCtor instanceof bCtor))) {
                         return false;
                     }
-                    // 深度递归比较对象
+                    // 娣卞害閫掑綊姣旇緝瀵硅薄
                     for (var key in a) {
                         if (hasOwn.call(a, key)) {
-                            // 计算预测成员数量
+                            // 璁＄畻棰勬祴鎴愬憳鏁伴噺
                             size++;
-                            // 深度比较每个成员
+                            // 娣卞害姣旇緝姣忎釜鎴愬憳
                             if (!(result = hasOwn.call(b, key) && eq(a[key], b[key], aStack, bStack))) break;
                         }
                     }
-                    // 确保每个对象都包含相同数量的属性
+                    // 纭繚姣忎釜瀵硅薄閮藉寘鍚浉鍚屾暟閲忕殑灞炴  
                     if (result) {
                         for (key in b) {
                             if (hasOwn.call(b, key) && !(size--)) break;
@@ -16604,7 +16652,7 @@ if (window.define) {
                         result = !size;
                     }
                 }
-                // 移除遍历对象堆栈第一个对象
+                // 绉婚櫎閬嶅巻瀵硅薄鍫嗘爤绗竴涓璞  
                 aStack.pop();
                 bStack.pop();
                 return result;
@@ -16614,7 +16662,7 @@ if (window.define) {
             }
         }(),
 
-        // 强化类型判断
+        // 寮哄寲绫诲瀷鍒ゆ柇
         type: (function($type){
             var rsplit = /[, |]+/g;
             var typeCase = {
@@ -16628,12 +16676,12 @@ if (window.define) {
                 NodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
-             * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
-             * $.type(obj) == a 可以推出 $.type(obj, a) == true，但反过来未必
-             * 如需进行更细节判断，请使用 $.type(obj, a) 的方式
+             * 鐢ㄤ簬鍙栧緱鏁版嵁鐨勭被鍨嬶紙涓  釜鍙傛暟鐨勬儏鍐典笅锛夋垨鍒ゅ畾鏁版嵁鐨勭被鍨嬶紙涓や釜鍙傛暟鐨勬儏鍐典笅锛  
+             * $.type(obj) == a 鍙互鎺ㄥ嚭 $.type(obj, a) == true锛屼絾鍙嶈繃鏉ユ湭蹇  
+             * 濡傞渶杩涜鏇寸粏鑺傚垽鏂紝璇蜂娇鐢  $.type(obj, a) 鐨勬柟寮  
              *
-             * @param {*} obj 要检测的东西
-             * @param {String|Array|Function} condition ? 要比较的条件
+             * @param {*} obj 瑕佹娴嬬殑涓滆タ
+             * @param {String|Array|Function} condition ? 瑕佹瘮杈冪殑鏉′欢
              * @return {String|Boolean}
              * @api public
              */
@@ -16662,17 +16710,17 @@ if (window.define) {
 
 
         /*
-         ============= parse 系列 ================
+         ============= parse 绯诲垪 ================
          */
 
         /**
-         * 将字符串当作JS代码执行
+         * 灏嗗瓧绗︿覆褰撲綔JS浠ｇ爜鎵ц
          * @param {string} code
          */
         parseJS: function(code) {
-            //IE中，global.eval()和eval()一样只在当前作用域生效。
-            //Firefox，Safari，Opera中，直接调用eval()为当前作用域，global.eval()调用为全局作用域。
-            //window.execScript 在IE下一些限制条件
+            //IE涓紝global.eval()鍜宔val()涓  牱鍙湪褰撳墠浣滅敤鍩熺敓鏁堛  
+            //Firefox锛孲afari锛孫pera涓紝鐩存帴璋冪敤eval()涓哄綋鍓嶄綔鐢ㄥ煙锛実lobal.eval()璋冪敤涓哄叏灞  綔鐢ㄥ煙銆  
+            //window.execScript 鍦↖E涓嬩竴浜涢檺鍒舵潯浠  
             //http://www.ascadnetworks.com/Guides-and-Tips/IE-error-%2522Could-not-complete-the-operation-due-to-error-80020101%2522
             if (code && /\S/.test(code)) {
                 try {
@@ -16681,7 +16729,7 @@ if (window.define) {
                 }
             }
         },
-        // 将text数据转换为base64字符串
+        // 灏唗ext鏁版嵁杞崲涓篵ase64瀛楃涓  
         parseBase64: function(inputStr){
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
@@ -16741,18 +16789,18 @@ if (window.define) {
         },
 
         /*
-         ============= 字符串处理 系列 ================
+         ============= 瀛楃涓插鐞  绯诲垪 ================
          */
 
 
         template: template,
         /**
-         * 字符串插值，有两种插值方法。
-         * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠值够多的情况
-         * 第二种，把第一个参数后的参数视为一个数组，{{}}里面为索引值，从零开始，替换为数组元素
+         * 瀛楃涓叉彃鍊硷紝鏈変袱绉嶆彃鍊兼柟娉曘  
+         * 绗竴绉嶏紝绗簩涓弬鏁颁负瀵硅薄锛寋{}}閲岄潰涓洪敭鍚嶏紝鏇挎崲涓洪敭鍊硷紝閫傜敤浜庨噸鍙犲  澶熷鐨勬儏鍐  
+         * 绗簩绉嶏紝鎶婄涓  釜鍙傛暟鍚庣殑鍙傛暟瑙嗕负涓  釜鏁扮粍锛寋{}}閲岄潰涓虹储寮曞  锛屼粠闆跺紑濮嬶紝鏇挎崲涓烘暟缁勫厓绱  
          * http://www.cnblogs.com/rubylouvre/archive/2011/05/02/1972176.html
          * @param {string} str
-         * @param {*} object 插值包或某一个要插的值
+         * @param {*} object 鎻掑  鍖呮垨鏌愪竴涓鎻掔殑鍊  
          * @return {string}
          */
         format: function(str, object) {
@@ -16763,7 +16811,7 @@ if (window.define) {
             })
         },
         /**
-         * 查看对象或数组的内部构造
+         * 鏌ョ湅瀵硅薄鎴栨暟缁勭殑鍐呴儴鏋勯  
          * @param {*} obj
          * @return {string}
          * https://github.com/tdolsen/jquery-dump/blob/master/jquery.dump.js
@@ -16773,7 +16821,7 @@ if (window.define) {
         dump: function(obj) {
             var space = $.isNative("parse", window.JSON) ? 4 : "\r\t", cache = [],
                 text = JSON.stringify(obj, function(key, value) {
-                    if (typeof value === 'object' && value !== null) {//防止环引用
+                    if (typeof value === 'object' && value !== null) {//闃叉鐜紩鐢  
                         if (cache.indexOf(value) !== -1) {
                             return;
                         }
@@ -16781,13 +16829,13 @@ if (window.define) {
                     }
                     return typeof value === "function" ? value + "" : value;
                 }, space);
-            cache = [];//GC回收
+            cache = [];//GC鍥炴敹
             return text;
         },
         /**
-         * 为数字加上单位
+         * 涓烘暟瀛楀姞涓婂崟浣  
          * @param i
-         * @param units 单位
+         * @param units 鍗曚綅
          * @returns {string}
          */
         unit: function (i, units) {
@@ -16798,13 +16846,13 @@ if (window.define) {
             }
         },
         hyphen: function (target) {
-            //转换为连字符线风格
+            //杞崲涓鸿繛瀛楃绾块鏍  
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase();
         },
 
 
 
-        // 参数初始化整理方法
+        // 鍙傛暟鍒濆鍖栨暣鐞嗘柟娉  
         argsArrange: (function(){
             var filter = function(args, params, defaults) {
                 var a = [], tempArr, arr = arguments, item;
@@ -16827,7 +16875,7 @@ if (window.define) {
                         if ($.type(arr[j], item.condition))
                             a[i] = grouper(arr[j++]);
                         else if (k < match && isNeed)
-                            throw new TypeError('参数' + name + '必须符合条件：' + item.condition + '，最少需要' + match + '个，现仅有' + k + '个');
+                            throw new TypeError('鍙傛暟' + name + '蹇呴』绗﹀悎鏉′欢锛   + item.condition + '锛屾渶灏戦渶瑕   + match + '涓紝鐜颁粎鏈   + k + '涓  );
                         else if (isAutoLen)
                             break;
                         else
@@ -16847,7 +16895,7 @@ if (window.define) {
         })()
     });
 
-    // TODO(wuhf): 类工厂
+    // TODO(wuhf): 绫诲伐鍘  
     // ========================================================
     (function(){
         var
@@ -16868,12 +16916,12 @@ if (window.define) {
             inherit : function( parent,init ) {
                 var bridge = function() { };
                 if( typeof parent == 'function'){
-                    for(var i in parent){//继承类成员
+                    for(var i in parent){//缁ф壙绫绘垚鍛  
                         this[i] = parent[i];
                     }
                     bridge.prototype = parent.prototype;
-                    this.prototype = new bridge ;//继承原型成员
-                    this._super = parent;//指定父类
+                    this.prototype = new bridge ;//缁ф壙鍘熷瀷鎴愬憳
+                    this._super = parent;//鎸囧畾鐖剁被
                 }
                 this._init = (this._init || []).concat();
                 if( init ){
@@ -16883,7 +16931,7 @@ if (window.define) {
                     return (init || bridge) + ''
                 };
                 var proto = this.prototype;
-                // FIXME(wuhf): 暂时不需要 备注一下
+                // FIXME(wuhf): 鏆傛椂涓嶉渶瑕  澶囨敞涓  笅
                 /*
                  proto.setOptions = function(first){
                  if( typeof first === 'string' ){
@@ -16908,7 +16956,7 @@ if (window.define) {
                 }
                 return this;
             },
-            extend: function(){//扩展类成员
+            extend: function(){//鎵╁睍绫绘垚鍛  
                 var bridge = {};
                 for(var i = 0, module; module = arguments[i++]; ){
                     $.extend( bridge, module );
@@ -16923,9 +16971,9 @@ if (window.define) {
         };
         $.factory = function( obj ){
             obj = obj || {};
-            var parent = obj.inherit; //父类
-            var init = obj.init ;    //构造器
-            var extend = obj.extend; //静态成员
+            var parent = obj.inherit; //鐖剁被
+            var init = obj.init ;    //鏋勯  鍣  
+            var extend = obj.extend; //闈欐  鎴愬憳
             delete obj.inherit;
             delete obj.init;
             var klass = function () {
@@ -16934,18 +16982,18 @@ if (window.define) {
                 }
             };
 
-            $.extend( klass, mutators ).inherit( parent, init );//添加更多类方法
+            $.extend( klass, mutators ).inherit( parent, init );//娣诲姞鏇村绫绘柟娉  
             return expand( klass, obj ).implement( obj );
         }
     })();
 
 
-    //构建四个工具方法:$.String, $.Array, $.Number, $.Object, $.Function
+    //鏋勫缓鍥涗釜宸ュ叿鏂规硶:$.String, $.Array, $.Number, $.Object, $.Function
     "String,Array,Number,Object,Function,Date".replace($.rword, function(Type) {
         var mix = $[Type];
         $[Type] = function(pack) {
             var isNative = typeof pack == "string",
-            //取得方法名
+            //鍙栧緱鏂规硶鍚  
                 methods = isNative ? pack.match($.rword) : Object.keys(pack);
             methods.forEach(function(method) {
                 $[Type][method] = isNative ?
@@ -16958,45 +17006,45 @@ if (window.define) {
     });
     $.String({
         byteLen: function(target) {
-            /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插
-             *入数据库 char、varchar、text 类型的字段时占用一个字节，而一个中文字符插入
-             *时占用两个字节，为了避免插入溢出，就需要事先判断字符串的字节长度。在前端，
-             *如果我们要用户填空的文本，需要字节上的长短限制，比如发短信，也要用到此方法。
-             *随着浏览器普及对二进制的操作，这方法也越来越常用。
+            /*鍙栧緱涓  釜瀛楃涓叉墍鏈夊瓧鑺傜殑闀垮害銆傝繖鏄竴涓悗绔繃鏉ョ殑鏂规硶锛屽鏋滃皢涓  釜鑻辨枃瀛楃鎻  
+             *鍏ユ暟鎹簱 char銆乿archar銆乼ext 绫诲瀷鐨勫瓧娈垫椂鍗犵敤涓  釜瀛楄妭锛岃  涓  釜涓枃瀛楃鎻掑叆
+             *鏃跺崰鐢ㄤ袱涓瓧鑺傦紝涓轰簡閬垮厤鎻掑叆婧㈠嚭锛屽氨闇  浜嬪厛鍒ゆ柇瀛楃涓茬殑瀛楄妭闀垮害銆傚湪鍓嶇锛  
+             *濡傛灉鎴戜滑瑕佺敤鎴峰～绌虹殑鏂囨湰锛岄渶瑕佸瓧鑺備笂鐨勯暱鐭檺鍒讹紝姣斿鍙戠煭淇★紝涔熻鐢ㄥ埌姝ゆ柟娉曘  
+             *闅忕潃娴忚鍣ㄦ櫘鍙婂浜岃繘鍒剁殑鎿嶄綔锛岃繖鏂规硶涔熻秺鏉ヨ秺甯哥敤銆  
              */
             return target.replace(/[^\x00-\xff]/g, 'ci').length;
         },
         underscored: function(target) {
-            //转换为下划线风格
+            //杞崲涓轰笅鍒掔嚎椋庢牸
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/\-/g, "_").toLowerCase();
         },
         capitalize: function(target) {
-            //首字母大写
+            //棣栧瓧姣嶅ぇ鍐  
             return target.charAt(0).toUpperCase() + target.substring(1).toLowerCase();
         },
         stripTags: function(target) {
-            //移除字符串中的html标签，但这方法有缺陷，如里面有script标签，会把这些不该显示出来的脚本也显示出来了
+            //绉婚櫎瀛楃涓蹭腑鐨刪tml鏍囩锛屼絾杩欐柟娉曟湁缂洪櫡锛屽閲岄潰鏈塻cript鏍囩锛屼細鎶婅繖浜涗笉璇ユ樉绀哄嚭鏉ョ殑鑴氭湰涔熸樉绀哄嚭鏉ヤ簡
             return target.replace(/<[^>]+>/g, "");
         },
         stripScripts: function(target) {
-            //移除字符串中所有的 script 标签。弥补stripTags方法的缺陷。此方法应在stripTags之前调用。
+            //绉婚櫎瀛楃涓蹭腑鎵  湁鐨  script 鏍囩銆傚讥琛tripTags鏂规硶鐨勭己闄枫  姝ゆ柟娉曞簲鍦╯tripTags涔嬪墠璋冪敤銆  
             return target.replace(/<script[^>]*>([\S\s]*?)<\/script>/img, '');
         },
         unescapeHTML: function(target) {
-            //还原为可被文档解析的HTML标签
-            return target.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&") //处理转义的中文和实体字符
+            //杩樺師涓哄彲琚枃妗ｈВ鏋愮殑HTML鏍囩
+            return target.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&") //澶勭悊杞箟鐨勪腑鏂囧拰瀹炰綋瀛楃
                 .replace(/&#([\d]+);/g, function($0, $1) {
                     return String.fromCharCode(parseInt($1, 10));
                 });
         },
         escapeRegExp: function(target) {
             //http://stevenlevithan.com/regex/xregexp/
-            //将字符串安全格式化为正则表达式的源码
+            //灏嗗瓧绗︿覆瀹夊叏鏍煎紡鍖栦负姝ｅ垯琛ㄨ揪寮忕殑婧愮爜
             return(target + "").replace(/([-.*+?^${}()|[\]\/\\])/g, "\\$1");
         },
         pad: function(target, n, filling, right, radix) {
             //http://www.cnblogs.com/rubylouvre/archive/2010/02/09/1666165.html
-            //在左边补上一些字符,默认为0
+            //鍦ㄥ乏杈硅ˉ涓婁竴浜涘瓧绗  榛樿涓  
             var num = target.toString(radix || 10);
             filling = filling || "0";
             while (num.length < n) {
@@ -17009,16 +17057,16 @@ if (window.define) {
             return num;
         }
     });
-    //字符串的原生原型方法
+    //瀛楃涓茬殑鍘熺敓鍘熷瀷鏂规硶
     $.String("charAt,charCodeAt,concat,indexOf,lastIndexOf,localeCompare,match," + "contains,endsWith,startsWith,repeat," + //es6
         "replace,search,slice,split,substring,toLowerCase,toLocaleLowerCase,toUpperCase,trim,toJSON");
     $.Array({
         contains: function(target, item) {
-            //判定数组是否包含指定目标。
+            //鍒ゅ畾鏁扮粍鏄惁鍖呭惈鎸囧畾鐩爣銆  
             return !!~target.indexOf(item);
         },
         shuffle: function(target) {
-            //对数组进行洗牌。若不想影响原数组，可以先拷贝一份出来操作。
+            //瀵规暟缁勮繘琛屾礂鐗屻  鑻ヤ笉鎯冲奖鍝嶅師鏁扮粍锛屽彲浠ュ厛鎷疯礉涓  唤鍑烘潵鎿嶄綔銆  
             var ret = [],
                 i = target.length,
                 n;
@@ -17031,11 +17079,11 @@ if (window.define) {
             return ret;
         },
         random: function(target) {
-            //从数组中随机抽选一个元素出来。
+            //浠庢暟缁勪腑闅忔満鎶介  涓  釜鍏冪礌鍑烘潵銆  
             return $.Array.shuffle(target.concat())[0];
         },
         flatten: function(target) {
-            //对数组进行平坦化处理，返回一个一维的新数组。
+            //瀵规暟缁勮繘琛屽钩鍧﹀寲澶勭悊锛岃繑鍥炰竴涓竴缁寸殑鏂版暟缁勩  
             var result = [],
                 self = $.Array.flatten;
             target.forEach(function(item) {
@@ -17048,14 +17096,14 @@ if (window.define) {
             return result;
         },
         compact: function(target) {
-            // 过滤数组中的null与undefined，但不影响原数组。
+            // 杩囨护鏁扮粍涓殑null涓巙ndefined锛屼絾涓嶅奖鍝嶅師鏁扮粍銆  
             return target.filter(function(el) {
                 return el != null;
             });
         },
         /**
-         * 对数组进行去重操作，返回一个没有重复元素的新数组。
-         * @param {Array} target 目标数组
+         * 瀵规暟缁勮繘琛屽幓閲嶆搷浣滐紝杩斿洖涓  釜娌℃湁閲嶅鍏冪礌鐨勬柊鏁扮粍銆  
+         * @param {Array} target 鐩爣鏁扮粍
          * @returns {Array}
          */
         unique: function(target) {
@@ -17071,13 +17119,13 @@ if (window.define) {
             return ret;
         },
         /**
-         * 合并两个数组
-         * @param {Array} first 第一个数组
-         * @param {Array} second 第二个数组
+         * 鍚堝苟涓や釜鏁扮粍
+         * @param {Array} first 绗竴涓暟缁  
+         * @param {Array} second 绗簩涓暟缁  
          * @returns {Array}
          */
         merge: function(first, second) {
-            //合并参数二到参数一
+            //鍚堝苟鍙傛暟浜屽埌鍙傛暟涓  
             var i = ~~first.length,
                 j = 0;
             for (var n = second.length; j < n; j++) {
@@ -17087,18 +17135,18 @@ if (window.define) {
             return first;
         },
         /**
-         * 对两个数组取并集。
-         * @param {Array} target 第一个数组
-         * @param {Array} array 第二个数组
+         * 瀵逛袱涓暟缁勫彇骞堕泦銆  
+         * @param {Array} target 绗竴涓暟缁  
+         * @param {Array} array 绗簩涓暟缁  
          * @returns {Array}
          */
         union: function(target, array) {
             return $.Array.unique($.Array.merge(target, array));
         },
         /**
-         * 对两个数组取交集
-         * @param {Array} target 第一个数组
-         * @param {Array} array 第二个数组
+         * 瀵逛袱涓暟缁勫彇浜ら泦
+         * @param {Array} target 绗竴涓暟缁  
+         * @param {Array} array 绗簩涓暟缁  
          * @returns {Array}
          */
         intersect: function(target, array) {
@@ -17107,9 +17155,9 @@ if (window.define) {
             });
         },
         /**
-         * 对两个数组取差集(补集)
-         * @param {Array} target 第一个数组
-         * @param {Array} array 第二个数组
+         * 瀵逛袱涓暟缁勫彇宸泦(琛ラ泦)
+         * @param {Array} target 绗竴涓暟缁  
+         * @param {Array} array 绗簩涓暟缁  
          * @returns {Array}
          */
         diff: function(target, array) {
@@ -17126,24 +17174,24 @@ if (window.define) {
             return result;
         },
         /**
-         * 返回数组中的最小值，用于数字数组。
-         * @param {Array} target 目标数组
+         * 杩斿洖鏁扮粍涓殑鏈  皬鍊硷紝鐢ㄤ簬鏁板瓧鏁扮粍銆  
+         * @param {Array} target 鐩爣鏁扮粍
          * @returns {Number}
          */
         min: function(target) {
             return Math.min.apply(0, target);
         },
         /**
-         * 返回数组中的最大值，用于数字数组。
-         * @param {Array} target 目标数组
+         * 杩斿洖鏁扮粍涓殑鏈  ぇ鍊硷紝鐢ㄤ簬鏁板瓧鏁扮粍銆  
+         * @param {Array} target 鐩爣鏁扮粍
          * @returns {Number}
          */
         max: function(target) {
             return Math.max.apply(0, target);
         },
         /**
-         * 深拷贝当前数组
-         * @param {Array} target 目标数组
+         * 娣辨嫹璐濆綋鍓嶆暟缁  
+         * @param {Array} target 鐩爣鏁扮粍
          * @returns {Array}
          */
         clone: function(target) {
@@ -17158,8 +17206,8 @@ if (window.define) {
             if (i>=0) target.splice(i, 1);
         },
         inGroupsOf: function(target, number, fillWith) {
-            //将数组划分成N个分组，其中小组有number个数，最后一组可能小于number个数,
-            //但如果第三个参数不为undefine时,我们可以拿它来填空最后一组
+            //灏嗘暟缁勫垝鍒嗘垚N涓垎缁勶紝鍏朵腑灏忕粍鏈塶umber涓暟锛屾渶鍚庝竴缁勫彲鑳藉皬浜巒umber涓暟,
+            //浣嗗鏋滅涓変釜鍙傛暟涓嶄负undefine鏃  鎴戜滑鍙互鎷垮畠鏉ュ～绌烘渶鍚庝竴缁  
             var t = target.length,
                 n = Math.ceil(t / number),
                 fill = fillWith !== void 0,
@@ -17184,7 +17232,7 @@ if (window.define) {
     $.Array("concat,join,pop,push,shift,slice,sort,reverse,splice,unshift," + "indexOf,lastIndexOf,every,some,filter,reduce,reduceRight");
     var NumberPack = {
         limit: function(target, n1, n2) {
-            //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值
+            //纭繚鏁板  鍦╗n1,n2]闂尯闂翠箣鍐  濡傛灉瓒呭嚭闄愮晫,鍒欑疆鎹负绂诲畠鏈  繎鐨勬渶澶у  鎴栨渶灏忓  
             var a = [n1, n2].sort();
             if (target < a[0])
                 target = a[0];
@@ -17193,7 +17241,7 @@ if (window.define) {
             return target;
         },
         nearer: function(target, n1, n2) {
-            //求出距离指定数值最近的那个数
+            //姹傚嚭璺濈鎸囧畾鏁板  鏈  繎鐨勯偅涓暟
             var diff1 = Math.abs(target - n1),
                 diff2 = Math.abs(target - n2);
             return diff1 < diff2 ? n1 : n2
@@ -17227,8 +17275,8 @@ if (window.define) {
 
 
     function mergeOne(source, key, current) {
-        //使用深拷贝方法将多个对象或数组合并成一个
-        if ($.isPlainObject(source[key])) { //只处理纯JS对象，不处理window与节点
+        //浣跨敤娣辨嫹璐濇柟娉曞皢澶氫釜瀵硅薄鎴栨暟缁勫悎骞舵垚涓  釜
+        if ($.isPlainObject(source[key])) { //鍙鐞嗙函JS瀵硅薄锛屼笉澶勭悊window涓庤妭鐐  
             $.Object.merge(source[key], current);
         } else {
             source[key] = cloneOf(current)
@@ -17238,10 +17286,10 @@ if (window.define) {
 
     $.Object({
         /**
-         * 过滤数组中不合要求的元素
+         * 杩囨护鏁扮粍涓笉鍚堣姹傜殑鍏冪礌
          * @param {Object} obj
-         * @param {Function} fn 如果返回true则放进结果集中
-         * @param {*} scope ? 默认为当前遍历的元素或属性值
+         * @param {Function} fn 濡傛灉杩斿洖true鍒欐斁杩涚粨鏋滈泦涓  
+         * @param {*} scope ? 榛樿涓哄綋鍓嶉亶鍘嗙殑鍏冪礌鎴栧睘鎬у  
          * @return {array}
          */
         filter: function(obj, fn, scope) {
@@ -17254,27 +17302,27 @@ if (window.define) {
             return ret;
         },
         subset: function(target, props) {
-            //根据传入数组取当前对象相关的键值对组成一个新对象返回
+            //鏍规嵁浼犲叆鏁扮粍鍙栧綋鍓嶅璞＄浉鍏崇殑閿  瀵圭粍鎴愪竴涓柊瀵硅薄杩斿洖
             var result = {};
             props.forEach(function(prop) {
                 result[prop] = target[prop];
             });
             return result;
         },
-        //将参数一的键值都放入回调中执行，如果回调返回false中止遍历
+        //灏嗗弬鏁颁竴鐨勯敭鍊奸兘鏀惧叆鍥炶皟涓墽琛岋紝濡傛灉鍥炶皟杩斿洖false涓閬嶅巻
         forEach: function(obj, fn) {
             Object.keys(obj).forEach(function(name) {
                 fn(obj[name], name)
             })
         },
-        //将参数一的键值都放入回调中执行，收集其结果返回
+        //灏嗗弬鏁颁竴鐨勯敭鍊奸兘鏀惧叆鍥炶皟涓墽琛岋紝鏀堕泦鍏剁粨鏋滆繑鍥  
         map: function(obj, fn) {
             return  Object.keys(obj).map(function(name) {
                 return fn(obj[name], name)
             })
         },
         clone: function(target) {
-            //进行深拷贝，返回一个新对象，如果是浅拷贝请使用$.extend
+            //杩涜娣辨嫹璐濓紝杩斿洖涓  釜鏂板璞★紝濡傛灉鏄祬鎷疯礉璇蜂娇鐢  .extend
             var clone = {};
             for (var key in target) {
                 clone[key] = cloneOf(target[key]);
@@ -17282,12 +17330,12 @@ if (window.define) {
             return clone;
         },
         merge: function(target, k, v) {
-            //将多个对象合并到第一个参数中或将后两个参数当作键与值加入到第一个参数
+            //灏嗗涓璞″悎骞跺埌绗竴涓弬鏁颁腑鎴栧皢鍚庝袱涓弬鏁板綋浣滈敭涓庡  鍔犲叆鍒扮涓  釜鍙傛暟
             var obj, key;
-            //为目标对象添加一个键值对
+            //涓虹洰鏍囧璞℃坊鍔犱竴涓敭鍊煎
             if (typeof k === "string")
                 return mergeOne(target, k, v);
-            //合并多个对象
+            //鍚堝苟澶氫釜瀵硅薄
             for (var i = 1, n = arguments.length; i < n; i++) {
                 obj = arguments[i];
                 for (key in obj) {
@@ -17402,43 +17450,43 @@ if (window.define) {
     };
     var locate = {
         AMPMS: {
-            0: "上午",
-            1: "下午"
+            0: "涓婂崍",
+            1: "涓嬪崍"
         },
         DAY: {
-            0: "星期日",
-            1: "星期一",
-            2: "星期二",
-            3: "星期三",
-            4: "星期四",
-            5: "星期五",
-            6: "星期六"
+            0: "鏄熸湡鏃  ,
+            1: "鏄熸湡涓  ,
+            2: "鏄熸湡浜  ,
+            3: "鏄熸湡涓  ,
+            4: "鏄熸湡鍥  ,
+            5: "鏄熸湡浜  ,
+            6: "鏄熸湡鍏  
         },
         MONTH: {
-            0: "1月",
-            1: "2月",
-            2: "3月",
-            3: "4月",
-            4: "5月",
-            5: "6月",
-            6: "7月",
-            7: "8月",
-            8: "9月",
-            9: "10月",
-            10: "11月",
-            11: "12月"
+            0: "1鏈  ,
+            1: "2鏈  ,
+            2: "3鏈  ,
+            3: "4鏈  ,
+            4: "5鏈  ,
+            5: "6鏈  ,
+            6: "7鏈  ,
+            7: "8鏈  ,
+            8: "9鏈  ,
+            9: "10鏈  ,
+            10: "11鏈  ,
+            11: "12鏈  
         },
         SHORTDAY: {
-            "0": "周日",
-            "1": "周一",
-            "2": "周二",
-            "3": "周三",
-            "4": "周四",
-            "5": "周五",
-            "6": "周六"
+            "0": "鍛ㄦ棩",
+            "1": "鍛ㄤ竴",
+            "2": "鍛ㄤ簩",
+            "3": "鍛ㄤ笁",
+            "4": "鍛ㄥ洓",
+            "5": "鍛ㄤ簲",
+            "6": "鍛ㄥ叚"
         },
-        fullDate: "y年M月d日EEEE",
-        longDate: "y年M月d日",
+        fullDate: "y骞碝鏈坉鏃EEE",
+        longDate: "y骞碝鏈坉鏃  ,
         medium: "yyyy-M-d ah:mm:ss",
         mediumDate: "yyyy-M-d",
         mediumTime: "ah:mm:ss",
@@ -17511,7 +17559,7 @@ if (window.define) {
         return paddedZone
     }
 
-    //取得上午下午
+    //鍙栧緱涓婂崍涓嬪崍
     function ampmGetter(date, formats) {
         return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
     }
@@ -17591,29 +17639,29 @@ if (window.define) {
         }
     })
 })(armer);
-// TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
-// 使用前，必须修改jQ一个bug，否则IE6不生效
-// 查找 dataType[0] === "+" 修改为 dataType.charAt(0) === "+"
+// TODO(wuhf): 寮哄寲$.ajax璁╁畠鏀寔style绫诲瀷(鏆傛椂涓嶆敮鎸乷nerror)image绫诲瀷鍜屼慨澶峴cript.onerror
+// 浣跨敤鍓嶏紝蹇呴』淇敼jQ涓  釜bug锛屽惁鍒橧E6涓嶇敓鏁  
+// 鏌ユ壘 dataType[0] === "+" 淇敼涓  dataType.charAt(0) === "+"
 ;(function ($) {
     var DOC = document, script,
         HEAD = document.head || document.getElementsByTagName('head')[0];
     var injectScript = function(src, beforeInject, charset){
         var script = document.createElement('script');
-        if (charset) script.scriptCharset = charset;
+        if (charset) script.charset = charset;
         script.async = true;
         beforeInject.call(script);
         script.src = src;
         HEAD.insertBefore(script, HEAD.firstChild);
         return script;
     };
-    // 销毁script标签
+    // 閿  瘉script鏍囩
     var destoryScript = function(s){
         s.onerror = s.onreadystatechange = s.onload = null;
         if (s.parentNode) {
             s.parentNode.removeChild(s)
         }
     };
-    // 添加配置
+    // 娣诲姞閰嶇疆
     jQuery.ajaxSetup({
         predictType: true,
         retry: 5,
@@ -17642,7 +17690,7 @@ if (window.define) {
     });
 
 
-    // 增加predictType参数
+    // 澧炲姞predictType鍙傛暟
     var rExt = /\.([^.?#/]*)(?:[?#]|$)/;
     function getType(url){
         if (rExt.test(url)) return $.ajax.ext2Type[RegExp.$1];
@@ -17650,12 +17698,12 @@ if (window.define) {
     }
     $.ajaxPrefilter(function(s){
         if (s.predictType && s.dataType == null) {
-            //如果为true且dataType为空则对url分析并预测类型
+            //濡傛灉涓簍rue涓攄ataType涓虹┖鍒欏url鍒嗘瀽骞堕娴嬬被鍨  
             return getType(s.url);
         }
     });
 
-    // 对style进行处理
+    // 瀵箂tyle杩涜澶勭悊
     $.ajaxPrefilter('style', function(s) {
         if ( s.crossDomain ) {
             s.type = "GET";
@@ -17695,7 +17743,7 @@ if (window.define) {
     $.ajaxPrefilter('file', function(s){
         s.mimeType = 'text/plain; charset=x-user-defined';
     });
-    // 对image 进行处理
+    // 瀵筰mage 杩涜澶勭悊
     $.ajaxTransport('image', function(s){
         var image;
         //if (s.crossDomain)
@@ -17731,7 +17779,7 @@ if (window.define) {
         }
     });
 
-    // 修复script onload的bug
+    // 淇script onload鐨刡ug
     $.ajaxTransport('+script', function(s){
         var src = s.url;
         if (s.crossDomain) {
@@ -17739,7 +17787,7 @@ if (window.define) {
                 send: function(_, complete){
                     var handler;
                     if (DOC.dispatchEvent) {
-                        // 对于w3c标准浏览器，采用onerror和onload判断脚本加载情况
+                        // 瀵逛簬w3c鏍囧噯娴忚鍣紝閲囩敤onerror鍜宱nload鍒ゆ柇鑴氭湰鍔犺浇鎯呭喌
                         handler = function(){
                             var s = this;
                             s.onload = function(){
@@ -17754,19 +17802,19 @@ if (window.define) {
                             };
                         };
                     } else {
-                        // 对于恶心的IE8-，我们通过一个vbscript元素，来检测脚本是否加载成功
+                        // 瀵逛簬鎭跺績鐨処E8-锛屾垜浠  杩囦竴涓獀bscript鍏冪礌锛屾潵妫  祴鑴氭湰鏄惁鍔犺浇鎴愬姛
                         handler = function(){
                             var vbtest = this, flag = 0;
                             vbtest.language = 'vbscript';
                             var errorHandler = function(){
-                                // 错误时，判断脚本是否正在解释，是则标志加载成功
+                                // 閿欒鏃讹紝鍒ゆ柇鑴氭湰鏄惁姝ｅ湪瑙ｉ噴锛屾槸鍒欐爣蹇楀姞杞芥垚鍔  
                                 if (vbtest.readyState == 'interactive') {
                                     flag = 1;
                                 }
                             };
                             vbtest.onreadystatechange = function(_, isAbort){
                                 if (isAbort || /loaded|complete/.test(this.readyState)) {
-                                    // 标志位，当加载成功，置1；
+                                    // 鏍囧織浣嶏紝褰撳姞杞芥垚鍔燂紝缃  锛  
                                     if (!isAbort) {
                                         if (flag == 1)
                                             injectScript(src, function(){
@@ -17777,7 +17825,7 @@ if (window.define) {
                                                         complete(200, 'success');
                                                     }
                                                 };
-                                            });
+                                            }, s.scriptCharset);
                                         else {
                                             complete(404, 'fail');
                                         }
@@ -17787,7 +17835,7 @@ if (window.define) {
                                     vbtest = null;
                                 }
                             };
-                            // 为window绑定一个错误，当js被误加载成vb的时候，会发生错误，来判断是否加载成功
+                            // 涓簑indow缁戝畾涓  釜閿欒锛屽綋js琚鍔犺浇鎴恦b鐨勬椂鍊欙紝浼氬彂鐢熼敊璇紝鏉ュ垽鏂槸鍚﹀姞杞芥垚鍔  
                             window.attachEvent('onerror', errorHandler);
                         };
                     }
@@ -17806,8 +17854,8 @@ if (window.define) {
 (function(){
 
     /**
-     * CSS Transform 过渡类
-     * 主要用于序列反序列transform字符串，生成transform的键值表，用于$.fn.css或者$.fn.transit, $.fn.css({ transform: '...' })
+     * CSS Transform 杩囨浮绫  
+     * 涓昏鐢ㄤ簬搴忓垪鍙嶅簭鍒梩ransform瀛楃涓诧紝鐢熸垚transform鐨勯敭鍊艰〃锛岀敤浜  .fn.css鎴栬  $.fn.transit, $.fn.css({ transform: '...' })
      * @param {string} transValue
      * @returns {Transform}
      * @constructor
@@ -17816,11 +17864,11 @@ if (window.define) {
      * t.rotate             //=> "90deg"
      * t.scale              //=> "4,4"
      *
-     * 这样set和get
+     * 杩欐牱set鍜実et
      * t.set('rotate', 4)
      * t.rotate             //=> "4deg"
      *
-     * 使用toString来进行序列化，toString参数为true时，为webkit版本.
+     * 浣跨敤toString鏉ヨ繘琛屽簭鍒楀寲锛宼oString鍙傛暟涓簍rue鏃讹紝涓簑ebkit鐗堟湰.
      * t.toString()         //=> "rotate(90deg) scale(4,4)"
      * t.toString(true)     //=> "rotate(90deg) scale3d(4,4,0)" (WebKit version)
      */
@@ -17832,10 +17880,10 @@ if (window.define) {
 
     Transform.prototype = {
         /**
-         * 通过字符串反序列化
-         * @param prop 需要设置的属性
-         * @param val 需要设置的值
-         * @example  t.setFromString('scale', '2,4'); 相当于 set('scale', '2', '4');
+         * 閫氳繃瀛楃涓插弽搴忓垪鍖  
+         * @param prop 闇  璁剧疆鐨勫睘鎬  
+         * @param val 闇  璁剧疆鐨勫  
+         * @example  t.setFromString('scale', '2,4'); 鐩稿綋浜  set('scale', '2', '4');
          */
         setFromString: function(prop, val) {
             var args =
@@ -17848,8 +17896,8 @@ if (window.define) {
             Transform.prototype.set.apply(this, args);
         },
         /**
-         * 设置一个属性
-         * @param prop 属性名
+         * 璁剧疆涓  釜灞炴  
+         * @param prop 灞炴  鍚  
          * @example t.set('scale', 2, 4);
          */
         set: function(prop) {
@@ -17871,8 +17919,8 @@ if (window.define) {
 
         setter: {
             /**
-             * 旋转
-             * @param theta 角度
+             * 鏃嬭浆
+             * @param theta 瑙掑害
              * @example
              * .css({ rotate: 30 })
              * .css({ rotate: "30" })
@@ -17888,7 +17936,7 @@ if (window.define) {
                 this.rotateY = unit(theta, 'deg');
             },
             /**
-             * 缩放
+             * 缂╂斁
              * @param x
              * @param y
              * @example
@@ -17906,11 +17954,11 @@ if (window.define) {
             skewY: function(y) {
                 this.skewY = unit(y, 'deg');
             },
-            // 透视
+            // 閫忚
             perspective: function(dist) {
                 this.perspective = unit(dist, 'px');
             },
-            // 相当于平移的XY
+            // 鐩稿綋浜庡钩绉荤殑XY
             x: function(x) {
                 this.set('translate', x, null);
             },
@@ -17918,7 +17966,7 @@ if (window.define) {
                 this.set('translate', null, y);
             },
             /**
-             * 平移
+             * 骞崇Щ
              * @param x
              * @param y
              * @example
@@ -17963,8 +18011,8 @@ if (window.define) {
                 return s;
             }
         },
-        // 转换transform
-        // 转换，由构造体调用
+        // 杞崲transform
+        // 杞崲锛岀敱鏋勯  浣撹皟鐢  
         parse: function(str) {
             var self = this;
             str.replace(/([a-zA-Z0-9]+)\((.*?)\)/g, function(x, prop, val) {
@@ -17973,9 +18021,9 @@ if (window.define) {
         },
 
         /**
-         * 序列化
-         * 将反序列化过的transform序列化
-         * @param use3d 是否使用3D
+         * 搴忓垪鍖  
+         * 灏嗗弽搴忓垪鍖栬繃鐨則ransform搴忓垪鍖  
+         * @param use3d 鏄惁浣跨敤3D
          * @returns {string}
          */
         toString: function(use3d) {
@@ -17983,7 +18031,7 @@ if (window.define) {
 
             for (var i in this) {
                 if (this.hasOwnProperty(i)) {
-                    // 如果浏览器不支持3D transform，则不使用
+                    // 濡傛灉娴忚鍣ㄤ笉鏀寔3D transform锛屽垯涓嶄娇鐢  
                     if ((!support.transform3d) && (
                         (i === 'rotateX') ||
                             (i === 'rotateY') ||
@@ -18011,7 +18059,7 @@ if (window.define) {
     var support = {};
     var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
-// 一个CSS对应transition-property的对应表
+// 涓  釜CSS瀵瑰簲transition-property鐨勫搴旇〃
 // https://developer.mozilla.org/en/CSS/CSS_transitions#Properties_that_can_be_animated
     var propertyMap = $.transitionPropertyMap = {
         marginLeft    : 'margin',
@@ -18024,7 +18072,7 @@ if (window.define) {
         paddingTop    : 'padding'
     }
 
-// 获取属性带前缀的键
+// 鑾峰彇灞炴  甯﹀墠缂  殑閿  
 // transition` => `WebkitTransition
     function getVendorPropertyName(prop) {
         // Handle unprefixed versions (FF16+, for example)
@@ -18038,33 +18086,33 @@ if (window.define) {
         }
     }
 
-// 检查是否支持transform3D
-// 理论上应该当Webkit和Firefox 10+ 返回true
+// 妫  煡鏄惁鏀寔transform3D
+// 鐞嗚涓婂簲璇ュ綋Webkit鍜孎irefox 10+ 杩斿洖true
     function checkTransform3dSupport() {
         div.style[support.transform] = '';
         div.style[support.transform] = 'rotateY(90deg)';
         return div.style[support.transform] !== '';
     }
 
-// 检查浏览器对transition各个属性的兼容情况
+// 妫  煡娴忚鍣ㄥtransition鍚勪釜灞炴  鐨勫吋瀹规儏鍐  
     support.transition      = getVendorPropertyName('transition');
     support.transitionDelay = getVendorPropertyName('transitionDelay');
     support.transform       = getVendorPropertyName('transform');
     support.transformOrigin = getVendorPropertyName('transformOrigin');
     support.transform3d     = checkTransform3dSupport();
 
-// 扩展进$.support
+// 鎵╁睍杩  .support
     for (var key in support) {
         if (support.hasOwnProperty(key) && typeof $.support[key] === 'undefined') {
             $.support[key] = support[key];
         }
     }
 
-// 避免IE的内存泄漏
+// 閬垮厤IE鐨勫唴瀛樻硠婕  
     div = null;
 
     function registerCssHook(prop, isPixels) {
-        // 对于某些属性，不应该包含'px'
+        // 瀵逛簬鏌愪簺灞炴  锛屼笉搴旇鍖呭惈'px'
         if (!isPixels) { $.cssNumber[prop] = true; }
         propertyMap[prop] = support.transform;
         $.cssHooks[prop] = {
@@ -18080,19 +18128,19 @@ if (window.define) {
         };
     }
 
-// 'transform' CSS 钩子
-// 允许你通过$.fn.css来修改transition
+// 'transform' CSS 閽╁瓙
+// 鍏佽浣犻  杩  .fn.css鏉ヤ慨鏀箃ransition
 //
 // $("#hello").css({ transform: "rotate(90deg)" });
 // $("#hello").css('transform');
 // => { rotate: '90deg' }
 //
     $.cssHooks['transit:transform'] = {
-        // getter会返回一个Transition对象
+        // getter浼氳繑鍥炰竴涓猅ransition瀵硅薄
         get: function(elem) {
             return $(elem).data('transform') || new Transform();
         },
-        // setter会接收一个Transform对象或者一个字符串
+        // setter浼氭帴鏀朵竴涓猅ransform瀵硅薄鎴栬  涓  釜瀛楃涓  
         set: function(elem, v) {
             var value = v;
 
@@ -18100,8 +18148,8 @@ if (window.define) {
                 value = new Transform(value);
             }
 
-            // 在Chrome，当元素在viewport外缩放的时候3D版本的缩放不会凑效，为了不冒险，
-            // 决定关闭3D缩放
+            // 鍦–hrome锛屽綋鍏冪礌鍦╲iewport澶栫缉鏀剧殑鏃跺  3D鐗堟湰鐨勭缉鏀句笉浼氬噾鏁堬紝涓轰簡涓嶅啋闄╋紝
+            // 鍐冲畾鍏抽棴3D缂╂斁
             // http://davidwalsh.name/detecting-google-chrome-javascript
             if (support.transform === 'WebkitTransform' && !isChrome) {
                 elem.style[support.transform] = value.toString(true);
@@ -18113,14 +18161,14 @@ if (window.define) {
         }
     };
 
-// 为.css({ transform: '...' })添加CSS钩子
-// 对于jQuery 1.8+，刻意覆盖默认transform
+// 涓  css({ transform: '...' })娣诲姞CSS閽╁瓙
+// 瀵逛簬jQuery 1.8+锛屽埢鎰忚鐩栭粯璁ransform
     $.cssHooks.transform = {
         set: $.cssHooks['transit:transform'].set
     };
 
-// 其他钩子
-// 允许使用rotate, scale等
+// 鍏朵粬閽╁瓙
+// 鍏佽浣跨敤rotate, scale绛  
     registerCssHook('scale');
     registerCssHook('translate');
     registerCssHook('rotate');
@@ -18137,7 +18185,7 @@ if (window.define) {
 
 
 $.fn.bgiframe = function(){
-    if(this.children('bgiframe').length == 0){   //如果不存在才插进去
+    if(this.children('bgiframe').length == 0){   //濡傛灉涓嶅瓨鍦ㄦ墠鎻掕繘鍘  
         return this.prepend($(document.createElement('bgiframe')).html('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>').css({
             position: 'absolute',
             width: '100%',
@@ -18148,7 +18196,7 @@ $.fn.bgiframe = function(){
     }
 };
 
-// .position 改造;
+// .position 鏀归  ;
 (function( $, undefined ) {
     var cachedScrollbarWidth,
         max = Math.max,
@@ -18651,9 +18699,9 @@ $.fn.bgiframe = function(){
 
 
 
-// 扩展内建jQuery css easing
+// 鎵╁睍鍐呭缓jQuery css easing
 ;(function () {
-    // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
+    // 鍩轰簬Robert Penner鐨勭紦鍔ㄥ叕寮  (http://www.robertpenner.com/easing)
     var baseEasings = {};
     $.each(['Quad', 'Cubic', 'Quart', 'Quint', 'Expo'], function (i, name) {
         baseEasings[ name ] = function (p) {
@@ -18694,7 +18742,7 @@ $.fn.bgiframe = function(){
         };
     });
 
-    // 扩展一些CSStransition-timing-function的js调用
+    // 鎵╁睍涓  簺CSStransition-timing-function鐨刯s璋冪敤
     $.cssEasing = {
         linear: 'linear',
         easeIn: 'ease-in',
@@ -18729,7 +18777,7 @@ $.fn.bgiframe = function(){
     $.cssEasing._default = 'cubic-bezier(.02,.01,.47,1)';
 
     var support = $.support;
-    // 检测需要的transitionend
+    // 妫  祴闇  鐨則ransitionend
     var eventNames = {
         'transition':       'transitionend',
         'MozTransition':    'transitionend',
@@ -18737,10 +18785,10 @@ $.fn.bgiframe = function(){
         'WebkitTransition': 'webkitTransitionEnd',
         'msTransition':     'MSTransitionEnd'
     };
-    // 根据support调用不同的事件
+    // 鏍规嵁support璋冪敤涓嶅悓鐨勪簨浠  
     var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
 
-    // 由于transitionEnd的表现不一致，所以不适用它作为判断动画完成的时机
+    // 鐢变簬transitionEnd鐨勮〃鐜颁笉涓  嚧锛屾墍浠ヤ笉閫傜敤瀹冧綔涓哄垽鏂姩鐢诲畬鎴愮殑鏃舵満
     //$.Transition.useTransitionEnd = true;
     Transition = function(elem, properties, options){
         var transition,
@@ -18754,14 +18802,14 @@ $.fn.bgiframe = function(){
             handler = function(){
                 deferred.resolveWith(elem, [transition]);
             };
-        // 默认动画为swing
+        // 榛樿鍔ㄧ敾涓簊wing
         options.easing = options.easing || 'swing';
         oldTransitions = elem.style[support.transition];
         if ($.Transition.useTransitionEnd) {
             bound = true;
             elem.addEventListener(transitionEnd, handler);
         } else window.setTimeout(handler, options.duration);
-        // webkit外必须强迫重绘才能触发
+        // webkit澶栧繀椤诲己杩噸缁樻墠鑳借Е鍙  
         var s = elem.offsetWidth;
 
         elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
@@ -18793,9 +18841,9 @@ $.fn.bgiframe = function(){
             .always( transition.opts.always );
     };
     $.Transition = $.extend(Transition, {
-        // 临时关闭transition效果
+        // 涓存椂鍏抽棴transition鏁堟灉
         enabled: true,
-        // 设置是否通过transitionEnd来触发动画的callback
+        // 璁剧疆鏄惁閫氳繃transitionEnd鏉ヨЕ鍙戝姩鐢荤殑callback
         useTransitionEnd: false
     });
     $.fn.transit = function(prop, speed, easing, callback){
@@ -18812,9 +18860,9 @@ $.fn.bgiframe = function(){
     };
 
     /**
-     * 根据CSS属性获取Transition属性
-     * @param props CSS属性
-     * @returns {Array} 返回一个用于transition-property的属性数组
+     * 鏍规嵁CSS灞炴  鑾峰彇Transition灞炴  
+     * @param props CSS灞炴  
+     * @returns {Array} 杩斿洖涓  釜鐢ㄤ簬transition-property鐨勫睘鎬ф暟缁  
      */
     function getProperties(props) {
         var re = [];
@@ -18831,27 +18879,27 @@ $.fn.bgiframe = function(){
     }
 
     /**
-     * 生成序列化的transition
-     * @param properties 属性
-     * @param duration 持续时间
-     * @param easing 过场动画
-     * @param delay 延时
+     * 鐢熸垚搴忓垪鍖栫殑transition
+     * @param properties 灞炴  
+     * @param duration 鎸佺画鏃堕棿
+     * @param easing 杩囧満鍔ㄧ敾
+     * @param delay 寤舵椂
      * @returns {string}
      * @exaple
      * getTransition({ opacity: 1, rotate: 30 }, 500, 'ease');  => 'opacity 500ms ease, -webkit-transform 500ms ease'
      */
     function getTransition(properties, duration, easing, delay) {
-        // 获取需要的Transition属性
+        // 鑾峰彇闇  鐨凾ransition灞炴  
         var props = getProperties(properties);
 
-        // 通过别称获取具体的timming-function
+        // 閫氳繃鍒О鑾峰彇鍏蜂綋鐨則imming-function
         if ($.cssEasing[easing]) { easing = $.cssEasing[easing]; }
 
-        // 创建duration/easing/delay属性
+        // 鍒涘缓duration/easing/delay灞炴  
         var attribs = '' + toMS(duration) + ' ' + easing;
         if (parseInt(delay, 10) > 0) { attribs += ' ' + toMS(delay); }
 
-        // 组合不同的CSS属性
+        // 缁勫悎涓嶅悓鐨凜SS灞炴  
         // "margin 200ms ease, padding 200ms ease, ..."
         var transitions = [];
         $.each(props, function(i, name) {
@@ -18861,7 +18909,7 @@ $.fn.bgiframe = function(){
         return transitions.join(', ');
     }
     /**
-     * 将速度转换为毫秒
+     * 灏嗛  搴﹁浆鎹负姣
      * @param duration
      * @returns {*}
      * @example
@@ -18870,21 +18918,21 @@ $.fn.bgiframe = function(){
      */
     function toMS(duration) {
         var i = duration;
-        // 转换类似 'fast' 的字符串.
+        // 杞崲绫讳技 'fast' 鐨勫瓧绗︿覆.
         if ($.fx.speeds[i]) { i = $.fx.speeds[i]; }
         return $.unit(i, 'ms');
     }
 
-    // 暴露一个测试用的方法
+    // 鏆撮湶涓  釜娴嬭瘯鐢ㄧ殑鏂规硶
     $.Transition.getTransitionValue = getTransition;
 
     if (!$.support.transition)
         $.fn.transit = $.fn.transition = $.fn.animate;
 
 
-    // TODO: classAnimation 让JS分析transition进行js动画过渡模拟tansitionCSS动画
+    // TODO: classAnimation 璁㎎S鍒嗘瀽transition杩涜js鍔ㄧ敾杩囨浮妯℃嫙tansitionCSS鍔ㄧ敾
 
-    // 转换为ms，例如：将'2000ms'、'2s' 转换为 2000;
+    // 杞崲涓簃s锛屼緥濡傦細灏  2000ms'銆  2s' 杞崲涓  2000;
     function toMS(duration) {
         if (typeof duration == 'number') return duration;
         if (duration.indexOf('ms') > -1) return parseInt(duration);
@@ -18907,7 +18955,7 @@ $.fn.bgiframe = function(){
             }
         }
     };
-    // 过滤，或者过滤并且求差集
+    // 杩囨护锛屾垨鑰呰繃婊ゅ苟涓旀眰宸泦
     var getStyles = function(elem, filter, diff){
         var style = elem.currentStyle, styles = {}, key, value;
         for (key in filter) {
@@ -18918,10 +18966,10 @@ $.fn.bgiframe = function(){
         }
         return styles;
     };
-    // 通过currentStyle获取transition
+    // 閫氳繃currentStyle鑾峰彇transition
     var getTransition = function(currentStyle){
         var i, tLeng = 0, t = [], property = [], duration = [], timingFunction = [], delay = [], transition = {};
-        // 必须在try运行，否则取自定义属性可能导致程序不能继续运行
+        // 蹇呴』鍦╰ry杩愯锛屽惁鍒欏彇鑷畾涔夊睘鎬у彲鑳藉鑷寸▼搴忎笉鑳界户缁繍琛  
         try {
             t = currentStyle['transition'].split(rC);
             for(i = t.length; i--;) {
@@ -18934,12 +18982,12 @@ $.fn.bgiframe = function(){
             timingFunction = currentStyle['transition-timing-function'].split(rC);
             delay = currentStyle['transition-delay'].split(rC);
         } catch(e) {}
-        // 整合成一个数组
+        // 鏁村悎鎴愪竴涓暟缁  
         for (i = 0; i < property.length; i++) {
             //alert(property[i]);
             t[i + tLeng] = {property: property[i], duration: duration[i] || duration[0], timingFunction: timingFunction[i] || timingFunction[0], delay: delay[i] || delay[0]};
         }
-        // 去重合并
+        // 鍘婚噸鍚堝苟
         for (i = 0; i < t.length; i++) {
             var item = transition[t[i].property];
             if (!item) item = transition[t[i].property] = {};
@@ -18966,7 +19014,7 @@ $.fn.bgiframe = function(){
         if (doAnimate) {
             var baseClass = animated.attr( "class" ) || "";
             allAnimations = animated.find($.trim(children).replace(/^["']/, '').replace(/['"]$/, '')).addBack();
-            // 遍历需要做动画的元素，抽取出原来样式
+            // 閬嶅巻闇  鍋氬姩鐢荤殑鍏冪礌锛屾娊鍙栧嚭鍘熸潵鏍峰紡
             allAnimations = allAnimations.map(function(){
                 var t = getTransition(this.currentStyle), el = $(this);
                 return {
@@ -18976,7 +19024,7 @@ $.fn.bgiframe = function(){
                 }
             });
             applyClassChange();
-            // 再次遍历需要，计算出样式的差异
+            // 鍐嶆閬嶅巻闇  锛岃绠楀嚭鏍峰紡鐨勫樊寮  
             allAnimations = allAnimations.map(function() {
                 this.diff = getStyles(this.el[0], this.start, true);
                 return this;
@@ -18984,7 +19032,7 @@ $.fn.bgiframe = function(){
             animated.attr( "class", baseClass );
             allAnimations = allAnimations.map(function(){
                 var i = firstVal(this.transitions);
-                // 只抽取第一个duration、timingFunction、delay来简化流程
+                // 鍙娊鍙栫涓  釜duration銆乼imingFunction銆乨elay鏉ョ畝鍖栨祦绋  
                 var styleInfo = this,
                     dfd = $.Deferred(),
                     opts = $.extend({
@@ -19000,10 +19048,10 @@ $.fn.bgiframe = function(){
             });
             $.when.apply($, allAnimations.get()).done(function() {
 
-                // 设置新类
+                // 璁剧疆鏂扮被
                 applyClassChange();
 
-                // 遍历所有动画的元素，清除所有css属性
+                // 閬嶅巻鎵  湁鍔ㄧ敾鐨勫厓绱狅紝娓呴櫎鎵  湁css灞炴  
                 $.each( arguments, function() {
                     var el = this.el;
                     $.each( this.diff, function(key) {
@@ -19017,7 +19065,7 @@ $.fn.bgiframe = function(){
     $.each(classAnimationActions, function(__, action){
         var orig = $.fn[action + 'Class'];
         $.fn[action + 'Class'] = $.support.transition ? orig : function(classes) {
-            // TODO: 判断是否做动画..
+            // TODO: 鍒ゆ柇鏄惁鍋氬姩鐢  .
             var withAnimation = true;
             if (withAnimation) classAnimation.call(this, {add: {classes: classes, orig: orig}})
             else orig.apply(this, arguments);
@@ -19049,17 +19097,17 @@ $.fn.bgiframe = function(){
     $.EventEmitter.prototype = $.EventEmitter.fn = mul;
 })();
 
-// valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化
+// valuechange浜嬩欢锛岀洃鍚潵鑷敭鐩樻暡鎵擄紝澶嶅埗鍜辫创锛岃Е灞忎簨浠讹紝璇煶杈撳叆瀵艰嚧鐨勮〃鍗曞  鍙樺寲
 /*
  $('input').valuechange(function(e){
- e.newValue; // 新的值
- e.oldValue; // 旧的值
- e.realEvent; // 触发变化的真实事件
+ e.newValue; // 鏂扮殑鍊  
+ e.oldValue; // 鏃х殑鍊  
+ e.realEvent; // 瑙﹀彂鍙樺寲鐨勭湡瀹炰簨浠  
  })
  */
 (function(){
     var DATA = "valuechangeData";
-    //如果值前后发生改变,触发绑定回调
+    //濡傛灉鍊煎墠鍚庡彂鐢熸敼鍙  瑙﹀彂缁戝畾鍥炶皟
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
@@ -19136,7 +19184,7 @@ $.fn.bgiframe = function(){
 })();
 
 
-// 添加enter,ctrlEnter,backspace事件
+// 娣诲姞enter,ctrlEnter,backspace浜嬩欢
 (function(){
     var keypressEvents = "keydown";
     $.each(["enter", "ctrlenter", "backspace"], function( i, name){
@@ -19144,7 +19192,7 @@ $.fn.bgiframe = function(){
         $.fn[key] = function( fn ){
             return !fn || $.isFunction( fn ) ?
                 this[fn ? "bind" : "trigger"]( key, fn ) :
-                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //兼容以前的enter代码
+                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //鍏煎浠ュ墠鐨別nter浠ｇ爜
         };
         $.event.special[key] = {
             setup: function(){
@@ -19268,10 +19316,10 @@ $.fn.bgiframe = function(){
             selector.each(function(){
                 /*
                  $.log(
-                 'this是：' + this,
-                 'target是：' + e.target,
-                 'this是否包含target:' + $.contains(this, e.target),
-                 'this是否target:' +  this == e.target
+                 'this鏄細' + this,
+                 'target鏄細' + e.target,
+                 'this鏄惁鍖呭惈target:' + $.contains(this, e.target),
+                 'this鏄惁target:' +  this == e.target
                  );
                  */
                 if ($.contains(this, e.target) || $(this)[0] == e.target) {
@@ -19290,29 +19338,29 @@ $.fn.bgiframe = function(){
 
     $.Utility = function(){
     return $.extend(function(){},{
-        // 关闭窗口
+        // 鍏抽棴绐楀彛
         'closeWindow' : function(confirmStr){
             if (confirmStr && !confirm(confirmStr)) return;
             if (document.referrer == "") {
-                if ($.browser.mozilla) return alert("该窗口需要关闭。但火狐浏览器不支持关闭单独窗口，请手动关闭。");
+                if ($.browser.mozilla) return alert("璇ョ獥鍙ｉ渶瑕佸叧闂  浣嗙伀鐙愭祻瑙堝櫒涓嶆敮鎸佸叧闂崟鐙獥鍙ｏ紝璇锋墜鍔ㄥ叧闂  ");
                 window.opener = '';
                 window.open('','_self');
             }
             window.close();
         },
-        // 文本复制
+        // 鏂囨湰澶嶅埗
         'copyText' : function(text, notdebug){
             var copy = true;
             if (window.clipboardData) {
                 window.clipboardData.clearData();
                 window.clipboardData.setData("Text", text);
             }else if (!notdebug) {
-                prompt("非IE浏览器请用Ctrl+c手动复制链接", text);
+                prompt("闈濱E娴忚鍣ㄨ鐢–trl+c鎵嬪姩澶嶅埗閾炬帴", text);
                 copy = false;
             }
             return copy;
         },
-        // 添加收藏
+        // 娣诲姞鏀惰棌
         'addFavorite' : function(url,title){
             var url = url || top.location.href;
             var title = title || top.document.title;
@@ -19321,7 +19369,7 @@ $.fn.bgiframe = function(){
             else if (window.sidebar)  {
                 window.sidebar.addPanel(title, url, "");
             } else {
-                alert("收藏失败！请使用Ctrl+D进行收藏");
+                alert("鏀惰棌澶辫触锛佽浣跨敤Ctrl+D杩涜鏀惰棌");
             }
         }
     })
@@ -19330,7 +19378,7 @@ $.fn.bgiframe = function(){
 
 $.UI = {};
 //==============================
-//   TODO(wuhf): UI级别的方法
+//   TODO(wuhf): UI绾у埆鐨勬柟娉  
 //==============================
 (function(support){
     if (!support) {
@@ -19383,7 +19431,7 @@ $.UI = {};
     try {
         $('<input/>').attr('placeholder')
     } catch(e) {
-        //IE10你可以去死了...
+        //IE10浣犲彲浠ュ幓姝讳簡...
         support = true;
     }
 
@@ -19398,7 +19446,7 @@ $.UI = {};
                 $this.removeClass('placeholder');
             });
 
-        //重写val
+        //閲嶅啓val
         $.fn.val = function(val){
             if (val == null && !val)
                 return this.each(function(){
@@ -19425,7 +19473,7 @@ $.UI = {};
     }
 
     if (!support) {
-        //重写val
+        //閲嶅啓val
         $.fn.val = function(val){
             var $this = $(this);
             if (!!val && !!$this.attr('placeholder')) {
@@ -19442,7 +19490,7 @@ $.UI = {};
     }
 
 })($.support.placeHolder =  'placeholder' in document.createElement('input'));
-/*可截取多行显示省略号*/
+/*鍙埅鍙栧琛屾樉绀虹渷鐣ュ彿*/
 $.fn.ellipsis = function() {
     function loop ($container, maxHeight, str) {
         if ($container.height() <= maxHeight) return;
@@ -19463,16 +19511,16 @@ $.fn.ellipsis = function() {
     }
     return function(str, container){
         return this.each(function(){
-            // 复制以下这个地址
+            // 澶嶅埗浠ヤ笅杩欎釜鍦板潃
             var container = container;
             var oldH, str = str || '<span class="ellipsis">...</span>'
             container = container || this;
-            // 获取max-height用来计算行数
+            // 鑾峰彇max-height鐢ㄦ潵璁＄畻琛屾暟
             var maxHeight = window.getComputedStyle ? (getComputedStyle(container)['max-height'] || getComputedStyle(container)['maxHeight']) : container.currentStyle['max-height'];
             var match = maxHeight.match(/(0?\.?\d*)px$/);
             if (match) maxHeight = oldH = match[1];
             else return;
-            // 用一个空元素测量一下行高，然后去掉
+            // 鐢ㄤ竴涓┖鍏冪礌娴嬮噺涓  笅琛岄珮锛岀劧鍚庡幓鎺  
             var s = $('<span></span>', {
                 html: 'o',
                 css: {
@@ -19491,7 +19539,7 @@ $.fn.ellipsis = function() {
             console.log(line)
             maxHeight = line * lineHeight;
 
-            // 去掉一些样式，让其超出范围
+            // 鍘绘帀涓  簺鏍峰紡锛岃鍏惰秴鍑鸿寖鍥  
             container.style.maxHeight = 'none';
             container.style.overflowY = 'auto';
             container.style.height = 'auto';
@@ -19505,7 +19553,7 @@ $.fn.ellipsis = function() {
             } else loop.call($(this), $(container), maxHeight, str);
 
 
-            // 覆盖样式
+            // 瑕嗙洊鏍峰紡
             container.style.overflowY = 'hidden';
             container.style.maxHeight = oldH + 'px';
         })

@@ -12,8 +12,6 @@
     "url": ""
   },
   "devDependencies": {
-    "jquery": "1.x",
-    "zepto": "*",
     "grunt": "*",
     "grunt-contrib-concat": "*",
     "grunt-contrib-requirejs": "*"

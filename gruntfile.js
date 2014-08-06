@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         package: grunt.file.readJSON('package.json')
     };
 
-    grunt.file.defaultEncoding = 'gb2312';
+    //grunt.file.defaultEncoding = 'utf-8';
 
     options.concat = {
         options: {

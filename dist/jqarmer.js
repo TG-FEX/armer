@@ -1,5 +1,5 @@
 /*!
- * ArmerJS - v0.1.0 - 2014-08-05 
+ * ArmerJS - v0.1.0 - 2014-08-06 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10313,13 +10313,13 @@ return jQuery;
 
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
-    // TODO(wuhf): 核心工具�  
+    // TODO(wuhf): 核心工具集
     // ========================================================
     (function(){
         var rword = /[^, |]+/g; //用于分割单词
         var html = DOC.documentElement; //HTML元素
         var head = DOC.head || DOC.getElementsByTagName("head")[0]; //HEAD元素
-        var W3C = DOC.dispatchEvent; //IE9�  ��支持W3C的事件模型与getComputedStyle取样式�  
+        var W3C = DOC.dispatchEvent; //IE9开始支持W3C的事件模型与getComputedStyle取样式值
         var hasOwn = Object.prototype.hasOwnProperty;
         var emptyObj = {};
         var rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
@@ -10360,14 +10360,14 @@ armer = window.jQuery || window.Zepto;
 
         /**
          * 计算类似array[-1]为最后一位的算法
-         * 用于模拟slice, splice的效�  
-         * @param a 下标�  
-         * @param [n] 总长�  
-         * @param [end] 非整数的处理方式，如果为true则取n�  
+         * 用于模拟slice, splice的效果
+         * @param a 下标值
+         * @param [n] 总长度
+         * @param [end] 非整数的处理方式，如果为true则取n值
          * @returns {number}
          */
         function resetNumber(a, n, end) {
-            if ((a === +a) && !(a % 1)) { //如果是整�  
+            if ((a === +a) && !(a % 1)) { //如果是整数
                 if (a < 0) {
                     a = a * -1 >= n ? 0 : a + n
                 } else {
@@ -10386,10 +10386,10 @@ armer = window.jQuery || window.Zepto;
         $.stringType = toStringType;
 
         /**
-         * 数组�  
-         * @param {ArrayLike} nodes 要处理的类数组对�  
-         * @param {number} start 可�  。要抽取的片断的起始下标。如果是负数，从后面取起
-         * @param {number} end  可�  。规定从何处结束选取
+         * 数组化
+         * @param {ArrayLike} nodes 要处理的类数组对象
+         * @param {number} start 可选。要抽取的片断的起始下标。如果是负数，从后面取起
+         * @param {number} end  可选。规定从何处结束选取
          * @returns {array}
          */
         $.slice = W3C ? function(nodes, start, end) {
@@ -10409,7 +10409,7 @@ armer = window.jQuery || window.Zepto;
         $.fn.mix = $.mix = $.extend;
 
         $.extend($, {
-            // ---补充�  ��全局变量---
+            // ---补充一些全局变量---
 
             // 规定那些方法不被列举
             DONT_ENUM: "propertyIsEnumerable,isPrototypeOf,hasOwnProperty,toLocaleString,toString,valueOf,constructor".split(","),
@@ -10420,19 +10420,19 @@ armer = window.jQuery || window.Zepto;
             rword: rword,
             rmapper: /(\w+)_(\w+)/g,
 
-            // ---补充�  ��工具方法---
+            // ---补充一些工具方法---
             //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
             /**
-             * 生成�  ��全局唯一ID
+             * 生成一个全局唯一ID
              * @returns {string}
              */
             generateID: function () {
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             /**
-             * 生成随机�  
-             * @param {Number} upper 上限�  
-             * @param {Number} [lower] 下限�  
+             * 生成随机数
+             * @param {Number} upper 上限值
+             * @param {Number} [lower] 下限值
              * @returns {Number}
              */
             random: function(upper, lower){
@@ -10440,9 +10440,9 @@ armer = window.jQuery || window.Zepto;
                 return parseInt(Math.random() * (upper - lower + 1)+ lower);
             },
             /**
-             * 生成键�  统一的对象，用于高�  化判�  
-             * @param {array|string} array 如果是字符串，请�  ,"或空格分�  
-             * @param {number} [val] 默认�  
+             * 生成键值统一的对象，用于高速化判定
+             * @param {array|string} array 如果是字符串，请用","或空格分开
+             * @param {number} [val] 默认为1
              * @returns {Object}
              */
             oneObject: oneObject,
@@ -10464,18 +10464,18 @@ armer = window.jQuery || window.Zepto;
              *  将调试信息打印到控制台或页面
              *  $.trace(str, page, level )
              *  @param {*} str 用于打印的信息，不是字符串将转换为字符串
-             *  @param {Boolean} page ? 是否打印到页�  
-             *  @param {number} level ? 通过它来过滤显示到控制台的日志数量�  
-             *          0为最少，只显示最致命的错误；7，则连普通的调试消息也打印出来�  
-             *          显示算法�  level <= $.config.level�  
-             *          这个$.config.level默认�  。下面是level各代表的含义�  
+             *  @param {Boolean} page ? 是否打印到页面
+             *  @param {number} level ? 通过它来过滤显示到控制台的日志数量。
+             *          0为最少，只显示最致命的错误；7，则连普通的调试消息也打印出来。
+             *          显示算法为 level <= $.config.level。
+             *          这个$.config.level默认为9。下面是level各代表的含义。
              *          0 EMERGENCY 致命错误,框架崩溃
-             *          1 ALERT �  ��立即采取措施进行修复
-             *          2 CRITICAL 危�  错误
+             *          1 ALERT 需要立即采取措施进行修复
+             *          2 CRITICAL 危急错误
              *          3 ERROR 异常
              *          4 WARNING 警告
-             *          5 NOTICE 通知用户已经进行到方�  
-             *          6 INFO 更一般化的�  �  
+             *          5 NOTICE 通知用户已经进行到方法
+             *          6 INFO 更一般化的通知
              *          7 DEBUG 调试消息
              *  @returns {string}
              *  @api public
@@ -10515,7 +10515,7 @@ armer = window.jQuery || window.Zepto;
                 for (var i = 0; i <= obj.length; i++) {
                     if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
                         continue
-                    // 不允许一般数�  
+                    // 不允许一般数组
                     result[obj[i].name] = result[obj[i].name] || [];
                     if (ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked)) {
                         result[obj[i].name].push(obj[i].value);
@@ -10529,15 +10529,15 @@ armer = window.jQuery || window.Zepto;
                 return result
             },
             /**
-             * 序列化�  过对象或数组产生类似cookie、get等字符串
+             * 序列化通过对象或数组产生类似cookie、get等字符串
              * @param {Object|Array.Object} obj
              * @param {string} [separator] 分割符，默认&
-             * @param {string} [assignment] 赋�  符，默认=
+             * @param {string} [assignment] 赋值符，默认=
              * @param {boolean} [encode] 是否进行编码, 默认true
              * @returns {string}
              */
             serialize: function(){
-                // 猜测值返回不同结�  
+                // 猜测值返回不同结果
                 function assume(value){
                     if ('undefined' == typeof value) return;
                     else if (null == value) return '';
@@ -10591,14 +10591,14 @@ armer = window.jQuery || window.Zepto;
              * 反序列化通过对象
              * @param {String} str
              * @param {String} [separator] 分割符，默认&
-             * @param {String} [assignment] 赋�  符，默认=
+             * @param {String} [assignment] 赋值符，默认=
              * @returns {Object|Array}
              */
             unserialize: function () {
                 var r = /[\n\r\s]/g
                 function assume (value){
                     if (value.indexOf('{') == 0) {
-                        // 预测是对象或者数�  
+                        // 预测是对象或者数组
                         return decodeURIComponent(JSON.parse(value));
                     } else if (value == '') {
                         //为空
@@ -10645,18 +10645,18 @@ armer = window.jQuery || window.Zepto;
                     return result;
                 }
             }(),
-            // 判断�  ��对象是不是jQuery.Deferred
+            // 判断一个对象是不是jQuery.Deferred
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
             },
             /**
-             * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属�  的Object对象�  
-             * 如果第二个参数为true,则包含有字符�  
+             * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
+             * 如果第二个参数为true,则包含有字符串
              * @param {Object} obj
              * @param {Boolean} [includeString]
              * @returns {Boolean}
              */
-            isArrayLike: function(obj, includeString) { //是否包含字符�  
+            isArrayLike: function(obj, includeString) { //是否包含字符串
                 var type = $.stringType(obj);
                 if (includeString && type === "String") {
                     return true;
@@ -10677,10 +10677,10 @@ armer = window.jQuery || window.Zepto;
             },
 
             /**
-             * 生成�  ��整数数组
-             * @param {number} [start] 默认�  
-             * @param {number} [end] 默认�  
-             * @param {number} [step] 默认�  
+             * 生成一个整数数组
+             * @param {number} [start] 默认为0
+             * @param {number} [end] 默认为0
+             * @param {number} [step] 默认为1
              * @returns {array}
              */
             range: function(start, end, step) {
@@ -10701,7 +10701,7 @@ armer = window.jQuery || window.Zepto;
             },
             parseFragment: function(html){return $.buildFragment([html], document)},
             /**
-             * 修改node的innerHTML（确保�  式IE使用�  
+             * 修改node的innerHTML（确保老式IE使用）
              * @param node
              * @param html
              */
@@ -10717,7 +10717,7 @@ armer = window.jQuery || window.Zepto;
                 this.clearChild(node).appendChild(a)
             },
             /**
-             * 清除node里边�  ��子元�  
+             * 清除node里边所有子元素
              * @param node
              * @returns {*}
              */
@@ -10737,7 +10737,7 @@ armer = window.jQuery || window.Zepto;
                 $.extend(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
                 return function parseDisplay(nodeName, val) {
-                    //用于取得此类标签的默认display�  
+                    //用于取得此类标签的默认display值
                     nodeName = nodeName.toLowerCase()
                     if (!cacheDisplay[nodeName]) {
                         var node = DOC.createElement(nodeName)
@@ -10756,8 +10756,8 @@ armer = window.jQuery || window.Zepto;
             })()
         });
 
-        // TODO(wuhf): 缓存�  
-        //视浏览器情况采用�  ��的异步回�  
+        // TODO(wuhf): 缓存器
+        //视浏览器情况采用最快的异步回调
         $.nextTick = global.setImmediate ? setImmediate.bind(global) : function(callback) {
             setTimeout(callback, 0)//IE10-11 or W3C
         };
@@ -10775,14 +10775,15 @@ armer = window.jQuery || window.Zepto;
         gif: 'image',
         png: 'image',
         bmp: 'image',
-        swf: 'flash'
+        swf: 'flash',
+        html: 'html'
     };
 
-    // TODO(wuhf): URL解释�  
+    // TODO(wuhf): URL解释器
     // ========================================================
     (function(){
         // url解释规范
-        // 参�  RFC3986 http://tools.ietf.org/html/rfc3986
+        // 参考RFC3986 http://tools.ietf.org/html/rfc3986
         var rHash = /#[^#?]*/;
         var rSearch = /\?[^#?]*/;
         var rProtocol = /^\w*:/;
@@ -10825,16 +10826,16 @@ armer = window.jQuery || window.Zepto;
             }
         };
         /**
-         * 生成�  ��URL对象
-         * @param url �  ��绝对地址或�  �  ��相对地址
-         * @param [parent] 相对地址的情况，可以设置它的父路�  
+         * 生成一个URL对象
+         * @param url 一个绝对地址或者一个相对地址
+         * @param [parent] 相对地址的情况，可以设置它的父路径
          * @param [basePath]
          * @returns {URL}
          * @constructor
          */
         $.URL = function(url, parent){
             var URL = arguments.callee;
-            // 先将parent路径转行为绝对路�  
+            // 先将parent路径转行为绝对路径
             parent = parent ? URL.absolutize(parent) : null;
             if (!(this instanceof URL)) return new URL(url, parent);
             // 分析url
@@ -10871,9 +10872,12 @@ armer = window.jQuery || window.Zepto;
                     parent = parent || location.href;
                     //http://p.tgnet.com/Office/MyInfo.aspx
                     var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
+                    parent.replace(rProtocol, function(protocol){
+                        self._protocol = protocol
+                    })
                     //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
-                    // 则获取协�  
-                    // 如果木有域名后缀，则判断为相对地�  
+                    // 则获取协议
+                    // 如果木有域名后缀，则判断为相对地址
                     if (!rSuffix.test(path)) {
                         /*
                          alert(path)
@@ -10881,15 +10885,15 @@ armer = window.jQuery || window.Zepto;
                          alert(basePath)
                          */
                         tmp = path.charAt(0);
-                        // ./css css 这种情况 相对于�  当前路径】的兄弟路径
-                        // /css 这两种情�  相对于�  根路径�  
-                        // ../css 这种情况 相对于�  当前路径】的父路�  
+                        // ./css css 这种情况 相对于【当前路径】的兄弟路径
+                        // /css 这两种情况 相对于【根路径】
+                        // ../css 这种情况 相对于【当前路径】的父路径
 
                         if (path.slice(0, 2) === './') {
-                            //相对于兄弟路�  
+                            //相对于兄弟路径
                             path = setProtocol(parent, self) + path.slice(1);
                         } else if (tmp !== "." && tmp !== '/') {
-                            //相对于兄弟路�  
+                            //相对于兄弟路径
                             path = setProtocol(parent, self) + '/' + path;
                         } else if (tmp == "/") {
                             path = setProtocol(basePath, self) + path;
@@ -10959,7 +10963,7 @@ armer = window.jQuery || window.Zepto;
                 return r;
             },
             /**
-             * 获取路径，返�  
+             * 获取路径，返回
              * @param index
              * @param value
              * @returns {*}
@@ -10980,6 +10984,21 @@ armer = window.jQuery || window.Zepto;
                     r = this;
                 }
                 return r;
+            },
+            fileName : function(value){
+                var p = this._pathname;
+                p = p[p.length - 1];
+                if (value) this._pathname[this._pathname.length - 1] = value;
+                else return p;
+            },
+            fileNameWithoutExt: function(value){
+                var p = this._pathname;
+                p = p[p.length - 1];
+                var i = p.lastIndexOf('.');
+                if (value == null) return i < 0 ? p : p.substring(0, i);
+                else
+                    this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
+
             },
             extension : function(value){
                 var p = this._pathname;
@@ -11018,7 +11037,7 @@ armer = window.jQuery || window.Zepto;
         }
     })();
 
-    // TODO(wuhf): AMD/CMD加载�  
+    // TODO(wuhf): AMD/CMD加载器
     // ========================================================
     (function () {
 
@@ -11032,11 +11051,10 @@ armer = window.jQuery || window.Zepto;
         };
 
 
-        var currentParent = null;
-        var currentUrl = null;
+        var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
         var requesting = {};
-        // 通过require正在请求的模�  
+        // 通过require正在请求的模块
         var defaults = {
             baseUrl : location.href,
             ext : 'js',
@@ -11049,10 +11067,19 @@ armer = window.jQuery || window.Zepto;
                 auto: {
                     config: function(config){
                         var url = $.URL(this.url, this.parent);
-                        if (url.extension() == '') url.extension(defaults.ext);
+                        var ext = url.extension();
+                        if (!ext) {
+                            url.extension(defaults.ext);
+                            ext = 'js';
+                        }
+                        if (ext == 'js') {
+                            this.name = url.fileNameWithoutExt()
+                        } else {
+                            this.name = url.fileName()
+                        }
                         url.search('callback', 'define');
                         this.url = url.toString();
-                        this.type = $.ajax.ext2Type[url.extension()]
+                        this.type = $.ajax.ext2Type[ext];
                     },
                     callback: function(){
                         var that = this;
@@ -11061,7 +11088,10 @@ armer = window.jQuery || window.Zepto;
                             this.exports = this.originData;
                         } else if (this.factory) {
                             var exports = this.factory.apply(this, getExports(arguments))
-                            this.exports = exports || this.exports || modules.exports.exports;
+                            if (exports != null)
+                                this.exports = exports
+                            else if (this.exports == null)
+                                this.exports = modules.exports.exports
                         }
 
                         this.dfd.resolveWith(this, [this]);
@@ -11070,10 +11100,11 @@ armer = window.jQuery || window.Zepto;
             }
         };
 
-        // 构�  模块
+        // 构造模块
         require.Model = function Model(config){
             $.extend(this, config);
-            modules[this.fullname] = this;
+            //throw Error(this.id)
+            modules[this.id] = this;
             //if (this.url) modules[this.method + this.url] = this;
             //else if (this.id) modules[this.id] = this;
         };
@@ -11082,7 +11113,7 @@ armer = window.jQuery || window.Zepto;
             fire: function(data){
                 // 使用shim模式
                 var mod = this;
-                var shim = defaults.shim[mod.id] || {};
+                var shim = defaults.shim[mod.name] || {};
                 if ($.isArray(shim))
                     shim = {
                         deps: shim
@@ -11092,19 +11123,17 @@ armer = window.jQuery || window.Zepto;
                 var success = function(){
                     modules.module.exports = mod;
                     modules.exports.exports = {};
-                    currentParent = mod.url;
+                    currentUrl = mod.url;
                     if (shim.exports)
                         modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
                     defaults.plusin[mod.method].callback.apply(mod, arguments);
                     modules.module.exports = null;
-                    currentParent = null;
                 }
                 if (mod.deps && mod.deps.length) {
-                    currentParent = mod.url;
+                    currentUrl = mod.url;
                     innerRequire(mod.deps).done(success).fail(function(){
                         mod.dfd.rejectWith(mod, [data]);
                     });
-                    currentParent = null;
                 } else success();
 
                 // 这两个是为CMD服务的，只读
@@ -11131,9 +11160,9 @@ armer = window.jQuery || window.Zepto;
             var mod;
             if (typeof config == 'string') {
                 // 存在同名模块
-                if (!(mod = modules[config] || modules[(config = id2Config(config)).fullname])) {
-                    // 不存在则是新的模�  
-                    config = idOrUrl2Config(config);
+                if (!(mod = modules[config] || modules[id2Config(config, currentUrl).id])) {
+                    // 不存在则是新的模块
+                    config = id2Config(config);
                 }
             }
             if (mod) {
@@ -11144,15 +11173,15 @@ armer = window.jQuery || window.Zepto;
                 if (config.modelName && modules[config.modelName])
                     mod = modules[config.modelName];
                 else {
-                    // 如果是一个dfd，则通过dfd产生�  ��匿名模块
+                    // 如果是一个dfd，则通过dfd产生一个匿名模块
                     id = 'anonymousModel' + $.now();
                     mod = new require.Model({dfd: config, id: id});
                     config.modelName = id;
                 }
             }
             else if (typeof config == 'object') {
-                // 处理同样地址同样方式加载但不同id的模�  
-                if (!(mod = modules[config.fullname]))
+                // 处理同样地址同样方式加载但不同name的模块
+                if (!(mod = modules[config.id]))
                     mod = new require.Model(config);
                 // 模块作为参数情况
             } else if (typeof config == 'string')
@@ -11175,7 +11204,7 @@ armer = window.jQuery || window.Zepto;
                 // 当不存在dfd的时候证明这个模块没有初始化
                 if (!mod.dfd) {
                     mod.dfd = $.Deferred();
-                    // 如果factory或�  exports没有定义，那么可以判断出是�  过异步加载已存在但未请求成功的模�  
+                    // 如果factory或者exports没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
                     // TODO:这个判断貌似不太准确
                     if (!mod.factory  && !('exports' in mod))
                         (function(mod){
@@ -11183,17 +11212,18 @@ armer = window.jQuery || window.Zepto;
                             var options = {
                                 url: mod.url,
                                 cache: true,
-                                crossDomain: defaults.charset ? true : undefined,
+                                crossDomain: defaults.charset ? true : void 0,
+                                //crossDomain: true,
                                 dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                                 scriptCharset: defaults.charset,
                                 success: function(data) {
                                     var bmod;
                                     if (requesting[mod.url]) {
                                         if (bmod = requesting[mod.url].bmod) {
-                                            mod.deps = bmod.deps;
-                                            mod.factory = bmod.factory;
-                                            mod.exports = bmod.exports;
-                                            mod.type = bmod.type;
+                                            var dfd = mod.dfd;
+                                            $.extend(mod, bmod);
+                                            mod.dfd = dfd;
+                                            modules[bmod.id] = mod;
                                         }
                                         delete requesting[mod.url]
                                     }
@@ -11205,16 +11235,16 @@ armer = window.jQuery || window.Zepto;
                                 },
                                 converters: {
                                     "text script": function(text) {
-                                        currentUrl = mod.url;
+                                        xhrRequestURL = mod.url
                                         jQuery.globalEval(text);
-                                        currentUrl = null;
+                                        xhrRequestURL = null;
                                         return text;
                                     }
                                 }
                             };
                             $.ajax(options);
                         })(mod);
-                    // 如果factory或�  exports已经定义过，那么就直接处理该模块
+                    // 如果factory或者exports已经定义过，那么就直接处理该模块
                     else if (mod.fire)
                         mod.fire();
                     else mod.dfd.resolveWith(mod, [mod])
@@ -11227,9 +11257,8 @@ armer = window.jQuery || window.Zepto;
         function require(deps, callback, errorCallback){
             // 兼容CMD模式
             if (!callback) {
-                var mod,
-                    config = id2Config(deps);
-                if (mod = modules[config.fullname] || modules[idOrUrl2Config(config).fullname])
+                var mod;
+                if (mod = modules[deps] || modules[id2Config(deps, currentUrl).id] || modules[id2Config(deps).id])
                     return mod.exports;
                 else {
                     throw Error('this module is not define');
@@ -11242,37 +11271,38 @@ armer = window.jQuery || window.Zepto;
         }
         /**
          *
-         * @param id 模块id用于记录缓存这个模块
-         * @param [deps] 依赖列表，这个模块需要依赖那些模�  
+         * @param name 模块name用于记录缓存这个模块
+         * @param [deps] 依赖列表，这个模块需要依赖那些模块
          * @param factory 工厂，用于处理返回的模块
          * @returns {Model}
          */
-        function define(id, deps, factory){
-            if (typeof id != 'string') {
+        function define(name, deps, factory){
+            if (typeof name != 'string') {
                 factory = deps;
-                deps = id;
-                id = null;
+                deps = name;
+                name = null;
             }
             if (factory === undefined) {
                 factory = deps;
                 deps = ['require', 'exports', 'module'];
             }
-            var mod, url;
+            var mod;
 
-            url = currentUrl || currentScriptURL();
+            currentUrl = xhrRequestURL || currentScriptURL();
             // 如果正在请求这个js
-            if (mod = requesting[url]) {
-                if (id && id !== mod.id) {
-                    // 如果define的名字不�  ��，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则�  ���  ��后备模块为该模块
-                    mod = new require.Model(id2Config(id), url);
-                    requesting[url].bmod = mod;
+            if (mod = requesting[currentUrl]) {
+                if (name && name !== mod.name) {
+                    // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
+                    mod = new require.Model(id2Config(name, currentUrl));
+                    requesting[currentUrl].bmod = mod;
                 } else {
-                    // define()这种形式默认是这个模�  
+                    // define()这种形式默认是这个模块
                     delete mod.bmod;
-                    delete requesting[url]
+                    delete requesting[currentUrl]
                 }
-            } else //如果没有请求这个js
-                mod = new require.Model(id2Config(id), url);
+            } else
+                //如果没有请求这个js
+                mod = new require.Model(id2Config(name, currentUrl));
             var withCMD = -1, i;
             for (i = 0; i < deps.length; i++) {
                 // 看deps里是否有require，是则找出其index
@@ -11311,7 +11341,7 @@ armer = window.jQuery || window.Zepto;
             if(document.currentScript) { //firefox 4+
                 return document.currentScript.src || location.href;
             }
-            //只在head标签中寻�  
+            //只在head标签中寻找
             var nodes = document.getElementsByTagName("script");
             for(var i = 0, node; node = nodes[i++];) {
                 if(node.readyState === "interactive") {
@@ -11320,7 +11350,7 @@ armer = window.jQuery || window.Zepto;
                     else return location.href
                 }
             }
-            // 参�   https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack;
             try {
                 //强制报错,以便捕获e.stack
@@ -11330,12 +11360,12 @@ armer = window.jQuery || window.Zepto;
                 stack = e.stack;
 
                 if(!stack && window.opera){
-                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取�  �  ��对e对象转字符串进行抽取
+                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
                 }
             }
             if(stack) {
-                /**e.stack�  ���  ��在所有支持的浏览器大致如�  
+                /**e.stack最后一行在所有支持的浏览器大致如下:
                  *chrome23:
                  * at http://113.93.50.63/data.js:4:1
                  *firefox17:
@@ -11345,50 +11375,46 @@ armer = window.jQuery || window.Zepto;
                  *IE10:
                  *  at Global code (http://113.93.50.63/data.js:4:1)
                  */
-                    //取得�  ���  ��,�  ���  ��空格或@之后的部�  
+                    //取得最后一行,最后一个空格或@之后的部分
                 stack = stack.split( /[@ ]/g).pop();
                 stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
                 //去掉行号与或许存在的出错字符起始位置
                 return stack.replace(/(:\d+)?:\d+$/i, "");
             }
         }
-        function id2Config(idOrPath) {
-            var c = {id: idOrPath};
-            idOrPath = idOrPath.split('!');
+        function id2Config(name, url) {
+            var x = name == 'domready!'
+            var s, c = {name: name};
+            s = name.split('!');
             // 分析处理方法
-            if (idOrPath.length == 2) {
-                c.method = idOrPath[0];
-                c.url = idOrPath[1];
+            if (s.length == 2) {
+                c.method = s[0];
+                c.name = s[1];
+            } else if (!!~name.indexOf('!')) {
+                c.method = s[0];
             } else {
                 c.method = defaults.method;
-                c.url = idOrPath[0];
+                c.name = s[0];
             }
-            idOrPath = c.url.split(':');
-            if (idOrPath.length > 1)
-                c.namespace = idOrPath.shift();
-            else
+            if (x) console.log(c)
+            s = c.name.split(':');
+            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
                 c.namespace = defaults.namespace;
-            c.url = idOrPath.join(':');
-            c.fullname = c.method + '!' + c.namespace + ':' + c.id
-            return c;
-        }
-        function idOrUrl2Config(c, url) {
+            else
+                c.namespace = s.shift();
+            c.name = s.join(':');
             if (url) {
                 c.url = url;
             } else {
-                c.parent = currentParent;
-                if (defaults.paths[c.id]) {
-                    //别名机制
-                    c.url = defaults.paths[c.id];
-                    if (typeof c.url === "object") {
-                        //paths
-                        c.url = c.url.src;
-                    }
-                }
+                c.parent = currentUrl;
+                c.url = c.name;
+                //别名机制
+                c.url = defaults.paths[name] || c.url;
                 c = defaults.plusin[c.method].config.call(c) || c;
             }
-            c.fullname = c.method + '!' + c.namespace + ':' + c.url
-            return c
+            c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
+                (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
+            return c;
         }
         define.amd = define.cmd = modules;
         require.defaults = defaults;
@@ -11409,7 +11435,8 @@ armer = window.jQuery || window.Zepto;
             config: function(){
                 var mod = {
                     dfd: $.Deferred(),
-                    exports: $
+                    exports: $,
+                    method: 'domready'
                 };
                 $(function(){
                     mod.dfd.resolveWith(mod, [mod]);
@@ -11419,16 +11446,15 @@ armer = window.jQuery || window.Zepto;
 
         };
 
-
         var nodes = document.getElementsByTagName("script")
         var dataMain = $(nodes[nodes.length - 1]).data('main')
-        if (dataMain) require([dataMain], $.noop);
+        if (dataMain) require(dataMain, $.noop);
     })();
 
     // 基本语言扩充
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
-            //根据指定条件进行排序，�  常用于对象数组�  
+            //根据指定条件进行排序，通常用于对象数组。
             trend = typeof trend === "boolean" ? trend : false;
             var array = target.map(function(item, index) {
                 return {
@@ -11444,9 +11470,9 @@ armer = window.jQuery || window.Zepto;
             return $.Array.pluck(array, 'el');
         },
         /**
-         * 取得对象数组的每个元素的指定属�  ，组成数组返回�  
+         * 取得对象数组的每个元素的指定属性，组成数组返回。
          * @param {Array} target 目标数组
-         * @param {string} name �  ��抽取的�  的键�  
+         * @param {string} name 需要抽取的值的键名
          * @returns {Array}
          */
         pluck: function(target, name) {
@@ -11455,7 +11481,7 @@ armer = window.jQuery || window.Zepto;
             });
         },
         /**
-         * 只有当前数组不存在此元素时只添加�  
+         * 只有当前数组不存在此元素时只添加它
          * @param {Array} target 目标数组
          * @param {*} el 元素
          * @returns {Array}
@@ -11470,7 +11496,7 @@ armer = window.jQuery || window.Zepto;
             return target;
         },
         /**
-         * 移除数组指定下标的成�  
+         * 移除数组指定下标的成员
          * @param target 目标数组
          * @param index 下标
          * @returns {boolean} 是否移除成功
@@ -11479,13 +11505,13 @@ armer = window.jQuery || window.Zepto;
             return !!target.splice(index, 1).length
         },
         /**
-         * 移除数组里对应元�  
+         * 移除数组里对应元素
          * @param target 目标数组
-         * @param item 对应的元�  
+         * @param item 对应的元素
          * @returns {boolean} 是否删除成功
          */
         remove: function(target, item) {
-            //移除数组中第�  ��匹配传参的那个元素，返回布尔表示成功与否�  
+            //移除数组中第一个匹配传参的那个元素，返回布尔表示成功与否。
             var index = target.indexOf(item);
             if (~index)
                 return $.Array.removeAt(target, index);
@@ -11494,8 +11520,8 @@ armer = window.jQuery || window.Zepto;
     }
     $.String = {
         /**
-         * 截取字符�  
-         * @param target 目标字符�  
+         * 截取字符串
+         * @param target 目标字符串
          * @param length 新字符串长度
          * @param [truncation] 新字符串的结尾的字段
          * @returns {string}
@@ -11506,8 +11532,8 @@ armer = window.jQuery || window.Zepto;
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target);
         },
         /**
-         * 将字符串经过 html 转义得到适合在页面中显示的内�   例如替换 < �  &lt;
-         * @param target 目标字符�  
+         * 将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt;
+         * @param target 目标字符串
          * @returns {string}
          */
         escapeHTML: function(target) {
@@ -11517,10 +11543,10 @@ armer = window.jQuery || window.Zepto;
     $.Number = {
         /**
          * 与PHP的number_format完全兼容
-         * @param number 要格式化的数�  
+         * @param number 要格式化的数字
          * @param [decimals] 规定多少个小数位
-         * @param [decPoint] 规定用作小数点的字符串（默认�  . �  
-         * @param [thousandsSep] 可�  ，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必�  ��
+         * @param [decPoint] 规定用作小数点的字符串（默认为 . ）
+         * @param [thousandsSep] 可选，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必需的
          * @returns {string}
          * http://kevin.vanzonneveld.net
          */
@@ -11670,8 +11696,8 @@ armer = window.jQuery || window.Zepto;
             };
         }
 
-        //  string.substr(start, length)参�   start
-        //  要抽取的子串的起始下标�  如果是一个负数，那么该参数声明从字符串的尾部�  ��算起的位置�  也就是说�  1指定字符串中的最后一个字符，-2指�  数第二个字符，以此类推�  
+        //  string.substr(start, length)参考 start
+        //  要抽取的子串的起始下标。如果是一个负数，那么该参数声明从字符串的尾部开始算起的位置。也就是说，-1指定字符串中的最后一个字符，-2指倒数第二个字符，以此类推。
         var substr = String.prototype.substr;
         if ('ab'.substr(-1) != 'b') {
             String.prototype.substr = function (start, length) {
@@ -11701,7 +11727,7 @@ armer = window.jQuery || window.Zepto;
             return false;
         }
 
-        //safari5+是把contains方法放在Element.prototype上�  不是Node.prototype
+        //safari5+是把contains方法放在Element.prototype上而不是Node.prototype
         if (!document.documentElement) {
             Node.prototype.contains = function(arg) {
                 return !!(this.compareDocumentPosition(arg) & 16)
@@ -11721,7 +11747,7 @@ armer = window.jQuery || window.Zepto;
         //=====================
         // TODO: Object
         //=====================
-        //第二个参数仅在浏览器支持Object.defineProperties时可�  
+        //第二个参数仅在浏览器支持Object.defineProperties时可用
         mix(Object, {
             create: function (o) {
                 if (arguments.length > 1) {
@@ -11775,7 +11801,7 @@ armer = window.jQuery || window.Zepto;
         };
 
         mix(Array[P], {
-            //定位操作，返回数组中第一个等于给定参数的元素的索引�  �  
+            //定位操作，返回数组中第一个等于给定参数的元素的索引值。
             indexOf: function (item, index) {
                 var n = this.length,
                     i = ~~index;
@@ -11786,7 +11812,7 @@ armer = window.jQuery || window.Zepto;
                         return i;
                 return -1;
             },
-            //定位引操作，同上，不过是从后遍历�  
+            //定位引操作，同上，不过是从后遍历。
             lastIndexOf: function (item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index;
@@ -11797,17 +11823,17 @@ armer = window.jQuery || window.Zepto;
                         return i;
                 return -1;
             },
-            //迭代操作，将数组的元素挨个儿传入�  ��函数中执行�  Ptototype.js的对应名字为each�  
+            //迭代操作，将数组的元素挨个儿传入一个函数中执行。Ptototype.js的对应名字为each。
             forEach: iterator('', '_', ''),
-            //迭代�  在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数�  
+            //迭代类 在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数组
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //收集操作，将数组的元素挨个儿传入�  ��函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect�  
+            //收集操作，将数组的元素挨个儿传入一个函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect。
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //只要数组中有�  ��元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any�  
+            //只要数组中有一个元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any。
             some: iterator('', 'if(_)return true', 'return false'),
-            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all�  
+            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all。
             every: iterator('', 'if(!_)return false', 'return true'),
-            //归化�  javascript1.8  将该数组的每个元素和前一次调用的结果运行�  ��函数，返回最后的结果�  
+            //归化类 javascript1.8  将该数组的每个元素和前一次调用的结果运行一个函数，返回最后的结果。
             reduce: function (fn, lastResult, scope) {
                 if (this.length == 0)
                     return lastResult;
@@ -11817,7 +11843,7 @@ armer = window.jQuery || window.Zepto;
                     result = fn.call(scope, result, this[i], i, this);
                 return result;
             },
-            //归化�  javascript1.8 同上，但从右向左执行�  
+            //归化类 javascript1.8 同上，但从右向左执行。
             reduceRight: function (fn, lastResult, scope) {
                 var array = this.concat().reverse();
                 return array.reduce(fn, lastResult, scope);
@@ -11875,7 +11901,7 @@ armer = window.jQuery || window.Zepto;
         //=====================================
         mix(String[P], {
             repeat: function (n) {
-                //将字符串重复n�  
+                //将字符串重复n遍
                 var result = "",
                     target = this;
                 while (n > 0) {
@@ -11887,7 +11913,7 @@ armer = window.jQuery || window.Zepto;
                 return result;
             },
             startsWith: function (str) {
-                //判定是否以给定字符串�  ��
+                //判定是否以给定字符串开头
                 return this.indexOf(str) === 0;
             },
             endsWith: function (str) {
@@ -11895,7 +11921,7 @@ armer = window.jQuery || window.Zepto;
                 return this.lastIndexOf(str) === this.length - str.length;
             },
             contains: function (s, position) {
-                //判断�  ��字符串是否包含另�  ��字符
+                //判断一个字符串是否包含另一个字符
                 return ''.indexOf.call(this, s, position >> 0) !== -1;
             }
         });
@@ -11952,23 +11978,23 @@ armer = window.jQuery || window.Zepto;
 
 
     //TODO: fix localStorage
-    // 本地存储的兼容方�  
+    // 本地存储的兼容方案
     // http://www.cnblogs.com/zjcn/archive/2012/07/03/2575026.html#2607520
     // https://github.com/marcuswestin/store.js
     (function (win, doc) {
         if(!($.support.localStorage = !!win.localStorage) && doc.documentElement.addBehavior){
             var storage, store, box, container;
-            //存储文件名（单文件小�  28k，足够普通情况下使用了）
-            //cookie大小4096, 0.4K X 50个大�  0K，可见userdata大的�  
+            //存储文件名（单文件小于128k，足够普通情况下使用了）
+            //cookie大小4096, 0.4K X 50个大概20K，可见userdata大的多
             var FILENAME = win.location.hostname || 'localStorage';
             try{
-                //由于#userData的存储仅适用于特定的路径�  
-                //我们�  ��以某种方式关联我们的数据到一个特定的路径。我们�  �  favicon.ico作为�  ��非常安全的目标，
-                //因为�  ��的浏览器都发出这个URL请求，�  且这个请求即使是404也不会有危险�  
-                //我们可以通过�  ��ActiveXObject(htmlfile)对象的文档来干这事�  
+                //由于#userData的存储仅适用于特定的路径，
+                //我们需要以某种方式关联我们的数据到一个特定的路径。我们选择/favicon.ico作为一个非常安全的目标，
+                //因为所有的浏览器都发出这个URL请求，而且这个请求即使是404也不会有危险。
+                //我们可以通过一个ActiveXObject(htmlfile)对象的文档来干这事。
                 //(参见:http://msdn.microsoft.com/en-us/library/aa752574(v = VS.85). aspx)
-                //因为iframe的访问规则允许直接访问和操纵文档中的元素，即使是404�  
-                //这文档可以用来代替当前文档（这被限制在当前路径）执行#userData的存储�  
+                //因为iframe的访问规则允许直接访问和操纵文档中的元素，即使是404。
+                //这文档可以用来代替当前文档（这被限制在当前路径）执行#userData的存储。
                 container = new ActiveXObject('htmlfile');
                 container.open();
                 container.write('<script>document.w=window</script><iframe src="/favicon.ico"></iframe>');
@@ -12083,7 +12109,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 return r.join('');
             },
-            //好吧，这里复制了�  ��jQ的，以免递归出错
+            //好吧，这里复制了一遍jQ的，以免递归出错
             parse : function(data){
                 if (typeof data != 'string') data = data.toString();
                 if ( data === null ) {
@@ -12124,7 +12150,7 @@ armer = window.jQuery || window.Zepto;
                     $.fn[ hashchange ].domain +"</script><body>" )
             }
 
-            function getHash ( url) {//用于取得当前窗口或iframe窗口的hash�  
+            function getHash ( url) {//用于取得当前窗口或iframe窗口的hash值
                 url = url || DOC.URL
                 return '#' + url.replace( /^[^#]*#?(.*)$/, '$1' );
             }
@@ -12133,7 +12159,7 @@ armer = window.jQuery || window.Zepto;
             }
             function setHistory(hash, history_hash){
                 var doc = iframe.document;
-                if (  hash !== history_hash ) {//只有当新hash不等于iframe中的hash才重�  
+                if (  hash !== history_hash ) {//只有当新hash不等于iframe中的hash才重写
                     //用于产生历史
                     doc.open();
                     doc.write($.format(html, hash));
@@ -12146,8 +12172,8 @@ armer = window.jQuery || window.Zepto;
                 setup: function(desc) {
                     $(function(){
                         if (!iframe) {
-                            //创建�  ��隐藏的iframe，使用这博文提供的技�  http://www.paciellogroup.com/blog/?p=604.
-                            //iframe是直接加载父页面，为了防止死循环，在DOM树未建完之前就擦入新的内�  
+                            //创建一个隐藏的iframe，使用这博文提供的技术 http://www.paciellogroup.com/blog/?p=604.
+                            //iframe是直接加载父页面，为了防止死循环，在DOM树未建完之前就擦入新的内容
                             var el = $('<iframe tabindex="-1" style="display:none" widht=0 height=0 title="empty" />').appendTo( document.body )[0], fn
                             iframe = el.contentWindow
                             $.event.add(el, "load", fn = function(){
@@ -12164,7 +12190,7 @@ armer = window.jQuery || window.Zepto;
                                 if(hash !== last_hash){//如果是主窗口的hash发生变化
                                     setHistory(last_hash = hash, history_hash )
                                     $(desc.currentTarget).fire(hashchange)
-                                }else if(history_hash !== last_hash){//如果按下回�  键，
+                                }else if(history_hash !== last_hash){//如果按下回退键，
                                     location.href = location.href.replace( /#.*/, '' ) + history_hash;
                                 }
                             }
@@ -12192,7 +12218,7 @@ armer = window.jQuery || window.Zepto;
     //var otherRequire = window.require
     //var otherDefine = window.define
     var stopRepeatAssign = false
-    //var rword = /[^, ]+/g //切割字符串为�  ��个小块，以空格或豆号分开它们，结合replace实现字符串的forEach
+    //var rword = /[^, ]+/g //切割字符串为一个个小块，以空格或豆号分开它们，结合replace实现字符串的forEach
     //var class2type = {}
     var oproto = Object.prototype
     var ohasOwn = oproto.hasOwnProperty
@@ -12229,7 +12255,7 @@ armer = window.jQuery || window.Zepto;
 */
 
     /*********************************************************************
-     *                    命名空间与工具函�                                *
+     *                    命名空间与工具函数                               *
      **********************************************************************/
     var getType = $.type;
     var resetNumber = $.slice.resetNumber;
@@ -12261,7 +12287,7 @@ armer = window.jQuery || window.Zepto;
     avalon.Array = $.Array;
 
 /*
-    avalon = function(el) { //创建jQuery式的无new 实例化结�  
+    avalon = function(el) { //创建jQuery式的无new 实例化结构
         return new avalon.init(el)
     }
 
@@ -12269,7 +12295,7 @@ armer = window.jQuery || window.Zepto;
         this[0] = this.element = el
     }
     avalon.fn = avalon.prototype = avalon.init.prototype
-    //率先添加三个判定类型的方�  
+    //率先添加三个判定类型的方法
 
     function getType(obj) { //取得类型
         if (obj == null) {
@@ -12285,8 +12311,8 @@ armer = window.jQuery || window.Zepto;
     avalon.isWindow = function(obj) {
         if (!obj)
             return false
-        // 利用IE678 window == document为true,document == window竟然为false的神奇特�  
-        // 标准浏览器及IE9，IE10等使�  正则�  ��
+        // 利用IE678 window == document为true,document == window竟然为false的神奇特性
+        // 标准浏览器及IE9，IE10等使用 正则检测
         return obj == obj.document && obj.document != obj
     }
 
@@ -12296,7 +12322,7 @@ armer = window.jQuery || window.Zepto;
     if (isWindow(window)) {
         avalon.isWindow = isWindow
     }
-    //判定是否是一个朴素的javascript对象（Object），不是DOM对象，不是BOM对象，不是自定义类的实例�  
+    //判定是否是一个朴素的javascript对象（Object），不是DOM对象，不是BOM对象，不是自定义类的实例。
     avalon.isPlainObject = function(obj) {
         if (getType(obj) !== "object" || obj.nodeType || this.isWindow(obj)) {
             return false
@@ -12323,32 +12349,32 @@ armer = window.jQuery || window.Zepto;
             length = arguments.length,
             deep = false
 
-        // 如果第一个参数为布尔,判定是否深拷�  
+        // 如果第一个参数为布尔,判定是否深拷贝
         if (typeof target === "boolean") {
             deep = target
             target = arguments[1] || {}
             i++
         }
 
-        //确保接受方为�  ��复杂的数据类�  
+        //确保接受方为一个复杂的数据类型
         if (typeof target !== "object" && getType(target) !== "function") {
             target = {}
         }
 
-        //如果只有�  ��参数，那么新成员添加于mix�  ��的对象上
+        //如果只有一个参数，那么新成员添加于mix所在的对象上
         if (i === length) {
             target = this
             i--
         }
 
         for (; i < length; i++) {
-            //只处理非空参�  
+            //只处理非空参数
             if ((options = arguments[i]) != null) {
                 for (name in options) {
                     src = target[name]
                     copy = options[name]
 
-                    // 防止环引�  
+                    // 防止环引用
                     if (target === copy) {
                         continue
                     }
@@ -12390,8 +12416,8 @@ armer = window.jQuery || window.Zepto;
     /*
     var eventMap = avalon.eventMap = {}
 
-    function resetNumber(a, n, end) { //用于模拟slice, splice的效�  
-        if ((a === +a) && !(a % 1)) { //如果是整�  
+    function resetNumber(a, n, end) { //用于模拟slice, splice的效果
+        if ((a === +a) && !(a % 1)) { //如果是整数
             if (a < 0) {
                 a = a * -1 >= n ? 0 : a + n
             } else {
@@ -12434,7 +12460,7 @@ armer = window.jQuery || window.Zepto;
             return ret
         },
         noop: noop,
-        error: function(str, e) { //如果不用Error对象封装�  ��，str在控制台下可能会乱码
+        error: function(str, e) { //如果不用Error对象封装一下，str在控制台下可能会乱码
             throw new (e || Error)(str)
         },
         oneObject: oneObject,
@@ -12520,18 +12546,18 @@ armer = window.jQuery || window.Zepto;
         },
         Array: {
             ensure: function(target, item) {
-                //只有当前数组不存在此元素时只添加�  
+                //只有当前数组不存在此元素时只添加它
                 if (target.indexOf(item) === -1) {
                     target.push(item)
                 }
                 return target
             },
             removeAt: function(target, index) {
-                //移除数组中指定位置的元素，返回布尔表示成功与否�  
+                //移除数组中指定位置的元素，返回布尔表示成功与否。
                 return !!target.splice(index, 1).length
             },
             remove: function(target, item) {
-                //移除数组中第�  ��匹配传参的那个元素，返回布尔表示成功与否�  
+                //移除数组中第一个匹配传参的那个元素，返回布尔表示成功与否。
                 var index = target.indexOf(item)
                 if (~index)
                     return avalon.Array.removeAt(target, index)
@@ -12545,14 +12571,14 @@ armer = window.jQuery || window.Zepto;
         return "avalon" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     }
 
-    //只让节点集合，纯数组，arguments与拥有非负整数的length属�  的纯JS对象通过
+    //只让节点集合，纯数组，arguments与拥有非负整数的length属性的纯JS对象通过
 
     function isArrayLike(obj) {
         if (obj && typeof obj === "object" && !avalon.isWindow(obj)) {
             var n = obj.length
-            if (+n === n && !(n % 1) && n >= 0) { //�  ��length属�  是否为非负整�  
+            if (+n === n && !(n % 1) && n >= 0) { //检测length属性是否为非负整数
                 try {
-                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //如果是原生对�  
+                    if ({}.propertyIsEnumerable.call(obj, "length") === false) { //如果是原生对象
                         return Array.isArray(obj) || /^\s?function/.test(obj.item || obj.callee)
                     }
                     return true
@@ -12563,7 +12589,7 @@ armer = window.jQuery || window.Zepto;
         }
         return false
     }
-    //视浏览器情况采用�  ��的异步回�  在avalon.ready里，还有�  ��分支，用于处理IE6-9)
+    //视浏览器情况采用最快的异步回调(在avalon.ready里，还有一个分支，用于处理IE6-9)
     avalon.nextTick = window.setImmediate ? setImmediate.bind(window) : function(callback) {
         setTimeout(callback, 0) //IE10-11 or W3C
     }
@@ -12577,12 +12603,12 @@ armer = window.jQuery || window.Zepto;
             avalon.error("必须指定ID")
         }
         if (typeof factory !== "function") {
-            avalon.error("factory必须是函�  )
+            avalon.error("factory必须是函数")
         }
         var scope = {
             $watch: noop
         }
-        factory(scope) //得到�  ��定义
+        factory(scope) //得到所有定义
         var model = modelFactory(scope) //偷天换日，将scope换为model
         stopRepeatAssign = true
         factory(model)
@@ -12593,7 +12619,7 @@ armer = window.jQuery || window.Zepto;
 
     function modelFactory(scope, model) {
         if (Array.isArray(scope)) {
-            var arr = scope.concat() //原数组的作为新生成的监控数组�  model而存�  
+            var arr = scope.concat() //原数组的作为新生成的监控数组的$model而存在
             scope.length = 0
             var collection = Collection(scope)
             collection.push.apply(collection, arr)
@@ -12603,12 +12629,12 @@ armer = window.jQuery || window.Zepto;
             return scope
         }
         var vmodel = {} //要返回的对象
-        model = model || {} //放置$model上的属�  
-        var accessingProperties = {} //监控属�  
-        var normalProperties = {} //普�  属�  
-        var computedProperties = [] //计算属�  
-        var watchProperties = arguments[2] || {} //强制要监听的属�  
-        var skipArray = scope.$skipArray //要忽略监控的属�  
+        model = model || {} //放置$model上的属性
+        var accessingProperties = {} //监控属性
+        var normalProperties = {} //普通属性
+        var computedProperties = [] //计算属性
+        var watchProperties = arguments[2] || {} //强制要监听的属性
+        var skipArray = scope.$skipArray //要忽略监控的属性
         for (var i = 0, name; name = skipProperties[i++]; ) {
             delete scope[name]
             normalProperties[name] = true
@@ -12621,7 +12647,7 @@ armer = window.jQuery || window.Zepto;
         for (var i in scope) {
             loopModel(i, scope[i], model, normalProperties, accessingProperties, computedProperties, watchProperties)
         }
-        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //生成�  ��空的ViewModel
+        vmodel = defineProperties(vmodel, descriptorFactory(accessingProperties), normalProperties) //生成一个空的ViewModel
         for (var name in normalProperties) {
             vmodel[name] = normalProperties[name]
         }
@@ -12633,7 +12659,7 @@ armer = window.jQuery || window.Zepto;
         vmodel[subscribers] = []
         for (var i in Observable) {
             var fn = Observable[i]
-            if (!W3C) { //在IE6-8下，VB对象的方法里的this并不指向自身，需要用bind处理�  ��
+            if (!W3C) { //在IE6-8下，VB对象的方法里的this并不指向自身，需要用bind处理一下
                 fn = fn.bind(vmodel)
             }
             vmodel[i] = fn
@@ -12641,7 +12667,7 @@ armer = window.jQuery || window.Zepto;
         vmodel.hasOwnProperty = function(name) {
             return name in vmodel.$model
         }
-        for (var i = 0, fn; fn = computedProperties[i++]; ) { //�  ��强�  计算属�   计算自己的�  
+        for (var i = 0, fn; fn = computedProperties[i++]; ) { //最后强逼计算属性 计算自己的值
             Registry[expose] = fn
             fn()
             collectSubscribers(fn)
@@ -12684,21 +12710,21 @@ armer = window.jQuery || window.Zepto;
 
     function loopModel(name, val, model, normalProperties, accessingProperties, computedProperties, watchProperties) {
         model[name] = val
-        if (normalProperties[name] || (val && val.nodeType)) { //如果是指明不用监控的系统属�  或元素节点，或放�  $skipArray里面
+        if (normalProperties[name] || (val && val.nodeType)) { //如果是指明不用监控的系统属性或元素节点，或放到 $skipArray里面
             return normalProperties[name] = val
         }
-        if (name.charAt(0) === "$" && !watchProperties[name]) { //如果�  �  ��，并且不在watchMore里面�  
+        if (name.charAt(0) === "$" && !watchProperties[name]) { //如果是$开头，并且不在watchMore里面的
             return normalProperties[name] = val
         }
         var valueType = getType(val)
-        if (valueType === "function") { //如果是函数，也不用监�  
+        if (valueType === "function") { //如果是函数，也不用监控
             return normalProperties[name] = val
         }
         var accessor, oldArgs
         if (valueType === "object" && typeof val.get === "function" && Object.keys(val).length <= 2) {
             var setter = val.set,
                 getter = val.get
-            accessor = function(newValue) { //创建计算属�  ，因变量，基本上由其他监控属性触发其改变
+            accessor = function(newValue) { //创建计算属性，因变量，基本上由其他监控属性触发其改变
                 var vmodel = watchProperties.vmodel
                 var value = model[name],
                     preValue = value
@@ -12708,7 +12734,7 @@ armer = window.jQuery || window.Zepto;
                     }
                     if (typeof setter === "function") {
                         var backup = vmodel.$events[name]
-                        vmodel.$events[name] = [] //清空回调，防止内部冒泡�  触发多次$fire
+                        vmodel.$events[name] = [] //清空回调，防止内部冒泡而触发多次$fire
                         setter.call(vmodel, newValue)
                         vmodel.$events[name] = backup
                     }
@@ -12733,7 +12759,7 @@ armer = window.jQuery || window.Zepto;
             }
             computedProperties.push(accessor)
         } else if (rchecktype.test(valueType)) {
-            accessor = function(newValue) { //子ViewModel或监控数�  
+            accessor = function(newValue) { //子ViewModel或监控数组
                 var realAccessor = accessor.$vmodel, preValue = realAccessor.$model
                 if (arguments.length) {
                     if (stopRepeatAssign) {
@@ -12757,7 +12783,7 @@ armer = window.jQuery || window.Zepto;
             accessor.$vmodel = val.$model ? val : modelFactory(val, val)
             model[name] = accessor.$vmodel.$model
         } else {
-            accessor = function(newValue) { //�  ��的数据类�  
+            accessor = function(newValue) { //简单的数据类型
                 var preValue = model[name]
                 if (arguments.length) {
                     if (!isEqual(preValue, newValue)) {
@@ -12774,7 +12800,7 @@ armer = window.jQuery || window.Zepto;
             }
             model[name] = val
         }
-        accessor[subscribers] = [] //订阅者数�  
+        accessor[subscribers] = [] //订阅者数组
         accessingProperties[name] = accessor
     }
     //with绑定生成的代理对象储存池
@@ -12790,7 +12816,7 @@ armer = window.jQuery || window.Zepto;
     }
 
     function updateVModel(a, b, valueType) {
-        //a为原来的VM�  b为新数组或新对象
+        //a为原来的VM， b为新数组或新对象
         if (valueType === "array") {
             if (!Array.isArray(b)) {
                 return a //fix https://github.com/RubyLouvre/avalon/issues/261
@@ -12825,9 +12851,9 @@ armer = window.jQuery || window.Zepto;
         }
     }
 
-    //===================修复浏览器对Object.defineProperties的支�  ================
+    //===================修复浏览器对Object.defineProperties的支持=================
     var defineProperty = Object.defineProperty
-    //如果浏览器不支持ecma262v5的Object.defineProperties或�  存在BUG，比如IE8
+    //如果浏览器不支持ecma262v5的Object.defineProperties或者存在BUG，比如IE8
     //标准浏览器使用__defineGetter__, __defineSetter__实现
     try {
         defineProperty({}, "_", {
@@ -12884,16 +12910,16 @@ armer = window.jQuery || window.Zepto;
                 "\t\tSet [__data__] = d: set [__proxy__] = p",
                 "\t\tSet [__const__] = Me", //链式调用
                 "\tEnd Function")
-            //添加普�  属�  ,因为VBScript对象不能像JS那样随意增删属�  ，必须在这里预先定义�  
+            //添加普通属性,因为VBScript对象不能像JS那样随意增删属性，必须在这里预先定义好
             for (name in normalProperties) {
                 buffer.push("\tPublic [" + name + "]")
             }
             buffer.push("\tPublic [" + 'hasOwnProperty' + "]")
-            //添加访问器属�  
+            //添加访问器属性 
             for (name in accessingProperties) {
                 if (!(name in normalProperties)) { //防止重复定义
                     buffer.push(
-                        //由于不知对方会传入什�  因此set, let都用�  
+                        //由于不知对方会传入什么,因此set, let都用上
                         "\tPublic Property Let [" + name + "](val" + expose + ")", //setter
                         "\t\tCall [__proxy__]([__data__], \"" + name + "\", val" + expose + ")",
                         "\tEnd Property",
@@ -12910,15 +12936,15 @@ armer = window.jQuery || window.Zepto;
                         "\tEnd Property")
                 }
             }
-            buffer.push("End Class") //类定义完�  
+            buffer.push("End Class") //类定义完毕
             buffer.push(
                 "Function " + className + "Factory(a, b)", //创建实例并传入两个关键的参数
                 "\tDim o",
                 "\tSet o = (New " + className + ")(a, b)",
                 "\tSet " + className + "Factory = o",
                 "End Function")
-            window.parseVB(buffer.join("\r\n")) //先创建一个VB类工�  
-            return window[className + "Factory"](accessingProperties, VBMediator) //得到其产�  
+            window.parseVB(buffer.join("\r\n")) //先创建一个VB类工厂
+            return window[className + "Factory"](accessingProperties, VBMediator) //得到其产品
         }
     }
     /*********************************************************************
@@ -12983,7 +13009,7 @@ armer = window.jQuery || window.Zepto;
     }
     if (!rnative.test([].map)) {
         avalon.mix(ap, {
-            //定位操作，返回数组中第一个等于给定参数的元素的索引�  �  
+            //定位操作，返回数组中第一个等于给定参数的元素的索引值。
             indexOf: function(item, index) {
                 var n = this.length,
                     i = ~~index
@@ -12994,7 +13020,7 @@ armer = window.jQuery || window.Zepto;
                         return i
                 return -1
             },
-            //定位引操作，同上，不过是从后遍历�  
+            //定位引操作，同上，不过是从后遍历。
             lastIndexOf: function(item, index) {
                 var n = this.length,
                     i = index == null ? n - 1 : index
@@ -13005,15 +13031,15 @@ armer = window.jQuery || window.Zepto;
                         return i
                 return -1
             },
-            //迭代操作，将数组的元素挨个儿传入�  ��函数中执行�  Ptototype.js的对应名字为each�  
+            //迭代操作，将数组的元素挨个儿传入一个函数中执行。Ptototype.js的对应名字为each。
             forEach: iterator("", '_', ""),
-            //迭代�  在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数�  
+            //迭代类 在数组中的每个项上运行一个函数，如果此函数的值为真，则此元素作为新数组的元素收集起来，并返回新数组
             filter: iterator('r=[],j=0,', 'if(_)r[j++]=this[i]', 'return r'),
-            //收集操作，将数组的元素挨个儿传入�  ��函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect�  
+            //收集操作，将数组的元素挨个儿传入一个函数中执行，然后把它们的返回值组成一个新数组返回。Ptototype.js的对应名字为collect。
             map: iterator('r=[],', 'r[i]=_', 'return r'),
-            //只要数组中有�  ��元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any�  
+            //只要数组中有一个元素满足条件（放进给定函数返回true），那么它就返回true。Ptototype.js的对应名字为any。
             some: iterator("", 'if(_)return true', 'return false'),
-            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all�  
+            //只有数组中的元素都满足条件（放进给定函数返回true），它才返回true。Ptototype.js的对应名字为all。
             every: iterator("", 'if(!_)return false', 'return true')
         })
     }
@@ -13028,7 +13054,7 @@ armer = window.jQuery || window.Zepto;
         }
         return false;
     }
-    if (!root.contains) { //safari5+是把contains方法放在Element.prototype上�  不是Node.prototype
+    if (!root.contains) { //safari5+是把contains方法放在Element.prototype上而不是Node.prototype
         Node.prototype.contains = function(arg) {
             return !!(this.compareDocumentPosition(arg) & 16)
         }
@@ -13038,7 +13064,7 @@ armer = window.jQuery || window.Zepto;
             return fixContains(this, b)
         }
     }
-    if (!root.outerHTML && window.HTMLElement) {//firefox �  1时才有outerHTML
+    if (!root.outerHTML && window.HTMLElement) {//firefox 到11时才有outerHTML
         HTMLElement.prototype.__defineGetter__("outerHTML", function() {
             domParser.textContent = ""
             domParser.appendChild(this)
@@ -13076,7 +13102,7 @@ armer = window.jQuery || window.Zepto;
     /*
     var plugins = {
         alias: function(val) {
-            log("Warning: alias方法已废弃，请用paths, shim配置�  )
+            log("Warning: alias方法已废弃，请用paths, shim配置项")
             for (var c in val) {
                 if (ohasOwn.call(val, c)) {
                     var currValue = val[c]
@@ -13137,17 +13163,17 @@ armer = window.jQuery || window.Zepto;
         }
     }
     /*********************************************************************
-     *                      DOM API的高级封�                            *
+     *                      DOM API的高级封装                           *
      **********************************************************************/
 
     /*
     function hyphen(target) {
-        //转换为连字符线风�  
+        //转换为连字符线风格
         return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase()
     }
 
     function camelize(target) {
-        //转换为驼峰风�  
+        //转换为驼峰风格
         if (target.indexOf("-") < 0 && target.indexOf("_") < 0) {
             return target //提前判断，提高getStyle等的效率
         }
@@ -13388,7 +13414,7 @@ armer = window.jQuery || window.Zepto;
         return null
     }
     cssHooks["@:set"] = function(node, name, value) {
-        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine 在旧式IE下会抛异�  
+        try { //node.style.width = NaN;node.style.width = "xxxxxxx";node.style.width = undefine 在旧式IE下会抛异常
             node.style[name] = value
         } catch (e) {
         }
@@ -13419,7 +13445,7 @@ armer = window.jQuery || window.Zepto;
             thick: ie8 ? '5px' : '6px'
         }
         cssHooks["@:get"] = function(node, name) {
-            //取得精确值，不过它有可能是带em,pc,mm,pt,%等单�  
+            //取得精确值，不过它有可能是带em,pc,mm,pt,%等单位
             var currentStyle = node.currentStyle
             var ret = currentStyle[name]
             if ((rnumnonpx.test(ret) && !rposition.test(ret))) {
@@ -13427,21 +13453,21 @@ armer = window.jQuery || window.Zepto;
                 var style = node.style,
                     left = style.left,
                     rsLeft = node.runtimeStyle.left
-                //②由于③处的style.left = xxx会影响到currentStyle.left�  
-                //因此把它currentStyle.left放到runtimeStyle.left�  
-                //runtimeStyle.left拥有�  ��优先级，不会style.left影响
+                //②由于③处的style.left = xxx会影响到currentStyle.left，
+                //因此把它currentStyle.left放到runtimeStyle.left，
+                //runtimeStyle.left拥有最高优先级，不会style.left影响
                 node.runtimeStyle.left = currentStyle.left
-                //③将精确值赋给到style.left，然后�  过IE的另�  ��私有属�   style.pixelLeft
+                //③将精确值赋给到style.left，然后通过IE的另一个私有属性 style.pixelLeft
                 //得到单位为px的结果；fontSize的分支见http://bugs.jquery.com/ticket/760
                 style.left = name === 'fontSize' ? '1em' : (ret || 0)
                 ret = style.pixelLeft + "px"
-                //④还�  style.left，runtimeStyle.left
+                //④还原 style.left，runtimeStyle.left
                 style.left = left
                 node.runtimeStyle.left = rsLeft
             }
             if (ret === "medium") {
                 name = name.replace("Width", "Style")
-                //border width 默认值为medium，即使其�  "
+                //border width 默认值为medium，即使其为0"
                 if (currentStyle[name] === "none") {
                     ret = "0px"
                 }
@@ -13453,12 +13479,12 @@ armer = window.jQuery || window.Zepto;
             node.style.zoom = 1
         }
         cssHooks["opacity:get"] = function(node) {
-            //这是�  ��的获取IE透明值的方式，不�  ��动用正则了！
+            //这是最快的获取IE透明值的方式，不需要动用正则了！
             var alpha = node.filters.alpha || node.filters[salpha],
                 op = alpha ? alpha.opacity : 100
-            return (op / 100) + "" //确保返回的是字符�  
+            return (op / 100) + "" //确保返回的是字符串
         }
-        //旧式IE无法通过currentStyle取得没有定义在样式表中的width, height�  
+        //旧式IE无法通过currentStyle取得没有定义在样式表中的width, height值
         "width,height".replace(rword, function(name) {
             cssHooks[name + ":get"] = function(node) {
                 if (name === "width") {
@@ -13533,7 +13559,7 @@ armer = window.jQuery || window.Zepto;
                     var doc = node.documentElement
                     //FF chrome    html.scrollHeight< body.scrollHeight
                     //IE 标准模式 : html.scrollHeight> body.scrollHeight
-                    //IE 怪异模式 : html.scrollHeight �  ��等于可视窗口多一点？
+                    //IE 怪异模式 : html.scrollHeight 最大等于可视窗口多一点？
                     return Math.max(node.body[scrollProp], doc[scrollProp], node.body[offsetProp], doc[offsetProp], doc[clientProp])
                 }
                 return cssHooks[method + "::get"](node)
@@ -13553,7 +13579,7 @@ armer = window.jQuery || window.Zepto;
         if (!doc) {
             return pos
         }
-        //http://hkom.blog1.fc2.com/?mode=m&no=750 body的偏移量是不包含margin�  
+        //http://hkom.blog1.fc2.com/?mode=m&no=750 body的偏移量是不包含margin的
         //我们可以通过getBoundingClientRect来获得元素相对于client的rect.
         //http://msdn.microsoft.com/en-us/library/ms536433.aspx
         var box = node.getBoundingClientRect(),
@@ -13564,8 +13590,8 @@ armer = window.jQuery || window.Zepto;
             clientLeft = root.clientLeft >> 0,
             scrollTop = win.pageYOffset || root.scrollTop,
             scrollLeft = win.pageXOffset || root.scrollLeft
-        // 把滚动距离加到left,top中去�  
-        // IE�  ��版本中会自动为HTML元素加上2px的border，我们需要去掉它
+        // 把滚动距离加到left,top中去。
+        // IE一些版本中会自动为HTML元素加上2px的border，我们需要去掉它
         // http://msdn.microsoft.com/en-us/library/ms533564(VS.85).aspx
         pos.top = box.top + scrollTop - clientTop
         pos.left = box.left + scrollLeft - clientLeft
@@ -13585,7 +13611,7 @@ armer = window.jQuery || window.Zepto;
             if (node.hasAttribute) {
                 return node.hasAttribute("value") ? node.value : node.text
             }
-            //specified并不可靠，因此�  过分析outerHTML判定用户有没有显示定义value
+            //specified并不可靠，因此通过分析outerHTML判定用户有没有显示定义value
             return roption.test(node.outerHTML) ? node.value : node.text
         },
         "select:get": function(node, value) {
@@ -13599,21 +13625,21 @@ armer = window.jQuery || window.Zepto;
             for (; i < max; i++) {
                 option = options[i]
                 //旧式IE在reset后不会改变selected，需要改用i === index判定
-                //我们过滤�  ��disabled的option元素，但在safari5下，如果设置select为disable，那么其�  ��孩子都disable
+                //我们过滤所有disabled的option元素，但在safari5下，如果设置select为disable，那么其所有孩子都disable
                 //因此当一个元素为disable，需要检测其是否显式设置了disable及其父节点的disable情况
                 if ((option.selected || i === index) && !option.disabled) {
                     value = getter(option)
                     if (one) {
                         return value
                     }
-                    //收集�  ��selected值组成数组返�  
+                    //收集所有selected值组成数组返回
                     values.push(value)
                 }
             }
             return values
         },
         "select:set": function(node, values, optionSet) {
-            values = [].concat(values) //强制转换为数�  
+            values = [].concat(values) //强制转换为数组
             var getter = valHooks["option:get"]
             for (var i = 0, el; el = node.options[i++]; ) {
                 if ((el.selected = values.indexOf(getter(el)) >= 0)) {
@@ -13636,9 +13662,9 @@ armer = window.jQuery || window.Zepto;
         rxhtml = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
         rcreate = W3C ? /[^\d\D]/ : /(<(?:script|link|style|meta|noscript))/ig,
         scriptTypes = oneObject("text/javascript", "text/ecmascript", "application/ecmascript", "application/javascript", "text/vbscript"),
-    //�  ��处理套嵌关系的标�  
+    //需要处理套嵌关系的标签
         rnest = /<(?:tb|td|tf|th|tr|col|opt|leg|cap|area)/
-    //parseHTML的辅助变�  
+    //parseHTML的辅助变量
     var tagHooks = {
         area: [1, "<map>"],
         param: [1, "<object>"],
@@ -13668,20 +13694,20 @@ armer = window.jQuery || window.Zepto;
             wrapper = domParser,
             firstChild, neo
         if (!W3C) { //fix IE
-            html = html.replace(rcreate, "<br class=msNoScope>$1") //在link style script等标签之前添加一个补�  
+            html = html.replace(rcreate, "<br class=msNoScope>$1") //在link style script等标签之前添加一个补丁
         }
         wrapper.innerHTML = wrap[1] + html + (wrap[2] || "")
         var els = wrapper.getElementsByTagName("script")
-        if (els.length) { //使用innerHTML生成的script节点不会发出请求与执行text属�  
+        if (els.length) { //使用innerHTML生成的script节点不会发出请求与执行text属性
             for (var i = 0, el; el = els[i++]; ) {
-                if (!el.type || scriptTypes[el.type]) { //如果script节点的MIME能让其执行脚�  
+                if (!el.type || scriptTypes[el.type]) { //如果script节点的MIME能让其执行脚本
                     neo = script.cloneNode(false) //FF不能省略参数
                     for (var j = 0, attr; attr = el.attributes[j++]; ) {
-                        if (attr.specified) { //复制其属�  
+                        if (attr.specified) { //复制其属性
                             neo[attr.name] = attr.value
                         }
                     }
-                    neo.text = el.text //必须指定,因为无法在attributes中遍历出�  
+                    neo.text = el.text //必须指定,因为无法在attributes中遍历出来
                     el.parentNode.replaceChild(neo, el) //替换节点
                 }
             }
@@ -13696,7 +13722,7 @@ armer = window.jQuery || window.Zepto;
                 }
             }
         }
-        while (firstChild = wrapper.firstChild) { // 将wrapper上的节点转移到文档碎片上�  
+        while (firstChild = wrapper.firstChild) { // 将wrapper上的节点转移到文档碎片上！
             fragment.appendChild(firstChild)
         }
         return fragment
@@ -13731,14 +13757,14 @@ armer = window.jQuery || window.Zepto;
                 } else {
                     this.$events[type] = [callback]
                 }
-            } else { //重新�  ��监听此VM的第�  ���  ��属�  的变�  
+            } else { //重新开始监听此VM的第一重简单属性的变动
                 this.$events = this.$watch.backup
             }
             return this
         },
         $unwatch: function(type, callback) {
             var n = arguments.length
-            if (n === 0) { //让此VM的所�  watch回调无效�  
+            if (n === 0) { //让此VM的所有$watch回调无效化
                 this.$watch.backup = this.$events
                 this.$events = {}
             } else if (n === 1) {
@@ -13768,14 +13794,14 @@ armer = window.jQuery || window.Zepto;
     }
 
     /*********************************************************************
-     *                           依赖收集与触�                                 *
+     *                           依赖收集与触发                                *
      **********************************************************************/
 
     function registerSubscriber(data) {
-        Registry[expose] = data //暴光此函�  方便collectSubscribers收集
+        Registry[expose] = data //暴光此函数,方便collectSubscribers收集
         avalon.openComputedCollect = true
         var fn = data.evaluator
-        if (fn) { //如果是求值函�  
+        if (fn) { //如果是求值函数
             if (data.type === "duplex") {
                 data.handler()
             } else {
@@ -13788,14 +13814,14 @@ armer = window.jQuery || window.Zepto;
         delete Registry[expose]
     }
 
-    function collectSubscribers(accessor) { //收集依赖于这个访问器的订阅�  
+    function collectSubscribers(accessor) { //收集依赖于这个访问器的订阅者
         if (Registry[expose]) {
             var list = accessor[subscribers]
             list && avalon.Array.ensure(list, Registry[expose]) //只有数组不存在此元素才push进去
         }
     }
 
-    function notifySubscribers(accessor) { //通知依赖于这个访问器的订阅�  更新自身
+    function notifySubscribers(accessor) { //通知依赖于这个访问器的订阅者更新自身
         var list = accessor[subscribers]
         if (list && list.length) {
             var args = aslice.call(arguments, 1)
@@ -13808,7 +13834,7 @@ armer = window.jQuery || window.Zepto;
                     } else {
                         remove = !avalon.contains(root, el)
                     }
-                    if (remove) { //如果它没有在DOM�  
+                    if (remove) { //如果它没有在DOM树
                         list.splice(i, 1)
                         log("Debug: remove " + fn.name)
                     }
@@ -13816,7 +13842,7 @@ armer = window.jQuery || window.Zepto;
                 if (typeof fn === "function") {
                     fn.apply(0, args) //强制重新计算自身
                 } else if (fn.getter) {
-                    fn.handler.apply(fn, args) //处理监控数组的方�  
+                    fn.handler.apply(fn, args) //处理监控数组的方法
                 } else {
                     fn.handler(fn.evaluator.apply(0, fn.args || []), el, fn)
                 }
@@ -13836,7 +13862,7 @@ armer = window.jQuery || window.Zepto;
     //http://www.w3.org/TR/html5/syntax.html#void-elements
     var stopScan = oneObject("area,base,basefont,br,col,command,embed,hr,img,input,link,meta,param,source,track,wbr,noscript,script,style,textarea".toUpperCase())
 
-    //确保元素的内容被完全扫描渲染完毕才调用回�  
+    //确保元素的内容被完全扫描渲染完毕才调用回调
     var interval = W3C ? 15 : 50
 
     function checkScan(elem, callback) {
@@ -13871,7 +13897,7 @@ armer = window.jQuery || window.Zepto;
             elem.removeAttribute(node.name) //removeAttributeNode不会刷新[vm-controller]样式规则
             avalon(elem).removeClass(node.name) //处理IE6
         }
-        scanAttr(elem, vmodels) //扫描特�  节点
+        scanAttr(elem, vmodels) //扫描特性节点
     }
 
     function scanNodes(parent, vmodels) {
@@ -13893,7 +13919,7 @@ armer = window.jQuery || window.Zepto;
             tokens = scanExpr(textNode.nodeValue)
         if (tokens.length) {
             for (var i = 0, token; token = tokens[i++]; ) {
-                var node = DOC.createTextNode(token.value) //将文本转换为文本节点，并替换原来的文本节�  
+                var node = DOC.createTextNode(token.value) //将文本转换为文本节点，并替换原来的文本节点
                 if (token.expr) {
                     var filters = token.filters
                     var binding = {
@@ -13911,7 +13937,7 @@ armer = window.jQuery || window.Zepto;
                             delete bindings.filters
                         }
                     }
-                    bindings.push(binding) //收集带有插�  表达式的文本
+                    bindings.push(binding) //收集带有插值表达式的文本
                 }
                 documentFragment.appendChild(node)
             }
@@ -13938,7 +13964,7 @@ armer = window.jQuery || window.Zepto;
         for (var i = 0, attr; attr = attributes[i++]; ) {
             if (attr.specified) {
                 if (match = attr.name.match(rmsAttr)) {
-                    //如果是以指定前缀命名�  
+                    //如果是以指定前缀命名的
                     var type = match[1]
                     msData[attr.name] = attr.value
                     if (typeof bindingHandlers[type] === "function") {
@@ -13969,7 +13995,7 @@ armer = window.jQuery || window.Zepto;
             return a.priority - b.priority
         })
         if (msData["vm-checked"] && msData["vm-duplex"]) {
-            log("warning!�  ��元素上不能同时定义vm-checked与vm-duplex")
+            log("warning!一个元素上不能同时定义vm-checked与vm-duplex")
         }
         var firstBinding = bindings[0] || {}
         switch (firstBinding.type) {
@@ -13991,15 +14017,15 @@ armer = window.jQuery || window.Zepto;
         }
 
     }
-    //IE67下，在循环绑定中，一个节点如果是通过cloneNode得到，自定义属�  的specified为false，无法进入里面的分支�  
-    //但如果我们去掉scanAttr中的attr.specified�  ��，一个元素会�  0+个特性节点（因为它不区分固有属�  与自定义属�  ），很容易卡死页�  
+    //IE67下，在循环绑定中，一个节点如果是通过cloneNode得到，自定义属性的specified为false，无法进入里面的分支，
+    //但如果我们去掉scanAttr中的attr.specified检测，一个元素会有80+个特性节点（因为它不区分固有属性与自定义属性），很容易卡死页面
     if (!"1" [0]) {
         var cacheAttr = createCache(512)
         var rattrs = /\s+(vm-[^=\s]+)(?:=("[^"]*"|'[^']*'|[^\s>]+))?/g,
             rquote = /^['"]/,
             rtag = /<\w+\b(?:(["'])[^"]*?(\1)|[^>])*>/i
         var getAttributes = function(elem) {
-            if (elem.outerHTML.slice(0, 2) == "</") { //处理旧式IE模拟HTML5新元素带来的伪标�  
+            if (elem.outerHTML.slice(0, 2) == "</") { //处理旧式IE模拟HTML5新元素带来的伪标签
                 return []
             }
             var str = elem.outerHTML.match(rtag)[0]
@@ -14030,7 +14056,7 @@ armer = window.jQuery || window.Zepto;
             bindingHandlers[data.type](data, vmodels)
 
             if (data.evaluator && data.name) { //移除数据绑定，防止被二次解析
-                //chrome使用removeAttributeNode移除不存在的特�  节点时会报错 https://github.com/RubyLouvre/avalon/issues/99
+                //chrome使用removeAttributeNode移除不存在的特性节点时会报错 https://github.com/RubyLouvre/avalon/issues/99
                 data.element.removeAttribute(data.name)
             }
         }
@@ -14052,7 +14078,7 @@ armer = window.jQuery || window.Zepto;
                 break
             }
             value = str.slice(start, stop)
-            if (value) { // {{ 左边的文�  
+            if (value) { // {{ 左边的文本
                 tokens.push({
                     value: value,
                     expr: false
@@ -14064,15 +14090,15 @@ armer = window.jQuery || window.Zepto;
                 break
             }
             value = str.slice(start, stop)
-            if (value) { //处理{{ }}插�  表达�  
+            if (value) { //处理{{ }}插值表达式
                 var leach = []
-                if (value.indexOf("|") > 0) { // 抽取过滤�  先替换掉�  ��短路�  
+                if (value.indexOf("|") > 0) { // 抽取过滤器 先替换掉所有短路与
                     value = value.replace(r11a, "U2hvcnRDaXJjdWl0") //btoa("ShortCircuit")
                     value = value.replace(rfilters, function(c, d, e) {
                         leach.push(d + (e || ""))
                         return ""
                     })
-                    value = value.replace(r11b, "||") //还原短路�  
+                    value = value.replace(r11b, "||") //还原短路与
                 }
                 tokens.push({
                     value: value,
@@ -14083,7 +14109,7 @@ armer = window.jQuery || window.Zepto;
             start = stop + closeTag.length
         } while (1)
         value = str.slice(start)
-        if (value) { //}} 右边的文�  
+        if (value) { //}} 右边的文本
             tokens.push({
                 value: value,
                 expr: false
@@ -14097,9 +14123,9 @@ armer = window.jQuery || window.Zepto;
      **********************************************************************/
 
     var keywords =
-        // 关键�  
+        // 关键字
         "break,case,catch,continue,debugger,default,delete,do,else,false" + ",finally,for,function,if,in,instanceof,new,null,return,switch,this" + ",throw,true,try,typeof,var,void,while,with"
-            // 保留�  
+            // 保留字
             + ",abstract,boolean,byte,char,class,const,double,enum,export,extends" + ",final,float,goto,implements,import,int,interface,long,native" + ",package,private,protected,public,short,static,super,synchronized" + ",throws,transient,volatile"
 
             // ECMA 5 - use strict
@@ -14122,7 +14148,7 @@ armer = window.jQuery || window.Zepto;
         return code ? code.split(/,+/) : []
     }
 
-    //添加赋�  语句
+    //添加赋值语句
 
     function addAssign(vars, scope, name, duplex) {
         var ret = [],
@@ -14156,7 +14182,7 @@ armer = window.jQuery || window.Zepto;
             return false
         })
     }
-    //缓存求�  函数，以便多次利�  
+    //缓存求值函数，以便多次利用
 
     function createCache(maxLength) {
         var keys = []
@@ -14170,7 +14196,7 @@ armer = window.jQuery || window.Zepto;
         return cache;
     }
     var cacheExpr = createCache(256)
-    //取得求�  函数及其传参
+    //取得求值函数及其传参
     var rduplex = /\w\[.*\]|\w\.\w/
     var rproxy = /(\$proxy\$[a-z]+)\d+$/
     function parseExpr(code, scopes, data, four) {
@@ -14184,7 +14210,7 @@ armer = window.jQuery || window.Zepto;
             names = [],
             args = [],
             prefix = ""
-        //args 是一个对象数组， names 是将要生成的求�  函数的参�  
+        //args 是一个对象数组， names 是将要生成的求值函数的参数
         vars = uniqArray(vars), scopes = uniqArray(scopes, 1)
         for (var i = 0, sn = scopes.length; i < sn; i++) {
             if (vars.length) {
@@ -14268,7 +14294,7 @@ armer = window.jQuery || window.Zepto;
         }
     }
 
-    //parseExpr的智能引用代�  
+    //parseExpr的智能引用代理
 
     function parseExprProxy(code, scopes, data, tokens) {
         if (Array.isArray(tokens)) {
@@ -14293,21 +14319,21 @@ armer = window.jQuery || window.Zepto;
                 return data.type + " binding to eval(" + code + ")"
             }
             //方便调试
-            //这里非常重要,我们通过判定视图刷新函数的element是否在DOM树决�  
-            //将它移出订阅者列�  
+            //这里非常重要,我们通过判定视图刷新函数的element是否在DOM树决定
+            //将它移出订阅者列表
             registerSubscriber(data)
         }
     }
     avalon.parseExprProxy = parseExprProxy
     /*********************************************************************
-     *绑定模块（实现�  操作数据即操作DOM”的关键，将DOM操作放�  出前端开发人员的视野，让它交由框架自行处理，�  ��人员专致于业务本身） *                                 *
+     *绑定模块（实现“操作数据即操作DOM”的关键，将DOM操作放逐出前端开发人员的视野，让它交由框架自行处理，开发人员专致于业务本身） *                                 *
      **********************************************************************/
     /*
     var cacheDisplay = oneObject("a,abbr,b,span,strong,em,font,i,kbd", "inline")
     avalon.mix(cacheDisplay, oneObject("div,h1,h2,h3,h4,h5,h6,section,p", "block"))
 
     function parseDisplay(nodeName, val) {
-        //用于取得此类标签的默认display�  
+        //用于取得此类标签的默认display值
         nodeName = nodeName.toLowerCase()
         if (!cacheDisplay[nodeName]) {
             var node = DOC.createElement(nodeName)
@@ -14370,7 +14396,7 @@ armer = window.jQuery || window.Zepto;
         avalon.contains = fixContains
     }
 */
-    //这里的函数每当VM发生改变后，都会被执行（操作方为notifySubscribers�  
+    //这里的函数每当VM发生改变后，都会被执行（操作方为notifySubscribers）
     var bindingExecutors = avalon.bindingExecutors = {
         "attr": function(val, elem, data) {
             var method = data.type,
@@ -14379,8 +14405,8 @@ armer = window.jQuery || window.Zepto;
                 avalon(elem).css(attrName, val)
             } else if (method === "attr") {
                 // vm-attr-class="xxx" vm.xxx="aaa bbb ccc"将元素的className设置为aaa bbb ccc
-                // vm-attr-class="xxx" vm.xxx=false  清空元素的所有类�  
-                // vm-attr-name="yyy"  vm.yyy="ooo" 为元素设置name属�  
+                // vm-attr-class="xxx" vm.xxx=false  清空元素的所有类名
+                // vm-attr-name="yyy"  vm.yyy="ooo" 为元素设置name属性
                 var toRemove = (val === false) || (val === null) || (val === void 0)
                 if (toRemove)
                     elem.removeAttribute(attrName)
@@ -14430,13 +14456,13 @@ armer = window.jQuery || window.Zepto;
                         xhr.send(null)
                     }
                 } else {
-                    //IE系列与够新的标准浏览器支持�  过ID取得元素（firefox14+�  
+                    //IE系列与够新的标准浏览器支持通过ID取得元素（firefox14+）
                     //http://tjvantoll.com/2012/07/19/dom-element-references-as-global-variables/
                     var el = val && val.nodeType == 1 ? val : DOC.getElementById(val)
                     if (el) {
                         if (el.tagName === "NOSCRIPT" && !(el.innerHTML || el.fixIE78)) { //IE7-8 innerText,innerHTML都无法取得其内容，IE6能取得其innerHTML
                             var xhr = getXHR() //IE9-11与chrome的innerHTML会得到转义的内容，它们的innerText可以
-                            xhr.open("GET", location, false) //谢谢Nodejs 乱炖�  深圳-纯属虚构
+                            xhr.open("GET", location, false) //谢谢Nodejs 乱炖群 深圳-纯属虚构
                             xhr.send(null)
                             //http://bbs.csdn.net/topics/390349046?page=1#post-393492653
                             var noscripts = DOC.getElementsByTagName("noscript")
@@ -14457,7 +14483,7 @@ armer = window.jQuery || window.Zepto;
                 }
             } else {
                 if (!root.hasAttribute && typeof val === "string" && (method === "src" || method === "href")) {
-                    val = val.replace(/&amp;/g, "&") //处理IE67自动转义的问�  
+                    val = val.replace(/&amp;/g, "&") //处理IE67自动转义的问题
                 }
                 elem[method] = val
             }
@@ -14480,7 +14506,7 @@ armer = window.jQuery || window.Zepto;
                         break;
                     case "hover":
                     case "active":
-                        if (!data.init) { //确保只绑定一�  
+                        if (!data.init) { //确保只绑定一次
                             if (method === "hover") { //在移出移入时切换类名
                                 var event1 = "mouseenter",
                                     event2 = "mouseleave"
@@ -14555,11 +14581,11 @@ armer = window.jQuery || window.Zepto;
                         }
                         spans = null
                         break
-                    case "del": //将pos后的el个元素删�  pos, el都是数字)
+                    case "del": //将pos后的el个元素删掉(pos, el都是数字)
                         proxies.splice(pos, el) //移除对应的子VM
                         removeFromSanctuary(removeView(locatedNode, group, el))
                         break
-                    case "index": //将proxies中的第pos个起的所有元素重新索引（pos为数字，el用作循环变量�  
+                    case "index": //将proxies中的第pos个起的所有元素重新索引（pos为数字，el用作循环变量）
                         var last = proxies.length - 1
                         for (; el = proxies[pos]; pos++) {
                             el.$index = pos
@@ -14586,7 +14612,7 @@ armer = window.jQuery || window.Zepto;
                         removeFromSanctuary(deleteFragment)
                         proxies.length = 0
                         break
-                    case "move": //将proxies中的第pos个元素移动el位置�  pos, el都是数字)
+                    case "move": //将proxies中的第pos个元素移动el位置上(pos, el都是数字)
                         var t = proxies.splice(pos, 1)[0]
                         if (t) {
                             proxies.splice(el, 0, t)
@@ -14595,7 +14621,7 @@ armer = window.jQuery || window.Zepto;
                             parent.insertBefore(moveNode, locatedNode)
                         }
                         break
-                    case "set": //将proxies中的第pos个元素的VM设置为el（pos为数字，el任意�  
+                    case "set": //将proxies中的第pos个元素的VM设置为el（pos为数字，el任意）
                         var proxy = proxies[pos]
                         if (proxy) {
                             proxy[proxy.$itemName] = el
@@ -14608,7 +14634,7 @@ armer = window.jQuery || window.Zepto;
                         var keys = [],
                             spans = [],
                             lastFn = {}
-                        for (var key in pos) { //得到�  ��键名
+                        for (var key in pos) { //得到所有键名
                             if (pos.hasOwnProperty(key) && key !== "hasOwnProperty") {
                                 keys.push(key)
                             }
@@ -14669,7 +14695,7 @@ armer = window.jQuery || window.Zepto;
         },
         "if": function(val, elem, data) {
             var placehoder = data.placehoder
-            if (val) { //插回DOM�  
+            if (val) { //插回DOM树
                 if (!data.msInDocument) {
                     data.msInDocument = true
                     try {
@@ -14684,7 +14710,7 @@ armer = window.jQuery || window.Zepto;
 //                        data.handler = noop
 //                    }
                 }
-            } else { //移出DOM树，放进ifSanctuary DIV中，并用注释节点占据原位�  
+            } else { //移出DOM树，放进ifSanctuary DIV中，并用注释节点占据原位置
 
                 if (data.msInDocument) {
                     data.msInDocument = false
@@ -14744,9 +14770,9 @@ armer = window.jQuery || window.Zepto;
         "widget": noop
     }
     var rwhitespace = /^\s+$/
-    //这里的函数只会在第一次被扫描后被执行�  ��，并放进行对应VM属�  的subscribers数组内（操作方为registerSubscriber�  
+    //这里的函数只会在第一次被扫描后被执行一次，并放进行对应VM属性的subscribers数组内（操作方为registerSubscriber）
     var bindingHandlers = avalon.bindingHandlers = {
-        //这是�  ��字符串属性绑定的范本, 方便你在title, alt,  src, href, include, css添加插�  表达�  
+        //这是一个字符串属性绑定的范本, 方便你在title, alt,  src, href, include, css添加插值表达式
         //<a vm-href="{{url.hostname}}/{{url.pathname}}.html">
         "attr": function(data, vmodels) {
             var text = data.value.trim(),
@@ -14758,14 +14784,14 @@ armer = window.jQuery || window.Zepto;
                     text = RegExp.$1
                 }
             }
-            data.handlerName = "attr" //handleName用于处理多种绑定共用同一种bindingExecutor的情�  
+            data.handlerName = "attr" //handleName用于处理多种绑定共用同一种bindingExecutor的情况
             parseExprProxy(text, vmodels, data, (simple ? null : scanExpr(data.value)))
         },
         "checked": function(data, vmodels) {
             data.handlerName = "checked"
             parseExprProxy(data.value, vmodels, data)
         },
-        //根据VM的属性�  或表达式的�  切换类名，vm-class="xxx yyy zzz:flag" 
+        //根据VM的属性值或表达式的值切换类名，vm-class="xxx yyy zzz:flag" 
         //http://www.cnblogs.com/rubylouvre/archive/2012/12/17/2818540.html
         "class": function(data, vmodels) {
             var oldStyle = data.param,
@@ -14775,24 +14801,24 @@ armer = window.jQuery || window.Zepto;
             if (!oldStyle || isFinite(oldStyle)) {
                 data.param = "" //去掉数字
                 var noExpr = text.replace(rexprg, function(a) {
-                    return Math.pow(10, a.length - 1) //将插值表达式插入10的N-1次方来占�  
+                    return Math.pow(10, a.length - 1) //将插值表达式插入10的N-1次方来占位
                 })
                 var colonIndex = noExpr.indexOf(":") //取得第一个冒号的位置
-                if (colonIndex === -1) { // 比如 vm-class="aaa bbb ccc" 的情�  
+                if (colonIndex === -1) { // 比如 vm-class="aaa bbb ccc" 的情况
                     var className = text
-                } else { // 比如 vm-class-1="ui-state-active:checked" 的情�  
+                } else { // 比如 vm-class-1="ui-state-active:checked" 的情况 
                     className = text.slice(0, colonIndex)
                     rightExpr = text.slice(colonIndex + 1)
-                    parseExpr(rightExpr, vmodels, data) //决定是添加还是删�  
+                    parseExpr(rightExpr, vmodels, data) //决定是添加还是删除
                     if (!data.evaluator) {
-                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' 不存在于VM�  )
+                        log("Debug: vm-class '" + (rightExpr || "").trim() + "' 不存在于VM中")
                         return false
                     } else {
                         data._evaluator = data.evaluator
                         data._args = data.args
                     }
                 }
-                var hasExpr = rexpr.test(className) //比如vm-class="width{{w}}"的情�  
+                var hasExpr = rexpr.test(className) //比如vm-class="width{{w}}"的情况
                 if (!hasExpr) {
                     data._class = className
                 }
@@ -14828,7 +14854,7 @@ armer = window.jQuery || window.Zepto;
             data.handler = bindingExecutors.each
             data.callbackName = "data-" + (type || "each") + "-rendered"
             if (type !== "repeat") {
-                avalon.log("Warning:建议使用vm-repeat代替vm-each, vm-with, vm-repeat只占用一个标签并且�  能更�  )
+                avalon.log("Warning:建议使用vm-repeat代替vm-each, vm-with, vm-repeat只占用一个标签并且性能更好")
             }
             data.callbackElement = data.parent = elem
             var freturn = true
@@ -14945,7 +14971,7 @@ armer = window.jQuery || window.Zepto;
         },
         "visible": function(data, vmodels) {
             var elem = data.element
-            if (!supportDisplay && !root.contains(elem)) { //fuck firfox 全家�  
+            if (!supportDisplay && !root.contains(elem)) { //fuck firfox 全家！
                 var display = parseDisplay(elem.tagName)
             }
             display = display || avalon(elem).css("display")
@@ -14969,12 +14995,12 @@ armer = window.jQuery || window.Zepto;
             if (typeof constructor === "function") { //vm-widget="tabs,tabsAAA,optname"
                 vmodels = element.vmodels || vmodels
                 for (var i = 0, v; v = vmodels[i++]; ) {
-                    if (VMODELS[v.$id]) { //取得离它�  ��由用户定义的VM
+                    if (VMODELS[v.$id]) { //取得离它最近由用户定义的VM
                         var nearestVM = v
                         break
                     }
                 }
-                var optName = args[2] || widget //尝试获得配置项的名字，没有则取widget的名�  
+                var optName = args[2] || widget //尝试获得配置项的名字，没有则取widget的名字
                 if (nearestVM && typeof nearestVM[optName] === "object") {
                     vmOptions = nearestVM[optName]
                     vmOptions = vmOptions.$model || vmOptions
@@ -14983,7 +15009,7 @@ armer = window.jQuery || window.Zepto;
                         args[1] = id
                     }
                 }
-                var widgetData = avalon.getWidgetData(element, args[0]) //抽取data-tooltip-text、data-tooltip-attr属�  ，组成一个配置对�  
+                var widgetData = avalon.getWidgetData(element, args[0]) //抽取data-tooltip-text、data-tooltip-attr属性，组成一个配置对象
                 data[widget + "Id"] = args[1]
                 data[widget + "Options"] = avalon.mix({}, constructor.defaults, vmOptions, widgetData)
                 element.removeAttribute("vm-widget")
@@ -15015,16 +15041,16 @@ armer = window.jQuery || window.Zepto;
     })
     bindingHandlers.data = bindingHandlers.text = bindingHandlers.html
     //============================= string preperty binding =======================
-    //与href绑定�  用法差不多的其他字符串属性的绑定�  
-    //建议不要直接在src属�  上修改，这样会发出无效的请求，请使用vm-src
+    //与href绑定器 用法差不多的其他字符串属性的绑定器
+    //建议不要直接在src属性上修改，这样会发出无效的请求，请使用vm-src
     "title,alt,src,value,css,include,href".replace(rword, function(name) {
         bindingHandlers[name] = bindingHandlers.attr
     })
     //============================= model binding =======================
-    //将模型中的字段与input, textarea的value值关联在�  ��
+    //将模型中的字段与input, textarea的value值关联在一起
     var modelBinding = bindingHandlers.duplex
-    //如果�  ��input标签添加了model绑定。那么它对应的字段将与元素的value连结在一�  
-    //字段变，value就变；value变，字段也跟�  ��。默认是绑定input事件�  
+    //如果一个input标签添加了model绑定。那么它对应的字段将与元素的value连结在一起
+    //字段变，value就变；value变，字段也跟着变。默认是绑定input事件，
     modelBinding.INPUT = function(element, evaluator, data) {
         var fixType = data.param,
             type = element.type,
@@ -15035,7 +15061,7 @@ armer = window.jQuery || window.Zepto;
         if (type === "checkbox" && fixType === "radio") {
             type = "radio"
         }
-        //当value变化时改变model的�  
+        //当value变化时改变model的值
         var updateVModel = function() {
             var val = element.oldValue = element.value
             if ($elem.data("duplex-observe") !== false) {
@@ -15043,7 +15069,7 @@ armer = window.jQuery || window.Zepto;
                 callback.call(element, val)
             }
         }
-        //当model变化�  它就会改变value的�  
+        //当model变化时,它就会改变value的值
         data.handler = function() {
             var val = evaluator()
             if (val !== element.value) {
@@ -15052,7 +15078,7 @@ armer = window.jQuery || window.Zepto;
         }
         if (type === "radio") {
             data.handler = function() {
-                //IE6是�  过defaultChecked来实现打勾效�  
+                //IE6是通过defaultChecked来实现打勾效果
                 element.defaultChecked = (element.checked = /bool|text/.test(fixType) ? evaluator() + "" === element.value : !!evaluator())
             }
             updateVModel = function() {
@@ -15083,13 +15109,13 @@ armer = window.jQuery || window.Zepto;
                     if (Array.isArray(array)) {
                         avalon.Array[method](array, element.value)
                     } else {
-                        avalon.error("vm-duplex位于checkbox时要求对应一个数�  )
+                        avalon.error("vm-duplex位于checkbox时要求对应一个数组")
                     }
                     callback.call(element, array)
                 }
             }
             data.handler = function() {
-                var array = [].concat(evaluator()) //强制转换为数�  
+                var array = [].concat(evaluator()) //强制转换为数组
                 element.checked = array.indexOf(element.value) >= 0
             }
             removeFn = $elem.bind("click", updateVModel) //IE6-8
@@ -15195,7 +15221,7 @@ armer = window.jQuery || window.Zepto;
         var $elem = avalon(element)
         function updateVModel() {
             if ($elem.data("duplex-observe") !== false) {
-                var val = $elem.val() //字符串或字符串数�  
+                var val = $elem.val() //字符串或字符串数组
                 if (val + "" !== oldValue) {
                     evaluator(val)
                     oldValue = val + ""
@@ -15221,7 +15247,7 @@ armer = window.jQuery || window.Zepto;
             var currHTML = element.innerHTML
             if (currHTML === innerHTML) {
                 clearInterval(id)
-                //先等到select里的option元素被扫描后，才根据model设置selected属�    
+                //先等到select里的option元素被扫描后，才根据model设置selected属性  
                 registerSubscriber(data)
             } else {
                 innerHTML = currHTML
@@ -15262,7 +15288,7 @@ armer = window.jQuery || window.Zepto;
         ret.preventDefault = function() { //阻止默认行为
             event.returnValue = false
         }
-        ret.stopPropagation = function() { //阻止事件在DOM树中的传�  
+        ret.stopPropagation = function() { //阻止事件在DOM树中的传播
             event.cancelBubble = true
         }
         return ret
@@ -15312,7 +15338,7 @@ armer = window.jQuery || window.Zepto;
         }
     }
     /*********************************************************************
-     *          监控数组（与vm-each, vm-repeat配合使用�                      *
+     *          监控数组（与vm-each, vm-repeat配合使用）                     *
      **********************************************************************/
 
     function Collection(model) {
@@ -15320,7 +15346,7 @@ armer = window.jQuery || window.Zepto;
         array.$id = generateID()
         array[subscribers] = []
         array.$model = model // model.concat()
-        array.$events = {} //VB对象的方法里的this并不指向自身，需要使用bind处理�  ��
+        array.$events = {} //VB对象的方法里的this并不指向自身，需要使用bind处理一下
         array._ = modelFactory({
             length: model.length
         })
@@ -15337,7 +15363,7 @@ armer = window.jQuery || window.Zepto;
     var _splice = ap.splice
     var CollectionPrototype = {
         _splice: _splice,
-        _add: function(arr, pos) { //在第pos个位置上，添加一组元�  
+        _add: function(arr, pos) { //在第pos个位置上，添加一组元素
             var oldLength = this.length
             pos = typeof pos === "number" ? pos : oldLength
             var added = []
@@ -15350,7 +15376,7 @@ armer = window.jQuery || window.Zepto;
                 return this._.length = this.length
             }
         },
-        _del: function(pos, n) { //在第pos个位置上，删除N个元�  
+        _del: function(pos, n) { //在第pos个位置上，删除N个元素
             var ret = this._splice(pos, n)
             if (ret.length) {
                 notifySubscribers(this, "del", pos, n)
@@ -15384,11 +15410,11 @@ armer = window.jQuery || window.Zepto;
             return el //返回被移除的元素
         },
         splice: function(a, b) {
-            // 必须存在第一个参数，�  ��大于-1, 为添加或删除元素的基�  
+            // 必须存在第一个参数，需要大于-1, 为添加或删除元素的基点
             a = resetNumber(a, this.length)
             var removed = _splice.apply(this.$model, arguments),
                 ret = []
-            this._stopFireLength = true //确保在这个方法中 , $watch("length",fn)只触发一�  
+            this._stopFireLength = true //确保在这个方法中 , $watch("length",fn)只触发一次
             if (removed.length) {
                 ret = this._del(a, removed.length)
                 if (arguments.length <= 2) { //如果没有执行添加操作，需要手动resetIndex
@@ -15408,7 +15434,7 @@ armer = window.jQuery || window.Zepto;
         size: function() { //取得数组长度，这个函数可以同步视图，length不能
             return this._.length
         },
-        remove: function(el) { //移除第一个等于给定�  的元�  
+        remove: function(el) { //移除第一个等于给定值的元素
             var index = this.indexOf(el)
             if (index >= 0) {
                 return this.removeAt(index)
@@ -15422,7 +15448,7 @@ armer = window.jQuery || window.Zepto;
             notifySubscribers(this, "clear", 0)
             return this
         },
-        removeAll: function(all) { //移除N个元�  
+        removeAll: function(all) { //移除N个元素
             if (Array.isArray(all)) {
                 all.forEach(function(el) {
                     this.remove(el)
@@ -15502,7 +15528,7 @@ armer = window.jQuery || window.Zepto;
         return val
     }
 
-    //取得el在array的位�  
+    //取得el在array的位置
 
     function getIndex(a, array, start) {
         for (var i = start, n = array.length; i < n; i++) {
@@ -15513,7 +15539,7 @@ armer = window.jQuery || window.Zepto;
         return -1
     }
     //============ each/repeat/with binding 用到的辅助函数与对象 ======================
-    //得到某一元素节点或文档碎片对象下的所有注释节�  
+    //得到某一元素节点或文档碎片对象下的所有注释节点
     var queryComments = DOC.createTreeWalker ? function(parent) {
         var tw = DOC.createTreeWalker(parent, NodeFilter.SHOW_COMMENT, null, null),
             comment, ret = []
@@ -15524,7 +15550,7 @@ armer = window.jQuery || window.Zepto;
     } : function(parent) {
         return parent.getElementsByTagName("!")
     }
-    //将�  过vm-if移出DOM树放进ifSanctuary的元素节点移出来，以便垃圾回�  
+    //将通过vm-if移出DOM树放进ifSanctuary的元素节点移出来，以便垃圾回收
 
     function removeFromSanctuary(parent) {
         var comments = queryComments(parent)
@@ -15548,7 +15574,7 @@ armer = window.jQuery || window.Zepto;
             })
         }
     }
-    //为vm-each, vm-with, vm-repeat要循环的元素外包�  ��msloop临时节点，vm-controller的�  为代理VM�  id
+    //为vm-each, vm-with, vm-repeat要循环的元素外包一个msloop临时节点，vm-controller的值为代理VM的$id
     function shimController(data, transation, spans, proxy) {
         var tview = data.template.cloneNode(true)
         var id = proxy.$id
@@ -15578,10 +15604,10 @@ armer = window.jQuery || window.Zepto;
         }
         return span.patchRepeat = fn
     }
-    // 取得用于定位的节点�  在绑定了vm-each, vm-with属�  的元素里，它的整个innerHTML都会视为�  ��子模板先行移出DOM树，
-    // 然后如果它的元素有多少个（vm-each）或键�  对有多少双（vm-with），就将它复制多少份(多少为N)，再经过扫描后，重新插入该元素中�  
-    // 这时该元素的孩子将分为N等分，每等份的第�  ��节点就是这个用于定位的节点，
-    // 方便我们根据它算出整个等分的节点们，然后整体移除或移动它们�  
+    // 取得用于定位的节点。在绑定了vm-each, vm-with属性的元素里，它的整个innerHTML都会视为一个子模板先行移出DOM树，
+    // 然后如果它的元素有多少个（vm-each）或键值对有多少双（vm-with），就将它复制多少份(多少为N)，再经过扫描后，重新插入该元素中。
+    // 这时该元素的孩子将分为N等分，每等份的第一个节点就是这个用于定位的节点，
+    // 方便我们根据它算出整个等分的节点们，然后整体移除或移动它们。
 
     function getLocatedNode(parent, data, pos) {
         if (data.startRepeat) {
@@ -15612,7 +15638,7 @@ armer = window.jQuery || window.Zepto;
         }
         return view
     }
-    // 为vm-each, vm-repeat创建�  ��代理对象，�  过它们能使用�  ��额外的属性与功能�  index,$first,$last,$remove,$key,$val,$outer�  
+    // 为vm-each, vm-repeat创建一个代理对象，通过它们能使用一些额外的属性与功能（$index,$first,$last,$remove,$key,$val,$outer）
     var watchEachOne = oneObject("$index,$first,$last")
 
     function createWithProxy(key, val, $outer) {
@@ -15646,7 +15672,7 @@ armer = window.jQuery || window.Zepto;
         return proxy
     }
     /*********************************************************************
-     *                  文本绑定里默认可用的过滤�                           *
+     *                  文本绑定里默认可用的过滤器                          *
      **********************************************************************/
     var filters = avalon.filters = {
         uppercase: function(str) {
@@ -15670,14 +15696,14 @@ armer = window.jQuery || window.Zepto;
             return str.toLowerCase()
         },
         truncate: function(target, length, truncation) {
-            //length，新字符串长度，truncation，新字符串的结尾的字�  返回新字符串
+            //length，新字符串长度，truncation，新字符串的结尾的字段,返回新字符串
             length = length || 30
             truncation = truncation === void(0) ? "..." : truncation
             return target.length > length ? target.slice(0, length - truncation.length) + truncation : String(target)
         },
         camelize: camelize,
         escape: function(html) {
-            //将字符串经过 html 转义得到适合在页面中显示的内�   例如替换 < �  &lt 
+            //将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt 
             return String(html)
                 .replace(/&(?!\w+;)/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -15685,15 +15711,15 @@ armer = window.jQuery || window.Zepto;
                 .replace(/"/g, '&quot;')
         },
         currency: function(number, symbol) {
-            symbol = symbol || "�  
+            symbol = symbol || "￥"
             return symbol + avalon.filters.number(number)
         },
         number: function(number, decimals, dec_point, thousands_sep) {
             //与PHP的number_format完全兼容
             //number	必需，要格式化的数字
-            //decimals	可�  ，规定多少个小数位�  
-            //dec_point	可�  ，规定用作小数点的字符串（默认为 . ）�  
-            //thousands_sep	可�  ，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必�  ���  
+            //decimals	可选，规定多少个小数位。
+            //dec_point	可选，规定用作小数点的字符串（默认为 . ）。
+            //thousands_sep	可选，规定用作千位分隔符的字符串（默认为 , ），如果设置了该参数，那么所有其他参数都是必需的。
             // http://kevin.vanzonneveld.net
             number = (number + "").replace(/[^0-9+\-Ee.]/g, "")
             var n = !isFinite(+number) ? 0 : +number,
@@ -15902,27 +15928,27 @@ armer = window.jQuery || window.Zepto;
                 1: "下午"
             },
             DAY: {
-                0: "星期�  ,
-                1: "星期�  ,
-                2: "星期�  ,
-                3: "星期�  ,
-                4: "星期�  ,
-                5: "星期�  ,
-                6: "星期�  
+                0: "星期日",
+                1: "星期一",
+                2: "星期二",
+                3: "星期三",
+                4: "星期四",
+                5: "星期五",
+                6: "星期六"
             },
             MONTH: {
-                0: "1�  ,
-                1: "2�  ,
-                2: "3�  ,
-                3: "4�  ,
-                4: "5�  ,
-                5: "6�  ,
-                6: "7�  ,
-                7: "8�  ,
-                8: "9�  ,
-                9: "10�  ,
-                10: "11�  ,
-                11: "12�  
+                0: "1月",
+                1: "2月",
+                2: "3月",
+                3: "4月",
+                4: "5月",
+                5: "6月",
+                6: "7月",
+                7: "8月",
+                8: "9月",
+                9: "10月",
+                10: "11月",
+                11: "12月"
             },
             SHORTDAY: {
                 "0": "周日",
@@ -15934,7 +15960,7 @@ armer = window.jQuery || window.Zepto;
                 "6": "周六"
             },
             fullDate: "y年M月d日EEEE",
-            longDate: "y年M月d�  ,
+            longDate: "y年M月d日",
             medium: "yyyy-M-d ah:mm:ss",
             mediumDate: "yyyy-M-d",
             mediumTime: "ah:mm:ss",
@@ -15965,7 +15991,7 @@ armer = window.jQuery || window.Zepto;
 
     new function() {
         var loadings = [] //正在加载中的模块列表
-        var factorys = [] //储存�  ��绑定ID与factory对应关系的模块（标准浏览器下，先parse的script节点会先onload�  
+        var factorys = [] //储存需要绑定ID与factory对应关系的模块（标准浏览器下，先parse的script节点会先onload）
         var basepath
 
         function cleanUrl(url) {
@@ -15974,7 +16000,7 @@ armer = window.jQuery || window.Zepto;
 
         plugins.js = function(url, shim) {
             var id = cleanUrl(url)
-            if (!modules[id]) { //如果之前没有加载�  
+            if (!modules[id]) { //如果之前没有加载过
                 modules[id] = {
                     id: id,
                     parent: parent,
@@ -15997,7 +16023,7 @@ armer = window.jQuery || window.Zepto;
             return id
         }
         plugins.css = function(url) {
-            var id = url.replace(/(#.+|\W)/g, "") ////用于处理掉href中的hash与所有特殊符�  
+            var id = url.replace(/(#.+|\W)/g, "") ////用于处理掉href中的hash与所有特殊符号
             if (!DOC.getElementById(id)) {
                 var node = DOC.createElement("link")
                 node.rel = "stylesheet"
@@ -16009,26 +16035,26 @@ armer = window.jQuery || window.Zepto;
         plugins.css.ext = ".css"
         plugins.js.ext = ".js"
         var cur = getCurrentScript(true)
-        if (!cur) { //处理window safari的Error没有stack的问�  
+        if (!cur) { //处理window safari的Error没有stack的问题
             cur = avalon.slice(DOC.scripts).pop().src
         }
         var url = cleanUrl(cur)
         basepath = kernel.base = url.slice(0, url.lastIndexOf("/") + 1)
 
         function getCurrentScript(base) {
-            // 参�   https://github.com/samyk/jiagra/blob/master/jiagra.js
+            // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
             var stack
             try {
                 a.b.c() //强制报错,以便捕获e.stack
             } catch (e) { //safari的错误对象只有line,sourceId,sourceURL
                 stack = e.stack
                 if (!stack && window.opera) {
-                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取�  �  ��对e对象转字符串进行抽取
+                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
                     stack = (String(e).match(/of linked script \S+/g) || []).join(" ")
                 }
             }
             if (stack) {
-                //e.stack�  ���  ��在所有支持的浏览器大致如�  
+                //e.stack最后一行在所有支持的浏览器大致如下:
                 //chrome23:
                 //at http://113.93.50.63/data.js:4:1
                 //firefox17:
@@ -16038,11 +16064,11 @@ armer = window.jQuery || window.Zepto;
                 //IE10:
                 //at Global code (http://113.93.50.63/data.js:4:1)
                 //firefox4+ 可以用document.currentScript
-                stack = stack.split(/[@ ]/g).pop() //取得�  ���  ��,�  ���  ��空格或@之后的部�  
-                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //去掉换行�  
+                stack = stack.split(/[@ ]/g).pop() //取得最后一行,最后一个空格或@之后的部分
+                stack = stack[0] === "(" ? stack.slice(1, -1) : stack.replace(/\s/, "") //去掉换行符
                 return stack.replace(/(:\d+)?:\d+$/i, "") //去掉行号与或许存在的出错字符起始位置
             }
-            var nodes = (base ? DOC : head).getElementsByTagName("script") //只在head标签中寻�  
+            var nodes = (base ? DOC : head).getElementsByTagName("script") //只在head标签中寻找
             for (var i = nodes.length, node; node = nodes[--i]; ) {
                 if ((base || node.className === subscribers) && node.readyState === "interactive") {
                     return node.className = node.src
@@ -16051,7 +16077,7 @@ armer = window.jQuery || window.Zepto;
         }
 
         function checkCycle(deps, nick) {
-            //�  ��是否存在循环依赖
+            //检测是否存在循环依赖
             for (var id in deps) {
                 if (deps[id] === "司徒正美" && modules[id].state !== 2 && (id === nick || checkCycle(modules[id].deps, nick))) {
                     return true
@@ -16060,7 +16086,7 @@ armer = window.jQuery || window.Zepto;
         }
 
         function checkDeps() {
-            //�  ��此JS模块的依赖是否都已安装完�  是则安装自身
+            //检测此JS模块的依赖是否都已安装完毕,是则安装自身
             loop: for (var i = loadings.length, id; id = loadings[--i]; ) {
 
                 var obj = modules[id],
@@ -16070,17 +16096,17 @@ armer = window.jQuery || window.Zepto;
                         continue loop
                     }
                 }
-                //如果deps是空对象或�  其依赖的模块的状态都�  
+                //如果deps是空对象或者其依赖的模块的状态都是2
                 if (obj.state !== 2) {
-                    loadings.splice(i, 1) //必须先移除再安装，防止在IE下DOM树建完后手动刷新页面，会多次执行�  
+                    loadings.splice(i, 1) //必须先移除再安装，防止在IE下DOM树建完后手动刷新页面，会多次执行它
                     fireFactory(obj.id, obj.args, obj.factory)
-                    checkDeps() //如果成功,则再执行�  ��,以防有些模块就差本模块没有安装好
+                    checkDeps() //如果成功,则再执行一次,以防有些模块就差本模块没有安装好
                 }
             }
         }
 
         function checkFail(node, onError, fuckIE) {
-            var id = cleanUrl(node.src) //�  ��是否死链
+            var id = cleanUrl(node.src) //检测是否死链
             node.onload = node.onreadystatechange = node.onerror = null
             if (onError || (fuckIE && !modules[id].state)) {
                 setTimeout(function() {
@@ -16095,18 +16121,18 @@ armer = window.jQuery || window.Zepto;
         var rdeuce = /\/\w+\/\.\./
 
         function loadResources(url, parent, ret, shim) {
-            //1. 特别处理mass|ready标识�  
+            //1. 特别处理mass|ready标识符
             if (url === "ready!" || (modules[url] && modules[url].state === 2)) {
                 return url
             }
-            //2. 转化为完整路�  
+            //2. 转化为完整路径
             if (typeof kernel.shim[url] === "object") {
                 shim = kernel.shim[url]
             }
             if (kernel.paths[url]) { //别名机制
                 url = kernel.paths[url]
             }
-            //3.  处理text!  css! 等资�  
+            //3.  处理text!  css! 等资源
             var plugin
             url = url.replace(/^\w+!/, function(a) {
                 plugin = a.slice(0, -1)
@@ -16123,7 +16149,7 @@ armer = window.jQuery || window.Zepto;
                 var tmp = url.charAt(0)
                 if (tmp !== "." && tmp !== "/") { //相对于根路径
                     ret = basepath + url
-                } else if (url.slice(0, 2) === "./") { //相对于兄弟路�  
+                } else if (url.slice(0, 2) === "./") { //相对于兄弟路径
                     ret = parent + url.slice(1)
                 } else if (url.slice(0, 2) === "..") { //相对于父路径
                     ret = parent + "/" + url
@@ -16131,12 +16157,12 @@ armer = window.jQuery || window.Zepto;
                         ret = ret.replace(rdeuce, "")
                     }
                 } else if (tmp === "/") {
-                    ret = parent + url //相对于兄弟路�  
+                    ret = parent + url //相对于兄弟路径
                 } else {
-                    avalon.error("不符合模块标识规�   " + url)
+                    avalon.error("不符合模块标识规则: " + url)
                 }
             }
-            //5. 补全扩展�  
+            //5. 补全扩展名
             url = cleanUrl(ret)
             var ext = plugin.ext
             if (ext) {
@@ -16164,24 +16190,24 @@ armer = window.jQuery || window.Zepto;
                         callback()
                     }
                     if (checkFail(node, false, !W3C)) {
-                        log("Debug: 已成功加�  " + url)
+                        log("Debug: 已成功加载 " + url)
                     }
                 }
             }
             node.onerror = function() {
                 checkFail(node, true)
             }
-            node.src = url //插入到head的第�  ��节点前，防止IE6下head标签没闭合前使用appendChild抛错
+            node.src = url //插入到head的第一个节点前，防止IE6下head标签没闭合前使用appendChild抛错
             head.insertBefore(node, head.firstChild) //chrome下第二个参数不能为null
-            log("Debug: 正准备加�  " + url) //更重要的是IE6下可以收窄getCurrentScript的寻找范�  
+            log("Debug: 正准备加载 " + url) //更重要的是IE6下可以收窄getCurrentScript的寻找范围
         }
 
         innerRequire = avalon.require = function(list, factory, parent) {
-            // 用于�  ��它的依赖是否都为2
+            // 用于检测它的依赖是否都为2
             var deps = {},
-            // 用于保存依赖模块的返回�  
+            // 用于保存依赖模块的返回值
                 args = [],
-            // �  ��安装的模块数
+            // 需要安装的模块数
                 dn = 0,
             // 已安装完的模块数
                 cn = 0,
@@ -16200,17 +16226,17 @@ armer = window.jQuery || window.Zepto;
                     }
                 }
             })
-            modules[id] = {//创建�  ��对象,记录模块的加载情况与其他信息
+            modules[id] = {//创建一个对象,记录模块的加载情况与其他信息
                 id: id,
                 factory: factory,
                 deps: deps,
                 args: args,
                 state: 1
             }
-            if (dn === cn) { //如果�  ��安装的等于已安装好的
+            if (dn === cn) { //如果需要安装的等于已安装好的
                 fireFactory(id, args, factory) //安装到框架中
             } else {
-                //放到�  ��列队�  等待checkDeps处理
+                //放到检测列队中,等待checkDeps处理
                 loadings.unshift(id)
             }
             checkDeps()
@@ -16223,7 +16249,7 @@ armer = window.jQuery || window.Zepto;
          * @param {Function} factory 模块工厂
          * @api public
          *//*
-        innerRequire.define = function(id, deps, factory) { //模块�  依赖列表,模块本身
+        innerRequire.define = function(id, deps, factory) { //模块名,依赖列表,模块本身
             var args = aslice.call(arguments)
 
             if (typeof id === "string") {
@@ -16232,8 +16258,8 @@ armer = window.jQuery || window.Zepto;
             if (typeof args[0] === "function") {
                 args.unshift([])
             } //上线合并后能直接得到模块ID,否则寻找当前正在解析中的script节点的src作为模块ID
-            //现在除了safari外，我们都能直接通过getCurrentScript�  ��到位得到当前执行的script节点�  
-            //safari可�  过onload+delay闭包组合解决
+            //现在除了safari外，我们都能直接通过getCurrentScript一步到位得到当前执行的script节点，
+            //safari可通过onload+delay闭包组合解决
             var name = modules[_id] && modules[_id].state >= 1 ? _id : cleanUrl(getCurrentScript())
             if (!modules[name] && _id) {
                 modules[name] = {
@@ -16289,15 +16315,15 @@ armer = window.jQuery || window.Zepto;
     var ready = W3C ? "DOMContentLoaded" : "readystatechange"
 
     function fireReady() {
-        if (DOC.body) { //  在IE8 iframe中doScrollCheck可能不正�  
+        if (DOC.body) { //  在IE8 iframe中doScrollCheck可能不正确
             modules["ready!"].state = 2
             innerRequire.checkDeps()
-            fireReady = noop //隋�  函数，防止IE9二次调用_checkDeps
+            fireReady = noop //隋性函数，防止IE9二次调用_checkDeps
         }
     }
 
     function doScrollCheck() {
-        try { //IE下�  过doScrollCheck�  ��DOM树是否建�  
+        try { //IE下通过doScrollCheck检测DOM树是否建完
             root.doScroll("left")
             fireReady()
         } catch (e) {
@@ -16330,7 +16356,7 @@ armer = window.jQuery || window.Zepto;
     })
     */
     avalon.ready(function() {
-        //IE6-9下这个�  常只�  ms,而且没有副作用，不会发出请求，setImmediate如果只执行一次，与setTimeout�  ���  40ms上下
+        //IE6-9下这个通常只要1ms,而且没有副作用，不会发出请求，setImmediate如果只执行一次，与setTimeout一样要140ms上下
         if (window.VBArray && !window.setImmediate) {
             var handlerQueue = []
 
@@ -16349,7 +16375,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 var node = DOC.createElement("script")
                 node.onreadystatechange = function() {
-                    drainQueue() //在interactive阶段就触�  
+                    drainQueue() //在interactive阶段就触发
                     node.onreadystatechange = null
                     head.removeChild(node)
                     node = null
@@ -16487,7 +16513,7 @@ if (window.define) {
     $.extend($, {
         /**
          * 为hash选项对象添加默认成员
-         * @param {object} obj �  ��
+         * @param {object} obj 需要
          * @returns {*}
          */
         defaults: function(obj) {
@@ -16513,7 +16539,7 @@ if (window.define) {
             return $.type(obj) == 'string';
         },
         /**
-         * 判定method是否为obj的原生方法，�  .isNative("JSON",window)
+         * 判定method是否为obj的原生方法，如$.isNative("JSON",window)
          * @param {String} methodKey
          * @param {*} obj 对象
          * @return {Boolean}
@@ -16546,14 +16572,14 @@ if (window.define) {
         isObjectLike : function(obj) {
             return typeof obj == 'object' || typeof obj == 'function';
         },
-        // 判断字符串，对象，数组是否为�  
+        // 判断字符串，对象，数组是否为空
         isEmpty : function(obj) {
             if (obj == null) return true;
             if ($.isArray(obj) || $.isString(obj)) return obj.length === 0;
             for (var key in obj) if (obj.hasOwnProperty(key)) return false;
             return true;
         },
-        // 判断�  ��对象是不是jQ对象
+        // 判断一个对象是不是jQ对象
         isQuaryElement : function(obj){
             return typeof obj == 'object' && obj.constructor == $;
         },
@@ -16564,7 +16590,7 @@ if (window.define) {
         isElement : function(obj){
             return !!(obj && obj.nodeType == 1);
         },
-        // 判断是否无穷�  
+        // 判断是否无穷大
         isFinite : function(obj){
             return $.isNumeric(obj) && isFinite(obj);
         },
@@ -16581,26 +16607,26 @@ if (window.define) {
                 // http://wiki.ecmascript.org/doku.php?id=harmony:egal
                 // http://www.w3.org/TR/xmlschema11-2/
                 if (a === b) return a !== 0 || 1 / a == 1 / b;
-                // 在a或b为null的时候，�  ��严格判断，因为null == undefined
+                // 在a或b为null的时候，需要严格判断，因为null == undefined
                 if (a == null || b == null) return a === b;
                 // 比较类型（类名）
                 var className = $.stringType(a);
                 if (className != $.stringType(b)) return false;
                 switch (className) {
-                    // 字符串，数字，日期，布尔比较�  
+                    // 字符串，数字，日期，布尔比较值.
                     case '[object String]':
-                        // 通过包装对象解决 '5' 实际上等�  String(5) 的情�  
+                        // 通过包装对象解决 '5' 实际上等于 String(5) 的情况
                         return a == String(b);
                     case '[object Number]':
                         // 比较数字
-                        // NaN实际上是相等的，但不然，但�  过以下方式仍可比�  
+                        // NaN实际上是相等的，但不然，但通过以下方式仍可比较
                         return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
                     case '[object Date]':
                     case '[object Boolean]':
-                        // 日期和布尔量强行转换成数字进行比�  
+                        // 日期和布尔量强行转换成数字进行比较
                         // 非法日期转换将为NaN，所以仍然保持不相等
                         return +a == +b;
-                    // 正则则比较其表达式以及标�  
+                    // 正则则比较其表达式以及标记
                     case '[object RegExp]':
                         return a.source == b.source &&
                             a.global == b.global &&
@@ -16610,14 +16636,14 @@ if (window.define) {
                 if (typeof a != 'object' || typeof b != 'object') return false;
                 var length = aStack.length;
                 while (length--) {
-                    // 线�  搜索
+                    // 线性搜索
                     if (aStack[length] == a) return bStack[length] == b;
                 }
-                // 将第�  ��对象堆到遍历堆栈�  
+                // 将第一个对象堆到遍历堆栈中
                 aStack.push(a);
                 bStack.push(b);
                 var size = 0, result = true;
-                // 递归比较数组和对�  
+                // 递归比较数组和对象
                 if (className == '[object Array]') {
                     // 比较数组长度是否相同确定是否深度比较
                     size = a.length;
@@ -16629,7 +16655,7 @@ if (window.define) {
                         }
                     }
                 } else {
-                    // 构�  体不同的对象将被认为不相�  
+                    // 构造体不同的对象将被认为不相等
                     var aCtor = a.constructor, bCtor = b.constructor;
                     if (aCtor !== bCtor && !($.isFunction(aCtor) && (aCtor instanceof aCtor) &&
                         $.isFunction(bCtor) && (bCtor instanceof bCtor))) {
@@ -16644,7 +16670,7 @@ if (window.define) {
                             if (!(result = hasOwn.call(b, key) && eq(a[key], b[key], aStack, bStack))) break;
                         }
                     }
-                    // 确保每个对象都包含相同数量的属�  
+                    // 确保每个对象都包含相同数量的属性
                     if (result) {
                         for (key in b) {
                             if (hasOwn.call(b, key) && !(size--)) break;
@@ -16652,7 +16678,7 @@ if (window.define) {
                         result = !size;
                     }
                 }
-                // 移除遍历对象堆栈第一个对�  
+                // 移除遍历对象堆栈第一个对象
                 aStack.pop();
                 bStack.pop();
                 return result;
@@ -16676,9 +16702,9 @@ if (window.define) {
                 NodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
-             * 用于取得数据的类型（�  ��参数的情况下）或判定数据的类型（两个参数的情况下�  
-             * $.type(obj) == a 可以推出 $.type(obj, a) == true，但反过来未�  
-             * 如需进行更细节判断，请使�  $.type(obj, a) 的方�  
+             * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
+             * $.type(obj) == a 可以推出 $.type(obj, a) == true，但反过来未必
+             * 如需进行更细节判断，请使用 $.type(obj, a) 的方式
              *
              * @param {*} obj 要检测的东西
              * @param {String|Array|Function} condition ? 要比较的条件
@@ -16718,9 +16744,9 @@ if (window.define) {
          * @param {string} code
          */
         parseJS: function(code) {
-            //IE中，global.eval()和eval()�  ��只在当前作用域生效�  
-            //Firefox，Safari，Opera中，直接调用eval()为当前作用域，global.eval()调用为全�  ��用域�  
-            //window.execScript 在IE下一些限制条�  
+            //IE中，global.eval()和eval()一样只在当前作用域生效。
+            //Firefox，Safari，Opera中，直接调用eval()为当前作用域，global.eval()调用为全局作用域。
+            //window.execScript 在IE下一些限制条件
             //http://www.ascadnetworks.com/Guides-and-Tips/IE-error-%2522Could-not-complete-the-operation-due-to-error-80020101%2522
             if (code && /\S/.test(code)) {
                 try {
@@ -16729,7 +16755,7 @@ if (window.define) {
                 }
             }
         },
-        // 将text数据转换为base64字符�  
+        // 将text数据转换为base64字符串
         parseBase64: function(inputStr){
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
@@ -16789,18 +16815,18 @@ if (window.define) {
         },
 
         /*
-         ============= 字符串处�  系列 ================
+         ============= 字符串处理 系列 ================
          */
 
 
         template: template,
         /**
-         * 字符串插值，有两种插值方法�  
-         * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠�  够多的情�  
-         * 第二种，把第�  ��参数后的参数视为�  ��数组，{{}}里面为索引�  ，从零开始，替换为数组元�  
+         * 字符串插值，有两种插值方法。
+         * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠值够多的情况
+         * 第二种，把第一个参数后的参数视为一个数组，{{}}里面为索引值，从零开始，替换为数组元素
          * http://www.cnblogs.com/rubylouvre/archive/2011/05/02/1972176.html
          * @param {string} str
-         * @param {*} object 插�  包或某一个要插的�  
+         * @param {*} object 插值包或某一个要插的值
          * @return {string}
          */
         format: function(str, object) {
@@ -16811,7 +16837,7 @@ if (window.define) {
             })
         },
         /**
-         * 查看对象或数组的内部构�  
+         * 查看对象或数组的内部构造
          * @param {*} obj
          * @return {string}
          * https://github.com/tdolsen/jquery-dump/blob/master/jquery.dump.js
@@ -16821,7 +16847,7 @@ if (window.define) {
         dump: function(obj) {
             var space = $.isNative("parse", window.JSON) ? 4 : "\r\t", cache = [],
                 text = JSON.stringify(obj, function(key, value) {
-                    if (typeof value === 'object' && value !== null) {//防止环引�  
+                    if (typeof value === 'object' && value !== null) {//防止环引用
                         if (cache.indexOf(value) !== -1) {
                             return;
                         }
@@ -16833,7 +16859,7 @@ if (window.define) {
             return text;
         },
         /**
-         * 为数字加上单�  
+         * 为数字加上单位
          * @param i
          * @param units 单位
          * @returns {string}
@@ -16846,13 +16872,13 @@ if (window.define) {
             }
         },
         hyphen: function (target) {
-            //转换为连字符线风�  
+            //转换为连字符线风格
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase();
         },
 
 
 
-        // 参数初始化整理方�  
+        // 参数初始化整理方法
         argsArrange: (function(){
             var filter = function(args, params, defaults) {
                 var a = [], tempArr, arr = arguments, item;
@@ -16875,7 +16901,7 @@ if (window.define) {
                         if ($.type(arr[j], item.condition))
                             a[i] = grouper(arr[j++]);
                         else if (k < match && isNeed)
-                            throw new TypeError('参数' + name + '必须符合条件�   + item.condition + '，最少需�   + match + '个，现仅�   + k + '�  );
+                            throw new TypeError('参数' + name + '必须符合条件：' + item.condition + '，最少需要' + match + '个，现仅有' + k + '个');
                         else if (isAutoLen)
                             break;
                         else
@@ -16895,7 +16921,7 @@ if (window.define) {
         })()
     });
 
-    // TODO(wuhf): 类工�  
+    // TODO(wuhf): 类工厂
     // ========================================================
     (function(){
         var
@@ -16916,7 +16942,7 @@ if (window.define) {
             inherit : function( parent,init ) {
                 var bridge = function() { };
                 if( typeof parent == 'function'){
-                    for(var i in parent){//继承类成�  
+                    for(var i in parent){//继承类成员
                         this[i] = parent[i];
                     }
                     bridge.prototype = parent.prototype;
@@ -16931,7 +16957,7 @@ if (window.define) {
                     return (init || bridge) + ''
                 };
                 var proto = this.prototype;
-                // FIXME(wuhf): 暂时不需�  备注�  ��
+                // FIXME(wuhf): 暂时不需要 备注一下
                 /*
                  proto.setOptions = function(first){
                  if( typeof first === 'string' ){
@@ -16956,7 +16982,7 @@ if (window.define) {
                 }
                 return this;
             },
-            extend: function(){//扩展类成�  
+            extend: function(){//扩展类成员
                 var bridge = {};
                 for(var i = 0, module; module = arguments[i++]; ){
                     $.extend( bridge, module );
@@ -16972,8 +16998,8 @@ if (window.define) {
         $.factory = function( obj ){
             obj = obj || {};
             var parent = obj.inherit; //父类
-            var init = obj.init ;    //构�  �  
-            var extend = obj.extend; //静�  成员
+            var init = obj.init ;    //构造器
+            var extend = obj.extend; //静态成员
             delete obj.inherit;
             delete obj.init;
             var klass = function () {
@@ -16982,7 +17008,7 @@ if (window.define) {
                 }
             };
 
-            $.extend( klass, mutators ).inherit( parent, init );//添加更多类方�  
+            $.extend( klass, mutators ).inherit( parent, init );//添加更多类方法
             return expand( klass, obj ).implement( obj );
         }
     })();
@@ -16993,7 +17019,7 @@ if (window.define) {
         var mix = $[Type];
         $[Type] = function(pack) {
             var isNative = typeof pack == "string",
-            //取得方法�  
+            //取得方法名
                 methods = isNative ? pack.match($.rword) : Object.keys(pack);
             methods.forEach(function(method) {
                 $[Type][method] = isNative ?
@@ -17006,11 +17032,11 @@ if (window.define) {
     });
     $.String({
         byteLen: function(target) {
-            /*取得�  ��字符串所有字节的长度。这是一个后端过来的方法，如果将�  ��英文字符�  
-             *入数据库 char、varchar、text 类型的字段时占用�  ��字节，�  �  ��中文字符插入
-             *时占用两个字节，为了避免插入溢出，就�  ��事先判断字符串的字节长度。在前端�  
-             *如果我们要用户填空的文本，需要字节上的长短限制，比如发短信，也要用到此方法�  
-             *随着浏览器普及对二进制的操作，这方法也越来越常用�  
+            /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插
+             *入数据库 char、varchar、text 类型的字段时占用一个字节，而一个中文字符插入
+             *时占用两个字节，为了避免插入溢出，就需要事先判断字符串的字节长度。在前端，
+             *如果我们要用户填空的文本，需要字节上的长短限制，比如发短信，也要用到此方法。
+             *随着浏览器普及对二进制的操作，这方法也越来越常用。
              */
             return target.replace(/[^\x00-\xff]/g, 'ci').length;
         },
@@ -17019,7 +17045,7 @@ if (window.define) {
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/\-/g, "_").toLowerCase();
         },
         capitalize: function(target) {
-            //首字母大�  
+            //首字母大写
             return target.charAt(0).toUpperCase() + target.substring(1).toLowerCase();
         },
         stripTags: function(target) {
@@ -17027,7 +17053,7 @@ if (window.define) {
             return target.replace(/<[^>]+>/g, "");
         },
         stripScripts: function(target) {
-            //移除字符串中�  ���  script 标签。弥补stripTags方法的缺陷�  此方法应在stripTags之前调用�  
+            //移除字符串中所有的 script 标签。弥补stripTags方法的缺陷。此方法应在stripTags之前调用。
             return target.replace(/<script[^>]*>([\S\s]*?)<\/script>/img, '');
         },
         unescapeHTML: function(target) {
@@ -17044,7 +17070,7 @@ if (window.define) {
         },
         pad: function(target, n, filling, right, radix) {
             //http://www.cnblogs.com/rubylouvre/archive/2010/02/09/1666165.html
-            //在左边补上一些字�  默认�  
+            //在左边补上一些字符,默认为0
             var num = target.toString(radix || 10);
             filling = filling || "0";
             while (num.length < n) {
@@ -17062,11 +17088,11 @@ if (window.define) {
         "replace,search,slice,split,substring,toLowerCase,toLocaleLowerCase,toUpperCase,trim,toJSON");
     $.Array({
         contains: function(target, item) {
-            //判定数组是否包含指定目标�  
+            //判定数组是否包含指定目标。
             return !!~target.indexOf(item);
         },
         shuffle: function(target) {
-            //对数组进行洗牌�  若不想影响原数组，可以先拷贝�  ��出来操作�  
+            //对数组进行洗牌。若不想影响原数组，可以先拷贝一份出来操作。
             var ret = [],
                 i = target.length,
                 n;
@@ -17079,11 +17105,11 @@ if (window.define) {
             return ret;
         },
         random: function(target) {
-            //从数组中随机抽�  �  ��元素出来�  
+            //从数组中随机抽选一个元素出来。
             return $.Array.shuffle(target.concat())[0];
         },
         flatten: function(target) {
-            //对数组进行平坦化处理，返回一个一维的新数组�  
+            //对数组进行平坦化处理，返回一个一维的新数组。
             var result = [],
                 self = $.Array.flatten;
             target.forEach(function(item) {
@@ -17096,13 +17122,13 @@ if (window.define) {
             return result;
         },
         compact: function(target) {
-            // 过滤数组中的null与undefined，但不影响原数组�  
+            // 过滤数组中的null与undefined，但不影响原数组。
             return target.filter(function(el) {
                 return el != null;
             });
         },
         /**
-         * 对数组进行去重操作，返回�  ��没有重复元素的新数组�  
+         * 对数组进行去重操作，返回一个没有重复元素的新数组。
          * @param {Array} target 目标数组
          * @returns {Array}
          */
@@ -17120,12 +17146,12 @@ if (window.define) {
         },
         /**
          * 合并两个数组
-         * @param {Array} first 第一个数�  
-         * @param {Array} second 第二个数�  
+         * @param {Array} first 第一个数组
+         * @param {Array} second 第二个数组
          * @returns {Array}
          */
         merge: function(first, second) {
-            //合并参数二到参数�  
+            //合并参数二到参数一
             var i = ~~first.length,
                 j = 0;
             for (var n = second.length; j < n; j++) {
@@ -17135,9 +17161,9 @@ if (window.define) {
             return first;
         },
         /**
-         * 对两个数组取并集�  
-         * @param {Array} target 第一个数�  
-         * @param {Array} array 第二个数�  
+         * 对两个数组取并集。
+         * @param {Array} target 第一个数组
+         * @param {Array} array 第二个数组
          * @returns {Array}
          */
         union: function(target, array) {
@@ -17145,8 +17171,8 @@ if (window.define) {
         },
         /**
          * 对两个数组取交集
-         * @param {Array} target 第一个数�  
-         * @param {Array} array 第二个数�  
+         * @param {Array} target 第一个数组
+         * @param {Array} array 第二个数组
          * @returns {Array}
          */
         intersect: function(target, array) {
@@ -17156,8 +17182,8 @@ if (window.define) {
         },
         /**
          * 对两个数组取差集(补集)
-         * @param {Array} target 第一个数�  
-         * @param {Array} array 第二个数�  
+         * @param {Array} target 第一个数组
+         * @param {Array} array 第二个数组
          * @returns {Array}
          */
         diff: function(target, array) {
@@ -17174,7 +17200,7 @@ if (window.define) {
             return result;
         },
         /**
-         * 返回数组中的�  ��值，用于数字数组�  
+         * 返回数组中的最小值，用于数字数组。
          * @param {Array} target 目标数组
          * @returns {Number}
          */
@@ -17182,7 +17208,7 @@ if (window.define) {
             return Math.min.apply(0, target);
         },
         /**
-         * 返回数组中的�  ��值，用于数字数组�  
+         * 返回数组中的最大值，用于数字数组。
          * @param {Array} target 目标数组
          * @returns {Number}
          */
@@ -17190,7 +17216,7 @@ if (window.define) {
             return Math.max.apply(0, target);
         },
         /**
-         * 深拷贝当前数�  
+         * 深拷贝当前数组
          * @param {Array} target 目标数组
          * @returns {Array}
          */
@@ -17207,7 +17233,7 @@ if (window.define) {
         },
         inGroupsOf: function(target, number, fillWith) {
             //将数组划分成N个分组，其中小组有number个数，最后一组可能小于number个数,
-            //但如果第三个参数不为undefine�  我们可以拿它来填空最后一�  
+            //但如果第三个参数不为undefine时,我们可以拿它来填空最后一组
             var t = target.length,
                 n = Math.ceil(t / number),
                 fill = fillWith !== void 0,
@@ -17232,7 +17258,7 @@ if (window.define) {
     $.Array("concat,join,pop,push,shift,slice,sort,reverse,splice,unshift," + "indexOf,lastIndexOf,every,some,filter,reduce,reduceRight");
     var NumberPack = {
         limit: function(target, n1, n2) {
-            //确保数�  在[n1,n2]闭区间之�  如果超出限界,则置换为离它�  ��的最大�  或最小�  
+            //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值
             var a = [n1, n2].sort();
             if (target < a[0])
                 target = a[0];
@@ -17241,7 +17267,7 @@ if (window.define) {
             return target;
         },
         nearer: function(target, n1, n2) {
-            //求出距离指定数�  �  ��的那个数
+            //求出距离指定数值最近的那个数
             var diff1 = Math.abs(target - n1),
                 diff2 = Math.abs(target - n2);
             return diff1 < diff2 ? n1 : n2
@@ -17275,8 +17301,8 @@ if (window.define) {
 
 
     function mergeOne(source, key, current) {
-        //使用深拷贝方法将多个对象或数组合并成�  ��
-        if ($.isPlainObject(source[key])) { //只处理纯JS对象，不处理window与节�  
+        //使用深拷贝方法将多个对象或数组合并成一个
+        if ($.isPlainObject(source[key])) { //只处理纯JS对象，不处理window与节点
             $.Object.merge(source[key], current);
         } else {
             source[key] = cloneOf(current)
@@ -17288,8 +17314,8 @@ if (window.define) {
         /**
          * 过滤数组中不合要求的元素
          * @param {Object} obj
-         * @param {Function} fn 如果返回true则放进结果集�  
-         * @param {*} scope ? 默认为当前遍历的元素或属性�  
+         * @param {Function} fn 如果返回true则放进结果集中
+         * @param {*} scope ? 默认为当前遍历的元素或属性值
          * @return {array}
          */
         filter: function(obj, fn, scope) {
@@ -17302,7 +17328,7 @@ if (window.define) {
             return ret;
         },
         subset: function(target, props) {
-            //根据传入数组取当前对象相关的键�  对组成一个新对象返回
+            //根据传入数组取当前对象相关的键值对组成一个新对象返回
             var result = {};
             props.forEach(function(prop) {
                 result[prop] = target[prop];
@@ -17315,14 +17341,14 @@ if (window.define) {
                 fn(obj[name], name)
             })
         },
-        //将参数一的键值都放入回调中执行，收集其结果返�  
+        //将参数一的键值都放入回调中执行，收集其结果返回
         map: function(obj, fn) {
             return  Object.keys(obj).map(function(name) {
                 return fn(obj[name], name)
             })
         },
         clone: function(target) {
-            //进行深拷贝，返回�  ��新对象，如果是浅拷贝请使�  .extend
+            //进行深拷贝，返回一个新对象，如果是浅拷贝请使用$.extend
             var clone = {};
             for (var key in target) {
                 clone[key] = cloneOf(target[key]);
@@ -17330,7 +17356,7 @@ if (window.define) {
             return clone;
         },
         merge: function(target, k, v) {
-            //将多个对象合并到第一个参数中或将后两个参数当作键与�  加入到第�  ��参数
+            //将多个对象合并到第一个参数中或将后两个参数当作键与值加入到第一个参数
             var obj, key;
             //为目标对象添加一个键值对
             if (typeof k === "string")
@@ -17454,27 +17480,27 @@ if (window.define) {
             1: "下午"
         },
         DAY: {
-            0: "星期�  ,
-            1: "星期�  ,
-            2: "星期�  ,
-            3: "星期�  ,
-            4: "星期�  ,
-            5: "星期�  ,
-            6: "星期�  
+            0: "星期日",
+            1: "星期一",
+            2: "星期二",
+            3: "星期三",
+            4: "星期四",
+            5: "星期五",
+            6: "星期六"
         },
         MONTH: {
-            0: "1�  ,
-            1: "2�  ,
-            2: "3�  ,
-            3: "4�  ,
-            4: "5�  ,
-            5: "6�  ,
-            6: "7�  ,
-            7: "8�  ,
-            8: "9�  ,
-            9: "10�  ,
-            10: "11�  ,
-            11: "12�  
+            0: "1月",
+            1: "2月",
+            2: "3月",
+            3: "4月",
+            4: "5月",
+            5: "6月",
+            6: "7月",
+            7: "8月",
+            8: "9月",
+            9: "10月",
+            10: "11月",
+            11: "12月"
         },
         SHORTDAY: {
             "0": "周日",
@@ -17486,7 +17512,7 @@ if (window.define) {
             "6": "周六"
         },
         fullDate: "y年M月d日EEEE",
-        longDate: "y年M月d�  ,
+        longDate: "y年M月d日",
         medium: "yyyy-M-d ah:mm:ss",
         mediumDate: "yyyy-M-d",
         mediumTime: "ah:mm:ss",
@@ -17640,8 +17666,8 @@ if (window.define) {
     })
 })(armer);
 // TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
-// 使用前，必须修改jQ�  ��bug，否则IE6不生�  
-// 查找 dataType[0] === "+" 修改�  dataType.charAt(0) === "+"
+// 使用前，必须修改jQ一个bug，否则IE6不生效
+// 查找 dataType[0] === "+" 修改为 dataType.charAt(0) === "+"
 ;(function ($) {
     var DOC = document, script,
         HEAD = document.head || document.getElementsByTagName('head')[0];
@@ -17654,7 +17680,7 @@ if (window.define) {
         HEAD.insertBefore(script, HEAD.firstChild);
         return script;
     };
-    // �  ��script标签
+    // 销毁script标签
     var destoryScript = function(s){
         s.onerror = s.onreadystatechange = s.onload = null;
         if (s.parentNode) {
@@ -17698,7 +17724,7 @@ if (window.define) {
     }
     $.ajaxPrefilter(function(s){
         if (s.predictType && s.dataType == null) {
-            //如果为true且dataType为空则对url分析并预测类�  
+            //如果为true且dataType为空则对url分析并预测类型
             return getType(s.url);
         }
     });
@@ -17802,19 +17828,19 @@ if (window.define) {
                             };
                         };
                     } else {
-                        // 对于恶心的IE8-，我们�  过一个vbscript元素，来�  ��脚本是否加载成功
+                        // 对于恶心的IE8-，我们通过一个vbscript元素，来检测脚本是否加载成功
                         handler = function(){
                             var vbtest = this, flag = 0;
                             vbtest.language = 'vbscript';
                             var errorHandler = function(){
-                                // 错误时，判断脚本是否正在解释，是则标志加载成�  
+                                // 错误时，判断脚本是否正在解释，是则标志加载成功
                                 if (vbtest.readyState == 'interactive') {
                                     flag = 1;
                                 }
                             };
                             vbtest.onreadystatechange = function(_, isAbort){
                                 if (isAbort || /loaded|complete/.test(this.readyState)) {
-                                    // 标志位，当加载成功，�  �  
+                                    // 标志位，当加载成功，置1；
                                     if (!isAbort) {
                                         if (flag == 1)
                                             injectScript(src, function(){
@@ -17835,7 +17861,7 @@ if (window.define) {
                                     vbtest = null;
                                 }
                             };
-                            // 为window绑定�  ��错误，当js被误加载成vb的时候，会发生错误，来判断是否加载成�  
+                            // 为window绑定一个错误，当js被误加载成vb的时候，会发生错误，来判断是否加载成功
                             window.attachEvent('onerror', errorHandler);
                         };
                     }
@@ -17854,8 +17880,8 @@ if (window.define) {
 (function(){
 
     /**
-     * CSS Transform 过渡�  
-     * 主要用于序列反序列transform字符串，生成transform的键值表，用�  .fn.css或�  $.fn.transit, $.fn.css({ transform: '...' })
+     * CSS Transform 过渡类
+     * 主要用于序列反序列transform字符串，生成transform的键值表，用于$.fn.css或者$.fn.transit, $.fn.css({ transform: '...' })
      * @param {string} transValue
      * @returns {Transform}
      * @constructor
@@ -17880,10 +17906,10 @@ if (window.define) {
 
     Transform.prototype = {
         /**
-         * 通过字符串反序列�  
-         * @param prop �  ��设置的属�  
-         * @param val �  ��设置的�  
-         * @example  t.setFromString('scale', '2,4'); 相当�  set('scale', '2', '4');
+         * 通过字符串反序列化
+         * @param prop 需要设置的属性
+         * @param val 需要设置的值
+         * @example  t.setFromString('scale', '2,4'); 相当于 set('scale', '2', '4');
          */
         setFromString: function(prop, val) {
             var args =
@@ -17896,8 +17922,8 @@ if (window.define) {
             Transform.prototype.set.apply(this, args);
         },
         /**
-         * 设置�  ��属�  
-         * @param prop 属�  �  
+         * 设置一个属性
+         * @param prop 属性名
          * @example t.set('scale', 2, 4);
          */
         set: function(prop) {
@@ -18012,7 +18038,7 @@ if (window.define) {
             }
         },
         // 转换transform
-        // 转换，由构�  体调�  
+        // 转换，由构造体调用
         parse: function(str) {
             var self = this;
             str.replace(/([a-zA-Z0-9]+)\((.*?)\)/g, function(x, prop, val) {
@@ -18021,8 +18047,8 @@ if (window.define) {
         },
 
         /**
-         * 序列�  
-         * 将反序列化过的transform序列�  
+         * 序列化
+         * 将反序列化过的transform序列化
          * @param use3d 是否使用3D
          * @returns {string}
          */
@@ -18031,7 +18057,7 @@ if (window.define) {
 
             for (var i in this) {
                 if (this.hasOwnProperty(i)) {
-                    // 如果浏览器不支持3D transform，则不使�  
+                    // 如果浏览器不支持3D transform，则不使用
                     if ((!support.transform3d) && (
                         (i === 'rotateX') ||
                             (i === 'rotateY') ||
@@ -18059,7 +18085,7 @@ if (window.define) {
     var support = {};
     var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
-// �  ��CSS对应transition-property的对应表
+// 一个CSS对应transition-property的对应表
 // https://developer.mozilla.org/en/CSS/CSS_transitions#Properties_that_can_be_animated
     var propertyMap = $.transitionPropertyMap = {
         marginLeft    : 'margin',
@@ -18072,7 +18098,7 @@ if (window.define) {
         paddingTop    : 'padding'
     }
 
-// 获取属�  带前�  ���  
+// 获取属性带前缀的键
 // transition` => `WebkitTransition
     function getVendorPropertyName(prop) {
         // Handle unprefixed versions (FF16+, for example)
@@ -18086,7 +18112,7 @@ if (window.define) {
         }
     }
 
-// �  ��是否支持transform3D
+// 检查是否支持transform3D
 // 理论上应该当Webkit和Firefox 10+ 返回true
     function checkTransform3dSupport() {
         div.style[support.transform] = '';
@@ -18094,25 +18120,25 @@ if (window.define) {
         return div.style[support.transform] !== '';
     }
 
-// �  ��浏览器对transition各个属�  的兼容情�  
+// 检查浏览器对transition各个属性的兼容情况
     support.transition      = getVendorPropertyName('transition');
     support.transitionDelay = getVendorPropertyName('transitionDelay');
     support.transform       = getVendorPropertyName('transform');
     support.transformOrigin = getVendorPropertyName('transformOrigin');
     support.transform3d     = checkTransform3dSupport();
 
-// 扩展�  .support
+// 扩展进$.support
     for (var key in support) {
         if (support.hasOwnProperty(key) && typeof $.support[key] === 'undefined') {
             $.support[key] = support[key];
         }
     }
 
-// 避免IE的内存泄�  
+// 避免IE的内存泄漏
     div = null;
 
     function registerCssHook(prop, isPixels) {
-        // 对于某些属�  ，不应该包含'px'
+        // 对于某些属性，不应该包含'px'
         if (!isPixels) { $.cssNumber[prop] = true; }
         propertyMap[prop] = support.transform;
         $.cssHooks[prop] = {
@@ -18129,7 +18155,7 @@ if (window.define) {
     }
 
 // 'transform' CSS 钩子
-// 允许你�  �  .fn.css来修改transition
+// 允许你通过$.fn.css来修改transition
 //
 // $("#hello").css({ transform: "rotate(90deg)" });
 // $("#hello").css('transform');
@@ -18140,7 +18166,7 @@ if (window.define) {
         get: function(elem) {
             return $(elem).data('transform') || new Transform();
         },
-        // setter会接收一个Transform对象或�  �  ��字符�  
+        // setter会接收一个Transform对象或者一个字符串
         set: function(elem, v) {
             var value = v;
 
@@ -18148,7 +18174,7 @@ if (window.define) {
                 value = new Transform(value);
             }
 
-            // 在Chrome，当元素在viewport外缩放的时�  3D版本的缩放不会凑效，为了不冒险，
+            // 在Chrome，当元素在viewport外缩放的时候3D版本的缩放不会凑效，为了不冒险，
             // 决定关闭3D缩放
             // http://davidwalsh.name/detecting-google-chrome-javascript
             if (support.transform === 'WebkitTransform' && !isChrome) {
@@ -18161,14 +18187,14 @@ if (window.define) {
         }
     };
 
-// �  css({ transform: '...' })添加CSS钩子
+// 为.css({ transform: '...' })添加CSS钩子
 // 对于jQuery 1.8+，刻意覆盖默认transform
     $.cssHooks.transform = {
         set: $.cssHooks['transit:transform'].set
     };
 
 // 其他钩子
-// 允许使用rotate, scale�  
+// 允许使用rotate, scale等
     registerCssHook('scale');
     registerCssHook('translate');
     registerCssHook('rotate');
@@ -18185,7 +18211,7 @@ if (window.define) {
 
 
 $.fn.bgiframe = function(){
-    if(this.children('bgiframe').length == 0){   //如果不存在才插进�  
+    if(this.children('bgiframe').length == 0){   //如果不存在才插进去
         return this.prepend($(document.createElement('bgiframe')).html('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>').css({
             position: 'absolute',
             width: '100%',
@@ -18196,7 +18222,7 @@ $.fn.bgiframe = function(){
     }
 };
 
-// .position 改�  ;
+// .position 改造;
 (function( $, undefined ) {
     var cachedScrollbarWidth,
         max = Math.max,
@@ -18701,7 +18727,7 @@ $.fn.bgiframe = function(){
 
 // 扩展内建jQuery css easing
 ;(function () {
-    // 基于Robert Penner的缓动公�  (http://www.robertpenner.com/easing)
+    // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
     var baseEasings = {};
     $.each(['Quad', 'Cubic', 'Quart', 'Quint', 'Expo'], function (i, name) {
         baseEasings[ name ] = function (p) {
@@ -18742,7 +18768,7 @@ $.fn.bgiframe = function(){
         };
     });
 
-    // 扩展�  ��CSStransition-timing-function的js调用
+    // 扩展一些CSStransition-timing-function的js调用
     $.cssEasing = {
         linear: 'linear',
         easeIn: 'ease-in',
@@ -18777,7 +18803,7 @@ $.fn.bgiframe = function(){
     $.cssEasing._default = 'cubic-bezier(.02,.01,.47,1)';
 
     var support = $.support;
-    // �  ���  ��的transitionend
+    // 检测需要的transitionend
     var eventNames = {
         'transition':       'transitionend',
         'MozTransition':    'transitionend',
@@ -18785,10 +18811,10 @@ $.fn.bgiframe = function(){
         'WebkitTransition': 'webkitTransitionEnd',
         'msTransition':     'MSTransitionEnd'
     };
-    // 根据support调用不同的事�  
+    // 根据support调用不同的事件
     var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
 
-    // 由于transitionEnd的表现不�  ��，所以不适用它作为判断动画完成的时机
+    // 由于transitionEnd的表现不一致，所以不适用它作为判断动画完成的时机
     //$.Transition.useTransitionEnd = true;
     Transition = function(elem, properties, options){
         var transition,
@@ -18809,7 +18835,7 @@ $.fn.bgiframe = function(){
             bound = true;
             elem.addEventListener(transitionEnd, handler);
         } else window.setTimeout(handler, options.duration);
-        // webkit外必须强迫重绘才能触�  
+        // webkit外必须强迫重绘才能触发
         var s = elem.offsetWidth;
 
         elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
@@ -18860,9 +18886,9 @@ $.fn.bgiframe = function(){
     };
 
     /**
-     * 根据CSS属�  获取Transition属�  
-     * @param props CSS属�  
-     * @returns {Array} 返回�  ��用于transition-property的属性数�  
+     * 根据CSS属性获取Transition属性
+     * @param props CSS属性
+     * @returns {Array} 返回一个用于transition-property的属性数组
      */
     function getProperties(props) {
         var re = [];
@@ -18880,7 +18906,7 @@ $.fn.bgiframe = function(){
 
     /**
      * 生成序列化的transition
-     * @param properties 属�  
+     * @param properties 属性
      * @param duration 持续时间
      * @param easing 过场动画
      * @param delay 延时
@@ -18889,17 +18915,17 @@ $.fn.bgiframe = function(){
      * getTransition({ opacity: 1, rotate: 30 }, 500, 'ease');  => 'opacity 500ms ease, -webkit-transform 500ms ease'
      */
     function getTransition(properties, duration, easing, delay) {
-        // 获取�  ��的Transition属�  
+        // 获取需要的Transition属性
         var props = getProperties(properties);
 
         // 通过别称获取具体的timming-function
         if ($.cssEasing[easing]) { easing = $.cssEasing[easing]; }
 
-        // 创建duration/easing/delay属�  
+        // 创建duration/easing/delay属性
         var attribs = '' + toMS(duration) + ' ' + easing;
         if (parseInt(delay, 10) > 0) { attribs += ' ' + toMS(delay); }
 
-        // 组合不同的CSS属�  
+        // 组合不同的CSS属性
         // "margin 200ms ease, padding 200ms ease, ..."
         var transitions = [];
         $.each(props, function(i, name) {
@@ -18909,7 +18935,7 @@ $.fn.bgiframe = function(){
         return transitions.join(', ');
     }
     /**
-     * 将�  度转换为毫秒
+     * 将速度转换为毫秒
      * @param duration
      * @returns {*}
      * @example
@@ -18923,7 +18949,7 @@ $.fn.bgiframe = function(){
         return $.unit(i, 'ms');
     }
 
-    // 暴露�  ��测试用的方法
+    // 暴露一个测试用的方法
     $.Transition.getTransitionValue = getTransition;
 
     if (!$.support.transition)
@@ -18932,7 +18958,7 @@ $.fn.bgiframe = function(){
 
     // TODO: classAnimation 让JS分析transition进行js动画过渡模拟tansitionCSS动画
 
-    // 转换为ms，例如：�  2000ms'�  2s' 转换�  2000;
+    // 转换为ms，例如：将'2000ms'、'2s' 转换为 2000;
     function toMS(duration) {
         if (typeof duration == 'number') return duration;
         if (duration.indexOf('ms') > -1) return parseInt(duration);
@@ -18969,7 +18995,7 @@ $.fn.bgiframe = function(){
     // 通过currentStyle获取transition
     var getTransition = function(currentStyle){
         var i, tLeng = 0, t = [], property = [], duration = [], timingFunction = [], delay = [], transition = {};
-        // 必须在try运行，否则取自定义属性可能导致程序不能继续运�  
+        // 必须在try运行，否则取自定义属性可能导致程序不能继续运行
         try {
             t = currentStyle['transition'].split(rC);
             for(i = t.length; i--;) {
@@ -18982,7 +19008,7 @@ $.fn.bgiframe = function(){
             timingFunction = currentStyle['transition-timing-function'].split(rC);
             delay = currentStyle['transition-delay'].split(rC);
         } catch(e) {}
-        // 整合成一个数�  
+        // 整合成一个数组
         for (i = 0; i < property.length; i++) {
             //alert(property[i]);
             t[i + tLeng] = {property: property[i], duration: duration[i] || duration[0], timingFunction: timingFunction[i] || timingFunction[0], delay: delay[i] || delay[0]};
@@ -19014,7 +19040,7 @@ $.fn.bgiframe = function(){
         if (doAnimate) {
             var baseClass = animated.attr( "class" ) || "";
             allAnimations = animated.find($.trim(children).replace(/^["']/, '').replace(/['"]$/, '')).addBack();
-            // 遍历�  ��做动画的元素，抽取出原来样式
+            // 遍历需要做动画的元素，抽取出原来样式
             allAnimations = allAnimations.map(function(){
                 var t = getTransition(this.currentStyle), el = $(this);
                 return {
@@ -19024,7 +19050,7 @@ $.fn.bgiframe = function(){
                 }
             });
             applyClassChange();
-            // 再次遍历�  ��，计算出样式的差�  
+            // 再次遍历需要，计算出样式的差异
             allAnimations = allAnimations.map(function() {
                 this.diff = getStyles(this.el[0], this.start, true);
                 return this;
@@ -19032,7 +19058,7 @@ $.fn.bgiframe = function(){
             animated.attr( "class", baseClass );
             allAnimations = allAnimations.map(function(){
                 var i = firstVal(this.transitions);
-                // 只抽取第�  ��duration、timingFunction、delay来简化流�  
+                // 只抽取第一个duration、timingFunction、delay来简化流程
                 var styleInfo = this,
                     dfd = $.Deferred(),
                     opts = $.extend({
@@ -19051,7 +19077,7 @@ $.fn.bgiframe = function(){
                 // 设置新类
                 applyClassChange();
 
-                // 遍历�  ��动画的元素，清除�  ��css属�  
+                // 遍历所有动画的元素，清除所有css属性
                 $.each( arguments, function() {
                     var el = this.el;
                     $.each( this.diff, function(key) {
@@ -19065,7 +19091,7 @@ $.fn.bgiframe = function(){
     $.each(classAnimationActions, function(__, action){
         var orig = $.fn[action + 'Class'];
         $.fn[action + 'Class'] = $.support.transition ? orig : function(classes) {
-            // TODO: 判断是否做动�  .
+            // TODO: 判断是否做动画..
             var withAnimation = true;
             if (withAnimation) classAnimation.call(this, {add: {classes: classes, orig: orig}})
             else orig.apply(this, arguments);
@@ -19097,17 +19123,17 @@ $.fn.bgiframe = function(){
     $.EventEmitter.prototype = $.EventEmitter.fn = mul;
 })();
 
-// valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单�  变化
+// valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化
 /*
  $('input').valuechange(function(e){
- e.newValue; // 新的�  
- e.oldValue; // 旧的�  
- e.realEvent; // 触发变化的真实事�  
+ e.newValue; // 新的值
+ e.oldValue; // 旧的值
+ e.realEvent; // 触发变化的真实事件
  })
  */
 (function(){
     var DATA = "valuechangeData";
-    //如果值前后发生改�  触发绑定回调
+    //如果值前后发生改变,触发绑定回调
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
@@ -19342,7 +19368,7 @@ $.fn.bgiframe = function(){
         'closeWindow' : function(confirmStr){
             if (confirmStr && !confirm(confirmStr)) return;
             if (document.referrer == "") {
-                if ($.browser.mozilla) return alert("该窗口需要关闭�  但火狐浏览器不支持关闭单独窗口，请手动关闭�  ");
+                if ($.browser.mozilla) return alert("该窗口需要关闭。但火狐浏览器不支持关闭单独窗口，请手动关闭。");
                 window.opener = '';
                 window.open('','_self');
             }
@@ -19378,7 +19404,7 @@ $.fn.bgiframe = function(){
 
 $.UI = {};
 //==============================
-//   TODO(wuhf): UI级别的方�  
+//   TODO(wuhf): UI级别的方法
 //==============================
 (function(support){
     if (!support) {
@@ -19520,7 +19546,7 @@ $.fn.ellipsis = function() {
             var match = maxHeight.match(/(0?\.?\d*)px$/);
             if (match) maxHeight = oldH = match[1];
             else return;
-            // 用一个空元素测量�  ��行高，然后去�  
+            // 用一个空元素测量一下行高，然后去掉
             var s = $('<span></span>', {
                 html: 'o',
                 css: {
@@ -19539,7 +19565,7 @@ $.fn.ellipsis = function() {
             console.log(line)
             maxHeight = line * lineHeight;
 
-            // 去掉�  ��样式，让其超出范�  
+            // 去掉一些样式，让其超出范围
             container.style.maxHeight = 'none';
             container.style.overflowY = 'auto';
             container.style.height = 'auto';
@@ -19565,7 +19591,7 @@ $.fn.ellipsis.useCssClamp = true;
 (function ($) {
     var $backdrop;
     /**
-     * ������
+     * ������
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
      * @constructor

@@ -478,7 +478,8 @@ armer = window.jQuery || window.Zepto;
         gif: 'image',
         png: 'image',
         bmp: 'image',
-        swf: 'flash'
+        swf: 'flash',
+        html: 'html'
     };
 
     // TODO(wuhf): URL解释器
@@ -574,6 +575,9 @@ armer = window.jQuery || window.Zepto;
                     parent = parent || location.href;
                     //http://p.tgnet.com/Office/MyInfo.aspx
                     var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
+                    parent.replace(rProtocol, function(protocol){
+                        self._protocol = protocol
+                    })
                     //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
                     // 则获取协议
                     // 如果木有域名后缀，则判断为相对地址
@@ -684,6 +688,21 @@ armer = window.jQuery || window.Zepto;
                 }
                 return r;
             },
+            fileName : function(value){
+                var p = this._pathname;
+                p = p[p.length - 1];
+                if (value) this._pathname[this._pathname.length - 1] = value;
+                else return p;
+            },
+            fileNameWithoutExt: function(value){
+                var p = this._pathname;
+                p = p[p.length - 1];
+                var i = p.lastIndexOf('.');
+                if (value == null) return i < 0 ? p : p.substring(0, i);
+                else
+                    this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
+
+            },
             extension : function(value){
                 var p = this._pathname;
                 p = p[p.length - 1];
@@ -735,8 +754,7 @@ armer = window.jQuery || window.Zepto;
         };
 
 
-        var currentParent = null;
-        var currentUrl = null;
+        var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
         var requesting = {};
         // 通过require正在请求的模块
@@ -752,10 +770,19 @@ armer = window.jQuery || window.Zepto;
                 auto: {
                     config: function(config){
                         var url = $.URL(this.url, this.parent);
-                        if (url.extension() == '') url.extension(defaults.ext);
+                        var ext = url.extension();
+                        if (!ext) {
+                            url.extension(defaults.ext);
+                            ext = 'js';
+                        }
+                        if (ext == 'js') {
+                            this.name = url.fileNameWithoutExt()
+                        } else {
+                            this.name = url.fileName()
+                        }
                         url.search('callback', 'define');
                         this.url = url.toString();
-                        this.type = $.ajax.ext2Type[url.extension()]
+                        this.type = $.ajax.ext2Type[ext];
                     },
                     callback: function(){
                         var that = this;
@@ -764,7 +791,10 @@ armer = window.jQuery || window.Zepto;
                             this.exports = this.originData;
                         } else if (this.factory) {
                             var exports = this.factory.apply(this, getExports(arguments))
-                            this.exports = exports || this.exports || modules.exports.exports;
+                            if (exports != null)
+                                this.exports = exports
+                            else if (this.exports == null)
+                                this.exports = modules.exports.exports
                         }
 
                         this.dfd.resolveWith(this, [this]);
@@ -776,7 +806,8 @@ armer = window.jQuery || window.Zepto;
         // 构造模块
         require.Model = function Model(config){
             $.extend(this, config);
-            modules[this.fullname] = this;
+            //throw Error(this.id)
+            modules[this.id] = this;
             //if (this.url) modules[this.method + this.url] = this;
             //else if (this.id) modules[this.id] = this;
         };
@@ -785,7 +816,7 @@ armer = window.jQuery || window.Zepto;
             fire: function(data){
                 // 使用shim模式
                 var mod = this;
-                var shim = defaults.shim[mod.id] || {};
+                var shim = defaults.shim[mod.name] || {};
                 if ($.isArray(shim))
                     shim = {
                         deps: shim
@@ -795,19 +826,17 @@ armer = window.jQuery || window.Zepto;
                 var success = function(){
                     modules.module.exports = mod;
                     modules.exports.exports = {};
-                    currentParent = mod.url;
+                    currentUrl = mod.url;
                     if (shim.exports)
                         modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
                     defaults.plusin[mod.method].callback.apply(mod, arguments);
                     modules.module.exports = null;
-                    currentParent = null;
                 }
                 if (mod.deps && mod.deps.length) {
-                    currentParent = mod.url;
+                    currentUrl = mod.url;
                     innerRequire(mod.deps).done(success).fail(function(){
                         mod.dfd.rejectWith(mod, [data]);
                     });
-                    currentParent = null;
                 } else success();
 
                 // 这两个是为CMD服务的，只读
@@ -834,9 +863,9 @@ armer = window.jQuery || window.Zepto;
             var mod;
             if (typeof config == 'string') {
                 // 存在同名模块
-                if (!(mod = modules[config] || modules[(config = id2Config(config)).fullname])) {
+                if (!(mod = modules[config] || modules[id2Config(config, currentUrl).id])) {
                     // 不存在则是新的模块
-                    config = idOrUrl2Config(config);
+                    config = id2Config(config);
                 }
             }
             if (mod) {
@@ -854,8 +883,8 @@ armer = window.jQuery || window.Zepto;
                 }
             }
             else if (typeof config == 'object') {
-                // 处理同样地址同样方式加载但不同id的模块
-                if (!(mod = modules[config.fullname]))
+                // 处理同样地址同样方式加载但不同name的模块
+                if (!(mod = modules[config.id]))
                     mod = new require.Model(config);
                 // 模块作为参数情况
             } else if (typeof config == 'string')
@@ -886,17 +915,18 @@ armer = window.jQuery || window.Zepto;
                             var options = {
                                 url: mod.url,
                                 cache: true,
-                                crossDomain: defaults.charset ? true : undefined,
+                                crossDomain: defaults.charset ? true : void 0,
+                                //crossDomain: true,
                                 dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                                 scriptCharset: defaults.charset,
                                 success: function(data) {
                                     var bmod;
                                     if (requesting[mod.url]) {
                                         if (bmod = requesting[mod.url].bmod) {
-                                            mod.deps = bmod.deps;
-                                            mod.factory = bmod.factory;
-                                            mod.exports = bmod.exports;
-                                            mod.type = bmod.type;
+                                            var dfd = mod.dfd;
+                                            $.extend(mod, bmod);
+                                            mod.dfd = dfd;
+                                            modules[bmod.id] = mod;
                                         }
                                         delete requesting[mod.url]
                                     }
@@ -908,9 +938,9 @@ armer = window.jQuery || window.Zepto;
                                 },
                                 converters: {
                                     "text script": function(text) {
-                                        currentUrl = mod.url;
+                                        xhrRequestURL = mod.url
                                         jQuery.globalEval(text);
-                                        currentUrl = null;
+                                        xhrRequestURL = null;
                                         return text;
                                     }
                                 }
@@ -930,9 +960,8 @@ armer = window.jQuery || window.Zepto;
         function require(deps, callback, errorCallback){
             // 兼容CMD模式
             if (!callback) {
-                var mod,
-                    config = id2Config(deps);
-                if (mod = modules[config.fullname] || modules[idOrUrl2Config(config).fullname])
+                var mod;
+                if (mod = modules[deps] || modules[id2Config(deps, currentUrl).id] || modules[id2Config(deps).id])
                     return mod.exports;
                 else {
                     throw Error('this module is not define');
@@ -945,37 +974,38 @@ armer = window.jQuery || window.Zepto;
         }
         /**
          *
-         * @param id 模块id用于记录缓存这个模块
+         * @param name 模块name用于记录缓存这个模块
          * @param [deps] 依赖列表，这个模块需要依赖那些模块
          * @param factory 工厂，用于处理返回的模块
          * @returns {Model}
          */
-        function define(id, deps, factory){
-            if (typeof id != 'string') {
+        function define(name, deps, factory){
+            if (typeof name != 'string') {
                 factory = deps;
-                deps = id;
-                id = null;
+                deps = name;
+                name = null;
             }
             if (factory === undefined) {
                 factory = deps;
                 deps = ['require', 'exports', 'module'];
             }
-            var mod, url;
+            var mod;
 
-            url = currentUrl || currentScriptURL();
+            currentUrl = xhrRequestURL || currentScriptURL();
             // 如果正在请求这个js
-            if (mod = requesting[url]) {
-                if (id && id !== mod.id) {
+            if (mod = requesting[currentUrl]) {
+                if (name && name !== mod.name) {
                     // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(id2Config(id), url);
-                    requesting[url].bmod = mod;
+                    mod = new require.Model(id2Config(name, currentUrl));
+                    requesting[currentUrl].bmod = mod;
                 } else {
                     // define()这种形式默认是这个模块
                     delete mod.bmod;
-                    delete requesting[url]
+                    delete requesting[currentUrl]
                 }
-            } else //如果没有请求这个js
-                mod = new require.Model(id2Config(id), url);
+            } else
+                //如果没有请求这个js
+                mod = new require.Model(id2Config(name, currentUrl));
             var withCMD = -1, i;
             for (i = 0; i < deps.length; i++) {
                 // 看deps里是否有require，是则找出其index
@@ -1055,43 +1085,39 @@ armer = window.jQuery || window.Zepto;
                 return stack.replace(/(:\d+)?:\d+$/i, "");
             }
         }
-        function id2Config(idOrPath) {
-            var c = {id: idOrPath};
-            idOrPath = idOrPath.split('!');
+        function id2Config(name, url) {
+            var x = name == 'domready!'
+            var s, c = {name: name};
+            s = name.split('!');
             // 分析处理方法
-            if (idOrPath.length == 2) {
-                c.method = idOrPath[0];
-                c.url = idOrPath[1];
+            if (s.length == 2) {
+                c.method = s[0];
+                c.name = s[1];
+            } else if (!!~name.indexOf('!')) {
+                c.method = s[0];
             } else {
                 c.method = defaults.method;
-                c.url = idOrPath[0];
+                c.name = s[0];
             }
-            idOrPath = c.url.split(':');
-            if (idOrPath.length > 1)
-                c.namespace = idOrPath.shift();
-            else
+            if (x) console.log(c)
+            s = c.name.split(':');
+            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
                 c.namespace = defaults.namespace;
-            c.url = idOrPath.join(':');
-            c.fullname = c.method + '!' + c.namespace + ':' + c.id
-            return c;
-        }
-        function idOrUrl2Config(c, url) {
+            else
+                c.namespace = s.shift();
+            c.name = s.join(':');
             if (url) {
                 c.url = url;
             } else {
-                c.parent = currentParent;
-                if (defaults.paths[c.id]) {
-                    //别名机制
-                    c.url = defaults.paths[c.id];
-                    if (typeof c.url === "object") {
-                        //paths
-                        c.url = c.url.src;
-                    }
-                }
+                c.parent = currentUrl;
+                c.url = c.name;
+                //别名机制
+                c.url = defaults.paths[name] || c.url;
                 c = defaults.plusin[c.method].config.call(c) || c;
             }
-            c.fullname = c.method + '!' + c.namespace + ':' + c.url
-            return c
+            c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
+                (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
+            return c;
         }
         define.amd = define.cmd = modules;
         require.defaults = defaults;
@@ -1112,7 +1138,8 @@ armer = window.jQuery || window.Zepto;
             config: function(){
                 var mod = {
                     dfd: $.Deferred(),
-                    exports: $
+                    exports: $,
+                    method: 'domready'
                 };
                 $(function(){
                     mod.dfd.resolveWith(mod, [mod]);
@@ -1122,10 +1149,9 @@ armer = window.jQuery || window.Zepto;
 
         };
 
-
         var nodes = document.getElementsByTagName("script")
         var dataMain = $(nodes[nodes.length - 1]).data('main')
-        if (dataMain) require([dataMain], $.noop);
+        if (dataMain) require(dataMain, $.noop);
     })();
 
     // 基本语言扩充

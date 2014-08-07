@@ -1,5 +1,5 @@
 /*!
- * ArmerJS - v0.1.0 - 2014-08-06 
+ * ArmerJS - v0.1.0 - 2014-08-07 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -823,13 +823,19 @@ armer = window.jQuery || window.Zepto;
                 if (mod.deps && mod.deps.length) {
                     currentUrl = mod.url;
                     innerRequire(mod.deps).done(success).fail(function(){
-                        mod.dfd.rejectWith(mod, [data]);
+                        mod.dfd.rejectWith(mod, arguments);
                     });
-                } else success();
+                } else
+                    // 避免加载过快 parseDep 时currentUrl的出错
+                    $.nextTick(function(){success()}, 0);
 
                 // 这两个是为CMD服务的，只读
                 mod.dependencies = mod.deps;
                 mod.uri = mod.url;
+            },
+            error: function(errState){
+                this.error = errState
+                this.dfd.rejectWith(this, [this]);
             },
             resolve: function(url){
                 url = $.URL(url, this.url);
@@ -893,7 +899,8 @@ armer = window.jQuery || window.Zepto;
             for (var i = 0; i < deps.length; i++) {
                 mod = parseDep(deps[i]);
                 // 当不存在dfd的时候证明这个模块没有初始化
-                if (!mod.dfd) {
+                // 当存在状态为rejected的模块，则重新请求
+                if (!mod.dfd || mod.dfd.state() == 'rejected') {
                     mod.dfd = $.Deferred();
                     // 如果factory或者exports没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
                     // TODO:这个判断貌似不太准确
@@ -921,7 +928,7 @@ armer = window.jQuery || window.Zepto;
                                     mod.fire(data);
                                 },
                                 error: function(){
-                                    mod.dfd.rejectWith(mod);
+                                    mod.error(arguments);
                                     delete requesting[mod.url];
                                 },
                                 converters: {
@@ -938,6 +945,7 @@ armer = window.jQuery || window.Zepto;
                     // 如果factory或者exports已经定义过，那么就直接处理该模块
                     else if (mod.fire)
                         mod.fire();
+                    // 一些特殊的模块，只包括exports的
                     else mod.dfd.resolveWith(mod, [mod])
                 }
                 mDps.push(mod.dfd);
@@ -945,7 +953,7 @@ armer = window.jQuery || window.Zepto;
             return $.when.apply($, mDps);
         }
 
-        function require(deps, callback, errorCallback){
+        function require(deps, callback, errorCallback, options){
             // 兼容CMD模式
             if (!callback) {
                 var mod;
@@ -955,7 +963,7 @@ armer = window.jQuery || window.Zepto;
                     throw Error('this module is not define');
                 }
             }
-            return innerRequire(deps).done(function(){
+            return innerRequire(deps, options).done(function(){
                 callback.apply(this, getExports(arguments))
             }).fail(errorCallback).promise();
 
@@ -977,23 +985,26 @@ armer = window.jQuery || window.Zepto;
                 factory = deps;
                 deps = ['require', 'exports', 'module'];
             }
-            var mod;
+            var mod, config;
 
             currentUrl = xhrRequestURL || currentScriptURL();
             // 如果正在请求这个js
             if (mod = requesting[currentUrl]) {
-                if (name && name !== mod.name) {
+                if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
                     // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(id2Config(name, currentUrl));
+                    mod = new require.Model(config);
                     requesting[currentUrl].bmod = mod;
                 } else {
                     // define()这种形式默认是这个模块
                     delete mod.bmod;
                     delete requesting[currentUrl]
                 }
-            } else
+            } else {
                 //如果没有请求这个js
-                mod = new require.Model(id2Config(name, currentUrl));
+                if (!name) $.error('can\'t create anonymous model here')
+                else mod = new require.Model(id2Config(name, currentUrl))
+            }
+
             var withCMD = -1, i;
             for (i = 0; i < deps.length; i++) {
                 // 看deps里是否有require，是则找出其index
@@ -1074,7 +1085,6 @@ armer = window.jQuery || window.Zepto;
             }
         }
         function id2Config(name, url) {
-            var x = name == 'domready!'
             var s, c = {name: name};
             s = name.split('!');
             // 分析处理方法
@@ -1087,7 +1097,6 @@ armer = window.jQuery || window.Zepto;
                 c.method = defaults.method;
                 c.name = s[0];
             }
-            if (x) console.log(c)
             s = c.name.split(':');
             if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
                 c.namespace = defaults.namespace;
@@ -1139,7 +1148,7 @@ armer = window.jQuery || window.Zepto;
 
         var nodes = document.getElementsByTagName("script")
         var dataMain = $(nodes[nodes.length - 1]).data('main')
-        if (dataMain) require(dataMain, $.noop);
+        if (dataMain) $(function(){require(dataMain, $.noop)});
     })();
 
     // 基本语言扩充

@@ -13236,7 +13236,7 @@ module.exports = uglify
 
 define('source-map/array-set', function (require, exports, module) {
 
-  var util = require('./util');
+  var util = require('./../../src/util');
 
   /**
    * A data structure which is a combination of an array and a set. Adding a new
@@ -13592,7 +13592,7 @@ define('source-map/binary-search', function (require, exports, module) {
 
 define('source-map/source-map-consumer', function (require, exports, module) {
 
-  var util = require('./util');
+  var util = require('./../../src/util');
   var binarySearch = require('./binary-search');
   var ArraySet = require('./array-set').ArraySet;
   var base64VLQ = require('./base64-vlq');
@@ -14069,7 +14069,7 @@ define('source-map/source-map-consumer', function (require, exports, module) {
 define('source-map/source-map-generator', function (require, exports, module) {
 
   var base64VLQ = require('./base64-vlq');
-  var util = require('./util');
+  var util = require('./../../src/util');
   var ArraySet = require('./array-set').ArraySet;
 
   /**
@@ -14447,7 +14447,7 @@ define('source-map/source-map-generator', function (require, exports, module) {
 define('source-map/source-node', function (require, exports, module) {
 
   var SourceMapGenerator = require('./source-map-generator').SourceMapGenerator;
-  var util = require('./util');
+  var util = require('./../../src/util');
 
   /**
    * SourceNodes provide a way to abstract over interpolating/concatenating

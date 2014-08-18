@@ -1,5 +1,5 @@
 /*!
- * ArmerJS - v0.1.0 - 2014-08-07 
+ * ArmerJS - v0.1.0 - 2014-08-18 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -740,7 +740,7 @@ armer = window.jQuery || window.Zepto;
             exports: {exports: {}},
             module: {exports: {}}
         };
-
+        modules.jQuery = modules.jquery = modulse.zepto = { exports: $ };
 
         var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
@@ -6248,6 +6248,24 @@ if (window.define) {
             var m = obj ? obj[methodKey] : false,
                 r = new RegExp(methodKey, "g");
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
+        },
+        /**
+         * 判断一个事件是不是原生支持
+         */
+        isNativeEvent: function(eventName, target){
+            target = target || DOC;
+            eventName = 'on' + eventName;
+            var osc = target[eventName];
+            if (osc !== undefined) {
+                try {
+                    target[eventName] = 0;
+                    return target[eventName] === null;
+                } catch (e) {
+                } finally {
+                    target[eventName] = osc;
+                }
+            }
+            return false;
         },
         /**
          * 是否为空对象

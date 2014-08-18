@@ -752,7 +752,7 @@ armer = window.jQuery || window.Zepto;
             exports: {exports: {}},
             module: {exports: {}}
         };
-
+        modules.jQuery = modules.jquery = modulse.zepto = { exports: $ };
 
         var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置

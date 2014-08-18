@@ -121,6 +121,24 @@
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
         },
         /**
+         * 判断一个事件是不是原生支持
+         */
+        isNativeEvent: function(eventName, target){
+            target = target || DOC;
+            eventName = 'on' + eventName;
+            var osc = target[eventName];
+            if (osc !== undefined) {
+                try {
+                    target[eventName] = 0;
+                    return target[eventName] === null;
+                } catch (e) {
+                } finally {
+                    target[eventName] = osc;
+                }
+            }
+            return false;
+        },
+        /**
          * 是否为空对象
          * @param {Object} obj
          * @return {Boolean}

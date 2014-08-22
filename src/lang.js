@@ -965,6 +965,13 @@
     $.Object("hasOwnerProperty,isPrototypeOf,propertyIsEnumerable");
 
     $.Function({
+        clone: function(fn, extend){
+            var newfn = new Function('return ' + fn.toString())();
+            if (newfn.prototype)
+                newfn.prototype = fn.prototype;
+            $.extend(newfn, fn, extend);
+            return newfn;
+        },
         partial: function(func) {
             var args = $.slice(arguments, 1);
             return function() {

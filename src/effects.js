@@ -1,4 +1,5 @@
 // 扩展内建jQuery css easing
+if ($.support.opacity) $.fx.off = false;
 ;(function () {
     // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
     var baseEasings = {};
@@ -86,11 +87,14 @@
     };
     // 根据support调用不同的事件
     var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
-
+    var transitionPrefilters = [defaultPrefilter];
     // 由于transitionEnd的表现不一致，所以不适用它作为判断动画完成的时机
     //$.Transition.useTransitionEnd = true;
-    Transition = function(elem, properties, options){
+    var Transition = function(elem, properties, options){
         var transition,
+            result,
+            index = 0,
+            length = transitionPrefilters.length,
             oldTransitions,
             $elem = $(elem),
             bound = false,
@@ -108,15 +112,11 @@
             bound = true;
             elem.addEventListener(transitionEnd, handler);
         } else window.setTimeout(handler, options.duration);
-        // webkit外必须强迫重绘才能触发
-        var s = elem.offsetWidth;
 
-        elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
-        $elem.css(properties);
         transition = deferred.promise({
             elem: elem,
             props: $.extend({}, properties),
-            opts: $.extend(true, {}, options),
+            opts: $.extend(true, { specialEasing: {} }, options),
             originalProperties: properties,
             originalOptions: options,
             duration: options.duration,
@@ -135,6 +135,23 @@
                 return this;
             }
         });
+
+        for ( ; index < length ; index++ ) {
+            result = transitionPrefilters[index].call(transition, elem, properties, transition.opts);
+            if (result) {
+                return result;
+            }
+        }
+
+        if ($.isFunction(transition.opts.start)) {
+            transition.opts.start.call(elem, transition);
+        }
+
+        // webkit外必须强迫重绘才能触发
+        var s = elem.offsetWidth;
+        elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
+        $elem.css(properties);
+
         return transition.done( transition.opts.done, transition.opts.complete )
             .fail( transition.opts.fail )
             .always( transition.opts.always );
@@ -176,6 +193,138 @@
 
         return re;
     }
+    var defaultDisplay = $.defaultDisplay,
+        isHidden = $.isHidden,
+        rfxtypes = /^(?:toggle|show|hide)$/
+
+    function defaultPrefilter( elem, props, opts ) {
+        /* jshint validthis: true */
+        var prop, value, toggle, tween, hooks, oldfire, display, checkDisplay,
+            anim = this,
+            orig = {},
+            style = elem.style,
+            hidden = elem.nodeType && isHidden( elem ),
+            dataShow = jQuery._data( elem, "fxshow" );
+
+        // height/width overflow pass
+        if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
+            // Make sure that nothing sneaks out
+            // Record all 3 overflow attributes because IE does not
+            // change the overflow attribute when overflowX and
+            // overflowY are set to the same value
+            opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
+
+            // Set display property to inline-block for height/width
+            // animations on inline elements that are having width/height animated
+            display = $.css( elem, "display" );
+
+            // Test default display if display is currently "none"
+            checkDisplay = display === "none" ?
+                $._data( elem, "olddisplay" ) || defaultDisplay( elem.nodeName ) : display;
+
+            if ( checkDisplay === "inline" && $.css( elem, "float" ) === "none" ) {
+
+                // inline-level elements accept inline-block;
+                // block-level elements need to be inline with layout
+                if ( !support.inlineBlockNeedsLayout || defaultDisplay( elem.nodeName ) === "inline" ) {
+                    style.display = "inline-block";
+                } else {
+                    style.zoom = 1;
+                }
+            }
+        }
+
+        if ( opts.overflow ) {
+            style.overflow = "hidden";
+            if ( !support.shrinkWrapBlocks() ) {
+                anim.always(function() {
+                    style.overflow = opts.overflow[ 0 ];
+                    style.overflowX = opts.overflow[ 1 ];
+                    style.overflowY = opts.overflow[ 2 ];
+                });
+            }
+        }
+
+        // show/hide pass
+        for ( prop in props ) {
+            value = props[ prop ];
+            if ( rfxtypes.exec( value ) ) {
+                delete props[ prop ];
+                toggle = toggle || value === "toggle";
+                if ( value === ( hidden ? "hide" : "show" ) ) {
+
+                    // If there is dataShow left over from a stopped hide or show and we are going to proceed with show, we should pretend to be hidden
+                    if ( value === "show" && dataShow && dataShow[ prop ] !== undefined ) {
+                        hidden = true;
+                    } else {
+                        continue;
+                    }
+                }
+                orig[ prop ] = dataShow && dataShow[ prop ] || $.style( elem, prop );
+
+                // Any non-fx value stops us from restoring the original display value
+            } else {
+                display = undefined;
+            }
+        }
+
+        if ( !jQuery.isEmptyObject( orig ) ) {
+            if ( dataShow ) {
+                if ( "hidden" in dataShow ) {
+                    hidden = dataShow.hidden;
+                }
+            } else {
+                dataShow = $._data( elem, "fxshow", {} );
+            }
+
+            // store state if its toggle - enables .stop().toggle() to "reverse"
+            if ( toggle ) {
+                dataShow.hidden = !hidden;
+            }
+            if ( hidden ) {
+                $( elem ).show();
+            } else {
+                anim.done(function() {
+                    $( elem ).hide();
+                });
+            }
+            anim.done(function() {
+                var prop;
+                $._removeData( elem, "fxshow" );
+                for ( prop in orig ) {
+                    $.style( elem, prop, orig[ prop ] );
+                }
+            });
+            //console.log(orig)
+            for (prop in orig) {
+                var start = $(elem).css(prop);
+                if (!( prop in dataShow )) {
+                    dataShow[prop] = start;
+                }
+                if (hidden) {
+                    style[prop] = 0
+                }
+                props[prop] = hidden ? dataShow[ prop ] : 0;
+            }
+/*
+            for ( prop in orig ) {
+                tween = createTween( hidden ? dataShow[ prop ] : 0, prop, anim );
+
+                if ( !( prop in dataShow ) ) {
+                    dataShow[ prop ] = tween.start;
+                    if ( hidden ) {
+                        tween.end = tween.start;
+                        tween.start = prop === "width" || prop === "height" ? 1 : 0;
+                    }
+                }
+            }
+*/
+
+            // If this is a noop like .hide().hide(), restore an overwritten display value
+        } else if ( (display === "none" ? defaultDisplay( elem.nodeName ) : display) === "inline" ) {
+            style.display = display;
+        }
+    }
 
     /**
      * 生成序列化的transition
@@ -204,7 +353,6 @@
         $.each(props, function(i, name) {
             transitions.push(name + ' ' + attribs);
         });
-
         return transitions.join(', ');
     }
     /**
@@ -217,8 +365,10 @@
      */
     function toMS(duration) {
         var i = duration;
-        // 转换类似 'fast' 的字符串.
-        if ($.fx.speeds[i]) { i = $.fx.speeds[i]; }
+
+        // Allow string durations like 'fast' and 'slow', without overriding numeric values.
+        if (typeof i === 'string' && (!i.match(/^[\-0-9\.]+/))) { i = $.fx.speeds[i] || $.fx.speeds._default; }
+
         return $.unit(i, 'ms');
     }
 
@@ -228,16 +378,9 @@
     if (!$.support.transition)
         $.fn.transit = $.fn.transition = $.fn.animate;
 
-
     // TODO: classAnimation 让JS分析transition进行js动画过渡模拟tansitionCSS动画
 
-    // 转换为ms，例如：将'2000ms'、'2s' 转换为 2000;
-    function toMS(duration) {
-        if (typeof duration == 'number') return duration;
-        if (duration.indexOf('ms') > -1) return parseInt(duration);
-        if (duration.indexOf('s') > -1) return parseInt(duration) * 1000;
-        return parseInt(duration);
-    }
+
     var classAnimationActions = [ "add", "remove", "toggle" ];
     var rC = /\s*,\s*/;
     var rS = /\s/;
@@ -266,7 +409,7 @@
         return styles;
     };
     // 通过currentStyle获取transition
-    var getTransition = function(currentStyle){
+    var queryTransition = function(currentStyle){
         var i, tLeng = 0, t = [], property = [], duration = [], timingFunction = [], delay = [], transition = {};
         // 必须在try运行，否则取自定义属性可能导致程序不能继续运行
         try {
@@ -315,7 +458,7 @@
             allAnimations = animated.find($.trim(children).replace(/^["']/, '').replace(/['"]$/, '')).addBack();
             // 遍历需要做动画的元素，抽取出原来样式
             allAnimations = allAnimations.map(function(){
-                var t = getTransition(this.currentStyle), el = $(this);
+                var t = queryTransition(this.currentStyle), el = $(this);
                 return {
                     el: el,
                     start: getStyles(this, t),

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="../../src/armer.js"></script>
+    <script src="../../src/polyfill.js"></script>
+    <script src="../../src/lang.js"></script>
+    <script src="../../src/io.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/effects.js"></script>
+    <script src="../../src/ui.js"></script>
+    <script src="../../src/ui/modal.js"></script>
+    <style>
+        .backdrop {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: .5;
+            z-index: 100;
+            position: fixed;
+            filter: alpha(opacity=50);
+            zoom:1;_position: absolute;
+            _height: expression(eval('document.body.offsetHeight')+'px')
+        }
+    </style>
+</head>
+<body>
+    <div style="width: 300px; height: 300px; background-color: lightgreen;" role="dialog">
+        <a onclick="modal.emit('open')" href="javascript:">打开</a>
+        <a onclick="modal.close()" href="javascript:">关闭</a>
+    </div>
+    <div style="width: 300px; height: 300px; background-color: cornflowerblue;" role="dialog">
+        <a onclick="modal2.emit('open')" href="javascript:">打开2</a>
+        <a onclick="modal2.close()" href="javascript:">关闭2</a>
+    </div>
+    <script>
+        var modal = $.UI.Modal($('[role=dialog]:eq(0)'))
+        var modal2 = $.UI.Modal($('[role=dialog]:eq(1)'))
+    </script>
+</body>
+</html>

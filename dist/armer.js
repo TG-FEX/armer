@@ -1,5 +1,5 @@
 /*!
- * ArmerJS - v0.1.0 - 2014-08-18 
+ * armerjs - v0.6.0 - 2014-08-22 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -137,6 +137,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {Object}
              */
             oneObject: oneObject,
+            hasOwn: hasOwn,
             config: function(settings) {
                 var kernel = arguments.callee;
                 for (var p in settings) {
@@ -339,6 +340,10 @@ armer = window.jQuery || window.Zepto;
             // 判断一个对象是不是jQuery.Deferred
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
+            },
+            // jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+            isHidden: function(elem) {
+                return $.css(elem, "display") === "none" || !$.contains(elem.ownerDocument, elem);
             },
             /**
              * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
@@ -740,7 +745,7 @@ armer = window.jQuery || window.Zepto;
             exports: {exports: {}},
             module: {exports: {}}
         };
-        modules.jQuery = modules.jquery = modulse.zepto = { exports: $ };
+        modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
 
         var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
@@ -7094,6 +7099,13 @@ if (window.define) {
     $.Object("hasOwnerProperty,isPrototypeOf,propertyIsEnumerable");
 
     $.Function({
+        clone: function(fn, extend){
+            var newfn = new Function('return ' + fn.toString())();
+            if (newfn.prototype)
+                newfn.prototype = fn.prototype;
+            $.extend(newfn, fn, extend);
+            return newfn;
+        },
         partial: function(func) {
             var args = $.slice(arguments, 1);
             return function() {
@@ -8444,6 +8456,7 @@ $.fn.bgiframe = function(){
 
 
 // 扩展内建jQuery css easing
+if ($.support.opacity) $.fx.off = false;
 ;(function () {
     // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
     var baseEasings = {};
@@ -8531,11 +8544,14 @@ $.fn.bgiframe = function(){
     };
     // 根据support调用不同的事件
     var transitionEnd = support.transitionEnd = eventNames[support.transition] || null;
-
+    var transitionPrefilters = [defaultPrefilter];
     // 由于transitionEnd的表现不一致，所以不适用它作为判断动画完成的时机
     //$.Transition.useTransitionEnd = true;
-    Transition = function(elem, properties, options){
+    var Transition = function(elem, properties, options){
         var transition,
+            result,
+            index = 0,
+            length = transitionPrefilters.length,
             oldTransitions,
             $elem = $(elem),
             bound = false,
@@ -8553,15 +8569,11 @@ $.fn.bgiframe = function(){
             bound = true;
             elem.addEventListener(transitionEnd, handler);
         } else window.setTimeout(handler, options.duration);
-        // webkit外必须强迫重绘才能触发
-        var s = elem.offsetWidth;
 
-        elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
-        $elem.css(properties);
         transition = deferred.promise({
             elem: elem,
             props: $.extend({}, properties),
-            opts: $.extend(true, {}, options),
+            opts: $.extend(true, { specialEasing: {} }, options),
             originalProperties: properties,
             originalOptions: options,
             duration: options.duration,
@@ -8580,6 +8592,23 @@ $.fn.bgiframe = function(){
                 return this;
             }
         });
+
+        for ( ; index < length ; index++ ) {
+            result = transitionPrefilters[index].call(transition, elem, properties, transition.opts);
+            if (result) {
+                return result;
+            }
+        }
+
+        if ($.isFunction(transition.opts.start)) {
+            transition.opts.start.call(elem, transition);
+        }
+
+        // webkit外必须强迫重绘才能触发
+        var s = elem.offsetWidth;
+        elem.style[support.transition] = getTransition(properties, options.duration, options.easing, options.delay);
+        $elem.css(properties);
+
         return transition.done( transition.opts.done, transition.opts.complete )
             .fail( transition.opts.fail )
             .always( transition.opts.always );
@@ -8621,6 +8650,138 @@ $.fn.bgiframe = function(){
 
         return re;
     }
+    var defaultDisplay = $.defaultDisplay,
+        isHidden = $.isHidden,
+        rfxtypes = /^(?:toggle|show|hide)$/
+
+    function defaultPrefilter( elem, props, opts ) {
+        /* jshint validthis: true */
+        var prop, value, toggle, tween, hooks, oldfire, display, checkDisplay,
+            anim = this,
+            orig = {},
+            style = elem.style,
+            hidden = elem.nodeType && isHidden( elem ),
+            dataShow = jQuery._data( elem, "fxshow" );
+
+        // height/width overflow pass
+        if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
+            // Make sure that nothing sneaks out
+            // Record all 3 overflow attributes because IE does not
+            // change the overflow attribute when overflowX and
+            // overflowY are set to the same value
+            opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
+
+            // Set display property to inline-block for height/width
+            // animations on inline elements that are having width/height animated
+            display = $.css( elem, "display" );
+
+            // Test default display if display is currently "none"
+            checkDisplay = display === "none" ?
+                $._data( elem, "olddisplay" ) || defaultDisplay( elem.nodeName ) : display;
+
+            if ( checkDisplay === "inline" && $.css( elem, "float" ) === "none" ) {
+
+                // inline-level elements accept inline-block;
+                // block-level elements need to be inline with layout
+                if ( !support.inlineBlockNeedsLayout || defaultDisplay( elem.nodeName ) === "inline" ) {
+                    style.display = "inline-block";
+                } else {
+                    style.zoom = 1;
+                }
+            }
+        }
+
+        if ( opts.overflow ) {
+            style.overflow = "hidden";
+            if ( !support.shrinkWrapBlocks() ) {
+                anim.always(function() {
+                    style.overflow = opts.overflow[ 0 ];
+                    style.overflowX = opts.overflow[ 1 ];
+                    style.overflowY = opts.overflow[ 2 ];
+                });
+            }
+        }
+
+        // show/hide pass
+        for ( prop in props ) {
+            value = props[ prop ];
+            if ( rfxtypes.exec( value ) ) {
+                delete props[ prop ];
+                toggle = toggle || value === "toggle";
+                if ( value === ( hidden ? "hide" : "show" ) ) {
+
+                    // If there is dataShow left over from a stopped hide or show and we are going to proceed with show, we should pretend to be hidden
+                    if ( value === "show" && dataShow && dataShow[ prop ] !== undefined ) {
+                        hidden = true;
+                    } else {
+                        continue;
+                    }
+                }
+                orig[ prop ] = dataShow && dataShow[ prop ] || $.style( elem, prop );
+
+                // Any non-fx value stops us from restoring the original display value
+            } else {
+                display = undefined;
+            }
+        }
+
+        if ( !jQuery.isEmptyObject( orig ) ) {
+            if ( dataShow ) {
+                if ( "hidden" in dataShow ) {
+                    hidden = dataShow.hidden;
+                }
+            } else {
+                dataShow = $._data( elem, "fxshow", {} );
+            }
+
+            // store state if its toggle - enables .stop().toggle() to "reverse"
+            if ( toggle ) {
+                dataShow.hidden = !hidden;
+            }
+            if ( hidden ) {
+                $( elem ).show();
+            } else {
+                anim.done(function() {
+                    $( elem ).hide();
+                });
+            }
+            anim.done(function() {
+                var prop;
+                $._removeData( elem, "fxshow" );
+                for ( prop in orig ) {
+                    $.style( elem, prop, orig[ prop ] );
+                }
+            });
+            //console.log(orig)
+            for (prop in orig) {
+                var start = $(elem).css(prop);
+                if (!( prop in dataShow )) {
+                    dataShow[prop] = start;
+                }
+                if (hidden) {
+                    style[prop] = 0
+                }
+                props[prop] = hidden ? dataShow[ prop ] : 0;
+            }
+/*
+            for ( prop in orig ) {
+                tween = createTween( hidden ? dataShow[ prop ] : 0, prop, anim );
+
+                if ( !( prop in dataShow ) ) {
+                    dataShow[ prop ] = tween.start;
+                    if ( hidden ) {
+                        tween.end = tween.start;
+                        tween.start = prop === "width" || prop === "height" ? 1 : 0;
+                    }
+                }
+            }
+*/
+
+            // If this is a noop like .hide().hide(), restore an overwritten display value
+        } else if ( (display === "none" ? defaultDisplay( elem.nodeName ) : display) === "inline" ) {
+            style.display = display;
+        }
+    }
 
     /**
      * 生成序列化的transition
@@ -8649,7 +8810,6 @@ $.fn.bgiframe = function(){
         $.each(props, function(i, name) {
             transitions.push(name + ' ' + attribs);
         });
-
         return transitions.join(', ');
     }
     /**
@@ -8662,8 +8822,10 @@ $.fn.bgiframe = function(){
      */
     function toMS(duration) {
         var i = duration;
-        // 转换类似 'fast' 的字符串.
-        if ($.fx.speeds[i]) { i = $.fx.speeds[i]; }
+
+        // Allow string durations like 'fast' and 'slow', without overriding numeric values.
+        if (typeof i === 'string' && (!i.match(/^[\-0-9\.]+/))) { i = $.fx.speeds[i] || $.fx.speeds._default; }
+
         return $.unit(i, 'ms');
     }
 
@@ -8673,16 +8835,9 @@ $.fn.bgiframe = function(){
     if (!$.support.transition)
         $.fn.transit = $.fn.transition = $.fn.animate;
 
-
     // TODO: classAnimation 让JS分析transition进行js动画过渡模拟tansitionCSS动画
 
-    // 转换为ms，例如：将'2000ms'、'2s' 转换为 2000;
-    function toMS(duration) {
-        if (typeof duration == 'number') return duration;
-        if (duration.indexOf('ms') > -1) return parseInt(duration);
-        if (duration.indexOf('s') > -1) return parseInt(duration) * 1000;
-        return parseInt(duration);
-    }
+
     var classAnimationActions = [ "add", "remove", "toggle" ];
     var rC = /\s*,\s*/;
     var rS = /\s/;
@@ -8711,7 +8866,7 @@ $.fn.bgiframe = function(){
         return styles;
     };
     // 通过currentStyle获取transition
-    var getTransition = function(currentStyle){
+    var queryTransition = function(currentStyle){
         var i, tLeng = 0, t = [], property = [], duration = [], timingFunction = [], delay = [], transition = {};
         // 必须在try运行，否则取自定义属性可能导致程序不能继续运行
         try {
@@ -8760,7 +8915,7 @@ $.fn.bgiframe = function(){
             allAnimations = animated.find($.trim(children).replace(/^["']/, '').replace(/['"]$/, '')).addBack();
             // 遍历需要做动画的元素，抽取出原来样式
             allAnimations = allAnimations.map(function(){
-                var t = getTransition(this.currentStyle), el = $(this);
+                var t = queryTransition(this.currentStyle), el = $(this);
                 return {
                     el: el,
                     start: getStyles(this, t),
@@ -8818,21 +8973,84 @@ $.fn.bgiframe = function(){
     })
 })(armer)
 
-;(function () {
-    $.EventEmitter = function(obj){
+;
+(function () {
+    $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
-        if(!(this instanceof $.EventEmitter)) return new $.EventEmitter();
-    }
+        if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
+    };
+
+    var hasOwn = $.hasOwn;
 
     var mul = {
-        on: function(types, fn){
-            $.event.add(this, types, fn);
+        on: function () {
+            [].unshift.call(arguments, this);
+            $.event.add.apply($.event, arguments);
         },
-        off: function(types){
-            $.event.remove(this, types);
+        off: function () {
+            [].unshift.call(arguments, this);
+            $.event.remove.apply($.event, arguments);
         },
-        emit: function(types, data){
-            $.event.trigger(new $.Event(types), data, this);
+        emit: function (event, data, onlyHandlers) {
+            var handle, ontype, tmp, orignData,
+                eventPath = [ this || document ],
+                type = hasOwn.call(event, "type") ? event.type : event,
+                namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
+
+            tmp = this;
+            if (type.indexOf(".") >= 0) {
+                namespaces = type.split(".");
+                type = namespaces.shift();
+                namespaces.sort();
+            }
+            ontype = type.indexOf(":") < 0 && "on" + type;
+
+            event = event[ $.expando ] ?
+                event :
+                new $.Event(type, typeof event === "object" && event);
+
+            event.isTrigger = onlyHandlers ? 2 : 3;
+            event.namespace = namespaces.join(".");
+            event.namespace_re = event.namespace ?
+                new RegExp("(^|\\.)" + namespaces.join("\\.(?:.*\\.|)") + "(\\.|$)") :
+                null;
+
+            event.result = undefined;
+            if (!event.target) {
+                event.target = this;
+            }
+            orignData = data = $.type(data, 'array') ? data : [data];
+            data = $.makeArray(orignData, [ event ]);
+            handle = ( $._data(this, "events") || {} )[ event.type ] && $._data(this, "handle");
+            if (handle) {
+                handle.apply(this, data);
+            }
+            handle = ontype && this[ ontype ];
+            if (handle && handle.apply && $.acceptData(this)) {
+                event.result = handle.apply(this, data);
+                if (event.result === false) {
+                    event.preventDefault();
+                }
+            }
+            event.type = type;
+
+            if (!onlyHandlers && !event.isDefaultPrevented()) {
+                if (ontype && this[ type ] && !$.isWindow(this)) {
+                    tmp = this[ ontype ];
+
+                    if (tmp) {
+                        this[ ontype ] = null;
+                    }
+                    $.event.triggered = type;
+                    event.actionReturns = this[ type ].apply(this, orignData);
+                    $.event.triggered = undefined;
+
+                    if (tmp) {
+                        this[ ontype ] = tmp;
+                    }
+                }
+            }
+            return event.result;
         }
     };
     $.mix(mul, {
@@ -8849,13 +9067,13 @@ $.fn.bgiframe = function(){
  e.realEvent; // 触发变化的真实事件
  })
  */
-(function(){
+(function () {
     var DATA = "valuechangeData";
     //如果值前后发生改变,触发绑定回调
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
-        if(old !== neo){
+        if (old !== neo) {
             $.data(elem, DATA, neo);
             var event = new $.Event("valuechange");
             event.realEvent = realEvent;
@@ -8865,40 +9083,46 @@ $.fn.bgiframe = function(){
 
         }
     }
-    function unTestChange(elem){
+
+    function unTestChange(elem) {
         $.removeData(elem, DATA);
     }
+
     function startTest(event) {
         var elem = event.target;
         if (event.type == 'focus' || event.type == 'mousedown' || event.type == 'paste') {
-            $.data(elem, DATA , elem.value);
-            event.type == 'paste' && $.nextTick(function(){
+            $.data(elem, DATA, elem.value);
+            event.type == 'paste' && $.nextTick(function () {
                 testChange(elem, event);
             })
         }
         else testChange(elem, event);
     }
-    function stopTest(event){
+
+    function stopTest(event) {
         unTestChange(event.target);
     }
+
     function listen(elem) {
         unlisten(elem);
-        "keydown paste keyup mousedown focus".replace($.rword, function(name){
-            $(elem).on(name+"._valuechange", startTest)
+        "keydown paste keyup mousedown focus".replace($.rword, function (name) {
+            $(elem).on(name + "._valuechange", startTest)
         });
         $(elem).on('blur._valuechange', stopTest);
-        $(elem).on('webkitspeechchange._valuechange', function(e){
-            testChange(e.target,e);
+        $(elem).on('webkitspeechchange._valuechange', function (e) {
+            testChange(e.target, e);
         });
     }
-    function unlisten(elem){
+
+    function unlisten(elem) {
         unTestChange(elem);
         $(elem).off("._valuechange")
     }
-    $.fn.valuechange = function(callback){
+
+    $.fn.valuechange = function (callback) {
         var $this = $(this), event, neo, old;
         if (typeof callback == 'function')
-            $this.on( "valuechange", callback );
+            $this.on("valuechange", callback);
         else {
             event = new $.Event('valuechange');
             old = event.oldValue = $this.val();
@@ -8910,7 +9134,7 @@ $.fn.bgiframe = function(){
         return $this;
     };
     $.event.special.valuechange = {
-        setup: function(){
+        setup: function () {
             var elem = this, nodeName = elem.tagName;
             if (nodeName == 'INPUT' || nodeName == 'TEXTAREA') {
                 listen(elem);
@@ -8929,36 +9153,38 @@ $.fn.bgiframe = function(){
 
 
 // 添加enter,ctrlEnter,backspace事件
-(function(){
+(function () {
     var keypressEvents = "keydown";
-    $.each(["enter", "ctrlenter", "backspace"], function( i, name){
+    $.each(["enter", "ctrlenter", "backspace"], function (i, name) {
         var key = name;
-        $.fn[key] = function( fn ){
-            return !fn || $.isFunction( fn ) ?
-                this[fn ? "bind" : "trigger"]( key, fn ) :
-                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //兼容以前的enter代码
+        $.fn[key] = function (fn) {
+            return !fn || $.isFunction(fn) ?
+                this[fn ? "bind" : "trigger"](key, fn) :
+                this["bind"](key, function () {
+                    $(fn).trigger("click");
+                }); //兼容以前的enter代码
         };
         $.event.special[key] = {
-            setup: function(){
-                $.event.add( this, keypressEvents + '.' + key, enterHandler, {type: key} );
+            setup: function () {
+                $.event.add(this, keypressEvents + '.' + key, enterHandler, {type: key});
             },
-            teardown: function(){
-                $.event.remove( this, keypressEvents + '.' + key, enterHandler );
+            teardown: function () {
+                $.event.remove(this, keypressEvents + '.' + key, enterHandler);
             }
         };
     });
 
-    function enterHandler( e ){
+    function enterHandler(e) {
         var pass = true;
-        switch(parseInt(e.which)){
+        switch (parseInt(e.which)) {
             case 13:
-                if( (e.data.type != "ctrlEnter" && e.data.type != "enter") ||
+                if ((e.data.type != "ctrlEnter" && e.data.type != "enter") ||
                     (e.data.type == "ctrlEnter" && !e.metaKey && !e.ctrlKey) ||
-                    (e.data.type == "enter" && e.metaKey) )
+                    (e.data.type == "enter" && e.metaKey))
                     pass = false;
                 break;
             case 8:
-                if(e.data.type != "backspace")
+                if (e.data.type != "backspace")
                     pass = false;
                 break;
             default:
@@ -8978,26 +9204,26 @@ $.fn.bgiframe = function(){
     var lowestDelta, lowestDeltaXY;
 
     if ($.event.fixHooks) {
-        for ( var i=toFix.length; i; ) {
+        for (var i = toFix.length; i;) {
             $.event.fixHooks[ toFix[--i] ] = $.event.mouseHooks;
         }
     }
 
     $.event.special.mousewheel = {
-        setup: function() {
-            if ( this.addEventListener ) {
-                for ( var i=toBind.length; i; ) {
-                    this.addEventListener( toBind[--i], handler, false );
+        setup: function () {
+            if (this.addEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.addEventListener(toBind[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = handler;
             }
         },
 
-        teardown: function() {
-            if ( this.removeEventListener ) {
-                for ( var i=toBind.length; i; ) {
-                    this.removeEventListener( toBind[--i], handler, false );
+        teardown: function () {
+            if (this.removeEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.removeEventListener(toBind[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = null;
@@ -9006,46 +9232,58 @@ $.fn.bgiframe = function(){
     };
 
     $.fn.extend({
-        mousewheel: function(fn) {
+        mousewheel: function (fn) {
             return fn ? this.on("mousewheel", fn) : this.trigger("mousewheel");
         }
     });
 
 
     function handler(event) {
-        var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, deltaX = 0, deltaY = 0, absDelta = 0, absDeltaXY = 0, fn;
+        var orgEvent = event || window.event, args = [].slice.call(arguments, 1), delta = 0, deltaX = 0, deltaY = 0, absDelta = 0, absDeltaXY = 0, fn;
         event = $.event.fix(orgEvent);
         event.type = "mousewheel";
 
         // Old school scrollwheel delta
-        if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta;  }
-        if ( orgEvent.detail     ) { delta = orgEvent.detail * -1; }
+        if (orgEvent.wheelDelta) {
+            delta = orgEvent.wheelDelta;
+        }
+        if (orgEvent.detail) {
+            delta = orgEvent.detail * -1;
+        }
 
         // New school wheel delta (wheel event)
-        if ( orgEvent.deltaY ) {
+        if (orgEvent.deltaY) {
             deltaY = orgEvent.deltaY * -1;
-            delta  = deltaY;
+            delta = deltaY;
         }
-        if ( orgEvent.deltaX ) {
+        if (orgEvent.deltaX) {
             deltaX = orgEvent.deltaX;
-            delta  = deltaX * -1;
+            delta = deltaX * -1;
         }
 
         // Webkit
-        if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY;      }
-        if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = orgEvent.wheelDeltaX * -1; }
+        if (orgEvent.wheelDeltaY !== undefined) {
+            deltaY = orgEvent.wheelDeltaY;
+        }
+        if (orgEvent.wheelDeltaX !== undefined) {
+            deltaX = orgEvent.wheelDeltaX * -1;
+        }
 
         // Look for lowest delta to normalize the delta values
         absDelta = Math.abs(delta);
-        if ( !lowestDelta || absDelta < lowestDelta ) { lowestDelta = absDelta; }
-        absDeltaXY = Math.max( Math.abs(deltaY), Math.abs(deltaX) );
-        if ( !lowestDeltaXY || absDeltaXY < lowestDeltaXY ) { lowestDeltaXY = absDeltaXY; }
+        if (!lowestDelta || absDelta < lowestDelta) {
+            lowestDelta = absDelta;
+        }
+        absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+        if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
+            lowestDeltaXY = absDeltaXY;
+        }
 
         // Get a whole value for the deltas
         fn = delta > 0 ? 'floor' : 'ceil';
-        delta  = Math[fn](delta/lowestDelta);
-        deltaX = Math[fn](deltaX/lowestDeltaXY);
-        deltaY = Math[fn](deltaY/lowestDeltaXY);
+        delta = Math[fn](delta / lowestDelta);
+        deltaX = Math[fn](deltaX / lowestDeltaXY);
+        deltaY = Math[fn](deltaY / lowestDeltaXY);
 
         // Add event and delta to the front of the arguments
         args.unshift(event, delta, deltaX, deltaY);
@@ -9053,11 +9291,11 @@ $.fn.bgiframe = function(){
         return ($.event.dispatch || $.event.handle).apply(this, args);
     }
 
-    $.fn.onExcept = function(selector, eventTypes, fn){
+    $.fn.onExcept = function (selector, eventTypes, fn) {
         selector = $(selector);
-        return this.on(eventTypes, function(e){
+        return this.on(eventTypes, function (e) {
             var trigger = true;
-            selector.each(function(){
+            selector.each(function () {
                 /*
                  $.log(
                  'this是：' + this,
@@ -9307,16 +9545,26 @@ $.fn.ellipsis = function() {
 $.fn.ellipsis.useCssClamp = true;
 
 (function ($) {
-    var $backdrop;
+
+    var animate = function($elem, animateArgs){
+        return ($.fn.transit || $.fn.animate).apply($elem, animateArgs);
+    }
+    var openCauseClose;
     /**
      * ������
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
      * @constructor
      */
-    var Modal = function(content, options){
-        if (!(this instanceof Modal)) return new Modal(content, options);
-        this.options = $.extend({}, arguments.callee.defaults);
+    var Dialog = function(content, options){
+        var callee = arguments.callee;
+        if (!(this instanceof callee)) return new callee(content, options);
+        this.options = $.extend({}, callee.defaults, options);
+        callee.factory.call(this, content, options);
+        this.constructor = callee;
+    };
+    Dialog.factory = function(content){
+        var that = this;
         if (typeof content == 'string' || /\//.test(content)) {
             var selector, url, off = content.indexOf(" ");
             if ( off >= 0 ) {
@@ -9339,112 +9587,223 @@ $.fn.ellipsis.useCssClamp = true;
             };
         else
             this._init = content;
-        this.$element = $('<div class="modal" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
-    };
-    Modal.list = [];
-    Modal.toogleBackDrop = function(toggle){
-        toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
-
-        $('body').toggleClass('with-backdrop', toggle);
-        if (!$backdrop) $backdrop = $('<div class="backdrop" style="display: none;"></div>').prependTo('body').bgiframe();
-        var opacity = $backdrop.css('opacity');
-
-        if (toggle) {
-            $backdrop.css({
-                display: 'block',
-                opacity: 0
-            }).transit({
-                opacity: opacity
-            }, function(){
-                $(this).css({opacity: ''})
-            })
-        } else {
-            $backdrop.css({
-                opacity: opacity
-            }).transit({
-                opacity: 0
-            }, function(){
-                $(this).css({opacity: '', display: 'none'})
-            })
-        }
+        this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
     }
-    Modal.prototype = {
-        constructor: Modal,
+    Dialog.toogleBackDrop = function(toggle, $backdrop){
+        $backdrop = $backdrop || this.defaults.backdrop;
+        if (!$backdrop) return;
+        var $body = $('body');
+        if (!$.contains($body[0], $backdrop[0])) {
+            $backdrop.prependTo('body').bgiframe();
+        }
+        toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
+        $body.toggleClass('with-backdrop', toggle);
+        animate($backdrop, [{
+            opacity: toggle ? 'show' : 'hide'
+        }]);
+    }
+    Dialog.closeAll = function(list, returnValue, closeOptions){
+        list = list || this.defaults.queue;
+        var $backdrop;
+        list.forEach(function(item){
+            var co = $.extend(closeOptions, item.options.close);
+            var rt = returnValue || co.returnValue;
+            rt = $.isFunction(rt) ? rt.call(this) : rt;
+            $backdrop = item.options.backdrop;
+            item._close(rt, co)
+        });
+        list.length = 0;
+        !openCauseClose && $backdrop && this.toogleBackDrop(false, $backdrop);
+    }
+    Dialog.prototype = $.EventEmitter({
         init: function(){
-            var e = $.Event('init'), dfd, self = this;
-            self.$element.trigger(e);
-            if (!e.isDefaultPrevented()) {
-                dfd = self._init();
-            } else dfd = $.Deferred.reject();
-            dfd.done(function($elem){
-                self._init = dfd;
-                self.$element.append($elem.show()).appendTo('body');
-            })
-        },
-        _open: function(){
             var self = this;
-            if (Modal.list.indexOf(self) >= 0) return;
-            if (!Modal.list.length) {
-                Modal.toogleBackDrop(true);
-                Modal.list.push(self);
-            }
-            else {
-                Modal.list.push(self);
-                Modal.list[0].close();
-            }
-            self.$element.css({
-                display: 'block',
-                opacity: 0
-            }).position({of:$(window), at:'center center-50', my:'center center'}).finish().transit({
-                top: '+=50',
-                opacity: '1'
-            }, function(){
-                self.$element.find('.modal-form :text, .modal-form textarea').eq(0).focus();
-            })
+            if (typeof this._init == "function") {
+                return this._init().done(function($elem){
+                    self._init = this;
+                    self.$element.append($elem.show()).appendTo('body');
+                })
+            } else return this._init
         },
-        _close: function(){
-            if (!(Modal.list.indexOf(this) >= 0)) return;
-            $.Array.remove(Modal.list, this);
-            if (!Modal.list.length) Modal.toogleBackDrop(false);
+        focus: function(){
+            var list = this.options.queue;
+            var z = this.options.zIndex;
+            var that = this;
+            var thisZindex;
+            $.Array.remove(list, that);
+            list.push(that);
+            list.forEach(function(item, i){
+                var s = z.start + i * z.step;
+                if (item == that) thisZindex = s
+                item.$element.css('zIndex', s);
+            })
+            this.options.backdrop && this.options.backdrop.css('zIndex', thisZindex);
 
-            this.$element.finish().transit({
-                opacity: 0,
-                top: '-=50'
-            }, function(){
-                this.style.display = 'none';
-                this.style.top = ''
-                this.style.left = ''
+        },
+        _open: function(openOptions){
+            var list = this.options.queue, self = this, index, position;
+            if (list.indexOf(self) >= 0) return;
+            self.$element.on('focus.dialog', function(e){
+                self.trigger(e);
             });
-
+            if (!list.length) {
+                if (openOptions.showBackdrop)
+                    this.constructor.toogleBackDrop(true, this.options.backdrop);
+            } else {
+                openCauseClose = true;
+                if (openOptions.closeOthers) {
+                    this.constructor.closeAll();
+                }
+                openCauseClose = false;
+            }
+            list.push(self);
+            position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
+            position.of = position.of || this.options.attach;
+            self.$element.finish().position(position);
+            return animate(self.$element, openOptions.animate).promise().done(function(){
+                self.trigger('opened');
+            });
         },
-        close: function(){
-            var e = $.Event('close'), self = this;
-            this.$element.trigger(e);
-            if (!e.isDefaultPrevented()) {
-                self._close();
+        _close: function(returnValue, closeOptions){
+            var self = this;
+            self.$element.off('focus.dialog');
+            return animate(this.$element, closeOptions.animate).promise().done(function(){
+                this[0].style.top = '';
+                this[0].style.left = '';
+                self.trigger('closed', [returnValue]);
+            });
+        },
+        close: function(returnValue, closeOptions){
+            var self = this, list = this.options.queue;
+            if (!(list.indexOf(this) >= 0)) return;
+            closeOptions = $.extend({}, this.options.close, closeOptions);
+            returnValue = returnValue || closeOptions.returnValue;
+            returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
+            this._close(returnValue, closeOptions);
+            $.Array.remove(this.options.queue, this);
+            if (!openCauseClose) {
+                if (!list.length) this.constructor.toogleBackDrop(false, this.options.backdrop);
+                list.length && list[list.length - 1].$element.trigger('focus');
             }
         },
-        open: function(dfd){
+        open: function(dfd, openOptions){
             var self = this;
-            $.when(typeof self._init == "function" ? self.init() : self._init, dfd).done(function(){
-                var e = $.Event('open');
-                self.$element.trigger(e);
-                if (!e.isDefaultPrevented()) {
-                    self._open();
-                }
+            if (!$.isDeferred(dfd)) {
+                openOptions = dfd;
+                dfd = null;
+            }
+            openOptions = $.extend({}, this.options.open, openOptions);
+            dfd = dfd || openOptions.dfd;
+            var init;
+            if (typeof this._init == 'function') {
+                var e = $.Event('init');
+                self.trigger(e);
+                if (!e.isDefaultPrevented())
+                    init = e.actionReturns
+                else init = $.Deferred.reject()
+            } else
+                init = self._init;
+            $.when(init, dfd).done(function(){
+                self._open(openOptions);
+                if (openOptions.getFocus)
+                    self.$element.trigger('focus')
+                else
+                    self.trigger('focus');
             })
         }
-    };
+    });
 
-    Modal.defaults = {};
+
+    Dialog.defaults = {
+        queue: [],
+        attach: $(window),
+        zIndex: {
+            start: 100,
+            step: 10,
+            end: 300
+        },
+        open: {
+            position: {
+                at: 'left' + ' bottom' + '+15',
+                my: 'left top'
+            },
+            showBackdrop: false,
+            closeOthers: true,
+            getFocus: false,
+            animate: [{
+                top: '-=10',
+                opacity: 'show'
+            }]
+        },
+        close: {
+            animate: [{
+                opacity: 'hide',
+                top: '+=10'
+            }]
+        },
+        onopen: $.noop,
+        onopened: $.noop,
+        onclose: $.noop,
+        onclosed: $.noop,
+        oninit: $.noop,
+        onfocus: $.noop
+    };
 
     $.fn.modal = function(options){
         var self = this[0], modal;
         if (modal = $.data(self, 'ui-modal'))
             return modal;
-        else $.data(self, 'ui-modal', Modal(self, options));
+        else $.data(self, 'ui-modal', $.UI.Modal(self, options));
         return this;
     }
-    $.UI.Modal = Modal;
+    $.UI.Dialog = Dialog;
+    $.UI.Modal = $.Function.clone(Dialog);
+    $.UI.Modal.defaults = {
+        queue: [],
+        attach: $(window),
+        backdrop: $('<div class="backdrop" style="display: none;"></div>'),
+        zIndex: {
+            start: 1100,
+            step: 10,
+            end: 1300
+        },
+        open: {
+            position: function(index){
+                var stepX = 20;
+                var stepY = 20;
+                var offestX = index * stepX;
+                var offestY = index * stepX - 30;
+                offestX = offestX ? offestX.toString() : '';
+                offestY = offestY ? offestY.toString() : '';
+                return {
+                    at: 'center' + offestY + ' center' + offestY,
+                    my: 'center center'
+                }
+            },
+            showBackdrop: true,
+            closeOthers: true,
+            getFocus: true,
+            animate: [{
+                top: '+=30',
+                opacity: 'show'
+            },{
+                done: function(){
+                    $(this).find('.modal-form :text, .modal-form textarea').eq(0).focus();
+                }
+            }]
+        },
+        close: {
+            animate: [{
+                opacity: 'hide',
+                top: '+=30'
+            }]
+        },
+        onopen: $.noop,
+        onopened: $.noop,
+        onclose: $.noop,
+        onclosed: $.noop,
+        oninit: $.noop,
+        onfocus: $.noop
+    }
 
 })(jQuery);

@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
     var options = {
-        package: grunt.file.readJSON('package.json')
+        package: grunt.file.readJSON('bower.json')
     };
 
     //grunt.file.defaultEncoding = 'utf-8';
@@ -19,37 +19,41 @@ module.exports = function(grunt) {
             dest: 'dist/armer.js'
         },
         'jq': {
-            /* (ËùÓÐä¯ÀÀÆ÷)°üº¬ÈçÏÂÎÄ¼þ
-             * jquery.1.x ºËÐÄ¿ò¼Ü
-             * armer À©Õ¹¿ò¼ÜºËÐÄ
-             * armer.polyfill ÐÞ¸´Ä£¿é
-             * armer.mvvm Ä£¿é
-             * armer.lang ÓïÑÔÀ©Õ¹Ä£¿é
+            /* (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
+             * jquery.1.x ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+             * armer ï¿½ï¿½Õ¹ï¿½ï¿½Üºï¿½ï¿½ï¿½
+             * armer.polyfill ï¿½Þ¸ï¿½Ä£ï¿½ï¿½
+             * armer.mvvm Ä£ï¿½ï¿½
+             * armer.lang ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹Ä£ï¿½ï¿½
              */
             src: ['bower_components/jquery/dist/jquery.js', 'src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
-            dest: 'dist/jq<%= package.name %>.js'
+            dest: 'dist/jqarmer.js'
         },
         z: {
-            /* (ÒÆ¶¯¶Ë)°üº¬ÈçÏÂÎÄ¼þ
-             * zepto ºËÐÄ¿ò¼Ü
-             * fastclick ÓÅ»¯µã»÷
-             * zepto.adapter ÊÊÅäÆ÷
-             * armer À©Õ¹¿ò¼ÜºËÐÄ
-             * armer.mvvm Ä£¿é
+            /* (ï¿½Æ¶ï¿½ï¿½ï¿½)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
+             * zepto ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+             * fastclick ï¿½Å»ï¿½ï¿½ï¿½ï¿½
+             * zepto.adapter ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+             * armer ï¿½ï¿½Õ¹ï¿½ï¿½Üºï¿½ï¿½ï¿½
+             * armer.mvvm Ä£ï¿½ï¿½
              */
             src: ['bower_components/zepto/zepto.js', '../fastclick.js', '/src/zepto/adapter.js', 'src/armer.js', 'src/mvvm.js'],
-            dest: 'dist/z<%= package.name %>.js'
+            dest: 'dist/zarmer.js'
         }
     };
 
     options.uglify = {
+        '1.X': {
+            src: 'dist/jqarmer.js',
+            dest: 'dist/jqarmer.min.js'
+        },
         '2.X': {
-            src: '../jq<%= package.name %>.2.x.js',
-            dest: '../jq<%= package.name %>.2.x.min.js'
+            src: 'dist/jqarmer.2.x.js',
+            dest: 'dist/jqarmer.2.x.min.js'
         },
         z: {
-            src: '../z<%= package.name %>.js',
-            dest: '../z<%= package.name %>.min.js'
+            src: 'dist/zarmer.js',
+            dest: 'dist/zarmer.min.js'
         }
     }
     /*
@@ -60,9 +64,10 @@ module.exports = function(grunt) {
     };
     */
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.initConfig(options);
     // Default task.
-    grunt.registerTask('default', ['concat']);
+    grunt.registerTask('default', ['concat', 'uglify']);
     //grunt.registerTask('default', ['concat']);
 
 };

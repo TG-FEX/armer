@@ -1,12 +1,19 @@
 {
     "name": "armerjs",
-    "version": "0.5",
+    "version": "0.6.0",
     "main": [
         "dist/armer.js",
         "dist/jqarmer.js",
         "dist/zarmer.js"
     ],
-    "license": "MIT",
+    "license": {
+        "type": "MIT",
+        "url": ""
+    },
+    "author": {
+        "name": "Alphmega",
+        "url": ""
+    },
     "ignore": [
         "**/.*",
         "build",

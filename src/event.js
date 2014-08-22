@@ -1,18 +1,81 @@
-;(function () {
-    $.EventEmitter = function(obj){
+;
+(function () {
+    $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
-        if(!(this instanceof $.EventEmitter)) return new $.EventEmitter();
-    }
+        if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
+    };
+
+    var hasOwn = $.hasOwn;
 
     var mul = {
-        on: function(types, fn){
-            $.event.add(this, types, fn);
+        on: function () {
+            [].unshift.call(arguments, this);
+            $.event.add.apply($.event, arguments);
         },
-        off: function(types){
-            $.event.remove(this, types);
+        off: function () {
+            [].unshift.call(arguments, this);
+            $.event.remove.apply($.event, arguments);
         },
-        emit: function(types, data){
-            $.event.trigger(new $.Event(types), data, this);
+        emit: function (event, data, onlyHandlers) {
+            var handle, ontype, tmp, orignData,
+                eventPath = [ this || document ],
+                type = hasOwn.call(event, "type") ? event.type : event,
+                namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
+
+            tmp = this;
+            if (type.indexOf(".") >= 0) {
+                namespaces = type.split(".");
+                type = namespaces.shift();
+                namespaces.sort();
+            }
+            ontype = type.indexOf(":") < 0 && "on" + type;
+
+            event = event[ $.expando ] ?
+                event :
+                new $.Event(type, typeof event === "object" && event);
+
+            event.isTrigger = onlyHandlers ? 2 : 3;
+            event.namespace = namespaces.join(".");
+            event.namespace_re = event.namespace ?
+                new RegExp("(^|\\.)" + namespaces.join("\\.(?:.*\\.|)") + "(\\.|$)") :
+                null;
+
+            event.result = undefined;
+            if (!event.target) {
+                event.target = this;
+            }
+            orignData = data = $.type(data, 'array') ? data : [data];
+            data = $.makeArray(orignData, [ event ]);
+            handle = ( $._data(this, "events") || {} )[ event.type ] && $._data(this, "handle");
+            if (handle) {
+                handle.apply(this, data);
+            }
+            handle = ontype && this[ ontype ];
+            if (handle && handle.apply && $.acceptData(this)) {
+                event.result = handle.apply(this, data);
+                if (event.result === false) {
+                    event.preventDefault();
+                }
+            }
+            event.type = type;
+
+            if (!onlyHandlers && !event.isDefaultPrevented()) {
+                if (ontype && this[ type ] && !$.isWindow(this)) {
+                    tmp = this[ ontype ];
+
+                    if (tmp) {
+                        this[ ontype ] = null;
+                    }
+                    $.event.triggered = type;
+                    event.actionReturns = this[ type ].apply(this, orignData);
+                    $.event.triggered = undefined;
+
+                    if (tmp) {
+                        this[ ontype ] = tmp;
+                    }
+                }
+            }
+            return event.result;
         }
     };
     $.mix(mul, {
@@ -29,13 +92,13 @@
  e.realEvent; // 触发变化的真实事件
  })
  */
-(function(){
+(function () {
     var DATA = "valuechangeData";
     //如果值前后发生改变,触发绑定回调
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
-        if(old !== neo){
+        if (old !== neo) {
             $.data(elem, DATA, neo);
             var event = new $.Event("valuechange");
             event.realEvent = realEvent;
@@ -45,40 +108,46 @@
 
         }
     }
-    function unTestChange(elem){
+
+    function unTestChange(elem) {
         $.removeData(elem, DATA);
     }
+
     function startTest(event) {
         var elem = event.target;
         if (event.type == 'focus' || event.type == 'mousedown' || event.type == 'paste') {
-            $.data(elem, DATA , elem.value);
-            event.type == 'paste' && $.nextTick(function(){
+            $.data(elem, DATA, elem.value);
+            event.type == 'paste' && $.nextTick(function () {
                 testChange(elem, event);
             })
         }
         else testChange(elem, event);
     }
-    function stopTest(event){
+
+    function stopTest(event) {
         unTestChange(event.target);
     }
+
     function listen(elem) {
         unlisten(elem);
-        "keydown paste keyup mousedown focus".replace($.rword, function(name){
-            $(elem).on(name+"._valuechange", startTest)
+        "keydown paste keyup mousedown focus".replace($.rword, function (name) {
+            $(elem).on(name + "._valuechange", startTest)
         });
         $(elem).on('blur._valuechange', stopTest);
-        $(elem).on('webkitspeechchange._valuechange', function(e){
-            testChange(e.target,e);
+        $(elem).on('webkitspeechchange._valuechange', function (e) {
+            testChange(e.target, e);
         });
     }
-    function unlisten(elem){
+
+    function unlisten(elem) {
         unTestChange(elem);
         $(elem).off("._valuechange")
     }
-    $.fn.valuechange = function(callback){
+
+    $.fn.valuechange = function (callback) {
         var $this = $(this), event, neo, old;
         if (typeof callback == 'function')
-            $this.on( "valuechange", callback );
+            $this.on("valuechange", callback);
         else {
             event = new $.Event('valuechange');
             old = event.oldValue = $this.val();
@@ -90,7 +159,7 @@
         return $this;
     };
     $.event.special.valuechange = {
-        setup: function(){
+        setup: function () {
             var elem = this, nodeName = elem.tagName;
             if (nodeName == 'INPUT' || nodeName == 'TEXTAREA') {
                 listen(elem);
@@ -109,36 +178,38 @@
 
 
 // 添加enter,ctrlEnter,backspace事件
-(function(){
+(function () {
     var keypressEvents = "keydown";
-    $.each(["enter", "ctrlenter", "backspace"], function( i, name){
+    $.each(["enter", "ctrlenter", "backspace"], function (i, name) {
         var key = name;
-        $.fn[key] = function( fn ){
-            return !fn || $.isFunction( fn ) ?
-                this[fn ? "bind" : "trigger"]( key, fn ) :
-                this["bind"]( key, function(){ $( fn ).trigger("click"); }); //兼容以前的enter代码
+        $.fn[key] = function (fn) {
+            return !fn || $.isFunction(fn) ?
+                this[fn ? "bind" : "trigger"](key, fn) :
+                this["bind"](key, function () {
+                    $(fn).trigger("click");
+                }); //兼容以前的enter代码
         };
         $.event.special[key] = {
-            setup: function(){
-                $.event.add( this, keypressEvents + '.' + key, enterHandler, {type: key} );
+            setup: function () {
+                $.event.add(this, keypressEvents + '.' + key, enterHandler, {type: key});
             },
-            teardown: function(){
-                $.event.remove( this, keypressEvents + '.' + key, enterHandler );
+            teardown: function () {
+                $.event.remove(this, keypressEvents + '.' + key, enterHandler);
             }
         };
     });
 
-    function enterHandler( e ){
+    function enterHandler(e) {
         var pass = true;
-        switch(parseInt(e.which)){
+        switch (parseInt(e.which)) {
             case 13:
-                if( (e.data.type != "ctrlEnter" && e.data.type != "enter") ||
+                if ((e.data.type != "ctrlEnter" && e.data.type != "enter") ||
                     (e.data.type == "ctrlEnter" && !e.metaKey && !e.ctrlKey) ||
-                    (e.data.type == "enter" && e.metaKey) )
+                    (e.data.type == "enter" && e.metaKey))
                     pass = false;
                 break;
             case 8:
-                if(e.data.type != "backspace")
+                if (e.data.type != "backspace")
                     pass = false;
                 break;
             default:
@@ -158,26 +229,26 @@
     var lowestDelta, lowestDeltaXY;
 
     if ($.event.fixHooks) {
-        for ( var i=toFix.length; i; ) {
+        for (var i = toFix.length; i;) {
             $.event.fixHooks[ toFix[--i] ] = $.event.mouseHooks;
         }
     }
 
     $.event.special.mousewheel = {
-        setup: function() {
-            if ( this.addEventListener ) {
-                for ( var i=toBind.length; i; ) {
-                    this.addEventListener( toBind[--i], handler, false );
+        setup: function () {
+            if (this.addEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.addEventListener(toBind[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = handler;
             }
         },
 
-        teardown: function() {
-            if ( this.removeEventListener ) {
-                for ( var i=toBind.length; i; ) {
-                    this.removeEventListener( toBind[--i], handler, false );
+        teardown: function () {
+            if (this.removeEventListener) {
+                for (var i = toBind.length; i;) {
+                    this.removeEventListener(toBind[--i], handler, false);
                 }
             } else {
                 this.onmousewheel = null;
@@ -186,46 +257,58 @@
     };
 
     $.fn.extend({
-        mousewheel: function(fn) {
+        mousewheel: function (fn) {
             return fn ? this.on("mousewheel", fn) : this.trigger("mousewheel");
         }
     });
 
 
     function handler(event) {
-        var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, deltaX = 0, deltaY = 0, absDelta = 0, absDeltaXY = 0, fn;
+        var orgEvent = event || window.event, args = [].slice.call(arguments, 1), delta = 0, deltaX = 0, deltaY = 0, absDelta = 0, absDeltaXY = 0, fn;
         event = $.event.fix(orgEvent);
         event.type = "mousewheel";
 
         // Old school scrollwheel delta
-        if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta;  }
-        if ( orgEvent.detail     ) { delta = orgEvent.detail * -1; }
+        if (orgEvent.wheelDelta) {
+            delta = orgEvent.wheelDelta;
+        }
+        if (orgEvent.detail) {
+            delta = orgEvent.detail * -1;
+        }
 
         // New school wheel delta (wheel event)
-        if ( orgEvent.deltaY ) {
+        if (orgEvent.deltaY) {
             deltaY = orgEvent.deltaY * -1;
-            delta  = deltaY;
+            delta = deltaY;
         }
-        if ( orgEvent.deltaX ) {
+        if (orgEvent.deltaX) {
             deltaX = orgEvent.deltaX;
-            delta  = deltaX * -1;
+            delta = deltaX * -1;
         }
 
         // Webkit
-        if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY;      }
-        if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = orgEvent.wheelDeltaX * -1; }
+        if (orgEvent.wheelDeltaY !== undefined) {
+            deltaY = orgEvent.wheelDeltaY;
+        }
+        if (orgEvent.wheelDeltaX !== undefined) {
+            deltaX = orgEvent.wheelDeltaX * -1;
+        }
 
         // Look for lowest delta to normalize the delta values
         absDelta = Math.abs(delta);
-        if ( !lowestDelta || absDelta < lowestDelta ) { lowestDelta = absDelta; }
-        absDeltaXY = Math.max( Math.abs(deltaY), Math.abs(deltaX) );
-        if ( !lowestDeltaXY || absDeltaXY < lowestDeltaXY ) { lowestDeltaXY = absDeltaXY; }
+        if (!lowestDelta || absDelta < lowestDelta) {
+            lowestDelta = absDelta;
+        }
+        absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+        if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
+            lowestDeltaXY = absDeltaXY;
+        }
 
         // Get a whole value for the deltas
         fn = delta > 0 ? 'floor' : 'ceil';
-        delta  = Math[fn](delta/lowestDelta);
-        deltaX = Math[fn](deltaX/lowestDeltaXY);
-        deltaY = Math[fn](deltaY/lowestDeltaXY);
+        delta = Math[fn](delta / lowestDelta);
+        deltaX = Math[fn](deltaX / lowestDeltaXY);
+        deltaY = Math[fn](deltaY / lowestDeltaXY);
 
         // Add event and delta to the front of the arguments
         args.unshift(event, delta, deltaX, deltaY);
@@ -233,11 +316,11 @@
         return ($.event.dispatch || $.event.handle).apply(this, args);
     }
 
-    $.fn.onExcept = function(selector, eventTypes, fn){
+    $.fn.onExcept = function (selector, eventTypes, fn) {
         selector = $(selector);
-        return this.on(eventTypes, function(e){
+        return this.on(eventTypes, function (e) {
             var trigger = true;
-            selector.each(function(){
+            selector.each(function () {
                 /*
                  $.log(
                  'this是：' + this,

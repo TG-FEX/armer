@@ -149,6 +149,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {Object}
              */
             oneObject: oneObject,
+            hasOwn: hasOwn,
             config: function(settings) {
                 var kernel = arguments.callee;
                 for (var p in settings) {
@@ -351,6 +352,10 @@ armer = window.jQuery || window.Zepto;
             // 判断一个对象是不是jQuery.Deferred
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
+            },
+            // jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+            isHidden: function(elem) {
+                return $.css(elem, "display") === "none" || !$.contains(elem.ownerDocument, elem);
             },
             /**
              * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
@@ -752,7 +757,7 @@ armer = window.jQuery || window.Zepto;
             exports: {exports: {}},
             module: {exports: {}}
         };
-        modules.jQuery = modules.jquery = modulse.zepto = { exports: $ };
+        modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
 
         var currentUrl = location.href, xhrRequestURL = null;
         // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置

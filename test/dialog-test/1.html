@@ -30,17 +30,36 @@
     </style>
 </head>
 <body>
-    <div style="width: 300px; height: 300px; background-color: lightgreen;" role="dialog">
-        <a onclick="modal.emit('open')" href="javascript:">打开</a>
-        <a onclick="modal.close()" href="javascript:">关闭</a>
+    <input type="text"/>
+    <a onclick="modal.open()" href="javascript:">打开1</a>
+    <a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a>
+    <a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭）</a>
+    <a onclick="modal2.open()" href="javascript:">打开2</a>
+    <div style="display: none; width: 300px; height: 300px; background-color: lightgreen;" role="dialog">
+        <a onclick="modal2.open()" href="javascript:">打开2</a>
+        <a onclick="modal2.open({showBackdrop: false})" href="javascript:">打开2（无遮罩）</a>
+        <a onclick="modal2.open({closeOthers: false})" href="javascript:">打开2（不关闭）</a>
+        <a onclick="modal.close()" href="javascript:">关闭1</a>
     </div>
-    <div style="width: 300px; height: 300px; background-color: cornflowerblue;" role="dialog">
-        <a onclick="modal2.emit('open')" href="javascript:">打开2</a>
+    <div style="display:none; width: 300px; height: 300px; background-color: cornflowerblue;" role="dialog">
+        <a onclick="modal.open()" href="javascript:">打开1</a>
+        <a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a>
+        <a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭）</a>
         <a onclick="modal2.close()" href="javascript:">关闭2</a>
+    </div>
+    <div style="display: none; width: 100px; height: 100px; background-color: lightgray;" role="dialog">
     </div>
     <script>
         var modal = $.UI.Modal($('[role=dialog]:eq(0)'))
         var modal2 = $.UI.Modal($('[role=dialog]:eq(1)'))
+        var $input = $('input');
+        var modal3 = $.UI.Dialog($('[role=dialog]:eq(2)'), {attach: $input});
+        $input.focus(function(){
+            modal3.open()
+        });
+        $(window).onExcept($input.add(modal3.$element), 'click', function(){
+            modal3.close();
+        })
     </script>
 </body>
 </html>

@@ -332,15 +332,24 @@
 
 
 $.fn.bgiframe = function(){
-    if(this.children('bgiframe').length == 0){   //如果不存在才插进去
-        return this.prepend($(document.createElement('bgiframe')).html('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>').css({
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            zoom: 1,
-            zIndex: -1
-        }));
-    }
+    $.each(this, function(){
+        var $this = $(this)
+        if($this.children('bgiframe').length == 0){   //如果不存在才插进去
+            var $iframe = $('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>')
+            var $wraper = $(document.createElement('bgiframe')).css({
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                zoom: 1,
+                zIndex: -1
+            });
+            $this.prepend($wraper.append($iframe));
+            $($iframe[0].contentWindow).on('click', function(e){
+                $iframe.trigger(e)
+            });
+        }
+    });
+    return this
 };
 
 // .position 改造;

@@ -172,9 +172,9 @@
         queue: [],
         attach: $(window),
         zIndex: {
-            start: 100,
-            step: 10,
-            end: 300
+            start: 1300,
+            step: 100,
+            end: 1400
         },
         open: {
             position: {
@@ -231,7 +231,8 @@
                 offestY = offestY ? offestY.toString() : '';
                 return {
                     at: 'center' + offestY + ' center' + offestY,
-                    my: 'center center'
+                    my: 'center center',
+                    collision: 'flipfit'
                 }
             },
             showBackdrop: true,

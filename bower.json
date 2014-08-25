@@ -1,6 +1,6 @@
 {
     "name": "armerjs",
-    "version": "0.6.1",
+    "version": "0.6.1a",
     "main": [
         "dist/armer.js",
         "dist/jqarmer.js",

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.0 - 2014-08-22 
+ * armerjs - v0.6.1a - 2014-08-25 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 var Zepto = (function() {

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.1 - 2014-08-25 
+ * armerjs - v0.6.1a - 2014-08-25 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -8429,7 +8429,7 @@ $.fn.bgiframe = function(){
     })();
 
     // offset option
-    (function( $ ) {
+    (function() {
         var _position = $.fn.position;
         $.fn.position = function( options ) {
             if ( !options || !options.offset ) {
@@ -8459,7 +8459,7 @@ $.fn.bgiframe = function(){
                 offset: undefined
             } ) );
         };
-    }( armer ) );
+    }() );
 }( armer ) );
 
 
@@ -9560,7 +9560,7 @@ $.fn.ellipsis.useCssClamp = true;
     }
     var openCauseClose;
     /**
-     * ������
+     * 对话框构造体
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
      * @constructor
@@ -9597,7 +9597,7 @@ $.fn.ellipsis.useCssClamp = true;
         else
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
-    }
+    };
     Dialog.toogleBackDrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;

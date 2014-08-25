@@ -3,7 +3,7 @@ server: http://192.168.0.228:9876
 load:
   - ../../qunit-adapter.js
   - ../../jquery.js
-  - ../src/armer.js
+  - ../src/main.js
   - ../src/polyfill.js
   - ../src/lang.js
 

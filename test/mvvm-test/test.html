@@ -4,7 +4,7 @@
     <title></title>
     <script src="../../../jquery.js"></script>
 
-    <script src="../armer.js"></script>
+    <script src="../main.js"></script>
     <script src="../polyfill.js"></script>
     <script src="../mvvm.js"></script>
 
@@ -32,7 +32,7 @@
 </head>
 <body>
     <div vm-controller="test">
-        <h1 vm-click='click'>{{test0|html}} - {{name}}<a vm-href="{{url}}" vm-title="{{url}}">²âÊÔ</a></h1>
+        <h1 vm-click='click'>{{test0|html}} - {{name}}<a vm-href="{{url}}" vm-title="{{url}}">ï¿½ï¿½ï¿½ï¿½</a></h1>
         <form vm-action='{{url}}'>
             <img vm-alt="{{url}}" vm-src="{{img}}"/>
             <input vm-duplex="name" name="myname"/>
@@ -46,10 +46,10 @@
             vm = this;
             vm.url = 'http://www.baidu.com';
             vm.img = 'http://www.baidu.com/img/baidu_jgylogo3.gif';
-            vm.name = 'ÎâºÆ·æ';
+            vm.name = 'ï¿½ï¿½Æ·ï¿½';
             vm.list = [
-                {a: '²âÊÔ', b:'asd', c: '²âÊÔ10'},
-                {a: '²âÊÔ', b:'asd', c: '²âÊÔ10'}
+                {a: 'ï¿½ï¿½ï¿½ï¿½', b:'asd', c: 'ï¿½ï¿½ï¿½ï¿½10'},
+                {a: 'ï¿½ï¿½ï¿½ï¿½', b:'asd', c: 'ï¿½ï¿½ï¿½ï¿½10'}
             ];
             vm.test0 = '111';
             vm.click = function(){

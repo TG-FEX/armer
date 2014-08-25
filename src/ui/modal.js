@@ -5,7 +5,7 @@
     }
     var openCauseClose;
     /**
-     * ������
+     * 对话框构造体
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
      * @constructor
@@ -42,7 +42,7 @@
         else
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
-    }
+    };
     Dialog.toogleBackDrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.0 - 2014-08-22 
+ * armerjs - v0.6.1 - 2014-08-25 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -7941,15 +7941,24 @@ if (window.define) {
 
 
 $.fn.bgiframe = function(){
-    if(this.children('bgiframe').length == 0){   //如果不存在才插进去
-        return this.prepend($(document.createElement('bgiframe')).html('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>').css({
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            zoom: 1,
-            zIndex: -1
-        }));
-    }
+    $.each(this, function(){
+        var $this = $(this)
+        if($this.children('bgiframe').length == 0){   //如果不存在才插进去
+            var $iframe = $('<iframe frameborder="0" scrolling="no" style="width: 100%;height: 100%;z-index: -2;filter: alpha(opacity=0);opacity: 0;"></iframe>')
+            var $wraper = $(document.createElement('bgiframe')).css({
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                zoom: 1,
+                zIndex: -1
+            });
+            $this.prepend($wraper.append($iframe));
+            $($iframe[0].contentWindow).on('click', function(e){
+                $iframe.trigger(e)
+            });
+        }
+    });
+    return this
 };
 
 // .position 改造;
@@ -9718,9 +9727,9 @@ $.fn.ellipsis.useCssClamp = true;
         queue: [],
         attach: $(window),
         zIndex: {
-            start: 100,
-            step: 10,
-            end: 300
+            start: 1300,
+            step: 100,
+            end: 1400
         },
         open: {
             position: {
@@ -9777,7 +9786,8 @@ $.fn.ellipsis.useCssClamp = true;
                 offestY = offestY ? offestY.toString() : '';
                 return {
                     at: 'center' + offestY + ' center' + offestY,
-                    my: 'center center'
+                    my: 'center center',
+                    collision: 'flipfit'
                 }
             },
             showBackdrop: true,

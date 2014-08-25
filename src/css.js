@@ -820,7 +820,7 @@ $.fn.bgiframe = function(){
     })();
 
     // offset option
-    (function( $ ) {
+    (function() {
         var _position = $.fn.position;
         $.fn.position = function( options ) {
             if ( !options || !options.offset ) {
@@ -850,7 +850,7 @@ $.fn.bgiframe = function(){
                 offset: undefined
             } ) );
         };
-    }( armer ) );
+    }() );
 }( armer ) );
 
 

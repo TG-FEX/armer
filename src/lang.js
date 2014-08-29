@@ -281,14 +281,14 @@
         type: (function($type){
             var rsplit = /[, |]+/g;
             var typeCase = {
-                Blank: function(){},
-                ArrayLike: function(){},
-                Int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
-                UInt: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
-                Arguments: function(){return identity(obj) == !!obj.callee},
-                Window: function(){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
-                Document: function(){return obj.nodeType === 9 || $.stringType(obj,'document')},
-                NodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
+                blank: function(){},
+                arraylike: function(){},
+                int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
+                uint: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
+                arguments: function(){return identity(obj) == !!obj.callee},
+                window: function(){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
+                document: function(){return obj.nodeType === 9 || $.stringType(obj,'document')},
+                nodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
@@ -310,7 +310,7 @@
                             return function(obj){
                                 var found = false;
                                 $.each(arr, function(__, type){
-                                    var compare = typeCase[type] || typeCase[$.hyphen(type)] || typeCase[type.toLowerCase()] || $.stringType;
+                                    var compare = typeCase[$.camelCase(type).toLowerCase()] || $.stringType;
                                     return !(found = compare(obj, type));
                                 });
                                 return found;
@@ -469,138 +469,58 @@
 
         // 参数初始化整理方法
         argsArrange: (function(){
-            var filter = function(args, params, defaults) {
-                var a = [], tempArr, arr = arguments, item;
-                params = params || [];
+            var filter = function(args, paramsDescription, defaults, excludeRest) {
+                if (typeof defaults == 'boolean') {
+                    excludeRest = defaults;
+                    defaults = null;
+                }
+                var a = [], tempArr, item;
+                paramsDescription = paramsDescription || [];
+                if (excludeRest == null) excludeRest = true;
                 defaults = defaults || [];
-                for (var i = 0, j = 0; i < params.length; i++) {
-                    item = params[i];
-                    if ($.isString(item)) item = {condition: item, defaults: defaults[i]};
+                for (var i = 0, j = 0; i < paramsDescription.length; i++) {
+                    item = paramsDescription[i];
+                    if ($.isString(item)) item = {type: item};
+                    item.defaults = defaults[i] || item.defaults;
                     tempArr = [];
-                    var isAutoLen = false, isNeed = false, grouper,
-                        match = item.match,
+                    var isAutoLen = false, required = false, grouper,
+                        match = item.required,
                         length = item.length,
                         group = item.group,
-                        name = item.name ? 'Params[' + i + ']' : item.name;
-                    match =  $.type(match, 'number') ? (isNeed = true, +match) : 1;
+                        name = item.name ? item.name : 'Params[' + i + ']';
+                    match =  $.type(match, 'number') ? (required = true, +match) : 1;
                     length =  $.type(length, 'number') ? +length :
                         length == 'auto' ? (isAutoLen = true, Infinity) : match;
                     grouper = group || length > 1 || isAutoLen ? function(arg){tempArr.push(arg); return tempArr} : function(arg){k++; return arg};
                     for (var k = 0; k < length || isAutoLen; k++) {
-                        if ($.type(arr[j], item.condition))
-                            a[i] = grouper(arr[j++]);
-                        else if (k < match && isNeed)
-                            throw new TypeError('参数' + name + '必须符合条件：' + item.condition + '，最少需要' + match + '个，现仅有' + k + '个');
+                        if ($.type(args[j], item.type))
+                            a[i] = grouper(args[j++]);
+                        else if (k < match && required)
+                            throw new TypeError('参数' + name + '必须符合条件：' + item.type + '，最少需要' + match + '个，现仅有' + k + '个');
                         else if (isAutoLen)
                             break;
                         else
                             a[i] = grouper(item.defaults);
                     }
                 }
+                for (;j < args.length && excludeRest;) {
+                    a[i++] = args[j++];
+                }
                 return a;
             };
-            return function(func, params, context){
-                if ($.isFunction(func))
+            return function(args, paramsDescription, defaults){
+                if ($.isFunction(args)) {
+                    paramsDescription = [].slice.call(arguments);
+                    var func = args.shift();
                     return function(){
-                        return func.apply(context || this, filter(arguments, params));
+                        return func.apply(this, filter(arguments, paramsDescription));
                     };
-                else
-                    return filter(func, params, context);
+                } else
+                    return filter(args, paramsDescription, defaults);
             };
         })()
     });
 
-    // TODO(wuhf): 类工厂
-    // ========================================================
-    (function(){
-        var
-            unextend = $.oneObject(["_super", "prototype", 'extend', 'implement' ]),
-            rconst = /constructor|_init|_super/,
-            classOne = 'object,array,function';
-        function expand(klass,props){
-            'extend,implement'.replace( $.rword, function(name){
-                var modules = props[name];
-                if( $.type(modules, classOne) ){
-                    klass[name].apply( klass,[].concat( modules ) );
-                    delete props[name];
-                }
-            });
-            return klass;
-        }
-        var mutators = {
-            inherit : function( parent,init ) {
-                var bridge = function() { };
-                if( typeof parent == 'function'){
-                    for(var i in parent){//继承类成员
-                        this[i] = parent[i];
-                    }
-                    bridge.prototype = parent.prototype;
-                    this.prototype = new bridge ;//继承原型成员
-                    this._super = parent;//指定父类
-                }
-                this._init = (this._init || []).concat();
-                if( init ){
-                    this._init.push(init);
-                }
-                this.toString = function(){
-                    return (init || bridge) + ''
-                };
-                var proto = this.prototype;
-                // FIXME(wuhf): 暂时不需要 备注一下
-                /*
-                 proto.setOptions = function(first){
-                 if( typeof first === 'string' ){
-                 first =  this[first] || (this[first] = {});
-                 [].splice.call( arguments, 0, 1, first );
-                 }else{
-                 [].unshift.call( arguments,this );
-                 }
-                 $.merge.apply(null,arguments);
-                 return this;
-                 };
-                 */
-                return proto.constructor = this;
-            },
-            implement:function(){
-                var target = this.prototype, reg = rconst;
-                for(var i = 0, module; module = arguments[i++]; ){
-                    module = typeof module === "function" ? new module :module;
-                    $.each(module, function(name){
-                        if(!reg.test(name)) target[name] = module[name];
-                    });
-                }
-                return this;
-            },
-            extend: function(){//扩展类成员
-                var bridge = {};
-                for(var i = 0, module; module = arguments[i++]; ){
-                    $.extend( bridge, module );
-                }
-                for( var key in bridge ){
-                    if( !unextend[key] ){
-                        this[key] =  bridge[key];
-                    }
-                }
-                return this;
-            }
-        };
-        $.factory = function( obj ){
-            obj = obj || {};
-            var parent = obj.inherit; //父类
-            var init = obj.init ;    //构造器
-            var extend = obj.extend; //静态成员
-            delete obj.inherit;
-            delete obj.init;
-            var klass = function () {
-                for( var i = 0 , init ; init =  klass._init[i++]; ){
-                    init.apply(this, arguments);
-                }
-            };
-
-            $.extend( klass, mutators ).inherit( parent, init );//添加更多类方法
-            return expand( klass, obj ).implement( obj );
-        }
-    })();
 
 
     //构建四个工具方法:$.String, $.Array, $.Number, $.Object, $.Function
@@ -900,6 +820,9 @@
     }
 
     $.Object({
+        size: function(obj){
+            return $.isArrayLike(obj) ? obj.length: Object.keys(obj).length;
+        },
         /**
          * 过滤数组中不合要求的元素
          * @param {Object} obj
@@ -929,6 +852,24 @@
             Object.keys(obj).forEach(function(name) {
                 fn(obj[name], name)
             })
+        },
+        reduce: function(obj, iterator, memo, context) {
+            var initial = arguments.length > 2;
+            if (obj == null) obj = [];
+            if (obj.reduce) {
+                if (context) iterator = iterator.bind(context);
+                return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
+            }
+            $.each(obj, function(index, value) {
+                if (!initial) {
+                    memo = value;
+                    initial = true;
+                } else {
+                    memo = iterator.call(context, memo, value, index);
+                }
+            });
+            if (!initial) throw new TypeError('Reduce of empty array with no initial value');
+            return memo;
         },
         //将参数一的键值都放入回调中执行，收集其结果返回
         map: function(obj, fn) {

@@ -43,12 +43,15 @@
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
     };
-    Dialog.toogleBackDrop = function(toggle, $backdrop){
+    Dialog.toggleBackDrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;
         var $body = $('body');
         if (!$.contains($body[0], $backdrop[0])) {
-            $backdrop.prependTo('body').bgiframe();
+            $backdrop.prependTo('body');
+            if (!!window.ActiveXObject && !window.XMLHttpRequest) {
+                $backdrop.bgiframe()
+            }
         }
         toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
         $body.toggleClass('with-backdrop', toggle);
@@ -67,7 +70,7 @@
             item._close(rt, co)
         });
         list.length = 0;
-        !openCauseClose && $backdrop && this.toogleBackDrop(false, $backdrop);
+        !openCauseClose && $backdrop && this.toggleBackDrop(false, $backdrop);
     }
     Dialog.prototype = $.EventEmitter({
         init: function(){
@@ -80,42 +83,46 @@
             } else return this._init
         },
         focus: function(){
+            var $backdrop = this.options.backdrop;
             var list = this.options.queue;
             var z = this.options.zIndex;
             var that = this;
-            var thisZindex;
+            var thisZindex, has = false, s;
             $.Array.remove(list, that);
             list.push(that);
             list.forEach(function(item, i){
-                var s = z.start + i * z.step;
-                if (item == that) thisZindex = s
+                s = z.start + i * z.step;
+                var b = !!item.lastOpen.showBackdrop;
+                has = b || has;
+                if (b) thisZindex = s || thisZindex;
                 item.$element.css('zIndex', s);
             })
-            this.options.backdrop && this.options.backdrop.css('zIndex', thisZindex);
-
+            if ($backdrop){
+                if (!has)
+                    this.constructor.toggleBackDrop(false, $backdrop);
+                else $backdrop.css('zIndex', thisZindex);
+            }
         },
         _open: function(openOptions){
             var list = this.options.queue, self = this, index, position;
             if (list.indexOf(self) >= 0) return;
-            self.$element.on('focus.dialog', function(e){
+            this.lastOpen = openOptions;
+            self.$element.on('focus.ui.dialog', function(e){
                 self.trigger(e);
             });
-            if (!list.length) {
-                if (openOptions.showBackdrop)
-                    this.constructor.toogleBackDrop(true, this.options.backdrop);
-            } else {
-                openCauseClose = true;
-                if (openOptions.closeOthers) {
-                    this.constructor.closeAll();
-                }
-                openCauseClose = false;
+            if (openOptions.showBackdrop)
+                this.constructor.toggleBackDrop(true, this.options.backdrop);
+            openCauseClose = true;
+            if (openOptions.closeOthers) {
+                this.constructor.closeAll();
             }
+            openCauseClose = false;
             list.push(self);
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
             self.$element.finish().position(position);
             return animate(self.$element, openOptions.animate).promise().done(function(){
-                self.trigger('opened');
+                self.trigger('opened.ui.dialog');
             });
         },
         _close: function(returnValue, closeOptions){
@@ -124,8 +131,13 @@
             return animate(this.$element, closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
-                self.trigger('closed', [returnValue]);
+                self.trigger('closed.ui.dialog', [returnValue]);
             });
+        },
+        toggle: function(){
+            var list = this.options.queue;
+            if (!(list.indexOf(this) >= 0)) this.trigger('close');
+            else this.trigger('open');
         },
         close: function(returnValue, closeOptions){
             var self = this, list = this.options.queue;
@@ -136,8 +148,8 @@
             this._close(returnValue, closeOptions);
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
-                if (!list.length) this.constructor.toogleBackDrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].$element.trigger('focus');
+                if (!list.length) this.constructor.toggleBackDrop(false, this.options.backdrop);
+                list.length && list[list.length - 1].$element.trigger('focus.ui.dialog');
             }
         },
         open: function(dfd, openOptions){
@@ -159,10 +171,8 @@
                 init = self._init;
             $.when(init, dfd).done(function(){
                 self._open(openOptions);
-                if (openOptions.getFocus)
-                    self.$element.trigger('focus')
-                else
-                    self.trigger('focus');
+                self.trigger('focus.ui.dialog');
+                //self.$element[0].focus();
             })
         }
     });
@@ -203,13 +213,6 @@
         onfocus: $.noop
     };
 
-    $.fn.modal = function(options){
-        var self = this[0], modal;
-        if (modal = $.data(self, 'ui-modal'))
-            return modal;
-        else $.data(self, 'ui-modal', $.UI.Modal(self, options));
-        return this;
-    }
     $.UI.Dialog = Dialog;
     $.UI.Modal = $.Function.clone(Dialog);
     $.UI.Modal.defaults = {
@@ -227,8 +230,8 @@
                 var stepY = 20;
                 var offestX = index * stepX;
                 var offestY = index * stepX - 30;
-                offestX = offestX ? offestX.toString() : '';
-                offestY = offestY ? offestY.toString() : '';
+                offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
+                offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
                 return {
                     at: 'center' + offestY + ' center' + offestY,
                     my: 'center center',
@@ -259,6 +262,31 @@
         onclosed: $.noop,
         oninit: $.noop,
         onfocus: $.noop
+    }
+
+
+    $.fn.modal = function(command){
+        var $this = this[0], modal;
+        // 判断是否有这个方法
+        if ($.type(command) != 'string' && !$.UI.Modal.prototype[command]) {
+            command = null;
+        } else
+            [].shift.call(arguments);
+        modal = $.data(self, 'ui-modal');
+        if (!modal) {
+            //如果命令为空，那么拼接参数
+            if (!command) {
+                [].unshift.call(arguments, $this);
+                modal = $.UI.Modal.apply($.UI.Modal, arguments);
+            } else {
+                console.log($this);
+                modal = $.UI.Modal($this);
+            }
+            $.data(self, 'ui-modal', modal);
+            if (!command) return this;
+        } else if (!command) return modal;
+
+        return modal[command].apply(modal, arguments);
     }
 
 })(jQuery);

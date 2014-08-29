@@ -3,8 +3,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="../../src/main.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
     <script src="../../src/polyfill.js"></script>
     <script src="../../src/lang.js"></script>
     <script src="../../src/io.js"></script>
@@ -14,6 +14,10 @@
     <script src="../../src/ui.js"></script>
     <script src="../../src/ui/modal.js"></script>
     <style>
+        ul, li {
+            padding: 0;
+            margin: 0;
+        }
         .backdrop {
             top: 0;
             left: 0;
@@ -32,34 +36,62 @@
 <body>
     <a onclick="modal.open()" href="javascript:">打开1</a>
     <a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a>
-    <a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭）</a>
     <a onclick="modal2.open()" href="javascript:">打开2</a>
+    <a onclick="modal2.open({showBackdrop: false})" href="javascript:">打开2（无遮罩）</a>
     <div style="display: none; width: 300px; height: 300px; background-color: lightgreen;" role="dialog">
-        <a onclick="modal2.open()" href="javascript:">打开2</a>
-        <a onclick="modal2.open({showBackdrop: false})" href="javascript:">打开2（无遮罩）</a>
-        <a onclick="modal2.open({closeOthers: false})" href="javascript:">打开2（不关闭）</a>
-        <a onclick="modal.close()" href="javascript:">关闭1</a>
-
-        <input type="text"/>
+        <ul>
+            <li><a onclick="modal2.open()" href="javascript:">打开2</a>
+            <li><a onclick="modal2.open({showBackdrop: false})" href="javascript:">打开2（无遮罩）</a></li>
+            <li><a onclick="modal2.open({closeOthers: false})" href="javascript:">打开2（不关闭其他）</a></li>
+            <li><a onclick="modal2.open({showBackdrop: false, closeOthers: false})" href="javascript:">打开2（无遮罩不关闭其他）</a></li>
+            <li><a onclick="modal.close()" href="javascript:">关闭1</a></li>
+            <li><input type="text" name="name"/></li>
+        </ul>
     </div>
     <div style="display:none; width: 300px; height: 300px; background-color: cornflowerblue;" role="dialog">
-        <a onclick="modal.open()" href="javascript:">打开1</a>
-        <a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a>
-        <a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭）</a>
-        <a onclick="modal2.close()" href="javascript:">关闭2</a>
+        <ul>
+            <li><a onclick="modal.open()" href="javascript:">打开1</a></li>
+            <li><a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a></li>
+            <li><a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭其他）</a></li>
+            <li><a onclick="modal.open({showBackdrop: false, closeOthers: false})" href="javascript:">打开1（无遮罩不关闭其他）</a></li>
+            <li><a onclick="modal2.close()" href="javascript:">关闭2</a></li>
+        </ul>
+        <ul>
+            <li><a onclick="modal3.open()" href="javascript:">打开3</a></li>
+            <li><a onclick="modal3.open({showBackdrop: false})" href="javascript:">打开3（无遮罩）</a></li>
+            <li><a onclick="modal3.open({closeOthers: false})" href="javascript:">打开3（不关闭其他）</a></li>
+            <li><a onclick="modal3.open({showBackdrop: false, closeOthers: false})" href="javascript:">打开3（无遮罩不关闭其他）</a></li>
+        </ul>
+    </div>
+    <div style="display:none; width: 300px; height: 300px; background-color: pink;" role="dialog">
+        <ul>
+            <li><a onclick="modal.open()" href="javascript:">打开1</a></li>
+            <li><a onclick="modal.open({showBackdrop: false})" href="javascript:">打开1（无遮罩）</a></li>
+            <li><a onclick="modal.open({closeOthers: false})" href="javascript:">打开1（不关闭其他）</a></li>
+            <li><a onclick="modal.open({showBackdrop: false, closeOthers: false})" href="javascript:">打开1（无遮罩不关闭其他）</a></li>
+            <li><a onclick="modal3.close()" href="javascript:">关闭3</a></li>
+        </ul>
     </div>
     <div style="display: none; width: 100px; height: 100px; background-color: lightgray;" role="dialog">
     </div>
+    <div style="height: 10000px"></div>
     <script>
-        var modal = $.UI.Modal($('[role=dialog]:eq(0)'))
-        var modal2 = $.UI.Modal($('[role=dialog]:eq(1)'))
+
+        var $role = $('[role=dialog]:eq(0)');
+        var $role2 = $('[role=dialog]:eq(1)');
+        var $role3 = $('[role=dialog]:eq(2)');
+        var $role4 = $('[role=dialog]:eq(3)');
+        $role.modal('open');
+        var modal = $role.modal();
+        var modal2 = $.UI.Modal($role2)
+        var modal3 = $.UI.Modal($role3)
         var $input = $('input');
-        var modal3 = $.UI.Dialog($('[role=dialog]:eq(2)'), {attach: $input});
+        var modal4 = $.UI.Dialog($role4, {attach: $input});
         $input.focus(function(){
-            modal3.open()
+            modal4.open()
         });
-        $(window).onExcept($input.add(modal3.$element), 'click', function(){
-            modal3.close();
+        $(document).onExcept($input.add(modal4.$element), 'click', function(){
+            modal4.close();
         })
     </script>
 </body>

@@ -14,8 +14,28 @@ module.exports = function(grunt) {
                 ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= package.author.name %>;' +
                 ' Licensed <%= package.license.type + "(" + package.license.url + ")" %> \n */\n'
         },
+        'core': {
+            src: [
+                'src/core/main.js',
+                'src/core/url.js',
+                'src/core/define.js'
+            ],
+            dest: 'dist/armer.core.js'
+        },
         'armer': {
-            src: ['src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
+            src: [
+                'dist/armer.core.js',
+                'src/polyfill.js',
+                'src/mvvm.js',
+                'src/lang.js',
+                'src/io.js',
+                'src/css.js',
+                'src/effects.js',
+                'src/event.js',
+                'src/util.js',
+                'src/ui.js',
+                'src/ui/modal.js'
+            ],
             dest: 'dist/armer.js'
         },
         'jq': {
@@ -26,7 +46,20 @@ module.exports = function(grunt) {
              * armer.mvvm ģ��
              * armer.lang ������չģ��
              */
-            src: ['bower_components/jquery/dist/jquery.js', 'src/armer.js', 'src/polyfill.js', 'src/mvvm.js', 'src/lang.js', 'src/io.js', 'src/css.js', 'src/effects.js', 'src/event.js', 'src/util.js', 'src/ui.js', 'src/ui/modal.js'],
+            src: [
+                'bower_components/jquery/dist/jquery.js',
+                'dist/armer.core.js',
+                'src/polyfill.js',
+                'src/mvvm.js',
+                'src/lang.js',
+                'src/io.js',
+                'src/css.js',
+                'src/effects.js',
+                'src/event.js',
+                'src/util.js',
+                'src/ui.js',
+                'src/ui/modal.js'
+            ],
             dest: 'dist/jqarmer.js'
         },
         z: {
@@ -37,7 +70,12 @@ module.exports = function(grunt) {
              * armer ��չ��ܺ���
              * armer.mvvm ģ��
              */
-            src: ['bower_components/zepto/zepto.js', '../fastclick.js', '/src/zepto/adapter.js', 'src/armer.js', 'src/mvvm.js'],
+            src: [
+                'bower_components/zepto/zepto.js',
+                '../fastclick.js',
+                '/src/zepto/adapter.js',
+                'dist/armer.core.js',
+                'src/mvvm.js'],
             dest: 'dist/zarmer.js'
         }
     };

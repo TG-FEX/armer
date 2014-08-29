@@ -1,4 +1,28 @@
 $.UI = {};
+$(function(){
+    var $b = $('body');
+    $b.on('click', '[data-trigger],[href]', function(e){
+        var $this = $(e.currentTarget),
+            target = $this.data('target'),
+            toggle = $this.data('toggle'),
+            $target, ui;
+        if (!target && toggle) target = $this.attr('href');
+        if (target) {
+            $target = $(target);
+            ui = $target.data('ui-toggle');
+            if (!ui) return;
+            if (!toggle) {
+                for(var i in ui) {
+                    $target[i](ui[i]);
+                }
+            } else {
+                $target[toggle](ui[toggle]);
+            }
+            e.stopPropagation(true);
+            return false;
+        }
+    });
+});
 //==============================
 //   TODO(wuhf): UI级别的方法
 //==============================

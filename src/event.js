@@ -1,5 +1,4 @@
-;
-(function () {
+;(function () {
     $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
         if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
@@ -11,10 +10,12 @@
         on: function () {
             [].unshift.call(arguments, this);
             $.event.add.apply($.event, arguments);
+            return this
         },
         off: function () {
             [].unshift.call(arguments, this);
             $.event.remove.apply($.event, arguments);
+            return this
         },
         emit: function (event, data, onlyHandlers) {
             var handle, ontype, tmp, orignData,

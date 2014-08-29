@@ -1,9 +1,17 @@
 /*!
- * armerjs - v0.6.1a - 2014-08-25 
+ * armerjs - v0.6.2a - 2014-08-29 
+ * Copyright (c) 2014 Alphmega; Licensed MIT() 
+ */
+/*!
+ * armerjs - v0.6.2a - 2014-08-29 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
+
+    // 关掉IE6 7 的动画
+    if ($.support.opacity) $.fx.off = false;
+
     // TODO(wuhf): 核心工具集
     // ========================================================
     (function(){
@@ -200,10 +208,16 @@ armer = window.jQuery || window.Zepto;
                 }
                 return str;
             },
-            serializeNodes: function(obj, separator, ignoreAttrChecked){
-                if (obj.length == 1 && obj[0].tagName == 'FORM')
-                    obj = $(obj).find('input,select,textarea');
-                var result = {}
+            serializeNodes: function(obj, join, ignoreAttrChecked){
+                if (!$.isArrayLike(obj))
+                    obj = $(obj).find('input,select,textarea').andSelf();
+                var result = {}, separator;
+                if (typeof join == 'string') {
+                    separator = join;
+                    join = function(a){
+                        return a.join(separator)
+                    }
+                }
                 for (var i = 0; i <= obj.length; i++) {
                     if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
                         continue
@@ -213,9 +227,9 @@ armer = window.jQuery || window.Zepto;
                         result[obj[i].name].push(obj[i].value);
                     }
                 }
-                if (separator) {
+                if (typeof join == 'function') {
                     for (var i in result) {
-                        result[i] = result[i].join(separator);
+                        result[i] = join(result[i]);
                     }
                 }
                 return result
@@ -475,687 +489,6 @@ armer = window.jQuery || window.Zepto;
         html: 'html'
     };
 
-    // TODO(wuhf): URL解释器
-    // ========================================================
-    (function(){
-        // url解释规范
-        // 参考RFC3986 http://tools.ietf.org/html/rfc3986
-        var rHash = /#[^#?]*/;
-        var rSearch = /\?[^#?]*/;
-        var rProtocol = /^\w*:/;
-        var rSuffix = /\.((?:com|co|cn|net|org|gov|info|la|cc|edu)(?:\.(?:cn|jp))?)/;
-        var rPort = /:(\d{2,5})/;
-        var protocol2port = {
-            'ftp:': '21',
-            'ssh:': '22',
-            'http:': '80',
-            'https:': '443',
-            'file:': ''
-        };
-        var setProtocol = function(parent, self){
-            parent = parent.replace(rProtocol, function(protocol){
-                //设置protocol;
-                self._protocol = protocol;
-                return '';
-            });
-            parent = parent.substr(0, parent.lastIndexOf('/'));
-            return parent;
-        };
-        var setHost = function(str, self){
-            var tmp;
-            if (str == '') {
-                self._hostname = [];
-                self._port = protocol2port[self._protocol];
-            } else {
-                if (tmp = str.match(rPort)) {
-                    // 如果有端口号
-                    self._hostname = str.substr(0, str.indexOf(tmp[0]));
-                    self._port = tmp[1];
-                } else {
-                    self._hostname = str;
-                    self._port = protocol2port[self._protocol];
-                }
-                self._hostname = self._hostname.split('.');
-            }
-            self._hostname.toString = function(){
-                return this.join('.')
-            }
-        };
-        /**
-         * 生成一个URL对象
-         * @param url 一个绝对地址或者一个相对地址
-         * @param [parent] 相对地址的情况，可以设置它的父路径
-         * @param [basePath]
-         * @returns {URL}
-         * @constructor
-         */
-        $.URL = function(url, parent){
-            var URL = arguments.callee;
-            // 先将parent路径转行为绝对路径
-            parent = parent ? URL.absolutize(parent) : null;
-            if (!(this instanceof URL)) return new URL(url, parent);
-            // 分析url
-            this.init(url, parent);
-        };
-        $.URL.prototype = {
-            constructor: $.URL,
-            init: function(path, parent){
-                //alert(basePath);
-                var self = this, tmp;
-                // 获取 search
-                path = path.replace(rSearch, function(search){
-                    search = search.replace('?', '');
-                    search = $.unserialize(search);
-                    self._search = search;
-                    return '';
-                });
-                self._search = self._search || {};
-                self._search.toString = function(){var s = $.serialize(this); return s == '' ? '' : '?' + s};
-                // 获取 hash
-                path = path.replace(rHash, function(hash){
-                    self._hash = hash;
-                    return '';
-                });
-                self._hash = self._hash || '';
-                // 获取 protocol
-                path = path.replace(rProtocol, function(protocol){
-                    self._protocol = protocol;
-                    return '';
-                });
-                // 如果木有协议
-                if (!self._protocol) {
-                    // 如果没有parent那么parent就是location
-                    parent = parent || location.href;
-                    //http://p.tgnet.com/Office/MyInfo.aspx
-                    var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
-                    parent.replace(rProtocol, function(protocol){
-                        self._protocol = protocol
-                    })
-                    //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
-                    // 则获取协议
-                    // 如果木有域名后缀，则判断为相对地址
-                    if (!rSuffix.test(path)) {
-                        /*
-                         alert(path)
-                         alert(parent)
-                         alert(basePath)
-                         */
-                        tmp = path.charAt(0);
-                        // ./css css 这种情况 相对于【当前路径】的兄弟路径
-                        // /css 这两种情况 相对于【根路径】
-                        // ../css 这种情况 相对于【当前路径】的父路径
-
-                        if (path.slice(0, 2) === './') {
-                            //相对于兄弟路径
-                            path = setProtocol(parent, self) + path.slice(1);
-                        } else if (tmp !== "." && tmp !== '/') {
-                            //相对于兄弟路径
-                            path = setProtocol(parent, self) + '/' + path;
-                        } else if (tmp == "/") {
-                            path = setProtocol(basePath, self) + path;
-                        } else if (path.slice(0, 2) === '..') {
-                            //相对于父路径
-                            var arr = setProtocol(parent, self).split('/');
-                            tmp = path.replace(/\.\.\//g, function() {
-                                arr.pop();
-                                return '';
-                            });
-                            path = arr.join("/") + "/" + tmp;
-                        }
-                    }
-                } else {
-                    self._pathname = path
-                }
-                self._pathname = path.substr(2).split('/');
-                self._pathname.toString = function(){
-                    return '/' + this.join('/');
-                };
-                setHost(self._pathname.shift(), self);
-            },
-            search: function(key, value){
-                if (!key) return $.extend({}, this._search);
-                if ($.isPlainObject(key)) this._search = $.unserialize($.extend({}, this._search, key));
-                if (value === undefined) return this._search[key];
-                this._search[key] = value;
-                return this;
-            },
-            hash: function(value){
-                if (!value) return this._hash;
-                this._hash = '#' + value.replace('#', '');
-            },
-/*
-            suffix: function(value){
-                var lIndex = this._hostname.length - 1;
-                if (value == null) return this._hostname[lIndex];
-                this._hostname[lIndex] = value.replace(/$\./, '');
-                return this;
-            },
-*/
-            port: function(value){
-                if (!value) return this._port;
-                this._port = value.replace(':', '');
-                return this;
-            },
-            host: function(value){
-                if (!value) return this._hostname + (this._port == protocol2port[this._protocol] ? '' : (':' + this._port));
-                setHost(value, this);
-                return this;
-            },
-            hostname: function(index, value){
-                var r;
-                if (index == undefined) {
-                    r = [].slice.call(this._hostname);
-                    r.toString = this._hostname.toString;
-                } else {
-                    if (typeof index == 'object') {
-                        for(var i = 0; i < index.length; i++) {
-                            this._hostname[i] = index[i] || this._hostname[i];
-                        }
-                    } else {
-                        this._hostname[index] = value;
-                    }
-                    r = this;
-                }
-                return r;
-            },
-            /**
-             * 获取路径，返回
-             * @param index
-             * @param value
-             * @returns {*}
-             */
-            pathname: function(index, value){
-                var r;
-                if (index == null) {
-                    r = [].slice.call(this._pathname);
-                    r.toString = this._pathname.toString;
-                } else if (typeof index == 'object') {
-                    for (var i = 0; i < index.length; i++) {
-                        this._pathname[i] = index[i] || this._pathname[i];
-                    }
-                    r = this;
-                } else if (value === undefined) r = this._pathname[index];
-                else {
-                    this._pathname[index] = value;
-                    r = this;
-                }
-                return r;
-            },
-            fileName : function(value){
-                var p = this._pathname;
-                p = p[p.length - 1];
-                if (value) this._pathname[this._pathname.length - 1] = value;
-                else return p;
-            },
-            fileNameWithoutExt: function(value){
-                var p = this._pathname;
-                p = p[p.length - 1];
-                var i = p.lastIndexOf('.');
-                if (value == null) return i < 0 ? p : p.substring(0, i);
-                else
-                    this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
-
-            },
-            extension : function(value){
-                var p = this._pathname;
-                p = p[p.length - 1];
-                var i = p.lastIndexOf('.');
-                if (value == null) return i < 0 ? '' : p.substr(i + 1);
-                else {
-                    this._pathname[this._pathname.length - 1] = (i < 0 ? p : p.substr(0, i - 1)) + '.' + value.replace('.', '');
-                    return this;
-                }
-            },
-            toString: function(){
-                return this._protocol + '//' + this.host() + this._pathname + this._search + this._hash;
-            },
-            href: function(url){},
-            /**
-             * 将URL对象转换为一个HTMLAnchorElement对象
-             * @param {string=} innerHTML 作为anchor元素的innerHTML内容
-             * @returns {HTMLElement}
-             */
-            anchor: function(innerHTML){
-                var a = document.createElement('a');
-                if (innerHTML) a.innerHTML = innerHTML;
-                a.href = this.toString();
-                return a;
-            },
-            relativize: function(baseURL){
-
-            }
-        };
-
-        $.URL.absolutize = function(url){
-            var a = document.createElement('a');
-            a.href = url;
-            return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
-        }
-    })();
-
-    // TODO(wuhf): AMD/CMD加载器
-    // ========================================================
-    (function () {
-
-        var modules = {
-            armer: {
-                exports: $
-            },
-            require: {exports: require},
-            exports: {exports: {}},
-            module: {exports: {}}
-        };
-        modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
-
-        var currentUrl = location.href, xhrRequestURL = null;
-        // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
-        var requesting = {};
-        // 通过require正在请求的模块
-        var defaults = {
-            baseUrl : location.href,
-            ext : 'js',
-            paths : {},
-            shim: {},
-            map: {},
-            method: 'auto',
-            namespace: 'default',
-            plusin: {
-                auto: {
-                    config: function(config){
-                        var url = $.URL(this.url, this.parent);
-                        var ext = url.extension();
-                        if (!ext) {
-                            url.extension(defaults.ext);
-                            ext = 'js';
-                        }
-                        if (ext == 'js') {
-                            this.name = url.fileNameWithoutExt()
-                        } else {
-                            this.name = url.fileName()
-                        }
-                        url.search('callback', 'define');
-                        this.url = url.toString();
-                        this.type = $.ajax.ext2Type[ext];
-                    },
-                    callback: function(){
-                        var that = this;
-
-                        if (this.type !== 'script'){
-                            this.exports = this.originData;
-                        } else if (this.factory) {
-                            var exports = this.factory.apply(this, getExports(arguments))
-                            if (exports != null)
-                                this.exports = exports
-                            else if (this.exports == null)
-                                this.exports = modules.exports.exports
-                        }
-
-                        this.dfd.resolveWith(this, [this]);
-                    }
-                }
-            }
-        };
-
-        // 构造模块
-        require.Model = function Model(config){
-            $.extend(this, config);
-            //throw Error(this.id)
-            modules[this.id] = this;
-            //if (this.url) modules[this.method + this.url] = this;
-            //else if (this.id) modules[this.id] = this;
-        };
-        require.Model.prototype = {
-            // 处理模块
-            fire: function(data){
-                // 使用shim模式
-                var mod = this;
-                var shim = defaults.shim[mod.name] || {};
-                if ($.isArray(shim))
-                    shim = {
-                        deps: shim
-                    }
-                mod.deps = mod.deps || shim.deps
-                mod.originData = data;
-                var success = function(){
-                    modules.module.exports = mod;
-                    modules.exports.exports = {};
-                    currentUrl = mod.url;
-                    if (shim.exports)
-                        modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
-                    defaults.plusin[mod.method].callback.apply(mod, arguments);
-                    modules.module.exports = null;
-                }
-                if (mod.deps && mod.deps.length) {
-                    currentUrl = mod.url;
-                    innerRequire(mod.deps).done(success).fail(function(){
-                        mod.dfd.rejectWith(mod, arguments);
-                    });
-                } else
-                    // 避免加载过快 parseDep 时currentUrl的出错
-                    $.nextTick(function(){success()}, 0);
-
-                // 这两个是为CMD服务的，只读
-                mod.dependencies = mod.deps;
-                mod.uri = mod.url;
-            },
-            error: function(errState){
-                this.error = errState
-                this.dfd.rejectWith(this, [this]);
-            },
-            resolve: function(url){
-                url = $.URL(url, this.url);
-                if (url.extension() == '') url.extension(defaults.ext);
-                return url.toString();
-            }
-        }
-
-
-        function getExports(mods){
-            var arr = [], i;
-            for (i = 0; i < mods.length; i++) {
-                arr.push(mods[i].exports);
-            }
-            return arr;
-        }
-
-        function parseDep(config) {
-            var mod;
-            if (typeof config == 'string') {
-                // 存在同名模块
-                if (!(mod = modules[config] || modules[id2Config(config, currentUrl).id])) {
-                    // 不存在则是新的模块
-                    config = id2Config(config);
-                }
-            }
-            if (mod) {
-                1;
-                //如果有mod证明已经通过同名模块的if分支
-            } else if ($.isDeferred(config)) {
-                var id;
-                if (config.modelName && modules[config.modelName])
-                    mod = modules[config.modelName];
-                else {
-                    // 如果是一个dfd，则通过dfd产生一个匿名模块
-                    id = 'anonymousModel' + $.now();
-                    mod = new require.Model({dfd: config, id: id});
-                    config.modelName = id;
-                }
-            }
-            else if (typeof config == 'object') {
-                // 处理同样地址同样方式加载但不同name的模块
-                if (!(mod = modules[config.id]))
-                    mod = new require.Model(config);
-                // 模块作为参数情况
-            } else if (typeof config == 'string')
-                mod = new require.Model({url: config})
-
-            return mod;
-        }
-        /**
-         * 请求模块
-         * @param deps 依赖列表
-         * @param callback 依赖加载成功后执行的回调函数
-         * @returns {$.Deferred.promise}
-         */
-
-        function innerRequire(deps) {
-            if (!$.isArray(deps)) deps = [deps];
-            var mDps = [], mod;
-            for (var i = 0; i < deps.length; i++) {
-                mod = parseDep(deps[i]);
-                // 当不存在dfd的时候证明这个模块没有初始化
-                // 当存在状态为rejected的模块，则重新请求
-                if (!mod.dfd || mod.dfd.state() == 'rejected') {
-                    mod.dfd = $.Deferred();
-                    // 如果factory或者exports没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
-                    // TODO:这个判断貌似不太准确
-                    if (!mod.factory  && !('exports' in mod))
-                        (function(mod){
-                            requesting[mod.url] = mod;
-                            var options = {
-                                url: mod.url,
-                                cache: true,
-                                crossDomain: defaults.charset ? true : void 0,
-                                //crossDomain: true,
-                                dataType: mod.type || $.ajax.ext2Type[defaults.ext],
-                                scriptCharset: defaults.charset,
-                                success: function(data) {
-                                    var bmod;
-                                    if (requesting[mod.url]) {
-                                        if (bmod = requesting[mod.url].bmod) {
-                                            var dfd = mod.dfd;
-                                            $.extend(mod, bmod);
-                                            mod.dfd = dfd;
-                                            modules[bmod.id] = mod;
-                                        }
-                                        delete requesting[mod.url]
-                                    }
-                                    mod.fire(data);
-                                },
-                                error: function(){
-                                    mod.error(arguments);
-                                    delete requesting[mod.url];
-                                },
-                                converters: {
-                                    "text script": function(text) {
-                                        xhrRequestURL = mod.url
-                                        jQuery.globalEval(text);
-                                        xhrRequestURL = null;
-                                        return text;
-                                    }
-                                }
-                            };
-                            $.ajax(options);
-                        })(mod);
-                    // 如果factory或者exports已经定义过，那么就直接处理该模块
-                    else if (mod.fire)
-                        mod.fire();
-                    // 一些特殊的模块，只包括exports的
-                    else mod.dfd.resolveWith(mod, [mod])
-                }
-                mDps.push(mod.dfd);
-            }
-            return $.when.apply($, mDps);
-        }
-
-        function require(deps, callback, errorCallback, options){
-            // 兼容CMD模式
-            if (!callback) {
-                var mod;
-                if (mod = modules[deps] || modules[id2Config(deps, currentUrl).id] || modules[id2Config(deps).id])
-                    return mod.exports;
-                else {
-                    throw Error('this module is not define');
-                }
-            }
-            return innerRequire(deps, options).done(function(){
-                callback.apply(this, getExports(arguments))
-            }).fail(errorCallback).promise();
-
-        }
-        /**
-         *
-         * @param name 模块name用于记录缓存这个模块
-         * @param [deps] 依赖列表，这个模块需要依赖那些模块
-         * @param factory 工厂，用于处理返回的模块
-         * @returns {Model}
-         */
-        function define(name, deps, factory){
-            if (typeof name != 'string') {
-                factory = deps;
-                deps = name;
-                name = null;
-            }
-            if (factory === undefined) {
-                factory = deps;
-                deps = ['require', 'exports', 'module'];
-            }
-            var mod, config;
-
-            currentUrl = xhrRequestURL || currentScriptURL();
-            // 如果正在请求这个js
-            if (mod = requesting[currentUrl]) {
-                if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
-                    // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                    mod = new require.Model(config);
-                    requesting[currentUrl].bmod = mod;
-                } else {
-                    // define()这种形式默认是这个模块
-                    delete mod.bmod;
-                    delete requesting[currentUrl]
-                }
-            } else {
-                //如果没有请求这个js
-                if (!name) $.error('can\'t create anonymous model here')
-                else mod = new require.Model(id2Config(name, currentUrl))
-            }
-
-            var withCMD = -1, i;
-            for (i = 0; i < deps.length; i++) {
-                // 看deps里是否有require，是则找出其index
-                if (deps[i] == 'require') {
-                    withCMD = i;
-                }
-            }
-
-            mod.deps = deps;
-            mod.type = 'script';
-
-            // CMD分析require
-            if (typeof factory == "function" && !!~withCMD) {
-                var fn = factory.toString(), requireS;
-                var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
-                requireS = $.trim(args[withCMD]);
-                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                    dep = eval.call(null, dep);
-                    if (typeof dep == 'string') mod.deps.push(dep);
-                })
-            }
-
-            if (typeof factory == 'function')
-                mod.factory = factory;
-            else
-                mod.exports = factory;
-            return mod;
-        }
-
-        /**
-         * 获取运行此代码所在的js的url
-         * @returns {string}
-         */
-        function currentScriptURL(){
-            //取得正在解析的script节点
-            if(document.currentScript) { //firefox 4+
-                return document.currentScript.src || location.href;
-            }
-            //只在head标签中寻找
-            var nodes = document.getElementsByTagName("script");
-            for(var i = 0, node; node = nodes[i++];) {
-                if(node.readyState === "interactive") {
-                    if (node.src)
-                        return node.src;
-                    else return location.href
-                }
-            }
-            // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
-            var stack;
-            try {
-                //强制报错,以便捕获e.stack
-                throw new Error();
-            } catch(e) {
-                //safari的错误对象只有line,sourceId,sourceURL
-                stack = e.stack;
-
-                if(!stack && window.opera){
-                    //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
-                    stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
-                }
-            }
-            if(stack) {
-                /**e.stack最后一行在所有支持的浏览器大致如下:
-                 *chrome23:
-                 * at http://113.93.50.63/data.js:4:1
-                 *firefox17:
-                 *@http://113.93.50.63/query.js:4
-                 *opera12:
-                 *@http://113.93.50.63/data.js:4
-                 *IE10:
-                 *  at Global code (http://113.93.50.63/data.js:4:1)
-                 */
-                    //取得最后一行,最后一个空格或@之后的部分
-                stack = stack.split( /[@ ]/g).pop();
-                stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
-                //去掉行号与或许存在的出错字符起始位置
-                return stack.replace(/(:\d+)?:\d+$/i, "");
-            }
-        }
-        function id2Config(name, url) {
-            var s, c = {name: name};
-            s = name.split('!');
-            // 分析处理方法
-            if (s.length == 2) {
-                c.method = s[0];
-                c.name = s[1];
-            } else if (!!~name.indexOf('!')) {
-                c.method = s[0];
-            } else {
-                c.method = defaults.method;
-                c.name = s[0];
-            }
-            s = c.name.split(':');
-            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
-                c.namespace = defaults.namespace;
-            else
-                c.namespace = s.shift();
-            c.name = s.join(':');
-            if (url) {
-                c.url = url;
-            } else {
-                c.parent = currentUrl;
-                c.url = c.name;
-                //别名机制
-                c.url = defaults.paths[name] || c.url;
-                c = defaults.plusin[c.method].config.call(c) || c;
-            }
-            c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
-                (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
-            return c;
-        }
-        define.amd = define.cmd = modules;
-        require.defaults = defaults;
-        require.config = function(options){
-            $.extend(require.defaults, options)
-        };
-        // CMD的async方法实际是就是AMD的require
-        require.async = require;
-        require.resolve = function(url){
-            return modules.module.exports.resolve(url);
-        };
-        require.requesting = requesting;
-        global.require = require;
-        global.define = define;
-
-        // domready 插件
-        defaults.plusin['domready'] = {
-            config: function(){
-                var mod = {
-                    dfd: $.Deferred(),
-                    exports: $,
-                    method: 'domready'
-                };
-                $(function(){
-                    mod.dfd.resolveWith(mod, [mod]);
-                });
-                return mod;
-            }
-
-        };
-
-        var nodes = document.getElementsByTagName("script")
-        var dataMain = $(nodes[nodes.length - 1]).data('main')
-        if (dataMain) $(function(){require(dataMain, $.noop)});
-    })();
-
     // 基本语言扩充
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
@@ -1300,6 +633,687 @@ armer = window.jQuery || window.Zepto;
 
 
 
+
+// TODO(wuhf): URL解释器
+// ========================================================
+(function($){
+    // url解释规范
+    // 参考RFC3986 http://tools.ietf.org/html/rfc3986
+    var rHash = /#[^#?]*/;
+    var rSearch = /\?[^#?]*/;
+    var rProtocol = /^\w*:/;
+    var rSuffix = /\.((?:com|co|cn|net|org|gov|info|la|cc|edu)(?:\.(?:cn|jp))?)/;
+    var rPort = /:(\d{2,5})/;
+    var protocol2port = {
+        'ftp:': '21',
+        'ssh:': '22',
+        'http:': '80',
+        'https:': '443',
+        'file:': ''
+    };
+    var setProtocol = function(parent, self){
+        parent = parent.replace(rProtocol, function(protocol){
+            //设置protocol;
+            self._protocol = protocol;
+            return '';
+        });
+        parent = parent.substr(0, parent.lastIndexOf('/'));
+        return parent;
+    };
+    var setHost = function(str, self){
+        var tmp;
+        if (str == '') {
+            self._hostname = [];
+            self._port = protocol2port[self._protocol];
+        } else {
+            if (tmp = str.match(rPort)) {
+                // 如果有端口号
+                self._hostname = str.substr(0, str.indexOf(tmp[0]));
+                self._port = tmp[1];
+            } else {
+                self._hostname = str;
+                self._port = protocol2port[self._protocol];
+            }
+            self._hostname = self._hostname.split('.');
+        }
+        self._hostname.toString = function(){
+            return this.join('.')
+        }
+    };
+    /**
+     * 生成一个URL对象
+     * @param url 一个绝对地址或者一个相对地址
+     * @param [parent] 相对地址的情况，可以设置它的父路径
+     * @param [basePath]
+     * @returns {URL}
+     * @constructor
+     */
+    $.URL = function(url, parent){
+        var URL = arguments.callee;
+        // 先将parent路径转行为绝对路径
+        parent = parent ? URL.absolutize(parent) : null;
+        if (!(this instanceof URL)) return new URL(url, parent);
+        // 分析url
+        this.init(url, parent);
+    };
+    $.URL.prototype = {
+        constructor: $.URL,
+        init: function(path, parent){
+            //alert(basePath);
+            var self = this, tmp;
+            // 获取 search
+            path = path.replace(rSearch, function(search){
+                search = search.replace('?', '');
+                search = $.unserialize(search);
+                self._search = search;
+                return '';
+            });
+            self._search = self._search || {};
+            self._search.toString = function(){var s = $.serialize(this); return s == '' ? '' : '?' + s};
+            // 获取 hash
+            path = path.replace(rHash, function(hash){
+                self._hash = hash;
+                return '';
+            });
+            self._hash = self._hash || '';
+            // 获取 protocol
+            path = path.replace(rProtocol, function(protocol){
+                self._protocol = protocol;
+                return '';
+            });
+            // 如果木有协议
+            if (!self._protocol) {
+                // 如果没有parent那么parent就是location
+                parent = parent || location.href;
+                //http://p.tgnet.com/Office/MyInfo.aspx
+                var basePath = parent.match(/\w+:\/\/[^/]*/)[0] + '/';
+                parent.replace(rProtocol, function(protocol){
+                    self._protocol = protocol
+                })
+                //basePath = basePath || location.protocol + '//' + location.hostname + (location.port ? (':' + location.port) : '');
+                // 则获取协议
+                // 如果木有域名后缀，则判断为相对地址
+                if (!rSuffix.test(path)) {
+                    /*
+                     alert(path)
+                     alert(parent)
+                     alert(basePath)
+                     */
+                    tmp = path.charAt(0);
+                    // ./css css 这种情况 相对于【当前路径】的兄弟路径
+                    // /css 这两种情况 相对于【根路径】
+                    // ../css 这种情况 相对于【当前路径】的父路径
+
+                    if (path.slice(0, 2) === './') {
+                        //相对于兄弟路径
+                        path = setProtocol(parent, self) + path.slice(1);
+                    } else if (tmp !== "." && tmp !== '/') {
+                        //相对于兄弟路径
+                        path = setProtocol(parent, self) + '/' + path;
+                    } else if (tmp == "/") {
+                        path = setProtocol(basePath, self) + path;
+                    } else if (path.slice(0, 2) === '..') {
+                        //相对于父路径
+                        var arr = setProtocol(parent, self).split('/');
+                        tmp = path.replace(/\.\.\//g, function() {
+                            arr.pop();
+                            return '';
+                        });
+                        path = arr.join("/") + "/" + tmp;
+                    }
+                }
+            } else {
+                self._pathname = path
+            }
+            self._pathname = path.substr(2).split('/');
+            self._pathname.toString = function(){
+                return '/' + this.join('/');
+            };
+            setHost(self._pathname.shift(), self);
+        },
+        search: function(key, value){
+            if (!key) return $.extend({}, this._search);
+            if ($.isPlainObject(key)) this._search = $.unserialize($.extend({}, this._search, key));
+            if (value === undefined) return this._search[key];
+            this._search[key] = value;
+            return this;
+        },
+        hash: function(value){
+            if (!value) return this._hash;
+            this._hash = '#' + value.replace('#', '');
+        },
+        /*
+         suffix: function(value){
+         var lIndex = this._hostname.length - 1;
+         if (value == null) return this._hostname[lIndex];
+         this._hostname[lIndex] = value.replace(/$\./, '');
+         return this;
+         },
+         */
+        port: function(value){
+            if (!value) return this._port;
+            this._port = value.replace(':', '');
+            return this;
+        },
+        host: function(value){
+            if (!value) return this._hostname + (this._port == protocol2port[this._protocol] ? '' : (':' + this._port));
+            setHost(value, this);
+            return this;
+        },
+        hostname: function(index, value){
+            var r;
+            if (index == undefined) {
+                r = [].slice.call(this._hostname);
+                r.toString = this._hostname.toString;
+            } else {
+                if (typeof index == 'object') {
+                    for(var i = 0; i < index.length; i++) {
+                        this._hostname[i] = index[i] || this._hostname[i];
+                    }
+                } else {
+                    this._hostname[index] = value;
+                }
+                r = this;
+            }
+            return r;
+        },
+        /**
+         * 获取路径，返回
+         * @param index
+         * @param value
+         * @returns {*}
+         */
+        pathname: function(index, value){
+            var r;
+            if (index == null) {
+                r = [].slice.call(this._pathname);
+                r.toString = this._pathname.toString;
+            } else if (typeof index == 'object') {
+                for (var i = 0; i < index.length; i++) {
+                    this._pathname[i] = index[i] || this._pathname[i];
+                }
+                r = this;
+            } else if (value === undefined) r = this._pathname[index];
+            else {
+                this._pathname[index] = value;
+                r = this;
+            }
+            return r;
+        },
+        fileName : function(value){
+            var p = this._pathname;
+            p = p[p.length - 1];
+            if (value) this._pathname[this._pathname.length - 1] = value;
+            else return p;
+        },
+        fileNameWithoutExt: function(value){
+            var p = this._pathname;
+            p = p[p.length - 1];
+            var i = p.lastIndexOf('.');
+            if (value == null) return i < 0 ? p : p.substring(0, i);
+            else
+                this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
+
+        },
+        extension : function(value){
+            var p = this._pathname;
+            p = p[p.length - 1];
+            var i = p.lastIndexOf('.');
+            if (value == null) return i < 0 ? '' : p.substr(i + 1);
+            else {
+                this._pathname[this._pathname.length - 1] = (i < 0 ? p : p.substr(0, i - 1)) + '.' + value.replace('.', '');
+                return this;
+            }
+        },
+        toString: function(){
+            return this._protocol + '//' + this.host() + this._pathname + this._search + this._hash;
+        },
+        href: function(url){},
+        /**
+         * 将URL对象转换为一个HTMLAnchorElement对象
+         * @param {string=} innerHTML 作为anchor元素的innerHTML内容
+         * @returns {HTMLElement}
+         */
+        anchor: function(innerHTML){
+            var a = document.createElement('a');
+            if (innerHTML) a.innerHTML = innerHTML;
+            a.href = this.toString();
+            return a;
+        },
+        relativize: function(baseURL){
+
+        }
+    };
+
+    $.URL.absolutize = function(url){
+        var a = document.createElement('a');
+        a.href = url;
+        return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
+    }
+})(armer);
+
+// TODO(wuhf): AMD/CMD加载器
+// ========================================================
+(function ($, global) {
+
+    var modules = {
+        'armer/core': {
+            exports: $
+        },
+        require: {exports: require},
+        exports: {exports: {}},
+        module: {exports: {}}
+    };
+    modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
+
+    var currentUrl = location.href, xhrRequestURL = null;
+    // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
+    var requesting = {};
+    // 通过require正在请求的模块
+    var defaults = {
+        baseUrl : location.href,
+        ext : 'js',
+        paths : {},
+        shim: {},
+        map: {},
+        method: 'auto',
+        namespace: 'default',
+        plusin: {
+            auto: {
+                config: function(config){
+                    var url = $.URL(this.url, this.parent);
+                    var ext = url.extension();
+                    if (!ext) {
+                        url.extension(defaults.ext);
+                        ext = 'js';
+                    }
+                    if (ext == 'js') {
+                        this.name = url.fileNameWithoutExt()
+                    } else {
+                        this.name = url.fileName()
+                    }
+                    url.search('callback', 'define');
+                    this.url = url.toString();
+                    this.type = $.ajax.ext2Type[ext];
+                },
+                callback: function(){
+                    var that = this;
+
+                    if (this.type !== 'script'){
+                        this.exports = this.originData;
+                    } else if (this.factory) {
+                        var exports = this.factory.apply(this, getExports(arguments))
+                        if (exports != null)
+                            this.exports = exports
+                        else if (this.exports == null)
+                            this.exports = modules.exports.exports
+                    }
+
+                    this.dfd.resolveWith(this, [this]);
+                }
+            }
+        }
+    };
+
+    // 构造模块
+    require.Model = function Model(config){
+        $.extend(this, config);
+        //throw Error(this.id)
+        modules[this.id] = this;
+        //if (this.url) modules[this.method + this.url] = this;
+        //else if (this.id) modules[this.id] = this;
+    };
+    require.Model.prototype = {
+        // 处理模块
+        fire: function(data){
+            // 使用shim模式
+            var mod = this;
+            var shim = defaults.shim[mod.name] || {};
+            if ($.isArray(shim))
+                shim = {
+                    deps: shim
+                }
+            mod.deps = mod.deps || shim.deps
+            mod.originData = data;
+            var success = function(){
+                modules.module.exports = mod;
+                modules.exports.exports = {};
+                currentUrl = mod.url;
+                if (shim.exports)
+                    modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
+                defaults.plusin[mod.method].callback.apply(mod, arguments);
+                modules.module.exports = null;
+            }
+            if (mod.deps && mod.deps.length) {
+                currentUrl = mod.url;
+                innerRequire(mod.deps).done(success).fail(function(){
+                    mod.dfd.rejectWith(mod, arguments);
+                });
+            } else
+            // 避免加载过快 parseDep 时currentUrl的出错
+                $.nextTick(function(){success()}, 0);
+
+            // 这两个是为CMD服务的，只读
+            mod.dependencies = mod.deps;
+            mod.uri = mod.url;
+        },
+        error: function(errState){
+            this.error = errState
+            this.dfd.rejectWith(this, [this]);
+        },
+        resolve: function(url){
+            url = $.URL(url, this.url);
+            if (url.extension() == '') url.extension(defaults.ext);
+            return url.toString();
+        }
+    }
+
+
+    function getExports(mods){
+        var arr = [], i;
+        for (i = 0; i < mods.length; i++) {
+            arr.push(mods[i].exports);
+        }
+        return arr;
+    }
+
+    function parseDep(config) {
+        var mod;
+        if (typeof config == 'string') {
+            // 存在同名模块
+            if (!(mod = modules[config] || modules[id2Config(config, currentUrl).id])) {
+                // 不存在则是新的模块
+                config = id2Config(config);
+            }
+        }
+        if (mod) {
+            1;
+            //如果有mod证明已经通过同名模块的if分支
+        } else if ($.isDeferred(config)) {
+            var id;
+            if (config.modelName && modules[config.modelName])
+                mod = modules[config.modelName];
+            else {
+                // 如果是一个dfd，则通过dfd产生一个匿名模块
+                id = 'anonymousModel' + $.now();
+                mod = new require.Model({dfd: config, id: id});
+                config.modelName = id;
+            }
+        }
+        else if (typeof config == 'object') {
+            // 处理同样地址同样方式加载但不同name的模块
+            if (!(mod = modules[config.id]))
+                mod = new require.Model(config);
+            // 模块作为参数情况
+        } else if (typeof config == 'string')
+            mod = new require.Model({url: config})
+
+        return mod;
+    }
+    /**
+     * 请求模块
+     * @param deps 依赖列表
+     * @param callback 依赖加载成功后执行的回调函数
+     * @returns {$.Deferred.promise}
+     */
+
+    function innerRequire(deps) {
+        if (!$.isArray(deps)) deps = [deps];
+        var mDps = [], mod;
+        for (var i = 0; i < deps.length; i++) {
+            mod = parseDep(deps[i]);
+            // 当不存在dfd的时候证明这个模块没有初始化
+            // 当存在状态为rejected的模块，则重新请求
+            if (!mod.dfd || mod.dfd.state() == 'rejected') {
+                mod.dfd = $.Deferred();
+                // 如果factory或者exports没有定义，那么可以判断出是通过异步加载已存在但未请求成功的模块
+                // TODO:这个判断貌似不太准确
+                if (!mod.factory  && !('exports' in mod))
+                    (function(mod){
+                        requesting[mod.url] = mod;
+                        var options = {
+                            url: mod.url,
+                            cache: true,
+                            crossDomain: defaults.charset ? true : void 0,
+                            //crossDomain: true,
+                            dataType: mod.type || $.ajax.ext2Type[defaults.ext],
+                            scriptCharset: defaults.charset,
+                            success: function(data) {
+                                var bmod;
+                                if (requesting[mod.url]) {
+                                    if (bmod = requesting[mod.url].bmod) {
+                                        var dfd = mod.dfd;
+                                        $.extend(mod, bmod);
+                                        mod.dfd = dfd;
+                                        modules[bmod.id] = mod;
+                                    }
+                                    delete requesting[mod.url]
+                                }
+                                mod.fire(data);
+                            },
+                            error: function(){
+                                mod.error(arguments);
+                                delete requesting[mod.url];
+                            },
+                            converters: {
+                                "text script": function(text) {
+                                    xhrRequestURL = mod.url
+                                    jQuery.globalEval(text);
+                                    xhrRequestURL = null;
+                                    return text;
+                                }
+                            }
+                        };
+                        $.ajax(options);
+                    })(mod);
+                // 如果factory或者exports已经定义过，那么就直接处理该模块
+                else if (mod.fire)
+                    mod.fire();
+                // 一些特殊的模块，只包括exports的
+                else mod.dfd.resolveWith(mod, [mod])
+            }
+            mDps.push(mod.dfd);
+        }
+        return $.when.apply($, mDps);
+    }
+
+    function require(deps, callback, errorCallback, options){
+        // 兼容CMD模式
+        if (!callback) {
+            var mod;
+            if (mod = modules[deps] || modules[id2Config(deps, currentUrl).id] || modules[id2Config(deps).id])
+                return mod.exports;
+            else {
+                throw Error('this module is not define');
+            }
+        }
+        return innerRequire(deps, options).done(function(){
+            callback.apply(this, getExports(arguments))
+        }).fail(errorCallback).promise();
+
+    }
+    /**
+     *
+     * @param name 模块name用于记录缓存这个模块
+     * @param [deps] 依赖列表，这个模块需要依赖那些模块
+     * @param factory 工厂，用于处理返回的模块
+     * @returns {Model}
+     */
+    function define(name, deps, factory){
+        if (typeof name != 'string') {
+            factory = deps;
+            deps = name;
+            name = null;
+        }
+        if (factory === undefined) {
+            factory = deps;
+            deps = ['require', 'exports', 'module'];
+        }
+        var mod, config;
+
+        currentUrl = xhrRequestURL || currentScriptURL();
+        // 如果正在请求这个js
+        if (mod = requesting[currentUrl]) {
+            if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
+                // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
+                mod = new require.Model(config);
+                requesting[currentUrl].bmod = mod;
+            } else {
+                // define()这种形式默认是这个模块
+                delete mod.bmod;
+                delete requesting[currentUrl]
+            }
+        } else {
+            //如果没有请求这个js
+            if (!name) $.error('can\'t create anonymous model here')
+            else mod = new require.Model(id2Config(name, currentUrl))
+        }
+
+        var withCMD = -1, i;
+        for (i = 0; i < deps.length; i++) {
+            // 看deps里是否有require，是则找出其index
+            if (deps[i] == 'require') {
+                withCMD = i;
+            }
+        }
+
+        mod.deps = deps;
+        mod.type = 'script';
+
+        // CMD分析require
+        if (typeof factory == "function" && !!~withCMD) {
+            var fn = factory.toString(), requireS;
+            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
+            requireS = $.trim(args[withCMD]);
+            fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                dep = eval.call(null, dep);
+                if (typeof dep == 'string') mod.deps.push(dep);
+            })
+        }
+
+        if (typeof factory == 'function')
+            mod.factory = factory;
+        else
+            mod.exports = factory;
+        return mod;
+    }
+
+    /**
+     * 获取运行此代码所在的js的url
+     * @returns {string}
+     */
+    function currentScriptURL(){
+        //取得正在解析的script节点
+        if(document.currentScript) { //firefox 4+
+            return document.currentScript.src || location.href;
+        }
+        //只在head标签中寻找
+        var nodes = document.getElementsByTagName("script");
+        for(var i = 0, node; node = nodes[i++];) {
+            if(node.readyState === "interactive") {
+                if (node.src)
+                    return node.src;
+                else return location.href
+            }
+        }
+        // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
+        var stack;
+        try {
+            //强制报错,以便捕获e.stack
+            throw new Error();
+        } catch(e) {
+            //safari的错误对象只有line,sourceId,sourceURL
+            stack = e.stack;
+
+            if(!stack && window.opera){
+                //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
+                stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
+            }
+        }
+        if(stack) {
+            /**e.stack最后一行在所有支持的浏览器大致如下:
+             *chrome23:
+             * at http://113.93.50.63/data.js:4:1
+             *firefox17:
+             *@http://113.93.50.63/query.js:4
+             *opera12:
+             *@http://113.93.50.63/data.js:4
+             *IE10:
+             *  at Global code (http://113.93.50.63/data.js:4:1)
+             */
+                //取得最后一行,最后一个空格或@之后的部分
+            stack = stack.split( /[@ ]/g).pop();
+            stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
+            //去掉行号与或许存在的出错字符起始位置
+            return stack.replace(/(:\d+)?:\d+$/i, "");
+        }
+    }
+    function id2Config(name, url) {
+        var s, c = {name: name};
+        s = name.split('!');
+        // 分析处理方法
+        if (s.length == 2) {
+            c.method = s[0];
+            c.name = s[1];
+        } else if (!!~name.indexOf('!')) {
+            c.method = s[0];
+        } else {
+            c.method = defaults.method;
+            c.name = s[0];
+        }
+        s = c.name.split(':');
+        if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
+            c.namespace = defaults.namespace;
+        else
+            c.namespace = s.shift();
+        c.name = s.join(':');
+        if (url) {
+            c.url = url;
+        } else {
+            c.parent = currentUrl;
+            c.url = c.name;
+            //别名机制
+            c.url = defaults.paths[name] || c.url;
+            c = defaults.plusin[c.method].config.call(c) || c;
+        }
+        c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
+            (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
+        return c;
+    }
+    define.amd = define.cmd = modules;
+    require.defaults = defaults;
+    require.config = function(options){
+        $.extend(require.defaults, options)
+    };
+    // CMD的async方法实际是就是AMD的require
+    require.async = require;
+    require.resolve = function(url){
+        return modules.module.exports.resolve(url);
+    };
+    require.requesting = requesting;
+    global.require = require;
+    global.define = define;
+
+    // domready 插件
+    defaults.plusin['domready'] = {
+        config: function(){
+            var mod = {
+                dfd: $.Deferred(),
+                exports: $,
+                method: 'domready'
+            };
+            $(function(){
+                mod.dfd.resolveWith(mod, [mod]);
+            });
+            return mod;
+        }
+
+    };
+
+    var nodes = document.getElementsByTagName("script")
+    var dataMain = $(nodes[nodes.length - 1]).data('main')
+    if (dataMain) $(function(){require(dataMain, $.noop)});
+})(armer, window);
 
 ;(function(){
     //fix ie for..in bug
@@ -6415,14 +6429,14 @@ if (window.define) {
         type: (function($type){
             var rsplit = /[, |]+/g;
             var typeCase = {
-                Blank: function(){},
-                ArrayLike: function(){},
-                Int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
-                UInt: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
-                Arguments: function(){return identity(obj) == !!obj.callee},
-                Window: function(){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
-                Document: function(){return obj.nodeType === 9 || $.stringType(obj,'document')},
-                NodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
+                blank: function(){},
+                arraylike: function(){},
+                int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
+                uint: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
+                arguments: function(){return identity(obj) == !!obj.callee},
+                window: function(){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
+                document: function(){return obj.nodeType === 9 || $.stringType(obj,'document')},
+                nodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
@@ -6444,7 +6458,7 @@ if (window.define) {
                             return function(obj){
                                 var found = false;
                                 $.each(arr, function(__, type){
-                                    var compare = typeCase[type] || typeCase[$.hyphen(type)] || typeCase[type.toLowerCase()] || $.stringType;
+                                    var compare = typeCase[$.camelCase(type).toLowerCase()] || $.stringType;
                                     return !(found = compare(obj, type));
                                 });
                                 return found;
@@ -6603,138 +6617,58 @@ if (window.define) {
 
         // 参数初始化整理方法
         argsArrange: (function(){
-            var filter = function(args, params, defaults) {
-                var a = [], tempArr, arr = arguments, item;
-                params = params || [];
+            var filter = function(args, paramsDescription, defaults, excludeRest) {
+                if (typeof defaults == 'boolean') {
+                    excludeRest = defaults;
+                    defaults = null;
+                }
+                var a = [], tempArr, item;
+                paramsDescription = paramsDescription || [];
+                if (excludeRest == null) excludeRest = true;
                 defaults = defaults || [];
-                for (var i = 0, j = 0; i < params.length; i++) {
-                    item = params[i];
-                    if ($.isString(item)) item = {condition: item, defaults: defaults[i]};
+                for (var i = 0, j = 0; i < paramsDescription.length; i++) {
+                    item = paramsDescription[i];
+                    if ($.isString(item)) item = {type: item};
+                    item.defaults = defaults[i] || item.defaults;
                     tempArr = [];
-                    var isAutoLen = false, isNeed = false, grouper,
-                        match = item.match,
+                    var isAutoLen = false, required = false, grouper,
+                        match = item.required,
                         length = item.length,
                         group = item.group,
-                        name = item.name ? 'Params[' + i + ']' : item.name;
-                    match =  $.type(match, 'number') ? (isNeed = true, +match) : 1;
+                        name = item.name ? item.name : 'Params[' + i + ']';
+                    match =  $.type(match, 'number') ? (required = true, +match) : 1;
                     length =  $.type(length, 'number') ? +length :
                         length == 'auto' ? (isAutoLen = true, Infinity) : match;
                     grouper = group || length > 1 || isAutoLen ? function(arg){tempArr.push(arg); return tempArr} : function(arg){k++; return arg};
                     for (var k = 0; k < length || isAutoLen; k++) {
-                        if ($.type(arr[j], item.condition))
-                            a[i] = grouper(arr[j++]);
-                        else if (k < match && isNeed)
-                            throw new TypeError('参数' + name + '必须符合条件：' + item.condition + '，最少需要' + match + '个，现仅有' + k + '个');
+                        if ($.type(args[j], item.type))
+                            a[i] = grouper(args[j++]);
+                        else if (k < match && required)
+                            throw new TypeError('参数' + name + '必须符合条件：' + item.type + '，最少需要' + match + '个，现仅有' + k + '个');
                         else if (isAutoLen)
                             break;
                         else
                             a[i] = grouper(item.defaults);
                     }
                 }
+                for (;j < args.length && excludeRest;) {
+                    a[i++] = args[j++];
+                }
                 return a;
             };
-            return function(func, params, context){
-                if ($.isFunction(func))
+            return function(args, paramsDescription, defaults){
+                if ($.isFunction(args)) {
+                    paramsDescription = [].slice.call(arguments);
+                    var func = args.shift();
                     return function(){
-                        return func.apply(context || this, filter(arguments, params));
+                        return func.apply(this, filter(arguments, paramsDescription));
                     };
-                else
-                    return filter(func, params, context);
+                } else
+                    return filter(args, paramsDescription, defaults);
             };
         })()
     });
 
-    // TODO(wuhf): 类工厂
-    // ========================================================
-    (function(){
-        var
-            unextend = $.oneObject(["_super", "prototype", 'extend', 'implement' ]),
-            rconst = /constructor|_init|_super/,
-            classOne = 'object,array,function';
-        function expand(klass,props){
-            'extend,implement'.replace( $.rword, function(name){
-                var modules = props[name];
-                if( $.type(modules, classOne) ){
-                    klass[name].apply( klass,[].concat( modules ) );
-                    delete props[name];
-                }
-            });
-            return klass;
-        }
-        var mutators = {
-            inherit : function( parent,init ) {
-                var bridge = function() { };
-                if( typeof parent == 'function'){
-                    for(var i in parent){//继承类成员
-                        this[i] = parent[i];
-                    }
-                    bridge.prototype = parent.prototype;
-                    this.prototype = new bridge ;//继承原型成员
-                    this._super = parent;//指定父类
-                }
-                this._init = (this._init || []).concat();
-                if( init ){
-                    this._init.push(init);
-                }
-                this.toString = function(){
-                    return (init || bridge) + ''
-                };
-                var proto = this.prototype;
-                // FIXME(wuhf): 暂时不需要 备注一下
-                /*
-                 proto.setOptions = function(first){
-                 if( typeof first === 'string' ){
-                 first =  this[first] || (this[first] = {});
-                 [].splice.call( arguments, 0, 1, first );
-                 }else{
-                 [].unshift.call( arguments,this );
-                 }
-                 $.merge.apply(null,arguments);
-                 return this;
-                 };
-                 */
-                return proto.constructor = this;
-            },
-            implement:function(){
-                var target = this.prototype, reg = rconst;
-                for(var i = 0, module; module = arguments[i++]; ){
-                    module = typeof module === "function" ? new module :module;
-                    $.each(module, function(name){
-                        if(!reg.test(name)) target[name] = module[name];
-                    });
-                }
-                return this;
-            },
-            extend: function(){//扩展类成员
-                var bridge = {};
-                for(var i = 0, module; module = arguments[i++]; ){
-                    $.extend( bridge, module );
-                }
-                for( var key in bridge ){
-                    if( !unextend[key] ){
-                        this[key] =  bridge[key];
-                    }
-                }
-                return this;
-            }
-        };
-        $.factory = function( obj ){
-            obj = obj || {};
-            var parent = obj.inherit; //父类
-            var init = obj.init ;    //构造器
-            var extend = obj.extend; //静态成员
-            delete obj.inherit;
-            delete obj.init;
-            var klass = function () {
-                for( var i = 0 , init ; init =  klass._init[i++]; ){
-                    init.apply(this, arguments);
-                }
-            };
-
-            $.extend( klass, mutators ).inherit( parent, init );//添加更多类方法
-            return expand( klass, obj ).implement( obj );
-        }
-    })();
 
 
     //构建四个工具方法:$.String, $.Array, $.Number, $.Object, $.Function
@@ -7034,6 +6968,9 @@ if (window.define) {
     }
 
     $.Object({
+        size: function(obj){
+            return $.isArrayLike(obj) ? obj.length: Object.keys(obj).length;
+        },
         /**
          * 过滤数组中不合要求的元素
          * @param {Object} obj
@@ -7063,6 +7000,24 @@ if (window.define) {
             Object.keys(obj).forEach(function(name) {
                 fn(obj[name], name)
             })
+        },
+        reduce: function(obj, iterator, memo, context) {
+            var initial = arguments.length > 2;
+            if (obj == null) obj = [];
+            if (obj.reduce) {
+                if (context) iterator = iterator.bind(context);
+                return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
+            }
+            $.each(obj, function(index, value) {
+                if (!initial) {
+                    memo = value;
+                    initial = true;
+                } else {
+                    memo = iterator.call(context, memo, value, index);
+                }
+            });
+            if (!initial) throw new TypeError('Reduce of empty array with no initial value');
+            return memo;
         },
         //将参数一的键值都放入回调中执行，收集其结果返回
         map: function(obj, fn) {
@@ -7939,7 +7894,6 @@ if (window.define) {
 
 })();
 
-
 $.fn.bgiframe = function(){
     $.each(this, function(){
         var $this = $(this)
@@ -8465,8 +8419,7 @@ $.fn.bgiframe = function(){
 
 
 // 扩展内建jQuery css easing
-if ($.support.opacity) $.fx.off = false;
-;(function () {
+(function () {
     // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
     var baseEasings = {};
     $.each(['Quad', 'Cubic', 'Quart', 'Quint', 'Expo'], function (i, name) {
@@ -8980,10 +8933,9 @@ if ($.support.opacity) $.fx.off = false;
             return this;
         }
     })
-})(armer)
+})(armer);
 
-;
-(function () {
+;(function () {
     $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
         if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
@@ -8995,10 +8947,12 @@ if ($.support.opacity) $.fx.off = false;
         on: function () {
             [].unshift.call(arguments, this);
             $.event.add.apply($.event, arguments);
+            return this
         },
         off: function () {
             [].unshift.call(arguments, this);
             $.event.remove.apply($.event, arguments);
+            return this
         },
         emit: function (event, data, onlyHandlers) {
             var handle, ontype, tmp, orignData,
@@ -9324,11 +9278,8 @@ if ($.support.opacity) $.fx.off = false;
 })(jQuery);
 
 
-
-
-
-    $.Utility = function(){
-    return $.extend(function(){},{
+(function($){
+    $.Utility = $.extend(function(){},{
         // 关闭窗口
         'closeWindow' : function(confirmStr){
             if (confirmStr && !confirm(confirmStr)) return;
@@ -9363,11 +9314,97 @@ if ($.support.opacity) $.fx.off = false;
                 alert("收藏失败！请使用Ctrl+D进行收藏");
             }
         }
+    });
+
+
+    var list = [], t;
+    function start(){
+        t = setInterval(function(){
+            list.forEach(function(item){
+                var now = $.now();
+                var pass = getpass(item, now);
+                this.tickNum ++;
+                if (now - item._lastTick >= item.interval || !item._lastTick) {
+                    item.trigger('tick', [pass,  pass / item.timeout, this.tickNum]);
+                    item._lastTick = now;
+                }
+                if (this.tickNum >= this.limit && pass >= item.timeout) {
+                    item.trigger('finish');
+                }
+            })
+        }, $.Timer.interval);
+    }
+    function getpass(item, now) {
+        var pass = now - item._startTime + item._pass;
+        pass = pass > item.timeout ? item.timeout : pass;
+        return pass;
+    }
+    $.Timer = function(timeout, interval, limit){
+        // 总需要的事件
+        if ($.type(timeout) != 'number') timeout = Infinity;
+        limit = limit ? (limit < 1 ? 1 : limit) : Infinity;
+
+        this.timeout = this._total = timeout;
+        this._pass = 0;
+        this.tickNum = 0;
+        this.limit = limit;
+        this.interval = interval || 200;
+        this.construtor = arguments.callee;
+    };
+    $.Timer.interval = 13;
+    $.Timer.prototype = $.EventEmitter({
+        start: function(){
+            if (list.length == 0) start();
+            $.Array.ensure(list, this);
+            this._startTime = $.now();
+        },
+        finish: function(){
+            this.stop();
+        },
+        stop: function(){
+            $.Array.remove(list, this);
+            if (list.length == 0) clearInterval(t);
+        },
+        reset: function(){
+            this.stop();
+            this._pass = 0;
+            this._total = $.now();
+        },
+        pause: function(){
+            this.stop();
+            var now = $.now();
+            this._pass = getpass(this, now);
+            this._total = now;
+        }
     })
-}();
+})(armer);
 
 
 $.UI = {};
+$(function(){
+    var $b = $('body');
+    $b.on('click', '[data-trigger],[href]', function(e){
+        var $this = $(e.currentTarget),
+            target = $this.data('target'),
+            toggle = $this.data('toggle'),
+            $target, ui;
+        if (!target && toggle) target = $this.attr('href');
+        if (target) {
+            $target = $(target);
+            ui = $target.data('ui-toggle');
+            if (!ui) return;
+            if (!toggle) {
+                for(var i in ui) {
+                    $target[i](ui[i]);
+                }
+            } else {
+                $target[toggle](ui[toggle]);
+            }
+            e.stopPropagation(true);
+            return false;
+        }
+    });
+});
 //==============================
 //   TODO(wuhf): UI级别的方法
 //==============================
@@ -9598,12 +9635,15 @@ $.fn.ellipsis.useCssClamp = true;
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
     };
-    Dialog.toogleBackDrop = function(toggle, $backdrop){
+    Dialog.toggleBackDrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;
         var $body = $('body');
         if (!$.contains($body[0], $backdrop[0])) {
-            $backdrop.prependTo('body').bgiframe();
+            $backdrop.prependTo('body');
+            if (!!window.ActiveXObject && !window.XMLHttpRequest) {
+                $backdrop.bgiframe()
+            }
         }
         toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
         $body.toggleClass('with-backdrop', toggle);
@@ -9622,7 +9662,7 @@ $.fn.ellipsis.useCssClamp = true;
             item._close(rt, co)
         });
         list.length = 0;
-        !openCauseClose && $backdrop && this.toogleBackDrop(false, $backdrop);
+        !openCauseClose && $backdrop && this.toggleBackDrop(false, $backdrop);
     }
     Dialog.prototype = $.EventEmitter({
         init: function(){
@@ -9635,42 +9675,46 @@ $.fn.ellipsis.useCssClamp = true;
             } else return this._init
         },
         focus: function(){
+            var $backdrop = this.options.backdrop;
             var list = this.options.queue;
             var z = this.options.zIndex;
             var that = this;
-            var thisZindex;
+            var thisZindex, has = false, s;
             $.Array.remove(list, that);
             list.push(that);
             list.forEach(function(item, i){
-                var s = z.start + i * z.step;
-                if (item == that) thisZindex = s
+                s = z.start + i * z.step;
+                var b = !!item.lastOpen.showBackdrop;
+                has = b || has;
+                if (b) thisZindex = s || thisZindex;
                 item.$element.css('zIndex', s);
             })
-            this.options.backdrop && this.options.backdrop.css('zIndex', thisZindex);
-
+            if ($backdrop){
+                if (!has)
+                    this.constructor.toggleBackDrop(false, $backdrop);
+                else $backdrop.css('zIndex', thisZindex);
+            }
         },
         _open: function(openOptions){
             var list = this.options.queue, self = this, index, position;
             if (list.indexOf(self) >= 0) return;
-            self.$element.on('focus.dialog', function(e){
+            this.lastOpen = openOptions;
+            self.$element.on('focus.ui.dialog', function(e){
                 self.trigger(e);
             });
-            if (!list.length) {
-                if (openOptions.showBackdrop)
-                    this.constructor.toogleBackDrop(true, this.options.backdrop);
-            } else {
-                openCauseClose = true;
-                if (openOptions.closeOthers) {
-                    this.constructor.closeAll();
-                }
-                openCauseClose = false;
+            if (openOptions.showBackdrop)
+                this.constructor.toggleBackDrop(true, this.options.backdrop);
+            openCauseClose = true;
+            if (openOptions.closeOthers) {
+                this.constructor.closeAll();
             }
+            openCauseClose = false;
             list.push(self);
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
             self.$element.finish().position(position);
             return animate(self.$element, openOptions.animate).promise().done(function(){
-                self.trigger('opened');
+                self.trigger('opened.ui.dialog');
             });
         },
         _close: function(returnValue, closeOptions){
@@ -9679,8 +9723,13 @@ $.fn.ellipsis.useCssClamp = true;
             return animate(this.$element, closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
-                self.trigger('closed', [returnValue]);
+                self.trigger('closed.ui.dialog', [returnValue]);
             });
+        },
+        toggle: function(){
+            var list = this.options.queue;
+            if (!(list.indexOf(this) >= 0)) this.trigger('close');
+            else this.trigger('open');
         },
         close: function(returnValue, closeOptions){
             var self = this, list = this.options.queue;
@@ -9691,8 +9740,8 @@ $.fn.ellipsis.useCssClamp = true;
             this._close(returnValue, closeOptions);
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
-                if (!list.length) this.constructor.toogleBackDrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].$element.trigger('focus');
+                if (!list.length) this.constructor.toggleBackDrop(false, this.options.backdrop);
+                list.length && list[list.length - 1].$element.trigger('focus.ui.dialog');
             }
         },
         open: function(dfd, openOptions){
@@ -9714,10 +9763,8 @@ $.fn.ellipsis.useCssClamp = true;
                 init = self._init;
             $.when(init, dfd).done(function(){
                 self._open(openOptions);
-                if (openOptions.getFocus)
-                    self.$element.trigger('focus')
-                else
-                    self.trigger('focus');
+                self.trigger('focus.ui.dialog');
+                //self.$element[0].focus();
             })
         }
     });
@@ -9758,13 +9805,6 @@ $.fn.ellipsis.useCssClamp = true;
         onfocus: $.noop
     };
 
-    $.fn.modal = function(options){
-        var self = this[0], modal;
-        if (modal = $.data(self, 'ui-modal'))
-            return modal;
-        else $.data(self, 'ui-modal', $.UI.Modal(self, options));
-        return this;
-    }
     $.UI.Dialog = Dialog;
     $.UI.Modal = $.Function.clone(Dialog);
     $.UI.Modal.defaults = {
@@ -9782,8 +9822,8 @@ $.fn.ellipsis.useCssClamp = true;
                 var stepY = 20;
                 var offestX = index * stepX;
                 var offestY = index * stepX - 30;
-                offestX = offestX ? offestX.toString() : '';
-                offestY = offestY ? offestY.toString() : '';
+                offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
+                offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
                 return {
                     at: 'center' + offestY + ' center' + offestY,
                     my: 'center center',
@@ -9814,6 +9854,31 @@ $.fn.ellipsis.useCssClamp = true;
         onclosed: $.noop,
         oninit: $.noop,
         onfocus: $.noop
+    }
+
+
+    $.fn.modal = function(command){
+        var $this = this[0], modal;
+        // 判断是否有这个方法
+        if ($.type(command) != 'string' && !$.UI.Modal.prototype[command]) {
+            command = null;
+        } else
+            [].shift.call(arguments);
+        modal = $.data(self, 'ui-modal');
+        if (!modal) {
+            //如果命令为空，那么拼接参数
+            if (!command) {
+                [].unshift.call(arguments, $this);
+                modal = $.UI.Modal.apply($.UI.Modal, arguments);
+            } else {
+                console.log($this);
+                modal = $.UI.Modal($this);
+            }
+            $.data(self, 'ui-modal', modal);
+            if (!command) return this;
+        } else if (!command) return modal;
+
+        return modal[command].apply(modal, arguments);
     }
 
 })(jQuery);

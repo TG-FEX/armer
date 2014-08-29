@@ -1,6 +1,5 @@
 // 扩展内建jQuery css easing
-if ($.support.opacity) $.fx.off = false;
-;(function () {
+(function () {
     // 基于Robert Penner的缓动公式 (http://www.robertpenner.com/easing)
     var baseEasings = {};
     $.each(['Quad', 'Cubic', 'Quart', 'Quint', 'Expo'], function (i, name) {
@@ -514,4 +513,4 @@ if ($.support.opacity) $.fx.off = false;
             return this;
         }
     })
-})(armer)
+})(armer);

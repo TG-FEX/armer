@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/lang.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/util.js"></script>
+</head>
+<body>
+    <script>
+        var t = new $.Timer(10000, 500);
+        t.on('tick', function(e, _, p){
+            console.log('%c' + p, 'color:blue');
+        });
+        t.on('finish', function(e){
+            console.log('%cfinish', 'color:blue');
+        });
+        t.trigger('start');
+        var t2 = new $.Timer(20000, 700);
+        t2.on('tick', function(e, _, p){
+            console.log('%c' + p, 'color:red');
+        });
+        t2.on('finish', function(e){
+            console.log('%cfinish', 'color:red');
+        });
+        t2.trigger('start');
+    </script>
+</body>
+</html>

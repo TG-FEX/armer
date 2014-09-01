@@ -6,10 +6,15 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="../../src/core/main.js"></script>
     <script src="../../src/lang.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/effects.js"></script>
     <script src="../../src/event.js"></script>
     <script src="../../src/util.js"></script>
 </head>
 <body>
+    <div style="width: 400px; border: 1px solid #A4A4A4; padding: 1px">
+        <span style="height: 30px; display: inline-block; width: 50%; vertical-align: top; background: linear-gradient(#888, #666)"></span>
+    </div>
     <script>
         var t = new $.Timer(10000, 500, function(){});
         t.on('tick', function(e, _, p){
@@ -27,6 +32,14 @@
             console.log('%cfinish', 'color:red');
         });
         t2.trigger('start');
+        var $process = $('span');
+        var t3 = $.Timer(5000, 400)
+        t3.on('tick', function(_, __, p){
+            $process.finish().transit({'width': $.easing.swing(p) * 100 + '%'})
+        }).on('finish', function(){
+            $process.transit({'width': '100%'})
+        });
+        t3.start();
     </script>
 </body>
 </html>

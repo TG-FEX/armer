@@ -70,6 +70,8 @@
      * @extends armer.EventEmitter
      */
     $.Timer = function(timeout, interval, limit, callback){
+        var callee = arguments.callee;
+        if (!(this instanceof callee)) return new callee(timeout, interval, limit, callback);
         // 总需要的事件
         if ($.type(limit) != 'number') {
             callback = limit;

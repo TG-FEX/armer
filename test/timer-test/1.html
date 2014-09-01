@@ -11,7 +11,7 @@
 </head>
 <body>
     <script>
-        var t = new $.Timer(10000, 500);
+        var t = new $.Timer(10000, 500, function(){});
         t.on('tick', function(e, _, p){
             console.log('%c' + p, 'color:blue');
         });

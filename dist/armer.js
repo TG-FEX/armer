@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.6.2a - 2014-08-29 
+ * armerjs - v0.6.2a - 2014-09-01 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.2a - 2014-08-29 
+ * armerjs - v0.6.2a - 2014-09-01 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -33,12 +33,6 @@ armer = window.jQuery || window.Zepto;
         });
 
 
-            /**
-         * 判断对象类型
-         * @param obj
-         * @param [type]
-         * @returns {boolean|string}
-         */
         function toStringType(obj, type){
             var result = emptyObj.toString.call(obj).slice(8, -1);
             if (type) result = !!result.match(RegExp(type, 'gi'));
@@ -56,15 +50,6 @@ armer = window.jQuery || window.Zepto;
             }
             return result;
         }
-
-        /**
-         * 计算类似array[-1]为最后一位的算法
-         * 用于模拟slice, splice的效果
-         * @param a 下标值
-         * @param [n] 总长度
-         * @param [end] 非整数的处理方式，如果为true则取n值
-         * @returns {number}
-         */
         function resetNumber(a, n, end) {
             if ((a === +a) && !(a % 1)) { //如果是整数
                 if (a < 0) {
@@ -79,13 +64,19 @@ armer = window.jQuery || window.Zepto;
         }
 
         /**
-         *
-         * @type {Function}
+         * 判断对象类型
+         * @method armer.stringType
+         * @static
+         * @param obj
+         * @param [type]
+         * @returns {boolean|string}
          */
         $.stringType = toStringType;
 
         /**
          * 数组化
+         * @method armer.slice
+         * @static
          * @param {ArrayLike} nodes 要处理的类数组对象
          * @param {number} start 可选。要抽取的片断的起始下标。如果是负数，从后面取起
          * @param {number} end  可选。规定从何处结束选取
@@ -103,6 +94,15 @@ armer = window.jQuery || window.Zepto;
             }
             return ret
         };
+        /**
+         * 计算类似array[-1]为最后一位的算法
+         * 用于模拟slice, splice的效果
+         * @name armer.resetNumber
+         * @param a 下标值
+         * @param [n] 总长度
+         * @param [end] 非整数的处理方式，如果为true则取n值
+         * @returns {number}
+         */
         $.resetNumber = resetNumber
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
@@ -123,6 +123,8 @@ armer = window.jQuery || window.Zepto;
             //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
             /**
              * 生成一个全局唯一ID
+             * @method armer.generateID
+             * @static
              * @returns {string}
              */
             generateID: function () {
@@ -130,6 +132,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 生成随机数
+             * @method armer.random
+             * @static
              * @param {Number} upper 上限值
              * @param {Number} [lower] 下限值
              * @returns {Number}
@@ -140,6 +144,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 生成键值统一的对象，用于高速化判定
+             * @method armer.oneObject
+             * @static
              * @param {array|string} array 如果是字符串，请用","或空格分开
              * @param {number} [val] 默认为1
              * @returns {Object}
@@ -162,7 +168,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              *  将调试信息打印到控制台或页面
-             *  $.trace(str, page, level )
+             *  @method armer.trace
+             *  @static
              *  @param {*} str 用于打印的信息，不是字符串将转换为字符串
              *  @param {Boolean} page ? 是否打印到页面
              *  @param {number} level ? 通过它来过滤显示到控制台的日志数量。
@@ -208,6 +215,15 @@ armer = window.jQuery || window.Zepto;
                 }
                 return str;
             },
+            /**
+             * 序列化表单对象
+             * @method armer.serializeNodes
+             * @static
+             * @param obj {string|jQuery|NodeList|Element} 需要序列化的元素
+             * @param [join] {string|function} 序列化同名元素的分隔符或者合并方法
+             * @param [ignoreAttrChecked=false] 是否忽略checked属性
+             * @returns {{}}
+             */
             serializeNodes: function(obj, join, ignoreAttrChecked){
                 if (!$.isArrayLike(obj))
                     obj = $(obj).find('input,select,textarea').andSelf();
@@ -236,6 +252,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 序列化通过对象或数组产生类似cookie、get等字符串
+             * @method armer.serialize
+             * @static
              * @param {Object|Array.Object} obj
              * @param {string} [separator] 分割符，默认&
              * @param {string} [assignment] 赋值符，默认=
@@ -295,6 +313,8 @@ armer = window.jQuery || window.Zepto;
             }(),
             /**
              * 反序列化通过对象
+             * @method armer.unserialize
+             * @static
              * @param {String} str
              * @param {String} [separator] 分割符，默认&
              * @param {String} [assignment] 赋值符，默认=
@@ -351,17 +371,31 @@ armer = window.jQuery || window.Zepto;
                     return result;
                 }
             }(),
-            // 判断一个对象是不是jQuery.Deferred
+            /**
+             * 判断一个对象是不是jQuery.Deferred
+             * @method armer.isDeferred;
+             * @static
+             * @param obj
+             * @returns {boolean}
+             */
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
             },
-            // jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+            /**
+             * jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+             * @method armer.isHidden;
+             * @static
+             * @param elem
+             * @returns {boolean}
+             */
             isHidden: function(elem) {
                 return $.css(elem, "display") === "none" || !$.contains(elem.ownerDocument, elem);
             },
             /**
              * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
              * 如果第二个参数为true,则包含有字符串
+             * @method armer.isArrayLike
+             * @static
              * @param {Object} obj
              * @param {Boolean} [includeString]
              * @returns {Boolean}
@@ -388,6 +422,8 @@ armer = window.jQuery || window.Zepto;
 
             /**
              * 生成一个整数数组
+             * @method armer.range
+             * @static
              * @param {number} [start] 默认为0
              * @param {number} [end] 默认为0
              * @param {number} [step] 默认为1
@@ -412,6 +448,8 @@ armer = window.jQuery || window.Zepto;
             parseFragment: function(html){return $.buildFragment([html], document)},
             /**
              * 修改node的innerHTML（确保老式IE使用）
+             * @method armer.innerHTML
+             * @static
              * @param node
              * @param html
              */
@@ -428,6 +466,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 清除node里边所有子元素
+             * @method armer.clearChild
+             * @static
              * @param node
              * @returns {*}
              */
@@ -439,6 +479,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 计算默认display
+             * @method armer.defaultDisplay
+             * @static
              * @param {string} nodeName 节点名字
              * @returns {string}
              */
@@ -467,7 +509,12 @@ armer = window.jQuery || window.Zepto;
         });
 
         // TODO(wuhf): 缓存器
-        //视浏览器情况采用最快的异步回调
+        /**
+         * 视浏览器情况采用最快的异步回调
+         * @method armer.nextTick
+         * @static
+         * @param [handler] {function} 需要绑定的函数
+         */
         $.nextTick = global.setImmediate ? setImmediate.bind(global) : function(callback) {
             setTimeout(callback, 0)//IE10-11 or W3C
         };
@@ -490,6 +537,7 @@ armer = window.jQuery || window.Zepto;
     };
 
     // 基本语言扩充
+    /** @namespace armer.Array */
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
             //根据指定条件进行排序，通常用于对象数组。
@@ -509,6 +557,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 取得对象数组的每个元素的指定属性，组成数组返回。
+         * @method armer.Array.pluck
+         * @static
          * @param {Array} target 目标数组
          * @param {string} name 需要抽取的值的键名
          * @returns {Array}
@@ -520,6 +570,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 只有当前数组不存在此元素时只添加它
+         * @method armer.Array.ensure
+         * @static
          * @param {Array} target 目标数组
          * @param {*} el 元素
          * @returns {Array}
@@ -535,6 +587,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 移除数组指定下标的成员
+         * @method armer.Array.removeAt
+         * @static
          * @param target 目标数组
          * @param index 下标
          * @returns {boolean} 是否移除成功
@@ -544,6 +598,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 移除数组里对应元素
+         * @method armer.Array.remove
+         * @static
          * @param target 目标数组
          * @param item 对应的元素
          * @returns {boolean} 是否删除成功
@@ -556,9 +612,12 @@ armer = window.jQuery || window.Zepto;
             return false;
         }
     }
+    /** @namespace armer.String */
     $.String = {
         /**
          * 截取字符串
+         * @method armer.String.truncate
+         * @static
          * @param target 目标字符串
          * @param length 新字符串长度
          * @param [truncation] 新字符串的结尾的字段
@@ -571,6 +630,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt;
+         * @method armer.String.escapeHTML
+         * @static
          * @param target 目标字符串
          * @returns {string}
          */
@@ -578,9 +639,12 @@ armer = window.jQuery || window.Zepto;
             return target.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
         }
     };
+    /** @namespace armer.Number */
     $.Number = {
         /**
          * 与PHP的number_format完全兼容
+         * @method armer.Number.format
+         * @static
          * @param number 要格式化的数字
          * @param [decimals] 规定多少个小数位
          * @param [decPoint] 规定用作小数点的字符串（默认为 . ）
@@ -612,6 +676,7 @@ armer = window.jQuery || window.Zepto;
         }
     };
 
+    /** @namespace armer.support */
     $.support.customeTag = (function(){
         var div = document.createElement('div'), support;
         div.innerHTML = '<customeTagTest></customeTagTest>';
@@ -6146,9 +6211,6 @@ if (window.define) {
 
 }
 
-//=========================================
-//  TODO(wuhf): lang.extend模块
-//==========================================
 ;(function($){
     var global = window, DOC = global.document;
     var seval = global.execScript ? "execScript" : "eval",
@@ -6228,11 +6290,16 @@ if (window.define) {
         escape      : /\[%-([\s\S]+?)%]/g
     };
 
-
+    /**
+     * @for armer
+     */
     $.extend($, {
         /**
          * 为hash选项对象添加默认成员
-         * @param {object} obj 需要
+         * @method defaults
+         * @static
+         * @param {object} obj 需要扩展的对象
+         * @param {object} [defaults]*  需要作为默认扩展的对象
          * @returns {*}
          */
         defaults: function(obj) {
@@ -6251,25 +6318,46 @@ if (window.define) {
         /*
            ============= is 系列 ================
          */
-        isBlank: function (target) {
-            return /^\s*$/.test(target);
-        },
-        isString: function(obj){
-            return $.type(obj) == 'string';
+        /**
+         * 判断一个字符串是否为空字符串
+         * @method isBlank
+         * @static
+         * @param str {string} 目标字符串
+         * @returns {boolean}
+         */
+        isBlank: function (str) {
+            return /^\s*$/.test(str);
         },
         /**
-         * 判定method是否为obj的原生方法，如$.isNative("JSON",window)
-         * @param {String} methodKey
-         * @param {*} obj 对象
-         * @return {Boolean}
+         * 判断一个目标变量是否为字符串
+         * @method isString
+         * @static
+         * @param target {*} 目标变量
+         * @returns {boolean}
          */
-        isNative: function(methodKey, obj) {
-            var m = obj ? obj[methodKey] : false,
+        isString: function(target){
+            return $.type(target) == 'string';
+        },
+        /**
+         * 判定目标对象是否包括名字为methodKey的原生方法，如$.isNative("JSON",window)
+         * @method isNative
+         * @static
+         * @param {string} methodKey 需要判断的方法的键
+         * @param {object|function} target 目标对象
+         * @return {boolean}
+         */
+        isNative: function(methodKey, target) {
+            var m = target ? target[methodKey] : false,
                 r = new RegExp(methodKey, "g");
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
         },
         /**
-         * 判断一个事件是不是原生支持
+         * 判定目标对象是否包括名字为eventName的原生事件
+         * @method isNativeEvent
+         * @static
+         * @param {string} eventName 需要判断的方法的键
+         * @param {object|function} target 目标对象
+         * @return {boolean}
          */
         isNativeEvent: function(eventName, target){
             target = target || DOC;
@@ -6288,7 +6376,9 @@ if (window.define) {
         },
         /**
          * 是否为空对象
-         * @param {Object} obj
+         * @method isEmptyObject
+         * @static
+         * @param {Object} obj 需要判断的目标对象
          * @return {Boolean}
          */
         isEmptyObject: function(obj) {
@@ -6297,14 +6387,35 @@ if (window.define) {
             }
             return true;
         },
-        isNaN : function(obj) {
-            return obj !== obj;
+        /**
+         * 判断是否为NaN
+         * @method isNaN
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isNaN : function(target) {
+            return target !== target;
         },
-        isNull : function(obj){
-            return obj === null;
+        /**
+         * 判断是否为null
+         * @method isNull
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isNull : function(target){
+            return target === null;
         },
-        isUndefined : function(obj){
-            return obj === void 0;
+        /**
+         * 判断是否为undefined
+         * @method isUndefined
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isUndefined : function(target){
+            return target === void 0;
         },
         isObjectLike : function(obj) {
             return typeof obj == 'object' || typeof obj == 'function';
@@ -6442,13 +6553,14 @@ if (window.define) {
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
              * $.type(obj) == a 可以推出 $.type(obj, a) == true，但反过来未必
              * 如需进行更细节判断，请使用 $.type(obj, a) 的方式
-             *
-             * @param {*} obj 要检测的东西
-             * @param {String|Array|Function} condition ? 要比较的条件
-             * @return {String|Boolean}
+             * @method type
+             * @static
+             * @param {*} target 要检测的东西
+             * @param {string|array|function} [condition] 要比较的条件
+             * @return {string|boolean}
              * @api public
              */
-            return function(obj, condition){
+            return function(target, condition){
                 if (!condition) return $type.apply(this, arguments);
                 else {
                     if ('string' == typeof condition)
@@ -6465,7 +6577,7 @@ if (window.define) {
                             }
                         })(condition);
                     if (!$.isFunction(condition)) throw new TypeError;
-                    return !!condition(obj);
+                    return !!condition(target);
                 }
             }
         })($.type),
@@ -6477,6 +6589,8 @@ if (window.define) {
          */
 
         /**
+         * @method parseJS
+         * @static
          * 将字符串当作JS代码执行
          * @param {string} code
          */
@@ -6492,7 +6606,14 @@ if (window.define) {
                 }
             }
         },
-        // 将text数据转换为base64字符串
+        /**
+         * 将text数据转换为base64字符串
+         * @method parseBase64
+         * @static
+         * @param inputStr
+         * @beta
+         * @returns {string}
+         */
         parseBase64: function(inputStr){
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
@@ -6525,9 +6646,15 @@ if (window.define) {
             }
             return outputStr;
         },
-        parseCSS: function (css){
+        /**
+         * 往页面插入CSS
+         * @method parseCSS
+         * @static
+         * @param cssStr
+         */
+        parseCSS: function (cssStr){
             var styles = head.getElementsByTagName("style"), style, media;
-            css += "\n";
+            cssStr += "\n";
             if (styles.length == 0) {
                 if (DOC.createStyleSheet) {
                     DOC.createStyleSheet();
@@ -6543,11 +6670,11 @@ if (window.define) {
                 style.setAttribute("media", "all");
             }
             if (style.styleSheet) {
-                style.styleSheet.cssText += css;
+                style.styleSheet.cssText += cssStr;
             } else if (DOC.getBoxObjectFor) {
-                style.innerHTML += css;
+                style.innerHTML += cssStr;
             } else {
-                style.appendChild(DOC.createTextNode(css))
+                style.appendChild(DOC.createTextNode(cssStr))
             }
         },
 
@@ -6562,6 +6689,8 @@ if (window.define) {
          * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠值够多的情况
          * 第二种，把第一个参数后的参数视为一个数组，{{}}里面为索引值，从零开始，替换为数组元素
          * http://www.cnblogs.com/rubylouvre/archive/2011/05/02/1972176.html
+         * @method format
+         * @static
          * @param {string} str
          * @param {*} object 插值包或某一个要插的值
          * @return {string}
@@ -6575,6 +6704,8 @@ if (window.define) {
         },
         /**
          * 查看对象或数组的内部构造
+         * @method dump
+         * @static
          * @param {*} obj
          * @return {string}
          * https://github.com/tdolsen/jquery-dump/blob/master/jquery.dump.js
@@ -6597,6 +6728,8 @@ if (window.define) {
         },
         /**
          * 为数字加上单位
+         * @method unit
+         * @static
          * @param i
          * @param units 单位
          * @returns {string}
@@ -8936,6 +9069,12 @@ $.fn.bgiframe = function(){
 })(armer);
 
 ;(function () {
+    /**
+     * 事件发射器，让一个对象拥有订阅事件的能力
+     * @param [obj] {object} 需要扩展的对象
+     * @constructor
+     * @class armer.EventEmitter
+     */
     $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
         if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
@@ -8944,16 +9083,36 @@ $.fn.bgiframe = function(){
     var hasOwn = $.hasOwn;
 
     var mul = {
+        /**
+         * 绑定一个事件处理器
+         * @param types {string} 绑定事件的类型
+         * @param handler {function} 绑定的处理器
+         * @method on
+         */
         on: function () {
             [].unshift.call(arguments, this);
             $.event.add.apply($.event, arguments);
             return this
         },
+        /**
+         * 解绑一个或多个事件处理器
+         * @param types {string} 解绑事件的类型
+         * @param [handler] {function} 解绑事件的处理器
+         * @async
+         * @method off
+         */
         off: function () {
             [].unshift.call(arguments, this);
             $.event.remove.apply($.event, arguments);
             return this
         },
+        /**
+         * 触发一个或多个事件
+         * @param event {$.Event|string} 解绑事件或者事件类型
+         * @param [data] {*} 触发事件传递的数据
+         * @param [onlyHandlers] {boolean} 是否不触发默认事件
+         * @method emit
+         */
         emit: function (event, data, onlyHandlers) {
             var handle, ontype, tmp, orignData,
                 eventPath = [ this || document ],
@@ -9017,6 +9176,10 @@ $.fn.bgiframe = function(){
         }
     };
     $.mix(mul, {
+        /**
+         * 触发一个事件
+         * @method trigger
+         */
         trigger: mul.emit
     });
     $.EventEmitter.prototype = $.EventEmitter.fn = mul;
@@ -9325,11 +9488,11 @@ $.fn.bgiframe = function(){
                 var pass = getpass(item, now);
                 this.tickNum ++;
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
-                    item.trigger('tick', [pass,  pass / item.timeout, this.tickNum]);
+                    item.trigger(this.EVENT.TICK, [pass,  pass / item.timeout, this.tickNum]);
                     item._lastTick = now;
                 }
                 if (this.tickNum >= this.limit && pass >= item.timeout) {
-                    item.trigger('finish');
+                    item.trigger(this.EVENT.FINISH);
                 }
             })
         }, $.Timer.interval);
@@ -9339,37 +9502,116 @@ $.fn.bgiframe = function(){
         pass = pass > item.timeout ? item.timeout : pass;
         return pass;
     }
-    $.Timer = function(timeout, interval, limit){
-        // 总需要的事件
-        if ($.type(timeout) != 'number') timeout = Infinity;
-        limit = limit ? (limit < 1 ? 1 : limit) : Infinity;
 
-        this.timeout = this._total = timeout;
+    /**
+     * 定时器
+     * @param timeout {boolean|number} 超时时间，定时器开始后，会在该时间后停止
+     * @param [interval=200] 通知时隔，定时器开始后，每隔一段时间会进行进度通知
+     * @param [limit=Infinity] 进度生成次数限制，超过这个次数，定时器将会停止
+     * @class armer.Timer
+     * @constructor
+     * @extends armer.EventEmitter
+     */
+    $.Timer = function(timeout, interval, limit, callback){
+        // 总需要的事件
+        if ($.type(limit) != 'number') {
+            callback = limit;
+            limit = limit ? (limit < 1 ? 1 : limit) : Infinity;
+        }
+        if ($.type(interval) != 'number') {
+            callback = interval;
+            interval = null;
+        }
+        if ($.type(timeout) != 'number') {
+            timeout = Infinity;
+        }
+
         this._pass = 0;
+
+        /**
+         * 最大超时时间
+         * @property timeout
+         * @type {number}
+         */
+        this.timeout = this._total = timeout;
+        /**
+         * 当前通知数
+         * @property tickNum
+         * @type {number}
+         */
         this.tickNum = 0;
+        /**
+         * 最大的通知数
+         * @property limit
+         * @type {number}
+         */
         this.limit = limit;
+        /**
+         * 通知的间隔时间
+         * @property interval
+         * @type {number}
+         */
         this.interval = interval || 200;
         this.construtor = arguments.callee;
+        if ($.type(callback) == 'function') this.onstop = callback;
     };
     $.Timer.interval = 13;
     $.Timer.prototype = $.EventEmitter({
+        /**
+         * 开始定时器
+         * @method start
+         */
+        EVENT: {
+            /**
+             * 启动事件
+             * @event start
+             */
+            START: 'start',
+            /**
+             * 完成事件
+             * @event finish
+             */
+            FINISH: 'finish',
+            /**
+             * 停止事件
+             * @event stop
+             */
+            STOP: 'stop',
+            /**
+             * 通知事件
+             * @event tick
+             */
+            TICK: 'tick'
+        },
         start: function(){
             if (list.length == 0) start();
             $.Array.ensure(list, this);
             this._startTime = $.now();
         },
         finish: function(){
-            this.stop();
+            this.reset();
         },
+        /**
+         * 停止定时器
+         * @method stop
+         */
         stop: function(){
             $.Array.remove(list, this);
             if (list.length == 0) clearInterval(t);
         },
+        /**
+         * 停止并重设定时器
+         * @method reset
+         */
         reset: function(){
             this.stop();
             this._pass = 0;
             this._total = $.now();
         },
+        /**
+         * 暂停定时器
+         * @method pause
+         */
         pause: function(){
             this.stop();
             var now = $.now();
@@ -9600,6 +9842,8 @@ $.fn.ellipsis.useCssClamp = true;
      * 对话框构造体
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
+     * @class armer.UI.Dialog
+     * @extends armer.EventEmitter
      * @constructor
      */
     var Dialog = function(content, options){
@@ -9609,6 +9853,13 @@ $.fn.ellipsis.useCssClamp = true;
         callee.factory.call(this, content, options);
         this.constructor = callee;
     };
+    Dialog.event = {
+        OPEN: 'open',
+        OPENED: 'opened',
+        CLOSE: 'close',
+        CLOSED: 'closed',
+        FOCUS: 'focus'
+    }
     Dialog.factory = function(content){
         var that = this;
         if (typeof content == 'string' || /\//.test(content)) {
@@ -9635,7 +9886,14 @@ $.fn.ellipsis.useCssClamp = true;
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
     };
-    Dialog.toggleBackDrop = function(toggle, $backdrop){
+    /**
+     * 打开/关闭遮罩层
+     * @method toggleBackdrop
+     * @static
+     * @param toggle {boolean} 打开或者关闭
+     * @param [$backdrop] {armer}　需要打开或者关闭的弹出框对象
+     */
+    Dialog.toggleBackdrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;
         var $body = $('body');
@@ -9651,6 +9909,14 @@ $.fn.ellipsis.useCssClamp = true;
             opacity: toggle ? 'show' : 'hide'
         }]);
     }
+    /**
+     * 关闭所有弹出框
+     * @method closeAll
+     * @static
+     * @param [list] 需要关闭的弹出框的列表
+     * @param [returnValue] 需要提供的返回值
+     * @param [closeOptions] 关闭的选项
+     */
     Dialog.closeAll = function(list, returnValue, closeOptions){
         list = list || this.defaults.queue;
         var $backdrop;
@@ -9662,9 +9928,14 @@ $.fn.ellipsis.useCssClamp = true;
             item._close(rt, co)
         });
         list.length = 0;
-        !openCauseClose && $backdrop && this.toggleBackDrop(false, $backdrop);
+        !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
     }
     Dialog.prototype = $.EventEmitter({
+        /**
+         * 初始化方法
+         * @method init
+         * @returns {$.Deferred}
+         */
         init: function(){
             var self = this;
             if (typeof this._init == "function") {
@@ -9674,6 +9945,10 @@ $.fn.ellipsis.useCssClamp = true;
                 })
             } else return this._init
         },
+        /**
+         * 聚焦弹出框
+         * @method focus
+         */
         focus: function(){
             var $backdrop = this.options.backdrop;
             var list = this.options.queue;
@@ -9691,7 +9966,7 @@ $.fn.ellipsis.useCssClamp = true;
             })
             if ($backdrop){
                 if (!has)
-                    this.constructor.toggleBackDrop(false, $backdrop);
+                    this.constructor.toggleBackdrop(false, $backdrop);
                 else $backdrop.css('zIndex', thisZindex);
             }
         },
@@ -9703,7 +9978,7 @@ $.fn.ellipsis.useCssClamp = true;
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
-                this.constructor.toggleBackDrop(true, this.options.backdrop);
+                this.constructor.toggleBackdrop(true, this.options.backdrop);
             openCauseClose = true;
             if (openOptions.closeOthers) {
                 this.constructor.closeAll();
@@ -9726,26 +10001,50 @@ $.fn.ellipsis.useCssClamp = true;
                 self.trigger('closed.ui.dialog', [returnValue]);
             });
         },
+        /**
+         * 开关弹出框
+         * @method toggle
+         * @async
+         */
         toggle: function(){
             var list = this.options.queue;
             if (!(list.indexOf(this) >= 0)) this.trigger('close');
             else this.trigger('open');
         },
+        /**
+         * 关闭弹出框
+         * @method close
+         * @async
+         * @param [returnValue] 关闭传递的参数
+         * @param [closeOptions] 关闭的选项
+         * @returns {$.Deferred}
+         */
         close: function(returnValue, closeOptions){
-            var self = this, list = this.options.queue;
+            var self = this, list = this.options.queue, ret = $.Deferred();
             if (!(list.indexOf(this) >= 0)) return;
             closeOptions = $.extend({}, this.options.close, closeOptions);
             returnValue = returnValue || closeOptions.returnValue;
             returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
-            this._close(returnValue, closeOptions);
+            this._close(returnValue, closeOptions).done(function(){
+                ret.resolve(returnValue)
+            });
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
-                if (!list.length) this.constructor.toggleBackDrop(false, this.options.backdrop);
+                if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
                 list.length && list[list.length - 1].$element.trigger('focus.ui.dialog');
             }
+            return ret
         },
+        /**
+         * 打开弹出框
+         * @method open
+         * @async
+         * @param [dfd] {$.Deferred} 需要等待的操作
+         * @param [openOptions] 打开的选项
+         * @returns {$.Deferred}
+         */
         open: function(dfd, openOptions){
-            var self = this;
+            var self = this, ret = $.Deferred();
             if (!$.isDeferred(dfd)) {
                 openOptions = dfd;
                 dfd = null;
@@ -9762,10 +10061,13 @@ $.fn.ellipsis.useCssClamp = true;
             } else
                 init = self._init;
             $.when(init, dfd).done(function(){
-                self._open(openOptions);
+                self._open(openOptions).done(function(){
+                    ret.resolve();
+                });
                 self.trigger('focus.ui.dialog');
                 //self.$element[0].focus();
-            })
+            });
+            return ret
         }
     });
 

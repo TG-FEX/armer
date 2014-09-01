@@ -1,6 +1,6 @@
-//=========================================
-//  TODO(wuhf): lang.extend模块
-//==========================================
+/**
+ * TODO(wuhf): lang模块
+ */
 ;(function($){
     var global = window, DOC = global.document;
     var seval = global.execScript ? "execScript" : "eval",
@@ -80,11 +80,16 @@
         escape      : /\[%-([\s\S]+?)%]/g
     };
 
-
+    /**
+     * @for armer
+     */
     $.extend($, {
         /**
          * 为hash选项对象添加默认成员
-         * @param {object} obj 需要
+         * @method defaults
+         * @static
+         * @param {object} obj 需要扩展的对象
+         * @param {object} [defaults]*  需要作为默认扩展的对象
          * @returns {*}
          */
         defaults: function(obj) {
@@ -103,25 +108,46 @@
         /*
            ============= is 系列 ================
          */
-        isBlank: function (target) {
-            return /^\s*$/.test(target);
-        },
-        isString: function(obj){
-            return $.type(obj) == 'string';
+        /**
+         * 判断一个字符串是否为空字符串
+         * @method isBlank
+         * @static
+         * @param str {string} 目标字符串
+         * @returns {boolean}
+         */
+        isBlank: function (str) {
+            return /^\s*$/.test(str);
         },
         /**
-         * 判定method是否为obj的原生方法，如$.isNative("JSON",window)
-         * @param {String} methodKey
-         * @param {*} obj 对象
-         * @return {Boolean}
+         * 判断一个目标变量是否为字符串
+         * @method isString
+         * @static
+         * @param target {*} 目标变量
+         * @returns {boolean}
          */
-        isNative: function(methodKey, obj) {
-            var m = obj ? obj[methodKey] : false,
+        isString: function(target){
+            return $.type(target) == 'string';
+        },
+        /**
+         * 判定目标对象是否包括名字为methodKey的原生方法，如$.isNative("JSON",window)
+         * @method isNative
+         * @static
+         * @param {string} methodKey 需要判断的方法的键
+         * @param {object|function} target 目标对象
+         * @return {boolean}
+         */
+        isNative: function(methodKey, target) {
+            var m = target ? target[methodKey] : false,
                 r = new RegExp(methodKey, "g");
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
         },
         /**
-         * 判断一个事件是不是原生支持
+         * 判定目标对象是否包括名字为eventName的原生事件
+         * @method isNativeEvent
+         * @static
+         * @param {string} eventName 需要判断的方法的键
+         * @param {object|function} target 目标对象
+         * @return {boolean}
          */
         isNativeEvent: function(eventName, target){
             target = target || DOC;
@@ -140,7 +166,9 @@
         },
         /**
          * 是否为空对象
-         * @param {Object} obj
+         * @method isEmptyObject
+         * @static
+         * @param {Object} obj 需要判断的目标对象
          * @return {Boolean}
          */
         isEmptyObject: function(obj) {
@@ -149,14 +177,35 @@
             }
             return true;
         },
-        isNaN : function(obj) {
-            return obj !== obj;
+        /**
+         * 判断是否为NaN
+         * @method isNaN
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isNaN : function(target) {
+            return target !== target;
         },
-        isNull : function(obj){
-            return obj === null;
+        /**
+         * 判断是否为null
+         * @method isNull
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isNull : function(target){
+            return target === null;
         },
-        isUndefined : function(obj){
-            return obj === void 0;
+        /**
+         * 判断是否为undefined
+         * @method isUndefined
+         * @static
+         * @param target {*} 需要判断的目标对象
+         * @returns {boolean}
+         */
+        isUndefined : function(target){
+            return target === void 0;
         },
         isObjectLike : function(obj) {
             return typeof obj == 'object' || typeof obj == 'function';
@@ -294,13 +343,14 @@
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
              * $.type(obj) == a 可以推出 $.type(obj, a) == true，但反过来未必
              * 如需进行更细节判断，请使用 $.type(obj, a) 的方式
-             *
-             * @param {*} obj 要检测的东西
-             * @param {String|Array|Function} condition ? 要比较的条件
-             * @return {String|Boolean}
+             * @method type
+             * @static
+             * @param {*} target 要检测的东西
+             * @param {string|array|function} [condition] 要比较的条件
+             * @return {string|boolean}
              * @api public
              */
-            return function(obj, condition){
+            return function(target, condition){
                 if (!condition) return $type.apply(this, arguments);
                 else {
                     if ('string' == typeof condition)
@@ -317,7 +367,7 @@
                             }
                         })(condition);
                     if (!$.isFunction(condition)) throw new TypeError;
-                    return !!condition(obj);
+                    return !!condition(target);
                 }
             }
         })($.type),
@@ -329,6 +379,8 @@
          */
 
         /**
+         * @method parseJS
+         * @static
          * 将字符串当作JS代码执行
          * @param {string} code
          */
@@ -344,7 +396,14 @@
                 }
             }
         },
-        // 将text数据转换为base64字符串
+        /**
+         * 将text数据转换为base64字符串
+         * @method parseBase64
+         * @static
+         * @param inputStr
+         * @beta
+         * @returns {string}
+         */
         parseBase64: function(inputStr){
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
@@ -377,9 +436,15 @@
             }
             return outputStr;
         },
-        parseCSS: function (css){
+        /**
+         * 往页面插入CSS
+         * @method parseCSS
+         * @static
+         * @param cssStr
+         */
+        parseCSS: function (cssStr){
             var styles = head.getElementsByTagName("style"), style, media;
-            css += "\n";
+            cssStr += "\n";
             if (styles.length == 0) {
                 if (DOC.createStyleSheet) {
                     DOC.createStyleSheet();
@@ -395,11 +460,11 @@
                 style.setAttribute("media", "all");
             }
             if (style.styleSheet) {
-                style.styleSheet.cssText += css;
+                style.styleSheet.cssText += cssStr;
             } else if (DOC.getBoxObjectFor) {
-                style.innerHTML += css;
+                style.innerHTML += cssStr;
             } else {
-                style.appendChild(DOC.createTextNode(css))
+                style.appendChild(DOC.createTextNode(cssStr))
             }
         },
 
@@ -414,6 +479,8 @@
          * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠值够多的情况
          * 第二种，把第一个参数后的参数视为一个数组，{{}}里面为索引值，从零开始，替换为数组元素
          * http://www.cnblogs.com/rubylouvre/archive/2011/05/02/1972176.html
+         * @method format
+         * @static
          * @param {string} str
          * @param {*} object 插值包或某一个要插的值
          * @return {string}
@@ -427,6 +494,8 @@
         },
         /**
          * 查看对象或数组的内部构造
+         * @method dump
+         * @static
          * @param {*} obj
          * @return {string}
          * https://github.com/tdolsen/jquery-dump/blob/master/jquery.dump.js
@@ -449,6 +518,8 @@
         },
         /**
          * 为数字加上单位
+         * @method unit
+         * @static
          * @param i
          * @param units 单位
          * @returns {string}

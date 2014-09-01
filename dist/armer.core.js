@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.2a - 2014-08-29 
+ * armerjs - v0.6.2a - 2014-09-01 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -29,12 +29,6 @@ armer = window.jQuery || window.Zepto;
         });
 
 
-            /**
-         * 判断对象类型
-         * @param obj
-         * @param [type]
-         * @returns {boolean|string}
-         */
         function toStringType(obj, type){
             var result = emptyObj.toString.call(obj).slice(8, -1);
             if (type) result = !!result.match(RegExp(type, 'gi'));
@@ -52,15 +46,6 @@ armer = window.jQuery || window.Zepto;
             }
             return result;
         }
-
-        /**
-         * 计算类似array[-1]为最后一位的算法
-         * 用于模拟slice, splice的效果
-         * @param a 下标值
-         * @param [n] 总长度
-         * @param [end] 非整数的处理方式，如果为true则取n值
-         * @returns {number}
-         */
         function resetNumber(a, n, end) {
             if ((a === +a) && !(a % 1)) { //如果是整数
                 if (a < 0) {
@@ -75,13 +60,19 @@ armer = window.jQuery || window.Zepto;
         }
 
         /**
-         *
-         * @type {Function}
+         * 判断对象类型
+         * @method armer.stringType
+         * @static
+         * @param obj
+         * @param [type]
+         * @returns {boolean|string}
          */
         $.stringType = toStringType;
 
         /**
          * 数组化
+         * @method armer.slice
+         * @static
          * @param {ArrayLike} nodes 要处理的类数组对象
          * @param {number} start 可选。要抽取的片断的起始下标。如果是负数，从后面取起
          * @param {number} end  可选。规定从何处结束选取
@@ -99,6 +90,15 @@ armer = window.jQuery || window.Zepto;
             }
             return ret
         };
+        /**
+         * 计算类似array[-1]为最后一位的算法
+         * 用于模拟slice, splice的效果
+         * @name armer.resetNumber
+         * @param a 下标值
+         * @param [n] 总长度
+         * @param [end] 非整数的处理方式，如果为true则取n值
+         * @returns {number}
+         */
         $.resetNumber = resetNumber
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
@@ -119,6 +119,8 @@ armer = window.jQuery || window.Zepto;
             //生成UUID http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
             /**
              * 生成一个全局唯一ID
+             * @method armer.generateID
+             * @static
              * @returns {string}
              */
             generateID: function () {
@@ -126,6 +128,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 生成随机数
+             * @method armer.random
+             * @static
              * @param {Number} upper 上限值
              * @param {Number} [lower] 下限值
              * @returns {Number}
@@ -136,6 +140,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 生成键值统一的对象，用于高速化判定
+             * @method armer.oneObject
+             * @static
              * @param {array|string} array 如果是字符串，请用","或空格分开
              * @param {number} [val] 默认为1
              * @returns {Object}
@@ -158,7 +164,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              *  将调试信息打印到控制台或页面
-             *  $.trace(str, page, level )
+             *  @method armer.trace
+             *  @static
              *  @param {*} str 用于打印的信息，不是字符串将转换为字符串
              *  @param {Boolean} page ? 是否打印到页面
              *  @param {number} level ? 通过它来过滤显示到控制台的日志数量。
@@ -204,6 +211,15 @@ armer = window.jQuery || window.Zepto;
                 }
                 return str;
             },
+            /**
+             * 序列化表单对象
+             * @method armer.serializeNodes
+             * @static
+             * @param obj {string|jQuery|NodeList|Element} 需要序列化的元素
+             * @param [join] {string|function} 序列化同名元素的分隔符或者合并方法
+             * @param [ignoreAttrChecked=false] 是否忽略checked属性
+             * @returns {{}}
+             */
             serializeNodes: function(obj, join, ignoreAttrChecked){
                 if (!$.isArrayLike(obj))
                     obj = $(obj).find('input,select,textarea').andSelf();
@@ -232,6 +248,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 序列化通过对象或数组产生类似cookie、get等字符串
+             * @method armer.serialize
+             * @static
              * @param {Object|Array.Object} obj
              * @param {string} [separator] 分割符，默认&
              * @param {string} [assignment] 赋值符，默认=
@@ -291,6 +309,8 @@ armer = window.jQuery || window.Zepto;
             }(),
             /**
              * 反序列化通过对象
+             * @method armer.unserialize
+             * @static
              * @param {String} str
              * @param {String} [separator] 分割符，默认&
              * @param {String} [assignment] 赋值符，默认=
@@ -347,17 +367,31 @@ armer = window.jQuery || window.Zepto;
                     return result;
                 }
             }(),
-            // 判断一个对象是不是jQuery.Deferred
+            /**
+             * 判断一个对象是不是jQuery.Deferred
+             * @method armer.isDeferred;
+             * @static
+             * @param obj
+             * @returns {boolean}
+             */
             isDeferred : function(obj){
                 return typeof obj == 'object' && typeof obj.done == 'function' && typeof obj.fail == 'function';
             },
-            // jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+            /**
+             * jQuery的isHidden方法，他丫的，这么好用为啥不弄成全局
+             * @method armer.isHidden;
+             * @static
+             * @param elem
+             * @returns {boolean}
+             */
             isHidden: function(elem) {
                 return $.css(elem, "display") === "none" || !$.contains(elem.ownerDocument, elem);
             },
             /**
              * 是否为类数组（Array, Arguments, NodeList与拥有非负整数的length属性的Object对象）
              * 如果第二个参数为true,则包含有字符串
+             * @method armer.isArrayLike
+             * @static
              * @param {Object} obj
              * @param {Boolean} [includeString]
              * @returns {Boolean}
@@ -384,6 +418,8 @@ armer = window.jQuery || window.Zepto;
 
             /**
              * 生成一个整数数组
+             * @method armer.range
+             * @static
              * @param {number} [start] 默认为0
              * @param {number} [end] 默认为0
              * @param {number} [step] 默认为1
@@ -408,6 +444,8 @@ armer = window.jQuery || window.Zepto;
             parseFragment: function(html){return $.buildFragment([html], document)},
             /**
              * 修改node的innerHTML（确保老式IE使用）
+             * @method armer.innerHTML
+             * @static
              * @param node
              * @param html
              */
@@ -424,6 +462,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 清除node里边所有子元素
+             * @method armer.clearChild
+             * @static
              * @param node
              * @returns {*}
              */
@@ -435,6 +475,8 @@ armer = window.jQuery || window.Zepto;
             },
             /**
              * 计算默认display
+             * @method armer.defaultDisplay
+             * @static
              * @param {string} nodeName 节点名字
              * @returns {string}
              */
@@ -463,7 +505,12 @@ armer = window.jQuery || window.Zepto;
         });
 
         // TODO(wuhf): 缓存器
-        //视浏览器情况采用最快的异步回调
+        /**
+         * 视浏览器情况采用最快的异步回调
+         * @method armer.nextTick
+         * @static
+         * @param [handler] {function} 需要绑定的函数
+         */
         $.nextTick = global.setImmediate ? setImmediate.bind(global) : function(callback) {
             setTimeout(callback, 0)//IE10-11 or W3C
         };
@@ -486,6 +533,7 @@ armer = window.jQuery || window.Zepto;
     };
 
     // 基本语言扩充
+    /** @namespace armer.Array */
     $.Array = {
         sortBy: function(target, fn, scope, trend) {
             //根据指定条件进行排序，通常用于对象数组。
@@ -505,6 +553,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 取得对象数组的每个元素的指定属性，组成数组返回。
+         * @method armer.Array.pluck
+         * @static
          * @param {Array} target 目标数组
          * @param {string} name 需要抽取的值的键名
          * @returns {Array}
@@ -516,6 +566,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 只有当前数组不存在此元素时只添加它
+         * @method armer.Array.ensure
+         * @static
          * @param {Array} target 目标数组
          * @param {*} el 元素
          * @returns {Array}
@@ -531,6 +583,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 移除数组指定下标的成员
+         * @method armer.Array.removeAt
+         * @static
          * @param target 目标数组
          * @param index 下标
          * @returns {boolean} 是否移除成功
@@ -540,6 +594,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 移除数组里对应元素
+         * @method armer.Array.remove
+         * @static
          * @param target 目标数组
          * @param item 对应的元素
          * @returns {boolean} 是否删除成功
@@ -552,9 +608,12 @@ armer = window.jQuery || window.Zepto;
             return false;
         }
     }
+    /** @namespace armer.String */
     $.String = {
         /**
          * 截取字符串
+         * @method armer.String.truncate
+         * @static
          * @param target 目标字符串
          * @param length 新字符串长度
          * @param [truncation] 新字符串的结尾的字段
@@ -567,6 +626,8 @@ armer = window.jQuery || window.Zepto;
         },
         /**
          * 将字符串经过 html 转义得到适合在页面中显示的内容, 例如替换 < 为 &lt;
+         * @method armer.String.escapeHTML
+         * @static
          * @param target 目标字符串
          * @returns {string}
          */
@@ -574,9 +635,12 @@ armer = window.jQuery || window.Zepto;
             return target.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
         }
     };
+    /** @namespace armer.Number */
     $.Number = {
         /**
          * 与PHP的number_format完全兼容
+         * @method armer.Number.format
+         * @static
          * @param number 要格式化的数字
          * @param [decimals] 规定多少个小数位
          * @param [decPoint] 规定用作小数点的字符串（默认为 . ）
@@ -608,6 +672,7 @@ armer = window.jQuery || window.Zepto;
         }
     };
 
+    /** @namespace armer.support */
     $.support.customeTag = (function(){
         var div = document.createElement('div'), support;
         div.innerHTML = '<customeTagTest></customeTagTest>';

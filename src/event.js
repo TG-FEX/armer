@@ -1,4 +1,10 @@
 ;(function () {
+    /**
+     * 事件发射器，让一个对象拥有订阅事件的能力
+     * @param [obj] {object} 需要扩展的对象
+     * @constructor
+     * @class armer.EventEmitter
+     */
     $.EventEmitter = function (obj) {
         if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
         if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
@@ -7,16 +13,36 @@
     var hasOwn = $.hasOwn;
 
     var mul = {
+        /**
+         * 绑定一个事件处理器
+         * @param types {string} 绑定事件的类型
+         * @param handler {function} 绑定的处理器
+         * @method on
+         */
         on: function () {
             [].unshift.call(arguments, this);
             $.event.add.apply($.event, arguments);
             return this
         },
+        /**
+         * 解绑一个或多个事件处理器
+         * @param types {string} 解绑事件的类型
+         * @param [handler] {function} 解绑事件的处理器
+         * @async
+         * @method off
+         */
         off: function () {
             [].unshift.call(arguments, this);
             $.event.remove.apply($.event, arguments);
             return this
         },
+        /**
+         * 触发一个或多个事件
+         * @param event {$.Event|string} 解绑事件或者事件类型
+         * @param [data] {*} 触发事件传递的数据
+         * @param [onlyHandlers] {boolean} 是否不触发默认事件
+         * @method emit
+         */
         emit: function (event, data, onlyHandlers) {
             var handle, ontype, tmp, orignData,
                 eventPath = [ this || document ],
@@ -80,6 +106,10 @@
         }
     };
     $.mix(mul, {
+        /**
+         * 触发一个事件
+         * @method trigger
+         */
         trigger: mul.emit
     });
     $.EventEmitter.prototype = $.EventEmitter.fn = mul;

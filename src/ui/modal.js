@@ -8,6 +8,8 @@
      * 对话框构造体
      * @param {jQuery.Deferred|jQuery|function|string} content
      * @param {object} options
+     * @class armer.UI.Dialog
+     * @extends armer.EventEmitter
      * @constructor
      */
     var Dialog = function(content, options){
@@ -17,6 +19,13 @@
         callee.factory.call(this, content, options);
         this.constructor = callee;
     };
+    Dialog.event = {
+        OPEN: 'open',
+        OPENED: 'opened',
+        CLOSE: 'close',
+        CLOSED: 'closed',
+        FOCUS: 'focus'
+    }
     Dialog.factory = function(content){
         var that = this;
         if (typeof content == 'string' || /\//.test(content)) {
@@ -43,7 +52,14 @@
             this._init = content;
         this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
     };
-    Dialog.toggleBackDrop = function(toggle, $backdrop){
+    /**
+     * 打开/关闭遮罩层
+     * @method toggleBackdrop
+     * @static
+     * @param toggle {boolean} 打开或者关闭
+     * @param [$backdrop] {armer}　需要打开或者关闭的弹出框对象
+     */
+    Dialog.toggleBackdrop = function(toggle, $backdrop){
         $backdrop = $backdrop || this.defaults.backdrop;
         if (!$backdrop) return;
         var $body = $('body');
@@ -59,6 +75,14 @@
             opacity: toggle ? 'show' : 'hide'
         }]);
     }
+    /**
+     * 关闭所有弹出框
+     * @method closeAll
+     * @static
+     * @param [list] 需要关闭的弹出框的列表
+     * @param [returnValue] 需要提供的返回值
+     * @param [closeOptions] 关闭的选项
+     */
     Dialog.closeAll = function(list, returnValue, closeOptions){
         list = list || this.defaults.queue;
         var $backdrop;
@@ -70,9 +94,14 @@
             item._close(rt, co)
         });
         list.length = 0;
-        !openCauseClose && $backdrop && this.toggleBackDrop(false, $backdrop);
+        !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
     }
     Dialog.prototype = $.EventEmitter({
+        /**
+         * 初始化方法
+         * @method init
+         * @returns {$.Deferred}
+         */
         init: function(){
             var self = this;
             if (typeof this._init == "function") {
@@ -82,6 +111,10 @@
                 })
             } else return this._init
         },
+        /**
+         * 聚焦弹出框
+         * @method focus
+         */
         focus: function(){
             var $backdrop = this.options.backdrop;
             var list = this.options.queue;
@@ -99,7 +132,7 @@
             })
             if ($backdrop){
                 if (!has)
-                    this.constructor.toggleBackDrop(false, $backdrop);
+                    this.constructor.toggleBackdrop(false, $backdrop);
                 else $backdrop.css('zIndex', thisZindex);
             }
         },
@@ -111,7 +144,7 @@
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
-                this.constructor.toggleBackDrop(true, this.options.backdrop);
+                this.constructor.toggleBackdrop(true, this.options.backdrop);
             openCauseClose = true;
             if (openOptions.closeOthers) {
                 this.constructor.closeAll();
@@ -134,26 +167,50 @@
                 self.trigger('closed.ui.dialog', [returnValue]);
             });
         },
+        /**
+         * 开关弹出框
+         * @method toggle
+         * @async
+         */
         toggle: function(){
             var list = this.options.queue;
             if (!(list.indexOf(this) >= 0)) this.trigger('close');
             else this.trigger('open');
         },
+        /**
+         * 关闭弹出框
+         * @method close
+         * @async
+         * @param [returnValue] 关闭传递的参数
+         * @param [closeOptions] 关闭的选项
+         * @returns {$.Deferred}
+         */
         close: function(returnValue, closeOptions){
-            var self = this, list = this.options.queue;
+            var self = this, list = this.options.queue, ret = $.Deferred();
             if (!(list.indexOf(this) >= 0)) return;
             closeOptions = $.extend({}, this.options.close, closeOptions);
             returnValue = returnValue || closeOptions.returnValue;
             returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
-            this._close(returnValue, closeOptions);
+            this._close(returnValue, closeOptions).done(function(){
+                ret.resolve(returnValue)
+            });
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
-                if (!list.length) this.constructor.toggleBackDrop(false, this.options.backdrop);
+                if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
                 list.length && list[list.length - 1].$element.trigger('focus.ui.dialog');
             }
+            return ret
         },
+        /**
+         * 打开弹出框
+         * @method open
+         * @async
+         * @param [dfd] {$.Deferred} 需要等待的操作
+         * @param [openOptions] 打开的选项
+         * @returns {$.Deferred}
+         */
         open: function(dfd, openOptions){
-            var self = this;
+            var self = this, ret = $.Deferred();
             if (!$.isDeferred(dfd)) {
                 openOptions = dfd;
                 dfd = null;
@@ -170,10 +227,13 @@
             } else
                 init = self._init;
             $.when(init, dfd).done(function(){
-                self._open(openOptions);
+                self._open(openOptions).done(function(){
+                    ret.resolve();
+                });
                 self.trigger('focus.ui.dialog');
                 //self.$element[0].focus();
-            })
+            });
+            return ret
         }
     });
 

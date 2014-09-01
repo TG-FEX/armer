@@ -3,7 +3,7 @@
 (function ($, global) {
 
     var modules = {
-        'armer/core': {
+        'armer': {
             exports: $
         },
         require: {exports: require},
@@ -104,7 +104,7 @@
             mod.uri = mod.url;
         },
         error: function(errState){
-            this.error = errState
+            this.err = errState
             this.dfd.rejectWith(this, [this]);
         },
         resolve: function(url){

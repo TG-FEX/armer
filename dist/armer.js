@@ -962,7 +962,7 @@ armer = window.jQuery || window.Zepto;
 (function ($, global) {
 
     var modules = {
-        'armer/core': {
+        'armer': {
             exports: $
         },
         require: {exports: require},
@@ -1063,7 +1063,7 @@ armer = window.jQuery || window.Zepto;
             mod.uri = mod.url;
         },
         error: function(errState){
-            this.error = errState
+            this.err = errState
             this.dfd.rejectWith(this, [this]);
         },
         resolve: function(url){

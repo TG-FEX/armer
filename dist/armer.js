@@ -9490,6 +9490,8 @@ $.fn.bgiframe = function(){
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
                     item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, this.tickNum]);
                     item._lastTick = now;
+                    console.log(this.tickNum >= this.limit)
+                    console.log(pass >= item.timeout)
                 }
                 if (this.tickNum >= this.limit && pass >= item.timeout) {
                     item.trigger($.Timer.event.FINISH);
@@ -9516,9 +9518,9 @@ $.fn.bgiframe = function(){
         var callee = arguments.callee;
         if (!(this instanceof callee)) return new callee(timeout, interval, limit, callback);
         // 总需要的事件
-        if ($.type(limit) != 'number') {
+        if ($.type(limit) != 'number' && limit < 1) {
             callback = limit;
-            limit = limit ? (limit < 1 ? 1 : limit) : Infinity;
+            limit = Infinity;
         }
         if ($.type(interval) != 'number') {
             callback = interval;
@@ -9556,7 +9558,7 @@ $.fn.bgiframe = function(){
         this.interval = interval || 200;
         this.construtor = arguments.callee;
         if ($.type(callback) == 'function') {
-            this.onstop = callback;
+            this.onfinish = callback;
             this.start();
         }
     };

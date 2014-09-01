@@ -19799,10 +19799,8 @@ $.fn.bgiframe = function(){
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
                     item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, this.tickNum]);
                     item._lastTick = now;
-                    console.log(this.tickNum >= this.limit)
-                    console.log(pass >= item.timeout)
                 }
-                if (this.tickNum >= this.limit && pass >= item.timeout) {
+                if (this.tickNum >= this.limit || pass >= item.timeout) {
                     item.trigger($.Timer.event.FINISH);
                 }
             })

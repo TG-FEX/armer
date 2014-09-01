@@ -19797,11 +19797,11 @@ $.fn.bgiframe = function(){
                 var pass = getpass(item, now);
                 this.tickNum ++;
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
-                    item.trigger(this.EVENT.TICK, [pass,  pass / item.timeout, this.tickNum]);
+                    item.trigger($.Timer.EVENT.TICK, [pass,  pass / item.timeout, this.tickNum]);
                     item._lastTick = now;
                 }
                 if (this.tickNum >= this.limit && pass >= item.timeout) {
-                    item.trigger(this.EVENT.FINISH);
+                    item.trigger($.Timer.EVENT.FINISH);
                 }
             })
         }, $.Timer.interval);
@@ -19870,33 +19870,33 @@ $.fn.bgiframe = function(){
         }
     };
     $.Timer.interval = 13;
+    $.Timer.event = {
+        /**
+         * 启动事件
+         * @event start
+         */
+        START: 'start',
+        /**
+         * 完成事件
+         * @event finish
+         */
+            FINISH: 'finish',
+        /**
+         * 停止事件
+         * @event stop
+         */
+            STOP: 'stop',
+        /**
+         * 通知事件
+         * @event tick
+         */
+            TICK: 'tick'
+    }
     $.Timer.prototype = $.EventEmitter({
         /**
          * 开始定时器
          * @method start
          */
-        EVENT: {
-            /**
-             * 启动事件
-             * @event start
-             */
-            START: 'start',
-            /**
-             * 完成事件
-             * @event finish
-             */
-            FINISH: 'finish',
-            /**
-             * 停止事件
-             * @event stop
-             */
-            STOP: 'stop',
-            /**
-             * 通知事件
-             * @event tick
-             */
-            TICK: 'tick'
-        },
         start: function(){
             if (list.length == 0) start();
             $.Array.ensure(list, this);

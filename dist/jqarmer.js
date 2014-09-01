@@ -19797,11 +19797,11 @@ $.fn.bgiframe = function(){
                 var pass = getpass(item, now);
                 this.tickNum ++;
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
-                    item.trigger($.Timer.EVENT.TICK, [pass,  pass / item.timeout, this.tickNum]);
+                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, this.tickNum]);
                     item._lastTick = now;
                 }
                 if (this.tickNum >= this.limit && pass >= item.timeout) {
-                    item.trigger($.Timer.EVENT.FINISH);
+                    item.trigger($.Timer.event.FINISH);
                 }
             })
         }, $.Timer.interval);

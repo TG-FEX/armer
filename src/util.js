@@ -110,7 +110,10 @@
          */
         this.interval = interval || 200;
         this.construtor = arguments.callee;
-        if ($.type(callback) == 'function') this.onstop = callback;
+        if ($.type(callback) == 'function') {
+            this.onstop = callback;
+            this.start();
+        }
     };
     $.Timer.interval = 13;
     $.Timer.prototype = $.EventEmitter({

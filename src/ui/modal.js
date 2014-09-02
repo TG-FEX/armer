@@ -138,7 +138,7 @@
         },
         _open: function(openOptions){
             var list = this.options.queue, self = this, index, position;
-            if (list.indexOf(self) >= 0) return;
+            if (list.indexOf(self) >= 0) return $.when();
             this.lastOpen = openOptions;
             self.$element.on('focus.ui.dialog', function(e){
                 self.trigger(e);

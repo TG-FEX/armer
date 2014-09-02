@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.6.2b - 2014-09-01 
+ * armerjs - v0.6.3b - 2014-09-02 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.2b - 2014-09-01 
+ * armerjs - v0.6.3b - 2014-09-02 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -9977,7 +9977,7 @@ $.fn.ellipsis.useCssClamp = true;
         },
         _open: function(openOptions){
             var list = this.options.queue, self = this, index, position;
-            if (list.indexOf(self) >= 0) return;
+            if (list.indexOf(self) >= 0) return $.when();
             this.lastOpen = openOptions;
             self.$element.on('focus.ui.dialog', function(e){
                 self.trigger(e);

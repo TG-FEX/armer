@@ -1,12 +1,12 @@
 /*!
- * armerjs - v0.6.3b - 2014-09-02 
+ * armerjs - v0.6.4b - 2014-09-03 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
 
     // 关掉IE6 7 的动画
-    if ($.support.opacity) $.fx.off = false;
+    if ($.support.opacity) $.fx.off = true;
 
     // TODO(wuhf): 核心工具集
     // ========================================================

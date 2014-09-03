@@ -153,16 +153,13 @@
             target = target || DOC;
             eventName = 'on' + eventName;
             var osc = target[eventName];
-            if (osc !== undefined) {
-                try {
-                    target[eventName] = 0;
-                    return target[eventName] === null;
-                } catch (e) {
-                } finally {
-                    target[eventName] = osc;
-                }
-            }
-            return false;
+            var support = false;
+            try {
+                target[eventName] = 0;
+            } catch (e) {}
+            support = target[eventName] === null;
+            target[eventName] = osc;
+            return support;
         },
         /**
          * 是否为空对象

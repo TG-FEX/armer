@@ -169,6 +169,8 @@
                                 // 错误时，判断脚本是否正在解释，是则标志加载成功
                                 if (vbtest.readyState == 'interactive') {
                                     flag = 1;
+                                    // IE恶心怪经常停不下错误
+                                    return false;
                                 }
                             };
                             vbtest.onreadystatechange = function(_, isAbort){

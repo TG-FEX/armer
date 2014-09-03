@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.3b - 2014-09-02 
+ * armerjs - v0.6.4b - 2014-09-03 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10312,14 +10312,14 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.6.3b - 2014-09-02 
+ * armerjs - v0.6.4b - 2014-09-03 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
 
     // 关掉IE6 7 的动画
-    if ($.support.opacity) $.fx.off = false;
+    if ($.support.opacity) $.fx.off = true;
 
     // TODO(wuhf): 核心工具集
     // ========================================================
@@ -16672,16 +16672,13 @@ if (window.define) {
             target = target || DOC;
             eventName = 'on' + eventName;
             var osc = target[eventName];
-            if (osc !== undefined) {
-                try {
-                    target[eventName] = 0;
-                    return target[eventName] === null;
-                } catch (e) {
-                } finally {
-                    target[eventName] = osc;
-                }
-            }
-            return false;
+            var support = false;
+            try {
+                target[eventName] = 0;
+            } catch (e) {}
+            support = target[eventName] === null;
+            target[eventName] = osc;
+            return support;
         },
         /**
          * 是否为空对象
@@ -17963,6 +17960,8 @@ if (window.define) {
                                 // 错误时，判断脚本是否正在解释，是则标志加载成功
                                 if (vbtest.readyState == 'interactive') {
                                     flag = 1;
+                                    // IE恶心怪经常停不下错误
+                                    return false;
                                 }
                             };
                             vbtest.onreadystatechange = function(_, isAbort){
@@ -20309,7 +20308,7 @@ $.fn.ellipsis.useCssClamp = true;
         _close: function(returnValue, closeOptions){
             var self = this;
             self.$element.off('focus.dialog');
-            return animate(this.$element, closeOptions.animate).promise().done(function(){
+            return animate(this.$element.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
                 self.trigger('closed.ui.dialog', [returnValue]);
@@ -20473,28 +20472,32 @@ $.fn.ellipsis.useCssClamp = true;
     }
 
 
-    $.fn.modal = function(command){
-        var $this = this[0], modal;
+    $.fn.dialog = function(command) {
+        var $this = this[0], dialog, callee = arguments.callee;
+        var constructor = callee.UIConstructor
         // 判断是否有这个方法
-        if ($.type(command) != 'string' && !$.UI.Modal.prototype[command]) {
+        if ($.type(command) != 'string' && !constructor.prototype[command]) {
             command = null;
         } else
             [].shift.call(arguments);
-        modal = $.data(self, 'ui-modal');
-        if (!modal) {
+        dialog = $.data(self, 'ui-dialog');
+        if (!dialog) {
             //如果命令为空，那么拼接参数
             if (!command) {
                 [].unshift.call(arguments, $this);
-                modal = $.UI.Modal.apply($.UI.Modal, arguments);
+                dialog = constructor.apply($.UI, arguments);
             } else {
-                console.log($this);
-                modal = $.UI.Modal($this);
+                dialog = constructor($this);
             }
-            $.data(self, 'ui-modal', modal);
+            $.data(self, 'ui-dialog', dialog);
             if (!command) return this;
-        } else if (!command) return modal;
+        } else if (!command) return dialog;
 
-        return modal[command].apply(modal, arguments);
+        return dialog[command].apply(dialog, arguments);
     }
+
+    $.fn.dialog.UIConstructor = $.UI.Dialog;
+    $.fn.modal = $.Function.clone($.fn.dialog);
+    $.fn.modal.UIConstructor = $.UI.Modal;
 
 })(jQuery);

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/factory.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/ui.js"></script>
+</head>
+<body>
+    <map>
+        <area>
+    </map>
+    <div contenteditable="true">
+        asdasd<i contenteditable="false">asdad</i>
+    </div>
+    <script>
+        var A = $.factory(function A(){}, $.EventEmitter, {
+            a: function(){}
+        });
+        var B = $.factory(function B(){}, A, {
+            a: function(){
+                console.log(arguments);
+            }
+        });
+    </script>
+</body>
+</html>

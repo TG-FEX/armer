@@ -22,12 +22,20 @@ module.exports = function(grunt) {
             ],
             dest: 'dist/armer.core.js'
         },
+        'lang': {
+            src: [
+                'src/core/main.js',
+                'src/core/url.js',
+                'src/core/define.js'
+            ],
+            dest: 'tmp/lang.js'
+        },
         'armer': {
             src: [
                 'dist/armer.core.js',
                 'src/polyfill.js',
                 'src/mvvm.js',
-                'src/lang.js',
+                'tmp/lang.js',
                 'src/io.js',
                 'src/css.js',
                 'src/effects.js',
@@ -51,7 +59,7 @@ module.exports = function(grunt) {
                 'dist/armer.core.js',
                 'src/polyfill.js',
                 'src/mvvm.js',
-                'src/lang.js',
+                'tmp/lang.js',
                 'src/io.js',
                 'src/css.js',
                 'src/effects.js',

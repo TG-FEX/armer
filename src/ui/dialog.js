@@ -12,13 +12,174 @@
      * @extends armer.EventEmitter
      * @constructor
      */
-    var Dialog = function(content, options){
-        var callee = arguments.callee;
-        if (!(this instanceof callee)) return new callee(content, options);
-        this.options = $.extend({}, callee.defaults, options);
-        callee.factory.call(this, content, options);
-        this.constructor = callee;
-    };
+    var Dialog = $.UI.extend('dialog', {
+        _init: function(content, options){
+            var that = this;
+            this.options = $.extend({}, this.constructor.defaults, options);
+            if (typeof content == 'string' || /\//.test(content)) {
+                var selector, url, off = content.indexOf(" ");
+                if ( off >= 0 ) {
+                    selector = content.slice(off, content.length);
+                    url = content.slice(0, off);
+                }
+                this._content = function(){
+                    return $.ajax({
+                        url: url,
+                        type: 'get',
+                        dataType: 'html',
+                        dataFilter: function(responseText){
+                            return  $(selector ? $('<div>').append($.parseHTML(responseText)).find(selector) : responseText)
+                        }
+                    })
+                }
+            } else if ($.type(content) != 'function')
+                this._content = function(){
+                    return $.when($(content));
+                };
+            else
+                this._content = content;
+            this.element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
+        },
+        /**
+         * 初始化方法
+         * @method init
+         * @returns {$.Deferred}
+         */
+        init: function(){
+            var self = this;
+            if (typeof this._content == "function") {
+                return this._content().done(function($elem){
+                    self._content = this;
+                    self.element.append($elem.show()).appendTo('body');
+                })
+            } else return this._content
+        },
+        /**
+         * 聚焦弹出框
+         * @method focus
+         */
+        focus: function(){
+            var $backdrop = this.options.backdrop;
+            var list = this.options.queue;
+            var z = this.options.zIndex;
+            var that = this;
+            var thisZindex, has = false, s;
+            $.Array.remove(list, that);
+            list.push(that);
+            list.forEach(function(item, i){
+                s = z.start + i * z.step;
+                var b = !!item.lastOpen.showBackdrop;
+                has = b || has;
+                if (b) thisZindex = s || thisZindex;
+                item.element.css('zIndex', s);
+            })
+            if ($backdrop){
+                if (!has)
+                    this.constructor.toggleBackdrop(false, $backdrop);
+                else $backdrop.css('zIndex', thisZindex);
+            }
+        },
+        _open: function(openOptions){
+            var list = this.options.queue, self = this, index, position;
+            if (list.indexOf(self) >= 0) return $.when();
+            this.lastOpen = openOptions;
+            self.element.on('focus.ui.dialog', function(e){
+                self.trigger(e);
+            });
+            if (openOptions.showBackdrop)
+                this.constructor.toggleBackdrop(true, this.options.backdrop);
+            openCauseClose = true;
+            if (openOptions.closeOthers) {
+                this.constructor.closeAll();
+            }
+            openCauseClose = false;
+            list.push(self);
+            position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
+            position.of = position.of || this.options.attach;
+            self.element.finish().position(position);
+            return animate(self.element, openOptions.animate).promise().done(function(){
+                self.trigger('opened.ui.dialog');
+            });
+        },
+        _close: function(returnValue, closeOptions){
+            var self = this;
+            self.element.off('focus.dialog');
+            return animate(this.element.finish(), closeOptions.animate).promise().done(function(){
+                this[0].style.top = '';
+                this[0].style.left = '';
+                self.trigger('closed.ui.dialog', [returnValue]);
+            });
+        },
+        /**
+         * 开关弹出框
+         * @method toggle
+         * @async
+         */
+        toggle: function(){
+            var list = this.options.queue;
+            if (!(list.indexOf(this) >= 0)) this.trigger('close');
+            else this.trigger('open');
+        },
+        /**
+         * 关闭弹出框
+         * @method close
+         * @async
+         * @param [returnValue] 关闭传递的参数
+         * @param [closeOptions] 关闭的选项
+         * @returns {$.Deferred}
+         */
+        close: function(returnValue, closeOptions){
+            var self = this, list = this.options.queue, ret = $.Deferred();
+            if (!(list.indexOf(this) >= 0)) return;
+            closeOptions = $.extend({}, this.options.close, closeOptions);
+            returnValue = returnValue || closeOptions.returnValue;
+            returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
+            this._close(returnValue, closeOptions).done(function(){
+                ret.resolve(returnValue)
+            });
+            $.Array.remove(this.options.queue, this);
+            if (!openCauseClose) {
+                if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
+                list.length && list[list.length - 1].element.trigger('focus.ui.dialog');
+            }
+            return ret
+        },
+        /**
+         * 打开弹出框
+         * @method open
+         * @async
+         * @param [dfd] {$.Deferred} 需要等待的操作
+         * @param [openOptions] 打开的选项
+         * @returns {$.Deferred}
+         */
+        open: function(dfd, openOptions){
+            var self = this, ret = $.Deferred();
+            if (!$.isDeferred(dfd)) {
+                openOptions = dfd;
+                dfd = null;
+            }
+            openOptions = $.extend({}, this.options.open, openOptions);
+            dfd = dfd || openOptions.dfd;
+            var init;
+            if (typeof this._content == 'function') {
+                var e = $.Event('init');
+                self.trigger(e);
+                if (!e.isDefaultPrevented())
+                    init = e.actionReturns
+                else init = $.Deferred.reject()
+            } else
+                init = self._content;
+            $.when(init, dfd).done(function(){
+                self._open(openOptions).done(function(){
+                    ret.resolve();
+                });
+                self.trigger('focus.ui.dialog');
+                //self.element[0].focus();
+            });
+            return ret
+        }
+    });
+
     Dialog.event = {
         OPEN: 'open',
         OPENED: 'opened',
@@ -26,32 +187,6 @@
         CLOSED: 'closed',
         FOCUS: 'focus'
     }
-    Dialog.factory = function(content){
-        var that = this;
-        if (typeof content == 'string' || /\//.test(content)) {
-            var selector, url, off = content.indexOf(" ");
-            if ( off >= 0 ) {
-                selector = content.slice(off, content.length);
-                url = content.slice(0, off);
-            }
-            this._init = function(){
-                return $.ajax({
-                    url: url,
-                    type: 'get',
-                    dataType: 'html',
-                    dataFilter: function(responseText){
-                        return  $(selector ? $('<div>').append($.parseHTML(responseText)).find(selector) : responseText)
-                    }
-                })
-            }
-        } else if ($.type(content) != 'function')
-            this._init = function(){
-                return $.when($(content));
-            };
-        else
-            this._init = content;
-        this.$element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
-    };
     /**
      * 打开/关闭遮罩层
      * @method toggleBackdrop
@@ -96,146 +231,6 @@
         list.length = 0;
         !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
     }
-    Dialog.prototype = $.EventEmitter({
-        /**
-         * 初始化方法
-         * @method init
-         * @returns {$.Deferred}
-         */
-        init: function(){
-            var self = this;
-            if (typeof this._init == "function") {
-                return this._init().done(function($elem){
-                    self._init = this;
-                    self.$element.append($elem.show()).appendTo('body');
-                })
-            } else return this._init
-        },
-        /**
-         * 聚焦弹出框
-         * @method focus
-         */
-        focus: function(){
-            var $backdrop = this.options.backdrop;
-            var list = this.options.queue;
-            var z = this.options.zIndex;
-            var that = this;
-            var thisZindex, has = false, s;
-            $.Array.remove(list, that);
-            list.push(that);
-            list.forEach(function(item, i){
-                s = z.start + i * z.step;
-                var b = !!item.lastOpen.showBackdrop;
-                has = b || has;
-                if (b) thisZindex = s || thisZindex;
-                item.$element.css('zIndex', s);
-            })
-            if ($backdrop){
-                if (!has)
-                    this.constructor.toggleBackdrop(false, $backdrop);
-                else $backdrop.css('zIndex', thisZindex);
-            }
-        },
-        _open: function(openOptions){
-            var list = this.options.queue, self = this, index, position;
-            if (list.indexOf(self) >= 0) return $.when();
-            this.lastOpen = openOptions;
-            self.$element.on('focus.ui.dialog', function(e){
-                self.trigger(e);
-            });
-            if (openOptions.showBackdrop)
-                this.constructor.toggleBackdrop(true, this.options.backdrop);
-            openCauseClose = true;
-            if (openOptions.closeOthers) {
-                this.constructor.closeAll();
-            }
-            openCauseClose = false;
-            list.push(self);
-            position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
-            position.of = position.of || this.options.attach;
-            self.$element.finish().position(position);
-            return animate(self.$element, openOptions.animate).promise().done(function(){
-                self.trigger('opened.ui.dialog');
-            });
-        },
-        _close: function(returnValue, closeOptions){
-            var self = this;
-            self.$element.off('focus.dialog');
-            return animate(this.$element.finish(), closeOptions.animate).promise().done(function(){
-                this[0].style.top = '';
-                this[0].style.left = '';
-                self.trigger('closed.ui.dialog', [returnValue]);
-            });
-        },
-        /**
-         * 开关弹出框
-         * @method toggle
-         * @async
-         */
-        toggle: function(){
-            var list = this.options.queue;
-            if (!(list.indexOf(this) >= 0)) this.trigger('close');
-            else this.trigger('open');
-        },
-        /**
-         * 关闭弹出框
-         * @method close
-         * @async
-         * @param [returnValue] 关闭传递的参数
-         * @param [closeOptions] 关闭的选项
-         * @returns {$.Deferred}
-         */
-        close: function(returnValue, closeOptions){
-            var self = this, list = this.options.queue, ret = $.Deferred();
-            if (!(list.indexOf(this) >= 0)) return;
-            closeOptions = $.extend({}, this.options.close, closeOptions);
-            returnValue = returnValue || closeOptions.returnValue;
-            returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
-            this._close(returnValue, closeOptions).done(function(){
-                ret.resolve(returnValue)
-            });
-            $.Array.remove(this.options.queue, this);
-            if (!openCauseClose) {
-                if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].$element.trigger('focus.ui.dialog');
-            }
-            return ret
-        },
-        /**
-         * 打开弹出框
-         * @method open
-         * @async
-         * @param [dfd] {$.Deferred} 需要等待的操作
-         * @param [openOptions] 打开的选项
-         * @returns {$.Deferred}
-         */
-        open: function(dfd, openOptions){
-            var self = this, ret = $.Deferred();
-            if (!$.isDeferred(dfd)) {
-                openOptions = dfd;
-                dfd = null;
-            }
-            openOptions = $.extend({}, this.options.open, openOptions);
-            dfd = dfd || openOptions.dfd;
-            var init;
-            if (typeof this._init == 'function') {
-                var e = $.Event('init');
-                self.trigger(e);
-                if (!e.isDefaultPrevented())
-                    init = e.actionReturns
-                else init = $.Deferred.reject()
-            } else
-                init = self._init;
-            $.when(init, dfd).done(function(){
-                self._open(openOptions).done(function(){
-                    ret.resolve();
-                });
-                self.trigger('focus.ui.dialog');
-                //self.$element[0].focus();
-            });
-            return ret
-        }
-    });
 
 
     Dialog.defaults = {

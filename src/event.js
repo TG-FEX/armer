@@ -1,18 +1,17 @@
 ;(function () {
+    var fn;
     /**
      * 事件发射器，让一个对象拥有订阅事件的能力
      * @param [obj] {object} 需要扩展的对象
      * @constructor
      * @class armer.EventEmitter
      */
-    $.EventEmitter = function (obj) {
-        if (typeof obj == 'function' || typeof obj == 'object') return $.mix(obj, mul);
-        if (!(this instanceof $.EventEmitter)) return new $.EventEmitter();
+     function Emitter(obj) {
+        var callee = arguments.callee;
+        if ($.isObjectLike(obj) && obj.emit != fn.emit) return $.mix(obj, fn);
+        if (!(this instanceof $.EventEmitter)) return new callee();
     };
-
-    var hasOwn = $.hasOwn;
-
-    var mul = {
+    Emitter.fn = Emitter.prototype = fn = $.Object({
         /**
          * 绑定一个事件处理器
          * @param types {string} 绑定事件的类型
@@ -46,8 +45,8 @@
         emit: function (event, data, onlyHandlers) {
             var handle, ontype, tmp, orignData,
                 eventPath = [ this || document ],
-                type = hasOwn.call(event, "type") ? event.type : event,
-                namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
+                type = $.hasOwn(event, "type") ? event.type : event,
+                namespaces = $.hasOwn(event, "namespace") ? event.namespace.split(".") : [];
 
             tmp = this;
             if (type.indexOf(".") >= 0) {
@@ -104,15 +103,16 @@
             }
             return event.result;
         }
-    };
-    $.mix(mul, {
+    });
+    $.mix(fn, {
+        constructor: Emitter,
         /**
          * 触发一个事件
          * @method trigger
          */
-        trigger: mul.emit
+        trigger: fn.emit
     });
-    $.EventEmitter.prototype = $.EventEmitter.fn = mul;
+    $.EventEmitter = Emitter;
 })();
 
 // valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化

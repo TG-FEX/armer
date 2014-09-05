@@ -4,9 +4,6 @@
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
 
-    // 关掉IE6 7 的动画
-    if ($.support.opacity) $.fx.off = true;
-
     // TODO(wuhf): 核心工具集
     // ========================================================
     (function(){
@@ -146,7 +143,16 @@ armer = window.jQuery || window.Zepto;
              * @returns {Object}
              */
             oneObject: oneObject,
-            hasOwn: hasOwn,
+            hasOwn: function(obj, key){
+                return hasOwn.call(obj, key)
+            },
+            own: function(obj, key){
+                if ($.type(obj) != 'object') {
+                    key = obj;
+                    obj = this;
+                }
+                return hasOwn.call(obj, key) ? obj[key] : undefined;
+            },
             config: function(settings) {
                 var kernel = arguments.callee;
                 for (var p in settings) {

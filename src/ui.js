@@ -1,4 +1,34 @@
-$.UI = {};
+// 关掉IE6 7 的动画
+if (!$.support.opacity) $.fx.off = true;
+
+$.UI = $.EventEmitter.extend({
+    _init: function(){}
+});
+$.UI.extend = function(name, base, prototype){
+    var tmp = name.split('.'), namespace, fullName, existingConstructor, construtor, construtorName, basePrototype;
+    fullName = name = tmp.pop();
+    namespace = tmp[0];
+
+    if (!$.isFunction(base)) {
+        prototype = base;
+        base = this
+    }
+    construtorName = name.charAt(0).toUpperCase() + $.camelCase(name).substr(1);
+    if (namespace) {
+        fullName = namespace + '-' + name;
+        tmp = this[namespace] = this[namespace] || {};
+    } else {
+        tmp = this;
+    }
+    fullName = 'ui-' + fullName;
+
+    $.expr[':'][fullName.toLowerCase()] = function(elem){
+        return !!$.data(elem, fullName);
+    };
+    return tmp[construtorName] = $.factory(prototype, base);
+};
+
+
 $(function(){
     var $b = $('body');
     $b.on('click', '[data-trigger],[href]', function(e){

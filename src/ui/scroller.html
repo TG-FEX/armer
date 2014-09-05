@@ -67,7 +67,7 @@
                 this.options = $.extend({}, arguments.callee.defaults);
                 this.$element = $(obj);
                 if (!this.$element) {
-                    console.log('Çë°ó¶¨Ò»¸ö¶ÔÏó');
+                    console.log('ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½');
                 } else {
                     this.$btnPrev = $('<a class="btn-prev"></a>');
                     this.$btnNext = $('<a class="btn-next"></a>');
@@ -77,13 +77,13 @@
                     this.initLeft = 0;
                     this.$lis;
                     this.timer;
-                    this._init();
+                    this._content();
                 }
             }
 
             Carousel.prototype = {
                 constructor: Carousel,
-                _init: function() {
+                _content: function() {
                     var $self = this,
                         $ul = $self.$element.find('ul'),
                         $lis = $ul.find('li'),
@@ -101,7 +101,7 @@
                         $self.minLeft = minLeft;
                         $self.initLeft = initLeft;
                         $self.autoMove();
-                        //ÒÆÉÏÍ£Ö¹¹ö¶¯
+                        //ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½
                         var $btnNext = $self.$btnNext;
                         var $btnPrev = $self.$btnPrev;
                         $self.$element.hover(function() {
@@ -113,15 +113,15 @@
                             $btnNext = $btnNext.detach();
                             $btnPrev = $btnPrev.detach();
                         });
-                        //µã»÷Ä³¸öÑ¡¿¨
+                        //ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Ñ¡ï¿½ï¿½
                         $ul.find('li').each(function(index) {
                             var $that = $(this);
                             $that.on('click',function() {
                                 var quotient = (index + 1) / liLength;
                                 var remainder = index % liLength
-                                /*if (!$self.options.direction) { //ÏòÓÒ
+                                /*if (!$self.options.direction) { //ï¿½ï¿½ï¿½ï¿½
 
-                                } else {                        //Ïò×ó
+                                } else {                        //ï¿½ï¿½ï¿½ï¿½
                                    if (quotient > 2) {
                                         $ul.css('margin-left', '+=' + liLength * liWidth);
                                     }
@@ -129,7 +129,7 @@
                                 $self.go2scene(remainder);
                             })
                         })
-                        //µã»÷ÉÏÒ»¸öºÍÏÂÒ»¸ö°´Å¥
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Å¥
                         $self.btnBindEvent();
 
                     }
@@ -159,7 +159,7 @@
                         })
                         $self.options.index = index;
                     } else {
-                        alert('³¬³ö¹ö¶¯·¶Î§')
+                        alert('ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§')
                     }
                 },
                 resetPosition: function($ul) {
@@ -204,9 +204,9 @@
             }
 
             Carousel.defaults = {
-                direction: 1, //Ä¬ÈÏ·½Ïò
-                interval: 2000, //Ä¬ÈÏ¹ö¶¯Ê±¼ä
-                index: 0          //Ä¬ÈÏ³õÊ¼»¯ÏÔÊ¾µÚÒ»¸öÑ¡¿¨
+                direction: 1, //Ä¬ï¿½Ï·ï¿½ï¿½ï¿½
+                interval: 2000, //Ä¬ï¿½Ï¹ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+                index: 0          //Ä¬ï¿½Ï³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ò»ï¿½ï¿½Ñ¡ï¿½ï¿½
             }
             $.fn.carousel = function(options) {
                 var $self = this,

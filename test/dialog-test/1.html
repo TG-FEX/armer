@@ -6,13 +6,17 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="../../src/core/main.js"></script>
     <script src="../../src/polyfill.js"></script>
-    <script src="../../src/lang.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/lang/array.js"></script>
+    <script src="../../src/lang/function.js"></script>
     <script src="../../src/io.js"></script>
     <script src="../../src/event.js"></script>
+    <script src="../../src/factory.js"></script>
     <script src="../../src/css.js"></script>
     <script src="../../src/effects.js"></script>
     <script src="../../src/ui.js"></script>
-    <script src="../../src/ui/modal.js"></script>
+    <script src="../../src/ui/dialog.js"></script>
     <style>
         ul, li {
             padding: 0;
@@ -81,6 +85,7 @@
         var $role2 = $('[role=dialog]:eq(1)');
         var $role3 = $('[role=dialog]:eq(2)');
         var $role4 = $('[role=dialog]:eq(3)');
+        var dialog1 = $.UI.Dialog($role);
         $role.modal('open');
         var modal = $role.modal();
         var modal2 = $.UI.Modal($role2)

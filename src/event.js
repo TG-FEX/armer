@@ -113,6 +113,7 @@
         trigger: fn.emit
     });
     $.EventEmitter = Emitter;
+    Emitter.mix = $.mix;
 })();
 
 // valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化

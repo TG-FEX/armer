@@ -178,95 +178,95 @@
             });
             return ret
         }
+    }).mix({
+        event: {
+        OPEN: 'open',
+            OPENED: 'opened',
+            CLOSE: 'close',
+            CLOSED: 'closed',
+            FOCUS: 'focus'
+        },
+        /**
+         * 打开/关闭遮罩层
+         * @method toggleBackdrop
+         * @static
+         * @param toggle {boolean} 打开或者关闭
+         * @param [$backdrop] {armer}　需要打开或者关闭的弹出框对象
+         */
+        toggleBackdrop: function(toggle, $backdrop){
+            $backdrop = $backdrop || this.defaults.backdrop;
+            if (!$backdrop) return;
+            var $body = $('body');
+            if (!$.contains($body[0], $backdrop[0])) {
+                $backdrop.prependTo('body');
+                if (!!window.ActiveXObject && !window.XMLHttpRequest) {
+                    $backdrop.bgiframe()
+                }
+            }
+            toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
+            $body.toggleClass('with-backdrop', toggle);
+            animate($backdrop, [{
+                opacity: toggle ? 'show' : 'hide'
+            }]);
+        },
+        /**
+         * 关闭所有弹出框
+         * @method closeAll
+         * @static
+         * @param [list] 需要关闭的弹出框的列表
+         * @param [returnValue] 需要提供的返回值
+         * @param [closeOptions] 关闭的选项
+         */
+        closeAll: function(list, returnValue, closeOptions){
+            list = list || this.defaults.queue;
+            var $backdrop;
+            list.forEach(function(item){
+                var co = $.extend(closeOptions, item.options.close);
+                var rt = returnValue || co.returnValue;
+                rt = $.isFunction(rt) ? rt.call(this) : rt;
+                $backdrop = item.options.backdrop;
+                item._close(rt, co)
+            });
+            list.length = 0;
+            !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
+        },
+        defaults: {
+            queue: [],
+            attach: $(window),
+            zIndex: {
+                start: 1300,
+                step: 100,
+                end: 1400
+            },
+            open: {
+                position: {
+                    at: 'left' + ' bottom' + '+15',
+                    my: 'left top'
+                },
+                showBackdrop: false,
+                closeOthers: true,
+                getFocus: false,
+                animate: [{
+                    top: '-=10',
+                    opacity: 'show'
+                }]
+            },
+            close: {
+                animate: [{
+                    opacity: 'hide',
+                    top: '+=10'
+                }]
+            },
+            onopen: $.noop,
+            onopened: $.noop,
+            onclose: $.noop,
+            onclosed: $.noop,
+            oninit: $.noop,
+            onfocus: $.noop
+        }
+
     });
 
-    Dialog.event = {
-        OPEN: 'open',
-        OPENED: 'opened',
-        CLOSE: 'close',
-        CLOSED: 'closed',
-        FOCUS: 'focus'
-    }
-    /**
-     * 打开/关闭遮罩层
-     * @method toggleBackdrop
-     * @static
-     * @param toggle {boolean} 打开或者关闭
-     * @param [$backdrop] {armer}　需要打开或者关闭的弹出框对象
-     */
-    Dialog.toggleBackdrop = function(toggle, $backdrop){
-        $backdrop = $backdrop || this.defaults.backdrop;
-        if (!$backdrop) return;
-        var $body = $('body');
-        if (!$.contains($body[0], $backdrop[0])) {
-            $backdrop.prependTo('body');
-            if (!!window.ActiveXObject && !window.XMLHttpRequest) {
-                $backdrop.bgiframe()
-            }
-        }
-        toggle = toggle == null ? $backdrop.css('display') == 'none' : !!toggle;
-        $body.toggleClass('with-backdrop', toggle);
-        animate($backdrop, [{
-            opacity: toggle ? 'show' : 'hide'
-        }]);
-    }
-    /**
-     * 关闭所有弹出框
-     * @method closeAll
-     * @static
-     * @param [list] 需要关闭的弹出框的列表
-     * @param [returnValue] 需要提供的返回值
-     * @param [closeOptions] 关闭的选项
-     */
-    Dialog.closeAll = function(list, returnValue, closeOptions){
-        list = list || this.defaults.queue;
-        var $backdrop;
-        list.forEach(function(item){
-            var co = $.extend(closeOptions, item.options.close);
-            var rt = returnValue || co.returnValue;
-            rt = $.isFunction(rt) ? rt.call(this) : rt;
-            $backdrop = item.options.backdrop;
-            item._close(rt, co)
-        });
-        list.length = 0;
-        !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
-    }
-
-
-    Dialog.defaults = {
-        queue: [],
-        attach: $(window),
-        zIndex: {
-            start: 1300,
-            step: 100,
-            end: 1400
-        },
-        open: {
-            position: {
-                at: 'left' + ' bottom' + '+15',
-                my: 'left top'
-            },
-            showBackdrop: false,
-            closeOthers: true,
-            getFocus: false,
-            animate: [{
-                top: '-=10',
-                opacity: 'show'
-            }]
-        },
-        close: {
-            animate: [{
-                opacity: 'hide',
-                top: '+=10'
-            }]
-        },
-        onopen: $.noop,
-        onopened: $.noop,
-        onclose: $.noop,
-        onclosed: $.noop,
-        oninit: $.noop,
-        onfocus: $.noop
-    };
 
     $.UI.Dialog = Dialog;
     $.UI.Modal = $.Function.clone(Dialog);

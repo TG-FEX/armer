@@ -23,6 +23,7 @@
         }
 
         basePrototype = new base();
+        basePrototype.options = $.mixOptions( {}, basePrototype.options );
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {

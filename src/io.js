@@ -1,6 +1,4 @@
 // TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
-// 使用前，必须修改jQ一个bug，否则IE6不生效
-// 查找 dataType[0] === "+" 修改为 dataType.charAt(0) === "+"
 ;(function ($) {
     var DOC = document, script,
         HEAD = document.head || document.getElementsByTagName('head')[0];

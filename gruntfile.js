@@ -61,17 +61,8 @@ module.exports = function(grunt) {
              */
             src: [
                 'bower_components/jquery/dist/jquery.js',
-                'dist/armer.core.js',
-                'src/polyfill.js',
-                'src/mvvm.js',
-                'tmp/lang.js',
-                'src/io.js',
-                'src/css.js',
-                'src/effects.js',
-                'src/event.js',
-                'src/util.js',
-                'src/ui.js',
-                'src/ui/modal.js'
+                'dist/armer.js',
+
             ],
             dest: 'dist/jqarmer.js'
         },

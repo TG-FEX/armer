@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     $.Number = {
         limit: function(target, n1, n2) {
             //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值

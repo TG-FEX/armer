@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     $.String = {
         byteLen: function(target) {
             /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插

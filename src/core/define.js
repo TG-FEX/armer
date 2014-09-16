@@ -1,6 +1,6 @@
 // TODO(wuhf): AMD/CMD加载器
 // ========================================================
-(function ($, global) {
+;(function ($, global) {
 
     var modules = {
         'armer': {

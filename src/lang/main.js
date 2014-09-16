@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     var global = window,
         DOC = global.document,
         seval = global.execScript ? "execScript" : "eval",

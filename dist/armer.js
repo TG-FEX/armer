@@ -707,7 +707,7 @@ armer = window.jQuery || window.Zepto;
 
 // TODO(wuhf): URL解释器
 // ========================================================
-(function($){
+;(function($){
     // url解释规范
     // 参考RFC3986 http://tools.ietf.org/html/rfc3986
     var rHash = /#[^#?]*/;
@@ -965,7 +965,7 @@ armer = window.jQuery || window.Zepto;
 
 // TODO(wuhf): AMD/CMD加载器
 // ========================================================
-(function ($, global) {
+;(function ($, global) {
 
     var modules = {
         'armer': {
@@ -6221,7 +6221,7 @@ if (window.define) {
  * armerjs - v0.6.5b - 2014-09-16 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
-(function($){
+;(function($){
     var global = window,
         DOC = global.document,
         seval = global.execScript ? "execScript" : "eval",
@@ -6858,7 +6858,7 @@ if (window.define) {
         })()
     });
 })(armer)
-(function($){
+;(function($){
     $.String = {
         byteLen: function(target) {
             /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插
@@ -6921,7 +6921,7 @@ if (window.define) {
         });
 })(armer);
 
-(function($){
+;(function($){
     function cloneOf(item) {
         var name = $.type(item);
         switch (name) {
@@ -7043,7 +7043,7 @@ if (window.define) {
         };
     });
 })(armer);
-(function($){
+;(function($){
     $.Array = {
         contains: function(target, item) {
             //判定数组是否包含指定目标。
@@ -7219,7 +7219,7 @@ if (window.define) {
         };
     });
 })(armer);
-(function($){
+;(function($){
     var DATE_FORMATS = {
         yyyy: dateGetter('FullYear', 4),
         yy: dateGetter('FullYear', 2, 0, true),
@@ -7435,7 +7435,7 @@ if (window.define) {
         }
     };
 })(armer);
-(function($){
+;(function($){
     $.Function = {
         clone: function(fn, extend){
             var newfn = new Function('return ' + fn.toString())();
@@ -7495,7 +7495,7 @@ if (window.define) {
     };
 })(armer);
 
-(function($){
+;(function($){
     $.Number = {
         limit: function(target, n1, n2) {
             //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值

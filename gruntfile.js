@@ -24,9 +24,13 @@ module.exports = function(grunt) {
         },
         'lang': {
             src: [
-                'src/core/main.js',
-                'src/core/url.js',
-                'src/core/define.js'
+                'src/lang/main.js',
+                'src/lang/string.js',
+                'src/lang/object.js',
+                'src/lang/array.js',
+                'src/lang/date.js',
+                'src/lang/function.js',
+                'src/lang/number.js',
             ],
             dest: 'tmp/lang.js'
         },

@@ -38,13 +38,13 @@ module.exports = function(grunt) {
             src: [
                 'dist/armer.core.js',
                 'src/polyfill.js',
-                'src/factory.js',
                 'tmp/lang.js',
                 'src/mvvm.js',
                 'src/io.js',
                 'src/css.js',
                 'src/effects.js',
                 'src/event.js',
+                'src/factory.js',
                 'src/util.js',
                 'src/ui.js',
                 'src/ui/modal.js'

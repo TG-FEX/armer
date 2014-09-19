@@ -1,5 +1,5 @@
 ;(function($){
-    $.Number = {
+    $.Number = $.extend($.Number, {
         limit: function(target, n1, n2) {
             //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值
             var a = [n1, n2].sort();
@@ -24,7 +24,7 @@
                 return Math.round(target);
             }
         }
-    };
+    });
     "abs,acos,asin,atan,atan2,ceil,cos,exp,floor,log,pow,sin,sqrt,tan".replace($.rword, function(name) {
         $.Number[name] = Math[name];
     });

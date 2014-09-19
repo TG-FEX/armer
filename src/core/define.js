@@ -397,8 +397,11 @@
         return modules.module.exports.resolve(url);
     };
     require.requesting = requesting;
-    global.require = require;
-    global.define = define;
+    require.register = define;
+    if (!window.require) window.require = require
+    if (!window.define) window.define = define
+    $.require = require;
+    $.define = define;
 
     // domready 插件
     defaults.plusin['domready'] = {

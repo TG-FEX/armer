@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.5b - 2014-09-16 
+ * armerjs - v0.6.5b - 2014-09-19 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -756,16 +756,16 @@ armer = window.jQuery || window.Zepto;
      * @constructor
      */
     $.URL = function(url, parent){
-        var URL = arguments.callee;
+        var callee = arguments.callee;
         // 先将parent路径转行为绝对路径
-        parent = parent ? URL.absolutize(parent) : null;
-        if (!(this instanceof URL)) return new URL(url, parent);
+        if (!(this instanceof callee)) return new callee(url, parent);
         // 分析url
-        this.init(url, parent);
+        this._init(url, parent);
     };
     $.URL.prototype = {
         constructor: $.URL,
-        init: function(path, parent){
+        _init: function(path, parent){
+            parent = parent ? this.constructor.absolutize(parent) : null;
             //alert(basePath);
             var self = this, tmp;
             // 获取 search
@@ -840,7 +840,10 @@ armer = window.jQuery || window.Zepto;
         },
         search: function(key, value){
             if (!key) return $.extend({}, this._search);
-            if ($.isPlainObject(key)) this._search = $.unserialize($.extend({}, this._search, key));
+            if ($.isPlainObject(key) || $.type(value) == 'boolean') {
+                if ($.type(key) == 'string') key = $.unserialize(key);
+                this._search = $.extend({}, value ? {} : this._search, key);
+            }
             if (value === undefined) return this._search[key];
             this._search[key] = value;
             return this;
@@ -859,7 +862,7 @@ armer = window.jQuery || window.Zepto;
          */
         port: function(value){
             if (!value) return this._port;
-            this._port = value.replace(':', '');
+            this._port = $.type(value) == 'number' ? value : value.replace(':', '');
             return this;
         },
         host: function(value){
@@ -872,15 +875,19 @@ armer = window.jQuery || window.Zepto;
             if (index == undefined) {
                 r = [].slice.call(this._hostname);
                 r.toString = this._hostname.toString;
-            } else {
-                if (typeof index == 'object') {
-                    for(var i = 0; i < index.length; i++) {
-                        this._hostname[i] = index[i] || this._hostname[i];
-                    }
-                } else {
-                    this._hostname[index] = value;
+            } else if ($.type(index) != 'number') {
+                if ($.type(index) != 'object') {
+                    index = index.split('.')
+                }
+                for(var i = 0; i < index.length; i++) {
+                    this._hostname[i] = index[i] || this._hostname[i];
                 }
                 r = this;
+            } else if (value) {
+                this._hostname[index] = value;
+                r = this
+            } else {
+                return this._hostname[index];
             }
             return r;
         },
@@ -1358,8 +1365,11 @@ armer = window.jQuery || window.Zepto;
         return modules.module.exports.resolve(url);
     };
     require.requesting = requesting;
-    global.require = require;
-    global.define = define;
+    require.register = define;
+    if (!window.require) window.require = require
+    if (!window.define) window.define = define
+    $.require = require;
+    $.define = define;
 
     // domready 插件
     defaults.plusin['domready'] = {

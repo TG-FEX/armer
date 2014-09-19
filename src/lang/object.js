@@ -28,9 +28,10 @@
             $.extend(this, mix);
         }
     };
+    var OldObject = $.Object;
     $.Object.prototype = Object.prototype;
     $.Object.mix = $.extend;
-    $.Object.mix({
+    $.Object.mix(OldObject, {
         size: function(obj){
             return $.isArrayLike(obj) ? obj.length: Object.keys(obj).length;
         },

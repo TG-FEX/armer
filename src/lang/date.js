@@ -139,7 +139,7 @@
         return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
     }
 
-    $.Date = {
+    $.Date = $.extend($.Date, {
         locate: locate,
         /*
          'yyyy': 4 digit representation of year (e.g. AD 1 => 0001, AD 2010 => 2010)
@@ -212,5 +212,5 @@
             });
             return text
         }
-    };
+    });
 })(armer);

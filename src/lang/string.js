@@ -1,5 +1,5 @@
 ;(function($){
-    $.String = {
+    $.String = $.extend($.String, {
         byteLen: function(target) {
             /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插
              *入数据库 char、varchar、text 类型的字段时占用一个字节，而一个中文字符插入
@@ -13,10 +13,7 @@
             //转换为下划线风格
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/\-/g, "_").toLowerCase();
         },
-        capitalize: function(target) {
-            //首字母大写
-            return target.charAt(0).toUpperCase() + target.substring(1).toLowerCase();
-        },
+        capitalize: $.capitalize,
         stripTags: function(target) {
             //移除字符串中的html标签，但这方法有缺陷，如里面有script标签，会把这些不该显示出来的脚本也显示出来了
             return target.replace(/<[^>]+>/g, "");
@@ -51,7 +48,7 @@
             }
             return num;
         }
-    };
+    });
     //字符串的原生原型方法
     ("charAt,charCodeAt,concat,indexOf,lastIndexOf,localeCompare,match," + "contains,endsWith,startsWith,repeat," + //es6
         "replace,search,slice,split,substring,toLowerCase,toLocaleLowerCase,toUpperCase,trim,toJSON").replace($.rword, function(name) {

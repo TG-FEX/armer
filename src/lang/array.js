@@ -1,5 +1,5 @@
 ;(function($){
-    $.Array = {
+    $.Array = $.extend($.Array, {
         contains: function(target, item) {
             //判定数组是否包含指定目标。
             return !!~target.indexOf(item);
@@ -167,7 +167,7 @@
             }
             return groups;
         }
-    };
+    });
     ("concat,join,pop,push,shift,slice,sort,reverse,splice,unshift," + "indexOf,lastIndexOf,every,some,filter,reduce,reduceRight").replace($.rword, function(name) {
         $.Array[name] = function(obj) {
             return obj[name].apply(obj, $.slice(arguments, 1));

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.5b - 2014-09-16 
+ * armerjs - v0.6.5b - 2014-09-19 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10312,11 +10312,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.6.5b - 2014-09-16 
+ * armerjs - v0.6.5b - 2014-09-19 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.5b - 2014-09-16 
+ * armerjs - v0.6.5b - 2014-09-19 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11073,16 +11073,16 @@ armer = window.jQuery || window.Zepto;
      * @constructor
      */
     $.URL = function(url, parent){
-        var URL = arguments.callee;
+        var callee = arguments.callee;
         // 先将parent路径转行为绝对路径
-        parent = parent ? URL.absolutize(parent) : null;
-        if (!(this instanceof URL)) return new URL(url, parent);
+        if (!(this instanceof callee)) return new callee(url, parent);
         // 分析url
-        this.init(url, parent);
+        this._init(url, parent);
     };
     $.URL.prototype = {
         constructor: $.URL,
-        init: function(path, parent){
+        _init: function(path, parent){
+            parent = parent ? this.constructor.absolutize(parent) : null;
             //alert(basePath);
             var self = this, tmp;
             // 获取 search
@@ -11157,7 +11157,10 @@ armer = window.jQuery || window.Zepto;
         },
         search: function(key, value){
             if (!key) return $.extend({}, this._search);
-            if ($.isPlainObject(key)) this._search = $.unserialize($.extend({}, this._search, key));
+            if ($.isPlainObject(key) || $.type(value) == 'boolean') {
+                if ($.type(key) == 'string') key = $.unserialize(key);
+                this._search = $.extend({}, value ? {} : this._search, key);
+            }
             if (value === undefined) return this._search[key];
             this._search[key] = value;
             return this;
@@ -11176,7 +11179,7 @@ armer = window.jQuery || window.Zepto;
          */
         port: function(value){
             if (!value) return this._port;
-            this._port = value.replace(':', '');
+            this._port = $.type(value) == 'number' ? value : value.replace(':', '');
             return this;
         },
         host: function(value){
@@ -11189,15 +11192,19 @@ armer = window.jQuery || window.Zepto;
             if (index == undefined) {
                 r = [].slice.call(this._hostname);
                 r.toString = this._hostname.toString;
-            } else {
-                if (typeof index == 'object') {
-                    for(var i = 0; i < index.length; i++) {
-                        this._hostname[i] = index[i] || this._hostname[i];
-                    }
-                } else {
-                    this._hostname[index] = value;
+            } else if ($.type(index) != 'number') {
+                if ($.type(index) != 'object') {
+                    index = index.split('.')
+                }
+                for(var i = 0; i < index.length; i++) {
+                    this._hostname[i] = index[i] || this._hostname[i];
                 }
                 r = this;
+            } else if (value) {
+                this._hostname[index] = value;
+                r = this
+            } else {
+                return this._hostname[index];
             }
             return r;
         },
@@ -11675,8 +11682,11 @@ armer = window.jQuery || window.Zepto;
         return modules.module.exports.resolve(url);
     };
     require.requesting = requesting;
-    global.require = require;
-    global.define = define;
+    require.register = define;
+    if (!window.require) window.require = require
+    if (!window.define) window.define = define
+    $.require = require;
+    $.define = define;
 
     // domready 插件
     defaults.plusin['domready'] = {
@@ -12314,7 +12324,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.6.5b - 2014-09-16 
+ * armerjs - v0.6.5b - 2014-09-19 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 ;(function($){
@@ -12955,7 +12965,7 @@ armer = window.jQuery || window.Zepto;
     });
 })(armer)
 ;(function($){
-    $.String = {
+    $.String = $.extend($.String, {
         byteLen: function(target) {
             /*取得一个字符串所有字节的长度。这是一个后端过来的方法，如果将一个英文字符插
              *入数据库 char、varchar、text 类型的字段时占用一个字节，而一个中文字符插入
@@ -12969,10 +12979,7 @@ armer = window.jQuery || window.Zepto;
             //转换为下划线风格
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1_$2").replace(/\-/g, "_").toLowerCase();
         },
-        capitalize: function(target) {
-            //首字母大写
-            return target.charAt(0).toUpperCase() + target.substring(1).toLowerCase();
-        },
+        capitalize: $.capitalize,
         stripTags: function(target) {
             //移除字符串中的html标签，但这方法有缺陷，如里面有script标签，会把这些不该显示出来的脚本也显示出来了
             return target.replace(/<[^>]+>/g, "");
@@ -13007,7 +13014,7 @@ armer = window.jQuery || window.Zepto;
             }
             return num;
         }
-    };
+    });
     //字符串的原生原型方法
     ("charAt,charCodeAt,concat,indexOf,lastIndexOf,localeCompare,match," + "contains,endsWith,startsWith,repeat," + //es6
         "replace,search,slice,split,substring,toLowerCase,toLocaleLowerCase,toUpperCase,trim,toJSON").replace($.rword, function(name) {
@@ -13047,9 +13054,10 @@ armer = window.jQuery || window.Zepto;
             $.extend(this, mix);
         }
     };
+    var OldObject = $.Object;
     $.Object.prototype = Object.prototype;
     $.Object.mix = $.extend;
-    $.Object.mix({
+    $.Object.mix(OldObject, {
         size: function(obj){
             return $.isArrayLike(obj) ? obj.length: Object.keys(obj).length;
         },
@@ -13140,7 +13148,7 @@ armer = window.jQuery || window.Zepto;
     });
 })(armer);
 ;(function($){
-    $.Array = {
+    $.Array = $.extend($.Array, {
         contains: function(target, item) {
             //判定数组是否包含指定目标。
             return !!~target.indexOf(item);
@@ -13308,7 +13316,7 @@ armer = window.jQuery || window.Zepto;
             }
             return groups;
         }
-    };
+    });
     ("concat,join,pop,push,shift,slice,sort,reverse,splice,unshift," + "indexOf,lastIndexOf,every,some,filter,reduce,reduceRight").replace($.rword, function(name) {
         $.Array[name] = function(obj) {
             return obj[name].apply(obj, $.slice(arguments, 1));
@@ -13456,7 +13464,7 @@ armer = window.jQuery || window.Zepto;
         return date.getHours() < 12 ? formats.AMPMS[0] : formats.AMPMS[1]
     }
 
-    $.Date = {
+    $.Date = $.extend($.Date, {
         locate: locate,
         /*
          'yyyy': 4 digit representation of year (e.g. AD 1 => 0001, AD 2010 => 2010)
@@ -13529,10 +13537,10 @@ armer = window.jQuery || window.Zepto;
             });
             return text
         }
-    };
+    });
 })(armer);
 ;(function($){
-    $.Function = {
+    $.Function = $.extend($.Function, {
         clone: function(fn, extend){
             var newfn = new Function('return ' + fn.toString())();
             if (newfn.prototype)
@@ -13588,11 +13596,11 @@ armer = window.jQuery || window.Zepto;
                 }
             };
         }
-    };
+    });
 })(armer);
 
 ;(function($){
-    $.Number = {
+    $.Number = $.extend($.Number, {
         limit: function(target, n1, n2) {
             //确保数值在[n1,n2]闭区间之内,如果超出限界,则置换为离它最近的最大值或最小值
             var a = [n1, n2].sort();
@@ -13617,7 +13625,7 @@ armer = window.jQuery || window.Zepto;
                 return Math.round(target);
             }
         }
-    };
+    });
     "abs,acos,asin,atan,atan2,ceil,cos,exp,floor,log,pow,sin,sqrt,tan".replace($.rword, function(name) {
         $.Number[name] = Math[name];
     });
@@ -17845,8 +17853,6 @@ if (window.define) {
 }
 
 // TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
-// 使用前，必须修改jQ一个bug，否则IE6不生效
-// 查找 dataType[0] === "+" 修改为 dataType.charAt(0) === "+"
 ;(function ($) {
     var DOC = document, script,
         HEAD = document.head || document.getElementsByTagName('head')[0];
@@ -19546,6 +19552,7 @@ $.fn.bgiframe = function(){
         trigger: fn.emit
     });
     $.EventEmitter = Emitter;
+    Emitter.mix = $.mix;
     Emitter.extend = $.factory;
 })();
 
@@ -19830,6 +19837,7 @@ $.fn.bgiframe = function(){
         }
 
         basePrototype = new base();
+        basePrototype.options = $.mixOptions( {}, basePrototype.options );
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {

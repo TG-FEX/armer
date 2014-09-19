@@ -1,9 +1,23 @@
+suite('core/main', function(){
+    suite('#type(target, [type])', function(){
+        test('target1', function(){
+            assert.equal($.type('', 'String'), true);
+        });
+        test('targetä¸ºæ•°å­—åº”è¯¥è¿”å›ž"Number"', function(){
+            assert.equal($.stringType(0), 'Number');
+        });
+        test('targetä¸ºå­—ç¬¦ä¸²åº”è¯¥è¿”å›ž"String"', function(){
+            assert.equal($.stringType(''), 'String');
+        });
+    });
+})
+
 test('isString',function(){
-    equal($.isString('aaa52'), true, 'ÊÇ×Ö·û´®')
+    equal($.isString('aaa52'), true, 'ï¿½ï¿½ï¿½Ö·ï¿½')
 })
 
 test('isNative',function(){
-    equal($.isNative('open',window), true, 'ÊÇ¹ÌÓÐ·½·¨')
+    equal($.isNative('open',window), true, 'ï¿½Ç¹ï¿½ï¿½Ð·ï¿½ï¿½ï¿½')
 })
 
 test('isEmptyObject',function(){
@@ -13,12 +27,12 @@ test('isEmptyObject',function(){
 test('filter',function(){
     equal($.filter([5,6,9,100,102],function(item,__){
         return item > 100;
-    }), [102], '¹ýÂËÊý×é')
+    }), [102], 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('format',function(){
-    equal($.format('aaa#{0}','bbb'), 'aaabbb', '×Ö·û´®²åÖµ')
-    equal($.format('hi,#{name},i am #{old}',{name:'tao',old:'23'}), 'hi,tao,i am 23', '×Ö·û´®²åÖµ')
+    equal($.format('aaa#{0}','bbb'), 'aaabbb', 'ï¿½Ö·ï¿½ï¿½Öµ')
+    equal($.format('hi,#{name},i am #{old}',{name:'tao',old:'23'}), 'hi,tao,i am 23', 'ï¿½Ö·ï¿½ï¿½Öµ')
 })
 
 test('dump',function(){
@@ -26,65 +40,65 @@ test('dump',function(){
 })
 
 test('parseBase64',function(){
-    equal($.parseBase64('10'), 'MTAA', '½«textÊý¾Ý×ª»»Îªbase64×Ö·û´®')
+    equal($.parseBase64('10'), 'MTAA', 'ï¿½ï¿½textï¿½ï¿½ï¿½×ªï¿½ï¿½Îªbase64ï¿½Ö·ï¿½')
 })
 
 test('unit',function(){
-    equal($.unit(55,'$'), '55$', 'ÎªÊý×Ö¼ÓÉÏµ¥Î»')
+    equal($.unit(55,'$'), '55$', 'Îªï¿½ï¿½ï¿½Ö¼ï¿½ï¿½Ïµï¿½Î»')
 })
 
 test('hyphen',function(){
-    equal($.hyphen('redApple'), 'red-apple', '×ª»»ÎªÁ¬×Ö·ûÏß·ç¸ñ')
+    equal($.hyphen('redApple'), 'red-apple', '×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Ö·ï¿½ï¿½ß·ï¿½ï¿½')
 })
 
 test('isEqual',function(){
-    //equal($.isEqual(0,-0), false, '±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ')
-    //equal($.isEqual([1,2,3],[1,2,3]), true, '±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ')
-    //equal($.isEqual([1,2,3],[1,2,4]), false, '±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ')
-    //equal($.isEqual({name: 'tao',old: '23'},{name: 'tao',old: '23'}), true, '±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ')
-    //equal($.isEqual({name: 'tao',old: '23'},{name: 'tao1',old: '24'}), false, '±È½ÏÁ½¸ö±äÁ¿ÊÇ·ñÏàµÈ')
+    //equal($.isEqual(0,-0), false, 'ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½')
+    //equal($.isEqual([1,2,3],[1,2,3]), true, 'ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½')
+    //equal($.isEqual([1,2,3],[1,2,4]), false, 'ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½')
+    //equal($.isEqual({name: 'tao',old: '23'},{name: 'tao',old: '23'}), true, 'ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½')
+    //equal($.isEqual({name: 'tao',old: '23'},{name: 'tao1',old: '24'}), false, 'ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('byteLen',function(){
-    equal($.String.byteLen('88·¢'), 4, 'È¡µÃÒ»¸ö×Ö·û´®ËùÓÐ×Ö½ÚµÄ³¤¶È')
-    equal($.String.byteLen('88,·¢'), 5, 'È¡µÃÒ»¸ö×Ö·û´®ËùÓÐ×Ö½ÚµÄ³¤¶È')
-    equal($.String.byteLen('88£¬·¢'), 6, 'È¡µÃÒ»¸ö×Ö·û´®ËùÓÐ×Ö½ÚµÄ³¤¶È')
+    equal($.String.byteLen('88ï¿½ï¿½'), 4, 'È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ÚµÄ³ï¿½ï¿½ï¿½')
+    equal($.String.byteLen('88,ï¿½ï¿½'), 5, 'È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ÚµÄ³ï¿½ï¿½ï¿½')
+    equal($.String.byteLen('88ï¿½ï¿½ï¿½ï¿½'), 6, 'È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ÚµÄ³ï¿½ï¿½ï¿½')
 })
 
 test('underScored',function(){
-    equal($.String.underscored('redApple'), 'red_apple', '×ª»»ÎªÏÂ»®Ïß·ç¸ñ')
-    equal($.String.underscored('red-apple'), 'red_apple', '×ª»»ÎªÏÂ»®Ïß·ç¸ñ')
+    equal($.String.underscored('redApple'), 'red_apple', '×ªï¿½ï¿½Îªï¿½Â»ï¿½ï¿½ß·ï¿½ï¿½')
+    equal($.String.underscored('red-apple'), 'red_apple', '×ªï¿½ï¿½Îªï¿½Â»ï¿½ï¿½ß·ï¿½ï¿½')
 })
 
 test('capitalize',function(){
-    equal($.String.capitalize('capitalize'), 'Capitalize', 'Ê××ÖÄ¸´óÐ´')
+    equal($.String.capitalize('capitalize'), 'Capitalize', 'ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½Ð´')
 })
 
 test('stripTags',function(){
-    equal($.String.stripTags('<p class="test">it is a test!</p>'), 'it is a test!', 'ÒÆ³ý×Ö·û´®ÖÐµÄhtml±êÇ©')
-    equal($.String.stripTags('<script>alert(1)</script>'), 'alert(1)', 'ÒÆ³ý×Ö·û´®ÖÐµÄhtml±êÇ©')
-    equal($.String.stripTags('<p class="test"><a href="">test</a><script>alert(1)</script></p>'), 'testalert(1)', 'ÒÆ³ý×Ö·û´®ÖÐµÄhtml±êÇ©')
+    equal($.String.stripTags('<p class="test">it is a test!</p>'), 'it is a test!', 'ï¿½Æ³ï¿½ï¿½Ö·ï¿½ï¿½Ðµï¿½htmlï¿½ï¿½Ç©')
+    equal($.String.stripTags('<script>alert(1)</script>'), 'alert(1)', 'ï¿½Æ³ï¿½ï¿½Ö·ï¿½ï¿½Ðµï¿½htmlï¿½ï¿½Ç©')
+    equal($.String.stripTags('<p class="test"><a href="">test</a><script>alert(1)</script></p>'), 'testalert(1)', 'ï¿½Æ³ï¿½ï¿½Ö·ï¿½ï¿½Ðµï¿½htmlï¿½ï¿½Ç©')
 })
 
 test('stripScripts',function(){
-    equal($.String.stripScripts('<script>alert(1)</script>'), '','ÒÆ³ý×Ö·û´®ÖÐËùÓÐµÄ script ±êÇ©')
-    equal($.String.stripScripts('<p class="test"><a href="">test</a><script>alert(1)</script></p>'), '<p class="test"><a href="">test</a></p>','ÒÆ³ý×Ö·û´®ÖÐËùÓÐµÄ script ±êÇ©')
+    equal($.String.stripScripts('<script>alert(1)</script>'), '','ï¿½Æ³ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ script ï¿½ï¿½Ç©')
+    equal($.String.stripScripts('<p class="test"><a href="">test</a><script>alert(1)</script></p>'), '<p class="test"><a href="">test</a></p>','ï¿½Æ³ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ script ï¿½ï¿½Ç©')
 })
 
 test('unescapeHTML',function(){
-    equal($.String.unescapeHTML('&lt;p class=&quot;test&quot;&gt;Ç°ÃæÊÇ×¢ÊÍ&#42;&lt;/p&gt;'), '<p class="test">Ç°ÃæÊÇ×¢ÊÍ*</p>', '»¹Ô­Îª¿É±»ÎÄµµ½âÎöµÄHTML±êÇ©')
+    equal($.String.unescapeHTML('&lt;p class=&quot;test&quot;&gt;Ç°ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½&#42;&lt;/p&gt;'), '<p class="test">Ç°ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½*</p>', 'ï¿½ï¿½Ô­Îªï¿½É±ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HTMLï¿½ï¿½Ç©')
 })
 
 test('escapeRegExp',function(){
-    //equal($.String.escapeRegExp('^[a-z]{0,2}u$'), '', '½«×Ö·û´®°²È«¸ñÊ½»¯ÎªÕýÔò±í´ïÊ½µÄÔ´Âë')
+    //equal($.String.escapeRegExp('^[a-z]{0,2}u$'), '', 'ï¿½ï¿½ï¿½Ö·ï¿½È«ï¿½ï¿½Ê½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ô´ï¿½ï¿½')
 })
 
 test('pad',function(){
-    equal($.String.pad(40,4), '0040', 'ÔÚ×ó±ß²¹Áã')
-    equal($.String.pad(40,4,'xx'), 'xx40', 'ÔÚ×ó±ß²¹xx')
-    equal($.String.pad(40,4,0,true), '4000', 'ÔÚÓÒ±ß²¹Áã')
-    equal($.String.pad(40,4,'xx',true), '40xx', 'ÔÚÓÒ±ß²¹xx')
-    equal($.String.pad(40,4,'xx',true,16), '28xx', 'ÏÈ×ªÎªÊ®Áù½øÖÆ£¬ÔÙÔÚÓÒ±ß²¹xx')
+    equal($.String.pad(40,4), '0040', 'ï¿½ï¿½ï¿½ï¿½ß²ï¿½ï¿½ï¿½')
+    equal($.String.pad(40,4,'xx'), 'xx40', 'ï¿½ï¿½ï¿½ï¿½ß²ï¿½xx')
+    equal($.String.pad(40,4,0,true), '4000', 'ï¿½ï¿½ï¿½Ò±ß²ï¿½ï¿½ï¿½')
+    equal($.String.pad(40,4,'xx',true), '40xx', 'ï¿½ï¿½ï¿½Ò±ß²ï¿½xx')
+    equal($.String.pad(40,4,'xx',true,16), '28xx', 'ï¿½ï¿½×ªÎªÊ®ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ß²ï¿½xx')
 
 })
 
@@ -93,73 +107,73 @@ test('contains',function(){
 })
 
 test('flatten',function(){
-    equal($.Array.flatten(['level1',[['level2a'],['level2b',['level3a']]],[3],[4]]),['level1','level2a','level2b','level3a',3,4], '¶ÔÊý×é½øÐÐÆ½Ì¹»¯´¦Àí')
+    equal($.Array.flatten(['level1',[['level2a'],['level2b',['level3a']]],[3],[4]]),['level1','level2a','level2b','level3a',3,4], 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('compact',function(){
-    equal($.Array.compact([null,'',,4]), ["", 4], 'È¥³ýÊý×éÖÐµÄundefinedºÍnull')
+    equal($.Array.compact([null,'',,4]), ["", 4], 'È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½undefinedï¿½ï¿½null')
 })
 
 test('unique',function(){
-    equal($.Array.unique([1,5,1,3,1,3,1]), [5,3,1], 'È¥³ýÈ¨ÖØ´óÓÚ1µÄ')
+    equal($.Array.unique([1,5,1,3,1,3,1]), [5,3,1], 'È¥ï¿½ï¿½È¨ï¿½Ø´ï¿½ï¿½ï¿½1ï¿½ï¿½')
 })
 
 test('merge',function(){
-    equal($.Array.merge([1,2], ['a','b']),[1,2,'a','b'], 'ºÏ²¢Êý×é')
-    equal($.Array.merge([1,2,[3,4]],['a','b',['c','d']]), [1,2,[3,4],'a','b',['c','d']], 'ºÏ²¢Êý×é')
+    equal($.Array.merge([1,2], ['a','b']),[1,2,'a','b'], 'ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½')
+    equal($.Array.merge([1,2,[3,4]],['a','b',['c','d']]), [1,2,[3,4],'a','b',['c','d']], 'ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('union',function(){
-    equal($.Array.union([1,2,3],[1,3,5]), [2,1,3,5], '¶ÔÁ½¸öÊý×éÈ¡²¢¼¯')
+    equal($.Array.union([1,2,3],[1,3,5]), [2,1,3,5], 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('intersect',function(){
-    equal($.Array.intersect([1],[1,3]),[1],'¶ÔÁ½¸öÊý×éÈ¡½»¼¯')
-    equal($.Array.intersect([1,2,3],[1,3]),[1,3],'¶ÔÁ½¸öÊý×éÈ¡½»¼¯')
+    equal($.Array.intersect([1],[1,3]),[1],'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½')
+    equal($.Array.intersect([1,2,3],[1,3]),[1,3],'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('diff',function(){
-    equal($.Array.diff([1,2,3],[4,5,6]),[1,2,3],'¶ÔÁ½¸öÊý×éÈ¡²î¼¯(²¹¼¯)')
+    equal($.Array.diff([1,2,3],[4,5,6]),[1,2,3],'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½î¼¯(ï¿½ï¿½ï¿½ï¿½)')
 })
 
 test('min',function(){
-    equal($.Array.min([1,2,3]),1,'·µ»ØÊý×éÖÐµÄ×îÐ¡Öµ')
+    equal($.Array.min([1,2,3]),1,'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ð¡Öµ')
 })
 
 test('max',function(){
-    equal($.Array.max([1,2,3]),3,'·µ»ØÊý×éÖÐµÄ×î´óÖµ')
+    equal($.Array.max([1,2,3]),3,'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½Öµ')
 })
 
 test('clone',function(){
-    //equal($.Array.clone([1,2,[5,6,[7,8,9]]]),[1,2,[5,6,[7,8,9]]],'Éî¿½±´µ±Ç°Êý×é')
+    //equal($.Array.clone([1,2,[5,6,[7,8,9]]]),[1,2,[5,6,[7,8,9]]],'ï¿½î¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('inGroupsOf',function(){
-    //equal($.Array.inGroupsOf([1,2,3,4,5],2,'fill'),[[1,2],[3,4],[5,'fill']],'½«Êý×é»®·Ö³ÉN¸ö·Ö×é')
+    //equal($.Array.inGroupsOf([1,2,3,4,5],2,'fill'),[[1,2],[3,4],[5,'fill']],'ï¿½ï¿½ï¿½ï¿½ï¿½é»®ï¿½Ö³ï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('subset',function(){
-    deepEqual($.Object.subset({one:1,two:2,three:3}, ['one', 'three']), {one:1, three:3}, '¸ù¾Ý´«ÈëÊý×éÈ¡µ±Ç°¶ÔÏóÏà¹ØµÄ¼üÖµ¶Ô×é³ÉÒ»¸öÐÂ¶ÔÏó·µ»Ø')
+    deepEqual($.Object.subset({one:1,two:2,three:3}, ['one', 'three']), {one:1, three:3}, 'ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¼ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ó·µ»ï¿½')
 })
 
 test('forEach',function(){
-    //deepEqual($.Object.forEach({one:1,two:2,three:3},function(val,key){var resule = [];if (val < 3) {return resule.push(val);}}), [1,2], '½«²ÎÊýÒ»µÄ¼üÖµ¶¼·ÅÈë»Øµ÷ÖÐÖ´ÐÐ£¬Èç¹û»Øµ÷·µ»ØfalseÖÐÖ¹±éÀú')
+    //deepEqual($.Object.forEach({one:1,two:2,three:3},function(val,key){var resule = [];if (val < 3) {return resule.push(val);}}), [1,2], 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ä¼ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½Ö´ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½falseï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½')
 })
 
 test('merge',function(){
-    deepEqual($.Object.merge({no:1,name:'tao'},'sex','men'), {no:1,name:'tao',sex:'men'}, '½«ºóÁ½¸ö²ÎÊýµ±×÷¼üÓëÖµ¼ÓÈëµ½µÚÒ»¸ö²ÎÊý¶ÔÏóÖÐ')
-    deepEqual($.Object.merge({no:1,name:'tao'},{sex:'men',father:'lisi'}), {no:1,name:'tao',sex:'men',father:'lisi'}, '½«¶à¸ö¶ÔÏóºÏ²¢µ½µÚÒ»¸ö¶ÔÏóÖÐ')
+    deepEqual($.Object.merge({no:1,name:'tao'},'sex','men'), {no:1,name:'tao',sex:'men'}, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ëµ½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
+    deepEqual($.Object.merge({no:1,name:'tao'},{sex:'men',father:'lisi'}), {no:1,name:'tao',sex:'men',father:'lisi'}, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½')
 })
 
 /*
 test('date',function(){
-    deepEqual($.Date.format(new Date('2014-1-24'),'fullDate'), '2014Äê1ÔÂ24ÈÕ0000', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'medium'), '2014-1-24 00:00:00', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'mediumDate'), '2014-1-24', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'mediumTime'), '00:00:00', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'short'), '14-1-24 00:00:00', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'longDate'), '2014Äê1ÔÂ24ÈÕ', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'shortDate'), '14-1ÔÂ-ÈÕ', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
-    deepEqual($.Date.format(new Date('2014-1-24'),'shortTime'), '00:00', '°ÑÈÕÆÚ¶ÔÏó×ª»»ÎªËùÐè¸ñÊ½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'fullDate'), '2014ï¿½ï¿½1ï¿½ï¿½24ï¿½ï¿½0000', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'medium'), '2014-1-24 00:00:00', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'mediumDate'), '2014-1-24', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'mediumTime'), '00:00:00', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'short'), '14-1-24 00:00:00', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'longDate'), '2014ï¿½ï¿½1ï¿½ï¿½24ï¿½ï¿½', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'shortDate'), '14-1ï¿½ï¿½-ï¿½ï¿½', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
+    deepEqual($.Date.format(new Date('2014-1-24'),'shortTime'), '00:00', 'ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ê½')
 })
 */

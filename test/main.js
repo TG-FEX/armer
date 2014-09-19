@@ -1,3 +1,6 @@
+function ok(expr, msg) {
+    if (!expr) throw new Error(msg);
+}
 test('stringType', function(){
     equal($.stringType(''), 'String',  '测试字符串')
     ok($.stringType('', 'string'), '测试字符串')

@@ -1,6 +1,6 @@
 // TODO(wuhf): URL解释器
 // ========================================================
-(function($){
+;(function($){
     // url解释规范
     // 参考RFC3986 http://tools.ietf.org/html/rfc3986
     var rHash = /#[^#?]*/;

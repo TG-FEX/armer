@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.5b - 2014-09-05 
+ * armerjs - v0.6.5b - 2014-09-16 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -703,7 +703,7 @@ armer = window.jQuery || window.Zepto;
 
 // TODO(wuhf): URL解释器
 // ========================================================
-(function($){
+;(function($){
     // url解释规范
     // 参考RFC3986 http://tools.ietf.org/html/rfc3986
     var rHash = /#[^#?]*/;
@@ -961,7 +961,7 @@ armer = window.jQuery || window.Zepto;
 
 // TODO(wuhf): AMD/CMD加载器
 // ========================================================
-(function ($, global) {
+;(function ($, global) {
 
     var modules = {
         'armer': {

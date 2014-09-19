@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     function cloneOf(item) {
         var name = $.type(item);
         switch (name) {

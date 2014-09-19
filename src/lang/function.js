@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     $.Function = {
         clone: function(fn, extend){
             var newfn = new Function('return ' + fn.toString())();

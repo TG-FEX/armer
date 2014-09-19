@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     $.Array = {
         contains: function(target, item) {
             //判定数组是否包含指定目标。

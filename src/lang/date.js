@@ -1,4 +1,4 @@
-(function($){
+;(function($){
     var DATE_FORMATS = {
         yyyy: dateGetter('FullYear', 4),
         yy: dateGetter('FullYear', 2, 0, true),

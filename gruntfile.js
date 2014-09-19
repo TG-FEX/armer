@@ -24,9 +24,13 @@ module.exports = function(grunt) {
         },
         'lang': {
             src: [
-                'src/core/main.js',
-                'src/core/url.js',
-                'src/core/define.js'
+                'src/lang/main.js',
+                'src/lang/string.js',
+                'src/lang/object.js',
+                'src/lang/array.js',
+                'src/lang/date.js',
+                'src/lang/function.js',
+                'src/lang/number.js',
             ],
             dest: 'tmp/lang.js'
         },
@@ -34,12 +38,13 @@ module.exports = function(grunt) {
             src: [
                 'dist/armer.core.js',
                 'src/polyfill.js',
-                'src/mvvm.js',
                 'tmp/lang.js',
+                'src/mvvm.js',
                 'src/io.js',
                 'src/css.js',
                 'src/effects.js',
                 'src/event.js',
+                'src/factory.js',
                 'src/util.js',
                 'src/ui.js',
                 'src/ui/modal.js'
@@ -56,17 +61,8 @@ module.exports = function(grunt) {
              */
             src: [
                 'bower_components/jquery/dist/jquery.js',
-                'dist/armer.core.js',
-                'src/polyfill.js',
-                'src/mvvm.js',
-                'tmp/lang.js',
-                'src/io.js',
-                'src/css.js',
-                'src/effects.js',
-                'src/event.js',
-                'src/util.js',
-                'src/ui.js',
-                'src/ui/modal.js'
+                'dist/armer.js',
+
             ],
             dest: 'dist/jqarmer.js'
         },

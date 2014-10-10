@@ -38,7 +38,7 @@
                 };
             else
                 this._content = content;
-            this.element = $('<div class="modal" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
+            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
         },
         /**
          * 初始化方法
@@ -50,7 +50,8 @@
             if (typeof this._content == "function") {
                 return this._content().done(function($elem){
                     self._content = this;
-                    self.element.append($elem.show()).appendTo('body');
+                    self.container.append($elem.show()).appendTo('body');
+                    self.element = $elem;
                 })
             } else return this._content
         },
@@ -71,7 +72,7 @@
                 var b = !!item.lastOpen.showBackdrop;
                 has = b || has;
                 if (b) thisZindex = s || thisZindex;
-                item.element.css('zIndex', s);
+                item.container.css('zIndex', s);
             })
             if ($backdrop){
                 if (!has)
@@ -83,7 +84,7 @@
             var list = this.options.queue, self = this, index, position;
             if (list.indexOf(self) >= 0) return $.when();
             this.lastOpen = openOptions;
-            self.element.on('focus.ui.dialog', function(e){
+            self.container.on('focus.ui.dialog', function(e){
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
@@ -96,15 +97,15 @@
             list.push(self);
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
-            self.element.finish().position(position);
-            return animate(self.element, openOptions.animate).promise().done(function(){
+            self.container.finish().position(position);
+            return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
         },
         _close: function(returnValue, closeOptions){
             var self = this;
-            self.element.off('focus.dialog');
-            return animate(this.element.finish(), closeOptions.animate).promise().done(function(){
+            self.container.off('focus.dialog');
+            return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
                 self.trigger('closed.ui.dialog', [returnValue]);
@@ -117,8 +118,8 @@
          */
         toggle: function(){
             var list = this.options.queue;
-            if (!(list.indexOf(this) >= 0)) this.trigger('close');
-            else this.trigger('open');
+            if (!(list.indexOf(this) >= 0)) this.open.apply(this, arguments);
+            else this.close.apply(this, arguments);
         },
         /**
          * 关闭弹出框
@@ -140,7 +141,7 @@
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
                 if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].element.trigger('focus.ui.dialog');
+                list.length && list[list.length - 1].container.trigger('focus.ui.dialog');
             }
             return ret
         },
@@ -174,13 +175,13 @@
                     ret.resolve();
                 });
                 self.trigger('focus.ui.dialog');
-                //self.element[0].focus();
+                //self.container[0].focus();
             });
             return ret
         }
     }).mix({
         event: {
-        OPEN: 'open',
+            OPEN: 'open',
             OPENED: 'opened',
             CLOSE: 'close',
             CLOSED: 'closed',
@@ -231,6 +232,7 @@
             !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
         },
         defaults: {
+            dialogClass: 'dialog',
             queue: [],
             attach: $(window),
             zIndex: {
@@ -269,8 +271,10 @@
 
 
     $.UI.Dialog = Dialog;
-    $.UI.Modal = $.Function.clone(Dialog);
+
+    $.UI.Modal = Dialog.extend('modal');
     $.UI.Modal.defaults = {
+        dialogClass: 'modal',
         queue: [],
         attach: $(window),
         backdrop: $('<div class="backdrop" style="display: none;"></div>'),
@@ -318,34 +322,5 @@
         oninit: $.noop,
         onfocus: $.noop
     }
-
-
-    $.fn.dialog = function(command) {
-        var $this = this[0], dialog, callee = arguments.callee;
-        var constructor = callee.UIConstructor
-        // 判断是否有这个方法
-        if ($.type(command) != 'string' && !constructor.prototype[command]) {
-            command = null;
-        } else
-            [].shift.call(arguments);
-        dialog = $.data(self, 'ui-dialog');
-        if (!dialog) {
-            //如果命令为空，那么拼接参数
-            if (!command) {
-                [].unshift.call(arguments, $this);
-                dialog = constructor.apply($.UI, arguments);
-            } else {
-                dialog = constructor($this);
-            }
-            $.data(self, 'ui-dialog', dialog);
-            if (!command) return this;
-        } else if (!command) return dialog;
-
-        return dialog[command].apply(dialog, arguments);
-    }
-
-    $.fn.dialog.UIConstructor = $.UI.Dialog;
-    $.fn.modal = $.Function.clone($.fn.dialog);
-    $.fn.modal.UIConstructor = $.UI.Modal;
 
 })(jQuery);

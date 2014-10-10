@@ -7,7 +7,8 @@ $.UI = $.EventEmitter.extend({
 $.UI.extend = function(name, base, prototype){
     var tmp = name.split('.'), namespace, fullName, existingConstructor, construtor, construtorName, basePrototype;
     fullName = name = tmp.pop();
-    namespace = tmp[0];
+    namespace = tmp[0],
+    construtor;
 
     if (!$.isFunction(base)) {
         prototype = base;
@@ -25,7 +26,35 @@ $.UI.extend = function(name, base, prototype){
     $.expr[':'][fullName.toLowerCase()] = function(elem){
         return !!$.data(elem, fullName);
     };
-    return tmp[construtorName] = $.factory(prototype, base);
+
+    prototype = prototype || {};
+
+    construtor = tmp[construtorName] = $.factory(prototype, base);
+    construtor.mix(base);
+
+    $.fn[name] = function(command) {
+        var self = this[0], ui, callee = arguments.callee, $this = $(this[0]);
+        var constructor = construtor, args = arguments
+        // 判断是否有这个方法
+        if ($.type(command) != 'string' && !constructor.prototype[command]) {
+            command = null;
+        } else
+            [].shift.call(args);
+        ui = $.data(self, fullName);
+        if (!ui) {
+            //如果命令为空，那么拼接参数
+            if (command)
+                args = [$this];
+            else
+                [].unshift.call(args, $this);
+            ui = constructor.apply($.UI, args)
+            $.data(self, fullName, ui);
+            if (!command) return this;
+        } else if (!command) return ui;
+        return ui[command].apply(ui, arguments);
+    }
+
+    return construtor;
 };
 
 

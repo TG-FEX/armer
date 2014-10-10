@@ -9,7 +9,7 @@
                 var callee = arguments.callee, prototype = callee.prototype;
                 if (!(this instanceof callee)) {return new callee(a, b, c, d, e, f)}
                 this.constructor = callee;
-                if ($.hasOwn(prototype, '_init') || $.hasOwn(this, '_init')) {
+                if (this._init) {
                     this._init(a, b, c, d, e, f);
                 }
             };

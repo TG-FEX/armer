@@ -100,7 +100,8 @@
             return obj;
         },
         mixOptions: function( target ) {
-            var input = $.slice( arguments, 1 ),
+            var callee = arguments.callee,
+                input = $.slice( arguments, 1 ),
                 inputIndex = 0,
                 inputLength = input.length,
                 key,
@@ -112,9 +113,9 @@
                         // Clone objects
                         if ( $.isPlainObject( value ) ) {
                             target[ key ] = $.isPlainObject( target[ key ] ) ?
-                                $.widget.extend( {}, target[ key ], value ) :
+                                callee.call(this, {}, target[ key ], value ) :
                                 // Don't extend strings, arrays, etc. with objects
-                                $.widget.extend( {}, value );
+                                callee.call(this, {}, value );
                             // Copy everything else by reference
                         } else {
                             target[ key ] = value;

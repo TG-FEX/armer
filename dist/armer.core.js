@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.5b - 2014-09-19 
+ * armerjs - v0.6.5b - 2014-10-08 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -222,18 +222,21 @@ armer = window.jQuery || window.Zepto;
              * @method armer.serializeNodes
              * @static
              * @param obj {string|jQuery|NodeList|Element} 需要序列化的元素
-             * @param [join] {string|function} 序列化同名元素的分隔符或者合并方法
+             * @param [join] {string|function} 序列化同名元素的分隔符或者合并方法，默认返回元素的值或者多个值情况的数组
              * @param [ignoreAttrChecked=false] 是否忽略checked属性
              * @returns {{}}
              */
-            serializeNodes: function(obj, join, ignoreAttrChecked){
-                if (!$.isArrayLike(obj))
-                    obj = $(obj).find('input,select,textarea').andSelf();
+            serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected){
+                obj = $(obj).find('input,option,textarea').andSelf();
                 var result = {}, separator;
                 if (typeof join == 'string') {
                     separator = join;
                     join = function(a){
                         return a.join(separator)
+                    }
+                } else if (join == null) {
+                    join = function(a){
+                        return a.length > 1 ? a : a[0];
                     }
                 }
                 for (var i = 0; i <= obj.length; i++) {
@@ -241,7 +244,10 @@ armer = window.jQuery || window.Zepto;
                         continue
                     // 不允许一般数组
                     result[obj[i].name] = result[obj[i].name] || [];
-                    if (ignoreAttrChecked || (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked)) {
+                    if (ignoreAttrCheckedOrSelected ||
+                        (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked) ||
+                        (obj[i].tagName == 'OPTION' && obj[i].selected)
+                        ) {
                         result[obj[i].name].push(obj[i].value);
                     }
                 }
@@ -270,42 +276,55 @@ armer = window.jQuery || window.Zepto;
                     else if ('object' != typeof value) return value;
                     else return JSON.stringify(value);
                 }
-
-                function buildParams(i, value, arrSeparator, add, encode) {
-                    arrSeparator = arrSeparator || ','
-                    var s = [], k;
+                function buildParams(i, value, assignment, add) {
+                    var k;
                     if ($.isArray(value)) {
                         $.each(value, function(i, value) {
                             k = assume(value);
-                            if (k !== void 0) s.push(encode ? encodeURIComponent(k) : k);
+                            if (k !== void 0) add(i + '[]', k, assignment);
                         });
-                        add(i, s.join(arrSeparator));
                     } else if ($.isPlainObject(value)) {
                         var k = assume(value);
-                        if (k !== void 0) add(i, encode ? encodeURIComponent(k) : k);
+                        if (k !== void 0) add(i, k, assignment);
                     } else if ($.isFunction(value)){
                         return;
                     } else if ('object' != typeof value) {
-                        add(i, value);
+                        value = value == null ? '' : value;
+                        add(i, value, assignment);
                     }
                 }
 
-                return function(obj, separator, assignment, arrSeparator, encode){
-                    separator = separator || '&';
-                    assignment = assignment || '=';
-                    arrSeparator = arrSeparator || ',';
-                    encode = encode == undefined ? true : encode;
-                    var s = [],
-                        add = function(key, value){
-                            value = value == null ? '' : value;
-                            s.push(key + assignment + value)
-                        };
+                return function(obj, separator, assignment, join, encode){
                     if (typeof obj == 'string' && obj == '' || obj == null) return '';
                     else if ($.isArrayLike(obj)) {
-                        return arguments.callee.call(this, $.serializeNodes(obj, separator), separator, assignment);
+                        return arguments.callee.call(this, $.serializeNodes(obj, false), separator, assignment, join, encode);
                     } else if ('object' == typeof obj) {
+                        separator = separator || '&';
+                        assignment = assignment || '=';
+                        if (join == null) {
+                            join = ',';
+                        }
+                        encode = encode == undefined ? true : encode;
+                        var s = [],
+                            arrSeparator,
+                            add = function(key, value, assignment){
+                                s.push(key + assignment + (encode ? encodeURI(value) : value))
+                            },
+                            resource = $.extend({}, obj);
+                        if (typeof join == 'string') {
+                            arrSeparator = join;
+                            join = function(a){
+                                return a.join(arrSeparator);
+                            }
+                        }
+                        if (typeof join == 'function') {
+                            for (var i in resource) {
+                                if ($.isArray(resource[i]))
+                                    resource[i] = join(resource[i]);
+                            }
+                        }
                         $.each(obj, function(i, value){
-                            buildParams(i, value, arrSeparator, add, encode);
+                            buildParams(i, value, assignment, add);
                         })
                     } else {
                         throw new TypeError;
@@ -323,7 +342,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {Object|Array}
              */
             unserialize: function () {
-                var r = /[\n\r\s]/g
+                var r = /[\n\r\s]/g;
                 function assume (value){
                     if (value.indexOf('{') == 0) {
                         // 预测是对象或者数组
@@ -331,10 +350,12 @@ armer = window.jQuery || window.Zepto;
                     } else if (value == '') {
                         //为空
                         return null
-                    }/* else if (!isNaN(Number(value).valueOf())) {
+                    /*
+                    } else if (!isNaN(Number(value).valueOf())) {
                         //数字
                         return Number(value).valueOf();
-                    }*/ else if (value == 'true') {
+                    */
+                    } else if (value == 'true') {
                         return true
                     } else if (value == 'false') {
                         return false
@@ -346,11 +367,21 @@ armer = window.jQuery || window.Zepto;
                         }
                     }
                 }
-                return function(str, separator, assignment, arrSeparator){
+                function add(result, key, value) {
+                    if (!(key in result))
+                        result[key] = value;
+                    else {
+                        if (!$.isArray(result[key]))
+                            result[key] = [result[key]];
+                        result[key].push(value);
+                    }
+
+                }
+                return function(str, separator, assignment, spliter){
                     if (str == '' || str == null) return {};
                     separator = separator || '&';
                     assignment = assignment || '=';
-                    arrSeparator = arrSeparator || ',';
+                    spliter = spliter || ',';
                     str = str.replace(r, '');
                     var group = str.split(separator),
                         result = {};
@@ -358,16 +389,21 @@ armer = window.jQuery || window.Zepto;
                         var splits = str.split(assignment),
                             key = splits[0],
                             value = splits[1];
-                        var aSplits, aResult = [];
+                        var m = key.match(/(.*)\[\]$/);
+
+                        if (m) {
+                            key = m[1];
+                            result[key] = result[key] || [];
+                        }
+
                         if (!value) return;
-                        else if (value.indexOf(arrSeparator) > -1) {
-                            aSplits = value.split(arrSeparator);
-                            $.each(aSplits, function(__, value){
-                                aResult.push(assume(value));
+                        else if (value.indexOf(spliter) > -1) {
+                            result[key] = result[key] || [];
+                            $.each(value.split(spliter), function(__, value){
+                                add(result, key, assume(value))
                             });
-                            result[key] = aResult;
                         } else {
-                            result[key] = assume(value);
+                            add(result, key, assume(value))
                         }
                     });
                     return result;
@@ -417,7 +453,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 if (type === "Object") {
                     var i = obj.length;
-                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && hasOwn.call(obj, '0'); //非负整数
+                    return typeof obj.callee == 'function' || obj.namedItem || (i >= 0) && (i % 1 === 0) && (hasOwn.call(obj, '0') || typeof obj.each == 'function' || typeof obj.forEach == 'function'); //非负整数
                 }
                 return false;
             },

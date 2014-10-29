@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.5b - 2014-10-08 
+ * armerjs - v0.6.6 - 2014-10-29 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -236,19 +236,21 @@ armer = window.jQuery || window.Zepto;
                     }
                 } else if (join == null) {
                     join = function(a){
-                        return a.length > 1 ? a : a[0];
+                        return (a.length > 1 ? a : a[0]) || '';
                     }
                 }
                 for (var i = 0; i <= obj.length; i++) {
-                    if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
+                    if ('object' != typeof obj[i] || !('value' in obj[i]))
                         continue
                     // 不允许一般数组
-                    result[obj[i].name] = result[obj[i].name] || [];
-                    if (ignoreAttrCheckedOrSelected ||
-                        (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked) ||
-                        (obj[i].tagName == 'OPTION' && obj[i].selected)
+                    var name = obj[i].name;
+                    if (obj[i].tagName == 'OPTION') name = $(obj[i]).closest('select').attr('name');
+                    if (!name) continue;
+                    result[name] = result[name] || [];
+                    if (ignoreAttrCheckedOrSelected  ||
+                        (obj[i].tagName != 'OPTION' && obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked || obj[i].selected)
                         ) {
-                        result[obj[i].name].push(obj[i].value);
+                        result[name].push(obj[i].value);
                     }
                 }
                 if (typeof join == 'function') {
@@ -279,7 +281,7 @@ armer = window.jQuery || window.Zepto;
                 function buildParams(i, value, assignment, add) {
                     var k;
                     if ($.isArray(value)) {
-                        $.each(value, function(i, value) {
+                        $.each(value, function(_, value) {
                             k = assume(value);
                             if (k !== void 0) add(i + '[]', k, assignment);
                         });
@@ -295,15 +297,15 @@ armer = window.jQuery || window.Zepto;
                 }
 
                 return function(obj, separator, assignment, join, encode){
+                    if (join == null) {
+                        join = ',';
+                    }
                     if (typeof obj == 'string' && obj == '' || obj == null) return '';
                     else if ($.isArrayLike(obj)) {
-                        return arguments.callee.call(this, $.serializeNodes(obj, false), separator, assignment, join, encode);
+                        return arguments.callee.call(this, $.serializeNodes(obj, join), separator, assignment, join, encode);
                     } else if ('object' == typeof obj) {
                         separator = separator || '&';
                         assignment = assignment || '=';
-                        if (join == null) {
-                            join = ',';
-                        }
                         encode = encode == undefined ? true : encode;
                         var s = [],
                             arrSeparator,

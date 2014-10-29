@@ -33,7 +33,7 @@ suite('lang/main', function(){
             })
         });
         test('随机测试', function(){
-            ok($.type({}, 'plainobject'))
+            ok($.type({}, 'plain-object'))
             ok($.type(window, 'window'))
             ok($.type(document, 'Document'))
             ok($.type(document, ['Document', 'object']))
@@ -42,15 +42,14 @@ suite('lang/main', function(){
             equal($.type(type.nodelist, 'number'), false)
             equal($.type(type.nodelist, 'string'), false)
             equal($.type(type.object, 'string'), false)
-            equal($.type(type.nodelist, 'plainobject'), false)
+            equal($.type(type.nodelist, 'plain-object'), false)
         });
         test('多类型测试', function(){
             ok($.type(type.nodelist, 'object nodelist'))
             ok($.type(type.array, 'object array'))
         })
         test('coincidence测试', function(){
-            equal($.type({}, 'plainobject, object', true), true)
-            equal($.type({}, 'plainobject, array', true), false)
+            equal($.type({}, 'plain-object, object'), true)
         })
 
     });

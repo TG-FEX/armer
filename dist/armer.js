@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.6.5b - 2014-10-08 
+ * armerjs - v0.6.6 - 2014-10-29 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.5b - 2014-10-08 
+ * armerjs - v0.6.6 - 2014-10-29 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -240,19 +240,21 @@ armer = window.jQuery || window.Zepto;
                     }
                 } else if (join == null) {
                     join = function(a){
-                        return a.length > 1 ? a : a[0];
+                        return (a.length > 1 ? a : a[0]) || '';
                     }
                 }
                 for (var i = 0; i <= obj.length; i++) {
-                    if ('object' != typeof obj[i] || !('value' in obj[i]) || !obj[i].name)
+                    if ('object' != typeof obj[i] || !('value' in obj[i]))
                         continue
                     // 不允许一般数组
-                    result[obj[i].name] = result[obj[i].name] || [];
-                    if (ignoreAttrCheckedOrSelected ||
-                        (obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked) ||
-                        (obj[i].tagName == 'OPTION' && obj[i].selected)
+                    var name = obj[i].name;
+                    if (obj[i].tagName == 'OPTION') name = $(obj[i]).closest('select').attr('name');
+                    if (!name) continue;
+                    result[name] = result[name] || [];
+                    if (ignoreAttrCheckedOrSelected  ||
+                        (obj[i].tagName != 'OPTION' && obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked || obj[i].selected)
                         ) {
-                        result[obj[i].name].push(obj[i].value);
+                        result[name].push(obj[i].value);
                     }
                 }
                 if (typeof join == 'function') {
@@ -283,7 +285,7 @@ armer = window.jQuery || window.Zepto;
                 function buildParams(i, value, assignment, add) {
                     var k;
                     if ($.isArray(value)) {
-                        $.each(value, function(i, value) {
+                        $.each(value, function(_, value) {
                             k = assume(value);
                             if (k !== void 0) add(i + '[]', k, assignment);
                         });
@@ -299,15 +301,15 @@ armer = window.jQuery || window.Zepto;
                 }
 
                 return function(obj, separator, assignment, join, encode){
+                    if (join == null) {
+                        join = ',';
+                    }
                     if (typeof obj == 'string' && obj == '' || obj == null) return '';
                     else if ($.isArrayLike(obj)) {
-                        return arguments.callee.call(this, $.serializeNodes(obj, false), separator, assignment, join, encode);
+                        return arguments.callee.call(this, $.serializeNodes(obj, join), separator, assignment, join, encode);
                     } else if ('object' == typeof obj) {
                         separator = separator || '&';
                         assignment = assignment || '=';
-                        if (join == null) {
-                            join = ',';
-                        }
                         encode = encode == undefined ? true : encode;
                         var s = [],
                             arrSeparator,
@@ -1437,6 +1439,7 @@ armer = window.jQuery || window.Zepto;
     var DONT_ENUM = $.DONT_ENUM,
         P = "prototype",
         hasOwn = ({}).hasOwnProperty;
+
     for (var i in {
         toString: 1
     }) {
@@ -1445,6 +1448,14 @@ armer = window.jQuery || window.Zepto;
     //IE8的Object.defineProperty只对DOM有效
     // 判断是否支持defineProperty
     var defineProperty = Object.defineProperty;
+
+    function isFunction(obj){
+        return 'function' === typeof obj;
+    }
+    function isArray(obj) {
+        return Object.prototype.toString.call(obj) === "[object Array]";
+    }
+
     try {
         defineProperty({}, 'a', {
             get: function() {
@@ -1802,15 +1813,8 @@ armer = window.jQuery || window.Zepto;
             },
             assign: $.extend
         });
-        window.Set = function(array){};
-        window.Set.prototype = {
-            size: function(){},
-            add: function(){},
-            "delete": function(){},
-            has: function(){},
-            clear: function(){}
-        }
     }
+
 
 
     //TODO: fix localStorage
@@ -1955,8 +1959,8 @@ armer = window.jQuery || window.Zepto;
                     data = $.trim( data );
                     if ( data ) {
                         if ( rvalidchars.test( data.replace( rvalidescape, "@" )
-                            .replace( rvalidtokens, "]" )
-                            .replace( rvalidbraces, "")) ) {
+                                .replace( rvalidtokens, "]" )
+                                .replace( rvalidbraces, "")) ) {
                             return ( new Function( "return " + data ) )();
                         }
                     }
@@ -1966,9 +1970,229 @@ armer = window.jQuery || window.Zepto;
         };
     }
 
+    //TODO polyfill Set Map
+    (function(support, golbal){
+        if (!support) return;
+
+        golbal.Map = function(array) {
+            var that = this;
+            this._keys = [];
+            this.length = this.size = 0;
+            array.forEach(function(item){
+                if (!isArray(item))
+                    throw Error('Iterator value ' + item.toString() + ' is not an entry object');
+                that['set'](item[0], item[1]);
+            })
+        }
+        golbal.Map.prototype = {
+            has: function(key){
+                return !!~this._keys.indexOf(key);
+            },
+            "set": function(key, value){
+                var index = this._keys.indexOf(key);
+                if (!~index) {
+                    this._keys.push(key);
+                    [].push.call(this, value);
+                } else {
+                    this[index] = value;
+                }
+                this.size = this.length;
+            },
+            "get": function(key){
+                var index = this._keys.indexOf(key);
+                return this[index];
+            },
+            "delete": function(key){
+                var index = this._keys.indexOf(key);
+                if (!~index) return false;
+                this._keys.splice(index, 1);
+                [].splice.call(this, index, 1);
+                this.size = this.length;
+                return true
+            },
+            clear: function(){
+                for (var i = this._keys.length - 1; i >= 0; i++) {
+                    delete this[i];
+                }
+                this.length = this.size = 0;
+                this._keys = [];
+            }
+        }
+        golbal.Set = function(array){
+            var that = this;
+            this.length = this.size = 0;
+            if (array && !isArray(array)) throw Error(array.toString() + ' is not iterable')
+            array.forEach(function(item){
+                that.add(item);
+            })
+        };
+        golbal.Set.prototype = {
+            add: function(item){
+                if (!this.has(item)) {
+                    [].push.call(this, item);
+                }
+                this.size = this.length;
+            },
+            "delete": function(item){
+                var index = [].indexOf.call(this, item);
+                if (!~index) return false;
+                [].splice.call(this, index, 1);
+                this.size = this.length;
+                return true;
+            },
+            has: function(item){
+                return !!~[].indexOf.call(this, item)
+            },
+            clear: function(){
+                for (var i = this.length - 1; i >= 0; i++) {
+                    delete this[i];
+                }
+                this.length = 0;
+                this.size = this.length;
+            }
+        }
+    })(typeof window.Set == 'function', window);
+
+    // TODO: polyfill Promise
+    (function(support, golbal){
+        if (support) {
+            return;
+        }
+        var PENDING = 'pending', REJECTED = 'rejected', RESOLVED = 'resolved', FULFILLED = "fulfilled";
+        var valueKey = '[[PromiseValue]]', stateKey = '[[PromiseStatus]]';
+        function isThenable(obj){
+            return obj && typeof obj['then'] == 'function';
+        }
+        function transition(status,value){
+            var promise = this;
+            if(promise[stateKey] !== PENDING) return;
+            // 所以的执行都是异步调用，保证then是先执行的
+            setTimeout(function(){
+                promise[stateKey] = status;
+                publish.call(promise,value);
+            });
+        }
+        function publish(val){
+            var promise = this,
+                fn,
+                st = promise[stateKey] === FULFILLED,
+                queue = promise[st ? '_resolves' : '_rejects'];
+
+            while(fn = queue.shift()) {
+                val = fn.call(promise, val) || val;
+            }
+            promise[valueKey] = val;
+            promise['_resolves'] = promise['_rejects'] = undefined;
+        }
+        function Promise(callback) {
+            if (!isFunction(callback))
+                throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
+            if (!(this instanceof Promise)) return new Promise(callback);
+            var promise = this;
+            promise[valueKey] = undefined;
+            promise[stateKey] = PENDING;
+            promise._resolves = [];
+            promise._rejects = [];
+        }
+        Promise.prototype = {
+            then: function(onFulfilled,onRejected){
+                var promise = this;
+                // 每次返回一个promise，保证是可thenable的
+                return Promise(function(resolve,reject){
+                    function callback(value){
+                        var ret = isFunction(onFulfilled) && onFulfilled(value) || value;
+                        if(isThenable(ret)){
+                            ret.then(function(value){
+                                resolve(value);
+                            }, function(reason){
+                                reject(reason);
+                            });
+                        }else{
+                            resolve(ret);
+                        }
+                    }
+                    function errback(reason){
+                        reason = isFunction(onRejected) && onRejected(reason) || reason;
+                        reject(reason);
+                    }
+                    if(promise[stateKey] === PENDING){
+                        promise._resolves.push(callback);
+                        promise._rejects.push(errback);
+                    }else if(promise[stateKey] === FULFILLED){ // 状态改变后的then操作，立刻执行
+                        callback(promise[valueKey]);
+                    }else if(promise[stateKey] === REJECTED){
+                        errback(promise[valueKey]);
+                    }
+                });
+            },
+            'catch': function(onRejected){
+                return this.then(undefined, onRejected);
+            },
+            reject: function(arg){
+                return Promise(function(resolve,reject){
+                    reject(arg)
+                })
+            }
+        }
+
+        Promise.all = function(promises){
+            if (!isArray(promises)) {
+                throw new TypeError('You must pass an array to all.');
+            }
+            return Promise(function(resolve,reject){
+                var i = 0,
+                    result = [],
+                    len = promises.length;
+
+                function resolver(index) {
+                    return function(value) {
+                        resolveAll(index, value);
+                    };
+                }
+
+                function rejecter(reason){
+                    reject(reason);
+                }
+
+                function resolveAll(index,value){
+                    result[index] = value;
+                    if(index == len - 1){
+                        resolve(result);
+                    }
+                }
+
+                for (; i < len; i++) {
+                    promises[i].then(resolver(i),rejecter);
+                }
+            });
+        }
+
+        Promise.race = function(promises){
+            if (!isArray(promises)) {
+                throw new TypeError('You must pass an array to race.');
+            }
+            return Promise(function(resolve,reject){
+                var i = 0,
+                    len = promises.length;
+
+                function resolver(value) {
+                    resolve(value);
+                }
+
+                function rejecter(reason){
+                    reject(reason);
+                }
+
+                for (; i < len; i++) {
+                    promises[i].then(resolver,rejecter);
+                }
+            });
+        }
+
+        golbal.Promise = Promise;
+    })(Promise, window);
+
     //TODO: fix hashchange
-
-
     (function(DOC){
         var hashchange = 'hashchange';
         $.support.hashchange = ('on' + hashchange) in window && ( document.documentMode === void 0 || document.documentMode > 7 );
@@ -1983,7 +2207,7 @@ armer = window.jQuery || window.Zepto;
             var iframe, timeoutID, html = '<!doctype html><html><body>#{0}</body></html>'
             if( $.fn[ hashchange ].domain){
                 html = html.replace("<body>","<script>document.domain ="+
-                    $.fn[ hashchange ].domain +"</script><body>" )
+                $.fn[ hashchange ].domain +"</script><body>" )
             }
 
             function getHash ( url) {//用于取得当前窗口或iframe窗口的hash值
@@ -2047,7 +2271,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.6.5b - 2014-10-08 
+ * armerjs - v0.6.6 - 2014-10-29 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 ;(function($){

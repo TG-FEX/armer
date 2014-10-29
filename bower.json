@@ -1,6 +1,6 @@
 {
     "name": "armerjs",
-    "version": "0.6.5b",
+    "version": "0.6.6",
     "repository": {
         "type": "git",
         "url": "git://github.com/TG-FEX/armer.git"
@@ -27,6 +27,7 @@
         "tmp",
         "AUTHORS.txt",
         "Gruntfile.js",
+        "gruntfile.js",
         "package.json"
     ],
     "devDependencies": {

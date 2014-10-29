@@ -2294,8 +2294,8 @@ armer = window.jQuery || window.Zepto;
         escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
 
 
-    function identity(value) {
-        return value;
+    function isArgs() {
+        return arguments !== undefined;
     }
 
     function template(text, data, settings){
@@ -2426,6 +2426,18 @@ armer = window.jQuery || window.Zepto;
          */
         isString: function(target){
             return $.type(target) == 'string';
+        },
+        isArguments: function(obj) {
+            if (obj != null) {
+                if ($.stringType(obj) == "Arguments") {
+                    return true;
+                } else if ('callee' in obj) {
+                    try {
+                        return isArgs.apply(this, obj);
+                    } catch (e) {}
+                }
+            }
+            return false;
         },
         /**
          * 判定目标对象是否包括名字为methodKey的原生方法，如$.isNative("JSON",window)
@@ -2627,13 +2639,13 @@ armer = window.jQuery || window.Zepto;
             var rsplit = /[, |]+/g;
             var typeCase = {
                 blank: function(){},
-                arraylike: function(){},
+                arraylike: $.isArrayLike,
                 int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
                 uint: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
-                arguments: function(){return identity(obj) == !!obj.callee},
-                window: function(){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
-                document: function(){return obj.nodeType === 9 || $.stringType(obj,'document')},
-                nodeList: function(){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
+                arguments: $.isArguments,
+                window: function(obj){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
+                document: function(obj){return obj.nodeType === 9 || $.stringType(obj,'document')},
+                nodelist: function(obj){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
             };
             /**
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
@@ -2656,7 +2668,10 @@ armer = window.jQuery || window.Zepto;
                             return function(obj){
                                 var found = false;
                                 $.each(arr, function(__, type){
-                                    var compare = typeCase[$.camelCase(type).toLowerCase()] || $.stringType;
+                                    var camel = $.camelCase(type);
+                                    var cap = $.capitalize(camel);
+                                    var lower = camel.toLowerCase();
+                                    var compare = typeCase[camel] || typeCase[cap] || typeCase[lower] || $['is' + cap] || $.stringType;
                                     return !(found = compare(obj, type));
                                 });
                                 return found;
@@ -2831,7 +2846,9 @@ armer = window.jQuery || window.Zepto;
             //转换为连字符线风格
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase();
         },
-
+        capitalize: function(s){
+            return s.charAt(0).toUpperCase() + s.substr(1);
+        },
         throttle: function(func, wait) {
             var context, args, timeout, result;
             var previous = 0;
@@ -2879,9 +2896,16 @@ armer = window.jQuery || window.Zepto;
                         length = item.length,
                         group = item.group,
                         name = item.name ? item.name : 'Params[' + i + ']';
-                    match =  $.type(match, 'number') ? (required = true, +match) : 1;
-                    length =  $.type(length, 'number') ? +length :
-                            length == 'auto' ? (isAutoLen = true, Infinity) : match;
+                    if ($.type(match, 'number')) {
+                        required = true;
+                        match = +match;
+                    } else match = 1;
+                    if ($.type(length, 'number')) {
+                        length = +length;
+                    } else if (length == 'auto') {
+                        length = Infinity;
+                        isAutoLen = true;
+                    } else length = match;
                     grouper = group || length > 1 || isAutoLen ? function(arg){tempArr.push(arg); return tempArr} : function(arg){k++; return arg};
                     for (var k = 0; k < length || isAutoLen; k++) {
                         if ($.type(args[j], item.type))

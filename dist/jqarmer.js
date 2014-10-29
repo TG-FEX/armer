@@ -12285,7 +12285,7 @@ armer = window.jQuery || window.Zepto;
 
     //TODO polyfill Set Map
     (function(support, golbal){
-        if (!support) return;
+        if (support) return;
 
         golbal.Map = function(array) {
             var that = this;
@@ -12324,13 +12324,19 @@ armer = window.jQuery || window.Zepto;
                 return true
             },
             clear: function(){
-                for (var i = this._keys.length - 1; i >= 0; i++) {
+                for (var i = this._keys.length - 1; i >= 0; i--) {
                     delete this[i];
                 }
                 this.length = this.size = 0;
                 this._keys = [];
+            },
+            forEach: function(iterator, context){
+                context = context || this;
+                for (var i = 0; i < this._keys.length; i++) {
+                    if (iterator.call(context, this[i], this._keys[i], this) === false) return
+                }
             }
-        }
+        };
         golbal.Set = function(array){
             var that = this;
             this.length = this.size = 0;
@@ -12345,6 +12351,7 @@ armer = window.jQuery || window.Zepto;
                     [].push.call(this, item);
                 }
                 this.size = this.length;
+                return this;
             },
             "delete": function(item){
                 var index = [].indexOf.call(this, item);
@@ -12357,11 +12364,17 @@ armer = window.jQuery || window.Zepto;
                 return !!~[].indexOf.call(this, item)
             },
             clear: function(){
-                for (var i = this.length - 1; i >= 0; i++) {
+                for (var i = this.length - 1; i >= 0; i--) {
                     delete this[i];
                 }
                 this.length = 0;
                 this.size = this.length;
+            },
+            forEach: function(iterator, context){
+                context = context || this;
+                for (var i = 0; i < this.length; i++) {
+                    if (iterator.call(context, this[i], i, this) === false) return
+                }
             }
         }
     })(typeof window.Set == 'function', window);

@@ -5,16 +5,28 @@ $.UI = $.EventEmitter.extend({
     _init: function(){}
 });
 $.UI.extend = function(name, base, prototype){
-    var tmp = name.split('.'), namespace, fullName, existingConstructor, construtor, construtorName, basePrototype;
-    fullName = name = tmp.pop();
-    namespace = tmp[0],
-    construtor;
+    var tmp, namespace, fullName, constructor, constructorName;
 
+    if (typeof name != 'string') {
+        prototype = base;
+        base = name
+        name = null;
+    }
     if (!$.isFunction(base)) {
         prototype = base;
         base = this
     }
-    construtorName = name.charAt(0).toUpperCase() + $.camelCase(name).substr(1);
+
+    prototype = prototype || {};
+    constructor = $.factory(prototype, base);
+    constructor.mix(base);
+
+
+    tmp = name.split('.');
+    fullName = name = tmp.pop();
+    namespace = tmp[0];
+
+    constructorName = name.charAt(0).toUpperCase() + $.camelCase(name).substr(1);
     if (namespace) {
         fullName = namespace + '-' + name;
         tmp = this[namespace] = this[namespace] || {};
@@ -22,24 +34,20 @@ $.UI.extend = function(name, base, prototype){
         tmp = this;
     }
     fullName = 'ui-' + fullName;
+    tmp[constructorName] = constructor
 
     $.expr[':'][fullName.toLowerCase()] = function(elem){
         return !!$.data(elem, fullName);
     };
 
-    prototype = prototype || {};
-
-    construtor = tmp[construtorName] = $.factory(prototype, base);
-    construtor.mix(base);
-
-    $.fn[name] = function(command) {
-        var self = this[0], ui, callee = arguments.callee, $this = $(this[0]);
-        var constructor = construtor, args = arguments
+    $.fn[name] = function() {
+        var self = this[0], ui, $this = $(this[0]);
+        var args = arguments, command;
         // 判断是否有这个方法
-        if ($.type(command) != 'string' && !constructor.prototype[command]) {
+        if ($.type(args[0]) != 'string' && !constructor.prototype[args[0]]) {
             command = null;
         } else
-            [].shift.call(args);
+            command = [].shift.call(args);
         ui = $.data(self, fullName);
         if (!ui) {
             //如果命令为空，那么拼接参数
@@ -54,7 +62,7 @@ $.UI.extend = function(name, base, prototype){
         return ui[command].apply(ui, arguments);
     }
 
-    return construtor;
+    return constructor;
 };
 
 

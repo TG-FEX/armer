@@ -137,7 +137,7 @@
             var i = target.length,
                 result = [];
             while (i--)
-                result[i] = cloneOf(target[i]);
+                result[i] = $.cloneOf(target[i]);
             return result;
         },
         remove: function(target, obj){
@@ -146,7 +146,7 @@
         },
         inGroupsOf: function(target, number, fillWith) {
             //将数组划分成N个分组，其中小组有number个数，最后一组可能小于number个数,
-            //但如果第三个参数不为undefine时,我们可以拿它来填空最后一组
+            //但如果第三个参数不为undefined时,我们可以拿它来填空最后一组
             var t = target.length,
                 n = Math.ceil(t / number),
                 fill = fillWith !== void 0,

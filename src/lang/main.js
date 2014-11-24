@@ -99,6 +99,13 @@
             });
             return obj;
         },
+        cloneOf: function(item){
+            var name = $.type(item);
+            var cap = $.capitalize(name)
+            if ($[cap] && typeof $[cap].clone == 'function')
+                return $[cap].clone(item)
+            else return item;
+        },
         mixOptions: function( target ) {
             var callee = arguments.callee,
                 input = $.slice( arguments, 1 ),

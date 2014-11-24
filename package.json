@@ -1,6 +1,6 @@
 {
     "title": "ArmerJS",
-    "version": "0.6.6",
+    "version": "0.6.7",
     "name": "armer",
     "description": "",
     "license": {
@@ -13,6 +13,9 @@
     },
     "devDependencies": {
         "grunt": "*",
+        "mocha": "*",
+        "chai": "*",
+        "mocha-phantomjs": "*",
         "grunt-contrib-concat": "*",
         "grunt-contrib-uglify": "*"
     }

@@ -47,7 +47,8 @@ module.exports = function(grunt) {
                 'src/factory.js',
                 'src/util.js',
                 'src/ui.js',
-                'src/ui/dialog.js'
+                'src/ui/dialog.js',
+                'src/ui/spinner.js'
             ],
             dest: 'dist/armer.js'
         },

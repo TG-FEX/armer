@@ -289,12 +289,15 @@
         // CMD分析require
         if (typeof factory == "function" && !!~withCMD) {
             var fn = factory.toString(), requireS;
-            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
-            requireS = $.trim(args[withCMD]);
-            fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                dep = eval.call(null, dep);
-                if (typeof dep == 'string') mod.deps.push(dep);
-            })
+            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1];
+            if ($.trim(args) != '')  {
+                args = args.split(',');
+                requireS = $.trim(args[withCMD]);
+                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    dep = eval.call(null, dep);
+                    if (typeof dep == 'string') mod.deps.push(dep);
+                })
+            }
         }
 
         if (typeof factory == 'function')

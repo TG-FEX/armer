@@ -1,15 +1,4 @@
 ;(function($){
-    function cloneOf(item) {
-        var name = $.type(item);
-        switch (name) {
-            case "array":
-            case "object":
-                return $[name].clone(item);
-            default:
-                return item;
-        }
-    }
-
 
     function mergeOne(source, key, current) {
         //使用深拷贝方法将多个对象或数组合并成一个
@@ -93,7 +82,7 @@
             //进行深拷贝，返回一个新对象，如果是浅拷贝请使用$.extend
             var clone = {};
             for (var key in target) {
-                clone[key] = cloneOf(target[key]);
+                clone[key] = $.cloneOf(target[key]);
             }
             return clone;
         },

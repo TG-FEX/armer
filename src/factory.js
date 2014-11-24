@@ -22,8 +22,19 @@
             base = $.own(prototype, 'inherit') || this;
         }
 
-        basePrototype = new base();
+        // 如果 base报错，具体方法待定
+        var baseInit = base.prototype._init
+        base.prototype._init = null;
+        var tmp = base.prototype;
+        try{
+            basePrototype = new base();
+        } catch(e){
+            base = function(){};
+            base.prototype = tmp;
+            basePrototype = new base();
+        }
         basePrototype.options = $.mixOptions( {}, basePrototype.options );
+        base.prototype._init = baseInit;
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {

@@ -16,7 +16,7 @@
         _init: function(content, options){
             var that = this;
             this.options = $.extend({}, this.constructor.defaults, options);
-            if (typeof content == 'string' || /\//.test(content)) {
+            if (typeof content == 'string' && /\//.test(content)) {
                 var selector, url, off = content.indexOf(" ");
                 if ( off >= 0 ) {
                     selector = content.slice(off, content.length);
@@ -97,7 +97,8 @@
             list.push(self);
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
-            self.container.finish().position(position);
+
+            self.container.show().finish().position(position).hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
@@ -165,9 +166,7 @@
             if (typeof this._content == 'function') {
                 var e = $.Event('init');
                 self.trigger(e);
-                if (!e.isDefaultPrevented())
-                    init = e.actionReturns
-                else init = $.Deferred.reject()
+                init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
             $.when(init, dfd).done(function(){

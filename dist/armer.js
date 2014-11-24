@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.6.6 - 2014-10-29 
+ * armerjs - v0.6.7 - 2014-11-24 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.6 - 2014-10-29 
+ * armerjs - v0.6.7 - 2014-11-24 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1299,12 +1299,15 @@ armer = window.jQuery || window.Zepto;
         // CMD分析require
         if (typeof factory == "function" && !!~withCMD) {
             var fn = factory.toString(), requireS;
-            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
-            requireS = $.trim(args[withCMD]);
-            fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                dep = eval.call(null, dep);
-                if (typeof dep == 'string') mod.deps.push(dep);
-            })
+            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1];
+            if ($.trim(args) != '')  {
+                args = args.split(',');
+                requireS = $.trim(args[withCMD]);
+                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    dep = eval.call(null, dep);
+                    if (typeof dep == 'string') mod.deps.push(dep);
+                })
+            }
         }
 
         if (typeof factory == 'function')
@@ -2203,7 +2206,7 @@ armer = window.jQuery || window.Zepto;
         }
 
         golbal.Promise = Promise;
-    })(Promise, window);
+    })(window.Promise, window);
 
     //TODO: fix hashchange
     (function(DOC){
@@ -2284,7 +2287,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.6.6 - 2014-10-29 
+ * armerjs - v0.6.7 - 2014-11-24 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 ;(function($){
@@ -2387,6 +2390,13 @@ armer = window.jQuery || window.Zepto;
                 }
             });
             return obj;
+        },
+        cloneOf: function(item){
+            var name = $.type(item);
+            var cap = $.capitalize(name)
+            if ($[cap] && typeof $[cap].clone == 'function')
+                return $[cap].clone(item)
+            else return item;
         },
         mixOptions: function( target ) {
             var callee = arguments.callee,
@@ -3010,17 +3020,6 @@ armer = window.jQuery || window.Zepto;
 })(armer);
 
 ;(function($){
-    function cloneOf(item) {
-        var name = $.type(item);
-        switch (name) {
-            case "array":
-            case "object":
-                return $[name].clone(item);
-            default:
-                return item;
-        }
-    }
-
 
     function mergeOne(source, key, current) {
         //使用深拷贝方法将多个对象或数组合并成一个
@@ -3104,7 +3103,7 @@ armer = window.jQuery || window.Zepto;
             //进行深拷贝，返回一个新对象，如果是浅拷贝请使用$.extend
             var clone = {};
             for (var key in target) {
-                clone[key] = cloneOf(target[key]);
+                clone[key] = $.cloneOf(target[key]);
             }
             return clone;
         },
@@ -3271,7 +3270,7 @@ armer = window.jQuery || window.Zepto;
             var i = target.length,
                 result = [];
             while (i--)
-                result[i] = cloneOf(target[i]);
+                result[i] = $.cloneOf(target[i]);
             return result;
         },
         remove: function(target, obj){
@@ -3280,7 +3279,7 @@ armer = window.jQuery || window.Zepto;
         },
         inGroupsOf: function(target, number, fillWith) {
             //将数组划分成N个分组，其中小组有number个数，最后一组可能小于number个数,
-            //但如果第三个参数不为undefine时,我们可以拿它来填空最后一组
+            //但如果第三个参数不为undefined时,我们可以拿它来填空最后一组
             var t = target.length,
                 n = Math.ceil(t / number),
                 fill = fillWith !== void 0,
@@ -9508,16 +9507,16 @@ $.fn.bgiframe = function(){
                 }
             }
             event.type = type;
-
+            var actFn
             if (!onlyHandlers && !event.isDefaultPrevented()) {
-                if (ontype && this[ type ] && !$.isWindow(this)) {
+                if (ontype && (actFn = this [ '_' + type ] || this[ type ] ) && !$.isWindow(this)) {
                     tmp = this[ ontype ];
 
                     if (tmp) {
                         this[ ontype ] = null;
                     }
                     $.event.triggered = type;
-                    event.actionReturns = this[ type ].apply(this, orignData);
+                    event.actionReturns = actFn.apply(this, orignData);
                     $.event.triggered = undefined;
 
                     if (tmp) {
@@ -9821,8 +9820,19 @@ $.fn.bgiframe = function(){
             base = $.own(prototype, 'inherit') || this;
         }
 
-        basePrototype = new base();
+        // 如果 base报错，具体方法待定
+        var baseInit = base.prototype._init
+        base.prototype._init = null;
+        var tmp = base.prototype;
+        try{
+            basePrototype = new base();
+        } catch(e){
+            base = function(){};
+            base.prototype = tmp;
+            basePrototype = new base();
+        }
         basePrototype.options = $.mixOptions( {}, basePrototype.options );
+        base.prototype._init = baseInit;
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {
@@ -9910,12 +9920,12 @@ $.fn.bgiframe = function(){
             list.forEach(function(item){
                 var now = $.now();
                 var pass = getpass(item, now);
-                this.tickNum ++;
+                item.tickNum ++;
                 if (now - item._lastTick >= item.interval || !item._lastTick) {
-                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, this.tickNum]);
+                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
                     item._lastTick = now;
                 }
-                if (this.tickNum >= this.limit || pass >= item.timeout) {
+                if (item.tickNum >= item.limit || pass >= item.timeout) {
                     item.trigger($.Timer.event.FINISH);
                 }
             })
@@ -10048,6 +10058,111 @@ $.fn.bgiframe = function(){
             this._total = now;
         }
     })
+
+    $.Store = (function(){
+        function serialize(value){
+            return JSON.stringify(value)
+        }
+        function deserialize(value){
+            var result;
+            if (typeof value != 'string') result = value;
+            try {
+                result = JSON.parse(value)
+            } catch(e) {}
+            // 不是对象的时候，将其值为空对象
+            if (!$.isPlainObject(result)) result = {}
+            return result
+        }
+        return $.EventEmitter.extend({
+            _init: function(_key, triggerItself){
+                this._key = _key;
+                this._triggerItself = !!triggerItself;
+                this._list = deserialize(localStorage.getItem(this._key));
+                this.init();
+            },
+            get: function(key){
+                if (key)
+                    return $.cloneOf(this._list[key]);
+                // 先备份一下，以免被误改
+                else return $.cloneOf(this._list);
+            },
+            init: function(){
+                //Chrome下(14.0.794.0)重写了document.domain之后会导致onstorage不触发
+                //支持localStorage的情况
+                var callback = this._callback.bind(this);
+                if ('onstorage' in document) {
+                    // IE绑到document;
+                    document.attachEvent("onstorage", callback)
+                } else if ($.support.localStorage) {
+                    // 标准浏览器绑到window;
+                    window.addEventListener("storage", callback)
+                } else if (this.userTicker) {
+                    // 先刨个坑
+                } else {
+                    // IE678
+                    window.attachEvent('onfocus', callback)
+                }
+            },
+            _callback: function(e){
+                var that = this;
+                //IE下不使用setTimeout竟然获取不到改变后的值?!
+                $.nextTick(function(){
+                    e = e || window.storageEvent
+                    //若变化的key不是绑定的key，则过滤掉
+                    //IE下不支持key属性,因此需要根据storage中的数据判断key中的数据是否变化
+                    if (e.key && that._key != e.key) return
+                    //获取新的值
+                    var result = that._testAndSet(deserialize(e.newValue || localStorage.getItem(that._key)));
+                    if (that._isChange(result)) {
+                        that.trigger('change', result)
+                    }
+                });
+            },
+            set: function(hash, triggerItself){
+                var key, isNew = true, value;
+                var that = this;
+                if ($.type(hash) == 'string') {
+                    key = hash;
+                    value = triggerItself;
+                    triggerItself = arguments[2];
+                    hash = {}
+                    hash[key] = value
+                    isNew = false
+                    // 如果不是这个hash传递的话，只修改某个字段
+                }
+                triggerItself = triggerItself == null ? this._triggerItself : triggerItself;
+                var result = this._testAndSet(hash, isNew);
+                if (this._isChange(result)) {
+                    triggerItself && this.trigger('change', result);
+                    // 延迟渲染，以免阻塞
+                    $.nextTick(function () {
+                        localStorage.setItem(that._key, serialize(result[2]))
+                    })
+                }
+            },
+            _isChange: function(result){
+                return !$.isEmptyObject(result[0]) || !$.isEmptyObject(result[1])
+            },
+            // 比较新旧数据的差异
+            _testAndSet: function(valueHash, isNew){
+                var i, newValue = {}, oldValue = {}, mix
+                if (isNew) mix = $.mix({}, valueHash, this._list)
+                else mix = valueHash
+                for (i in mix) {
+                    if (mix.hasOwnProperty(i) && !$.isEqual(this._list[i], valueHash[i])) {
+                        // 如果不相等则赋值
+                        oldValue[i] = this._list[i];
+                        if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
+                        else delete this._list[i]
+                    }
+                }
+                return [newValue, oldValue, this._list]
+            }
+        })
+    })();
+    $.store = new $.Store('default-store');
+
+
 })(armer);
 
 
@@ -10058,16 +10173,28 @@ $.UI = $.EventEmitter.extend({
     _init: function(){}
 });
 $.UI.extend = function(name, base, prototype){
-    var tmp = name.split('.'), namespace, fullName, existingConstructor, construtor, construtorName, basePrototype;
-    fullName = name = tmp.pop();
-    namespace = tmp[0],
-    construtor;
+    var tmp, namespace, fullName, constructor, constructorName;
 
+    if (typeof name != 'string') {
+        prototype = base;
+        base = name
+        name = null;
+    }
     if (!$.isFunction(base)) {
         prototype = base;
         base = this
     }
-    construtorName = name.charAt(0).toUpperCase() + $.camelCase(name).substr(1);
+
+    prototype = prototype || {};
+    constructor = $.factory(prototype, base);
+    constructor.mix(base);
+
+
+    tmp = name.split('.');
+    fullName = name = tmp.pop();
+    namespace = tmp[0];
+
+    constructorName = name.charAt(0).toUpperCase() + $.camelCase(name).substr(1);
     if (namespace) {
         fullName = namespace + '-' + name;
         tmp = this[namespace] = this[namespace] || {};
@@ -10075,24 +10202,20 @@ $.UI.extend = function(name, base, prototype){
         tmp = this;
     }
     fullName = 'ui-' + fullName;
+    tmp[constructorName] = constructor
 
     $.expr[':'][fullName.toLowerCase()] = function(elem){
         return !!$.data(elem, fullName);
     };
 
-    prototype = prototype || {};
-
-    construtor = tmp[construtorName] = $.factory(prototype, base);
-    construtor.mix(base);
-
-    $.fn[name] = function(command) {
-        var self = this[0], ui, callee = arguments.callee, $this = $(this[0]);
-        var constructor = construtor, args = arguments
+    $.fn[name] = function() {
+        var self = this[0], ui, $this = $(this[0]);
+        var args = arguments, command;
         // 判断是否有这个方法
-        if ($.type(command) != 'string' && !constructor.prototype[command]) {
+        if ($.type(args[0]) != 'string' && !constructor.prototype[args[0]]) {
             command = null;
         } else
-            [].shift.call(args);
+            command = [].shift.call(args);
         ui = $.data(self, fullName);
         if (!ui) {
             //如果命令为空，那么拼接参数
@@ -10107,7 +10230,7 @@ $.UI.extend = function(name, base, prototype){
         return ui[command].apply(ui, arguments);
     }
 
-    return construtor;
+    return constructor;
 };
 
 
@@ -10338,7 +10461,7 @@ $.fn.ellipsis.useCssClamp = true;
         _init: function(content, options){
             var that = this;
             this.options = $.extend({}, this.constructor.defaults, options);
-            if (typeof content == 'string' || /\//.test(content)) {
+            if (typeof content == 'string' && /\//.test(content)) {
                 var selector, url, off = content.indexOf(" ");
                 if ( off >= 0 ) {
                     selector = content.slice(off, content.length);
@@ -10419,7 +10542,8 @@ $.fn.ellipsis.useCssClamp = true;
             list.push(self);
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
-            self.container.finish().position(position);
+
+            self.container.show().finish().position(position).hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
@@ -10487,9 +10611,7 @@ $.fn.ellipsis.useCssClamp = true;
             if (typeof this._content == 'function') {
                 var e = $.Event('init');
                 self.trigger(e);
-                if (!e.isDefaultPrevented())
-                    init = e.actionReturns
-                else init = $.Deferred.reject()
+                init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
             $.when(init, dfd).done(function(){
@@ -10646,3 +10768,88 @@ $.fn.ellipsis.useCssClamp = true;
     }
 
 })(jQuery);
+$.UI.extend('spinner', {
+    _init: function(element, options){
+
+        var that= this;
+        this.element = element;
+        this._element = $('<span class="spinner"><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
+        this._input = this._element.find('input');
+        this.options = $.extend({}, this.constructor.defaults, options);
+        this.oldValue = isNaN(this.element.val()) ?  options.min : this.element.val();
+
+        var tmp;
+        this._element.on('click', 'a', function(){
+            var $this = $(this);
+            var klass = $this.attr('class');
+            that.trigger(!~klass.indexOf('up') ? 'spinup' : 'spindown');
+        });
+        this._input.valuechange(function(e, newValue, oldValue){
+            if (newValue === '') {
+                tmp = oldValue;
+                return;
+            }
+            that.trigger('validate', [newValue, that.oldValue]);
+        }).blur(function(){
+            if (this.value === '') {
+                that.trigger('validate', [this.value, that.oldValue]);
+            }
+        }).on('keyup', function(e){
+            if (e.which == 38) {
+                that.spinup();
+                this.select();
+                return false;
+            } else if (e.which == 40) {
+                that.spindown();
+                this.select();
+                return false;
+            }
+        }).val(this.oldValue);
+        this.element.after(this._element);
+        this.on('invalid overflow', function(e, _, oldValue){
+            that._input.val(oldValue);
+        });
+        this.editable(this.options.editable);
+    },
+    editable: function(editable){
+        this._input.prop('readonly', !editable);
+    },
+    spin: function(down){
+        var oldValue = this._input.val();
+        var step = 0;
+        if (down) step = -this.options.step;
+        else step = +this.options.step;
+        if (step)  this.trigger('validate', [step + +oldValue, oldValue]);
+    },
+    spinup: function(){
+        return this.spin();
+    },
+    spindown: function(){
+        return this.spin(true);
+    },
+    _change: function(newValue){
+        this._input.val(newValue);
+        this.element.val(newValue);
+        this.oldValue = newValue;
+    },
+    val: function(newValue){
+        if (newValue != null) this._change(newValue);
+        else return this.element.val();
+    },
+    validate: function(newValue, oldValue){
+        var that = this;
+        var val = +newValue;
+        if (isNaN(val) || newValue == '') {
+            that.trigger('invalid', [newValue, oldValue]);
+        } else if (val < that.options.min || val > that.options.max) {
+            that.trigger('overflow', [val, oldValue]);
+        } else this.trigger('change', [val, oldValue]);
+    }
+}).mix({
+    defaults: {
+        min: 1,
+        max: 99,
+        step: 1,
+        editable: true
+    }
+})

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.6 - 2014-10-29 
+ * armerjs - v0.6.7 - 2014-11-24 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 var Zepto = (function() {
@@ -1582,7 +1582,7 @@ window.$ === undefined && (window.$ = Zepto)
 })(Zepto)
 
 /*!
- * armerjs - v0.6.6 - 2014-10-29 
+ * armerjs - v0.6.7 - 2014-11-24 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -2878,12 +2878,15 @@ armer = window.jQuery || window.Zepto;
         // CMD分析require
         if (typeof factory == "function" && !!~withCMD) {
             var fn = factory.toString(), requireS;
-            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1].split(',');
-            requireS = $.trim(args[withCMD]);
-            fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                dep = eval.call(null, dep);
-                if (typeof dep == 'string') mod.deps.push(dep);
-            })
+            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1];
+            if ($.trim(args) != '')  {
+                args = args.split(',');
+                requireS = $.trim(args[withCMD]);
+                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    dep = eval.call(null, dep);
+                    if (typeof dep == 'string') mod.deps.push(dep);
+                })
+            }
         }
 
         if (typeof factory == 'function')

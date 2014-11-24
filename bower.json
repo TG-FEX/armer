@@ -1,6 +1,6 @@
 {
     "name": "armerjs",
-    "version": "0.6.6",
+    "version": "0.6.7",
     "repository": {
         "type": "git",
         "url": "git://github.com/TG-FEX/armer.git"
@@ -31,12 +31,10 @@
         "package.json"
     ],
     "devDependencies": {
-        "mocha": "*",
-        "mocha-phantomjs": "*",
-        "chai": "*",
         "jquery": "1.x",
         "zepto": ">= 1.1.3",
-        "fastclick": "*"
+        "fastclick": "*",
+        "avalon": "*"
     },
     "dependencies": {
         "jquery": "1.x",

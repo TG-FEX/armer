@@ -786,7 +786,7 @@
         }
 
         golbal.Promise = Promise;
-    })(Promise, window);
+    })(window.Promise, window);
 
     //TODO: fix hashchange
     (function(DOC){

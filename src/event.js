@@ -84,16 +84,16 @@
                 }
             }
             event.type = type;
-
+            var actFn
             if (!onlyHandlers && !event.isDefaultPrevented()) {
-                if (ontype && this[ type ] && !$.isWindow(this)) {
+                if (ontype && (actFn = this [ '_' + type ] || this[ type ] ) && !$.isWindow(this)) {
                     tmp = this[ ontype ];
 
                     if (tmp) {
                         this[ ontype ] = null;
                     }
                     $.event.triggered = type;
-                    event.actionReturns = this[ type ].apply(this, orignData);
+                    event.actionReturns = actFn.apply(this, orignData);
                     $.event.triggered = undefined;
 
                     if (tmp) {

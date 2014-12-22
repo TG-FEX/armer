@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/polyfill.js"></script>
+</head>
+<body>
+<form target="_blank">
+    <input name="a[]" value="">
+    <input name="a[]" value="">
+    <input name="b[]" type="radio" value="1" checked>
+    <input name="b[]" type="radio" value="2">
+    <input name="b[]" type="radio" value="3">
+    <select name="c[]" multiple>
+        <option value="1">测试1</option>
+        <option value="2">测试2</option>
+        <option value="3">测试3</option>
+    </select>
+    <select name="d[]">
+        <option value="1">测试1</option>
+        <option value="2">测试2</option>
+        <option value="3">测试3</option>
+    </select>
+    <button>提交</button>
+</form>
+
+<script>
+    function setAsGroup(obj, key, item) {
+        if (obj[key] == null){
+            obj[key] = item;
+            return
+        }
+        if (!$.isArray(obj[key]))
+            obj[key] = [obj[key]];
+        obj[key].push(item);
+    }
+    $.flatten = function(obj, combine){
+        var a = {};
+        function s(name, obj, b){
+            if ($.type(obj) == 'object' || $.isArray(obj)) {
+                $.each(obj, function(i, item){
+                    s((combine && $.isArray(obj) && typeof item != 'object') ? (name + '[]') : (name + '[' + i + ']'), item, b);
+                })
+            } else setAsGroup(b, name, obj)
+
+        }
+        $.each(obj, function(key, item){
+            s(key, item, a);
+        });
+        return a;
+    };
+
+    $.unserializeNodes = function(data, nodes, hooks, phpstyle){
+        var callee = arguments.callee;
+        hooks = hooks || {};
+        nodes = $(nodes).find('input,select,textarea').andSelf();
+
+        var b = {};
+
+        $.each(data, function(key, item){
+            if (!phpstyle)
+                setAsGroup(b, key, item);
+            if (typeof item == 'object' && phpstyle == null) {
+                phpstyle = true;
+                return false;
+            }
+        });
+
+        if (phpstyle)
+            b = $.flatten(data, true);
+
+        var a = {};
+        nodes.each(function(key, node){
+            var name = node.name;
+            if (!name) return;
+            if (!a[name]) a[name] = [];
+            a[name].push(node);
+        })
+        $.each(a, function(key, nodes){
+            var name = key.slice(0, -2);
+            if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
+                b[key] = b[name]
+            }
+            (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
+        })
+    }
+
+    function has(values, node){
+        var has = false;
+        $.each(values, function(j, value){
+            if (value == node.value) {
+                has = true;
+            }
+        })
+        return has;
+    }
+
+    $.unserializeNodes.defaultHandler = function(nodes, values, key, b){
+        if (!$.isArray(values)) values = [values];
+        if (nodes[0].tagName == 'SELECT') {
+            nodes = nodes[0];
+            $.each(nodes, function(i, node){
+                node.selected = has(values, node);
+            })
+        } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
+            $.each(nodes, function(i, node){
+                node.checked = has(values, node);
+            });
+        } else
+            $.each(nodes, function(i, node){
+                node.value = values[i];
+            })
+    }
+</script>
+</body>
+</html>

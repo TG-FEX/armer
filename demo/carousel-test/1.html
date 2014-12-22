@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/polyfill.js"></script>
+
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/factory.js"></script>
+    <script src="../../src/effects.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/util.js"></script>
+    <script src="../../src/ui.js"></script>
+    <script src="../../src/ui/carousel.js"></script>
+
+    <style>
+        ul, li {
+            margin: 0;
+            padding: 0;
+            list-style: none;;
+        }
+        .carousel {
+            width: 800px;
+            padding: 2px;
+            border: 2px solid #000;
+            overflow-x: hidden;
+        }
+        ul {
+            white-space: nowrap;
+            width: 9999px;
+            overflow: hidden;
+        }
+        li {
+            float: left;
+            height: 307px;
+            background: #888;
+            margin: 0 5px;
+            line-height: 307px;
+            font-size: 30px;
+            color: #FFF;
+            text-align: center;
+        }
+        span {
+            border: 1px dashed red;
+            width: 0;
+            height: 311px;
+            display: block;
+            position: absolute;
+            left: 404px;
+        }
+    </style>
+</head>
+<body>
+<span></span>
+<div class="carousel" data-delay="5000">
+    <ul>
+        <li style="width: 120px">0</li>
+        <li style="width: 80px">1</li>
+        <li style="width: 110px">2</li>
+        <li style="width: 30px">3</li>
+        <li style="width: 120px">4</li>
+        <li style="width: 80px">5</li>
+        <li style="width: 110px">6</li>
+        <li style="width: 30px">7</li>
+        <li style="width: 120px">8</li>
+        <li style="width: 80px">9</li>
+    </ul>
+</div>
+<script>
+    $('.carousel').carousel();
+</script>
+</body>
+</html>

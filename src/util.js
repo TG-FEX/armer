@@ -44,7 +44,8 @@
                 var now = $.now();
                 var pass = getpass(item, now);
                 item.tickNum ++;
-                if (now - item._lastTick >= item.interval || !item._lastTick) {
+                if (!item._lastTick) item._lastTick = now;
+                if (now - item._lastTick >= item.interval) {
                     item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
                     item._lastTick = now;
                 }
@@ -69,78 +70,52 @@
      * @constructor
      * @extends armer.EventEmitter
      */
-    $.Timer = function(timeout, interval, limit, callback){
-        var callee = arguments.callee;
-        if (!(this instanceof callee)) return new callee(timeout, interval, limit, callback);
-        // 总需要的事件
-        if ($.type(limit) != 'number' && limit < 1) {
-            callback = limit;
-            limit = Infinity;
-        }
-        if ($.type(interval) != 'number') {
-            callback = interval;
-            interval = null;
-        }
-        if ($.type(timeout) != 'number') {
-            timeout = Infinity;
-        }
+    $.Timer = $.EventEmitter.extend({
+        _init: function(timeout, interval, limit, callback){
+            // 总需要的事件
+            if ($.type(limit) != 'number' && limit < 1) {
+                callback = limit;
+                limit = Infinity;
+            }
+            if ($.type(interval) != 'number') {
+                callback = interval;
+                interval = null;
+            }
+            if ($.type(timeout) != 'number') {
+                timeout = Infinity;
+            }
 
-        this._pass = 0;
+            this._pass = 0;
 
-        /**
-         * 最大超时时间
-         * @property timeout
-         * @type {number}
-         */
-        this.timeout = this._total = timeout;
-        /**
-         * 当前通知数
-         * @property tickNum
-         * @type {number}
-         */
-        this.tickNum = 0;
-        /**
-         * 最大的通知数
-         * @property limit
-         * @type {number}
-         */
-        this.limit = limit;
-        /**
-         * 通知的间隔时间
-         * @property interval
-         * @type {number}
-         */
-        this.interval = interval || 200;
-        this.construtor = arguments.callee;
-        if ($.type(callback) == 'function') {
-            this.onfinish = callback;
-            this.start();
-        }
-    };
-    $.Timer.interval = 13;
-    $.Timer.event = {
-        /**
-         * 启动事件
-         * @event start
-         */
-        START: 'start',
-        /**
-         * 完成事件
-         * @event finish
-         */
-            FINISH: 'finish',
-        /**
-         * 停止事件
-         * @event stop
-         */
-            STOP: 'stop',
-        /**
-         * 通知事件
-         * @event tick
-         */
-            TICK: 'tick'
-    }
-    $.Timer.prototype = $.EventEmitter({
+            /**
+             * 最大超时时间
+             * @property timeout
+             * @type {number}
+             */
+            this.timeout = this._total = timeout;
+            /**
+             * 当前通知数
+             * @property tickNum
+             * @type {number}
+             */
+            this.tickNum = 0;
+            /**
+             * 最大的通知数
+             * @property limit
+             * @type {number}
+             */
+            this.limit = limit;
+            /**
+             * 通知的间隔时间
+             * @property interval
+             * @type {number}
+             */
+            this.interval = interval || 200;
+            if ($.type(callback) == 'function') {
+                this.onfinish = callback;
+                this.start();
+            }
+        },
         /**
          * 开始定时器
          * @method start
@@ -180,7 +155,30 @@
             this._pass = getpass(this, now);
             this._total = now;
         }
-    })
+    });
+    $.Timer.interval = 13;
+    $.Timer.event = {
+        /**
+         * 启动事件
+         * @event start
+         */
+        START: 'start',
+        /**
+         * 完成事件
+         * @event finish
+         */
+            FINISH: 'finish',
+        /**
+         * 停止事件
+         * @event stop
+         */
+            STOP: 'stop',
+        /**
+         * 通知事件
+         * @event tick
+         */
+            TICK: 'tick'
+    }
 
     $.Store = (function(){
         function serialize(value){

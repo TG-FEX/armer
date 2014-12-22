@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.7 - 2014-11-24 
+ * armerjs - v0.6.8 - 2014-12-22 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10312,11 +10312,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.6.7 - 2014-11-24 
+ * armerjs - v0.6.8 - 2014-12-22 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.7 - 2014-11-24 
+ * armerjs - v0.6.8 - 2014-12-22 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -10533,6 +10533,45 @@ armer = window.jQuery || window.Zepto;
 
                 }
                 return str;
+            },
+            unparam: function(query){
+                var setValue = function(root, path, value){
+                    if(path.length > 1){
+                        var dir = path.shift();
+                        if( typeof root[dir] == 'undefined' ){
+                            root[dir] = path[0] == '' ? [] : {};
+                        }
+
+                        arguments.callee(root[dir], path, value);
+                    }else{
+                        if( root instanceof Array ){
+                            root.push(value);
+                        }else{
+                            root[path] = value;
+                        }
+                    }
+                };
+                var nvp = query.split('&');
+                var data = {};
+                for( var i = 0 ; i < nvp.length ; i++ ){
+                    var pair = nvp[i].split('=');
+                    var name = decodeURIComponent(pair[0]);
+                    var value = decodeURIComponent(pair[1]);
+
+                    var path = name.match(/(^[^\[]+)(\[.*\]$)?/);
+                    var first = path[1];
+                    if(path[2]){
+                        //case of 'array[level1]' || 'array[level1][level2]'
+                        path = path[2].match(/(?=\[(.*)\]$)/)[1].split('][')
+                    }else{
+                        //case of 'name'
+                        path = [];
+                    }
+                    path.unshift(first);
+
+                    setValue(data, path, value);
+                }
+                return data;
             },
             /**
              * 序列化表单对象
@@ -12600,7 +12639,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.6.7 - 2014-11-24 
+ * armerjs - v0.6.8 - 2014-12-22 
  * Copyright (c) 2014 Alphmega; Licensed MIT() 
  */
 ;(function($){
@@ -20234,7 +20273,8 @@ $.fn.bgiframe = function(){
                 var now = $.now();
                 var pass = getpass(item, now);
                 item.tickNum ++;
-                if (now - item._lastTick >= item.interval || !item._lastTick) {
+                if (!item._lastTick) item._lastTick = now;
+                if (now - item._lastTick >= item.interval) {
                     item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
                     item._lastTick = now;
                 }
@@ -20259,78 +20299,52 @@ $.fn.bgiframe = function(){
      * @constructor
      * @extends armer.EventEmitter
      */
-    $.Timer = function(timeout, interval, limit, callback){
-        var callee = arguments.callee;
-        if (!(this instanceof callee)) return new callee(timeout, interval, limit, callback);
-        // 总需要的事件
-        if ($.type(limit) != 'number' && limit < 1) {
-            callback = limit;
-            limit = Infinity;
-        }
-        if ($.type(interval) != 'number') {
-            callback = interval;
-            interval = null;
-        }
-        if ($.type(timeout) != 'number') {
-            timeout = Infinity;
-        }
+    $.Timer = $.EventEmitter.extend({
+        _init: function(timeout, interval, limit, callback){
+            // 总需要的事件
+            if ($.type(limit) != 'number' && limit < 1) {
+                callback = limit;
+                limit = Infinity;
+            }
+            if ($.type(interval) != 'number') {
+                callback = interval;
+                interval = null;
+            }
+            if ($.type(timeout) != 'number') {
+                timeout = Infinity;
+            }
 
-        this._pass = 0;
+            this._pass = 0;
 
-        /**
-         * 最大超时时间
-         * @property timeout
-         * @type {number}
-         */
-        this.timeout = this._total = timeout;
-        /**
-         * 当前通知数
-         * @property tickNum
-         * @type {number}
-         */
-        this.tickNum = 0;
-        /**
-         * 最大的通知数
-         * @property limit
-         * @type {number}
-         */
-        this.limit = limit;
-        /**
-         * 通知的间隔时间
-         * @property interval
-         * @type {number}
-         */
-        this.interval = interval || 200;
-        this.construtor = arguments.callee;
-        if ($.type(callback) == 'function') {
-            this.onfinish = callback;
-            this.start();
-        }
-    };
-    $.Timer.interval = 13;
-    $.Timer.event = {
-        /**
-         * 启动事件
-         * @event start
-         */
-        START: 'start',
-        /**
-         * 完成事件
-         * @event finish
-         */
-            FINISH: 'finish',
-        /**
-         * 停止事件
-         * @event stop
-         */
-            STOP: 'stop',
-        /**
-         * 通知事件
-         * @event tick
-         */
-            TICK: 'tick'
-    }
-    $.Timer.prototype = $.EventEmitter({
+            /**
+             * 最大超时时间
+             * @property timeout
+             * @type {number}
+             */
+            this.timeout = this._total = timeout;
+            /**
+             * 当前通知数
+             * @property tickNum
+             * @type {number}
+             */
+            this.tickNum = 0;
+            /**
+             * 最大的通知数
+             * @property limit
+             * @type {number}
+             */
+            this.limit = limit;
+            /**
+             * 通知的间隔时间
+             * @property interval
+             * @type {number}
+             */
+            this.interval = interval || 200;
+            if ($.type(callback) == 'function') {
+                this.onfinish = callback;
+                this.start();
+            }
+        },
         /**
          * 开始定时器
          * @method start
@@ -20370,7 +20384,30 @@ $.fn.bgiframe = function(){
             this._pass = getpass(this, now);
             this._total = now;
         }
-    })
+    });
+    $.Timer.interval = 13;
+    $.Timer.event = {
+        /**
+         * 启动事件
+         * @event start
+         */
+        START: 'start',
+        /**
+         * 完成事件
+         * @event finish
+         */
+            FINISH: 'finish',
+        /**
+         * 停止事件
+         * @event stop
+         */
+            STOP: 'stop',
+        /**
+         * 通知事件
+         * @event tick
+         */
+            TICK: 'tick'
+    }
 
     $.Store = (function(){
         function serialize(value){

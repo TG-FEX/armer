@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/polyfill.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/lang/array.js"></script>
+    <script src="../../src/lang/function.js"></script>
+    <script src="../../src/io.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/factory.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/effects.js"></script>
+    <script src="../../src/ui.js"></script>
+    <script src="../../src/ui/dialog.js"></script>
+    <script src="../../src/ui/datasource.js"></script>
+    <style>
+        .selected {
+            background: #AAA;
+            color: #FFF;
+        }
+        ul, li {
+            margin: 0;
+            padding: 0;
+        }
+        input {
+            height: 24px;
+            border: #AAA 1px solid;
+            padding: 2px 5px;
+        }
+        .option-list {
+            font-size: 12px;
+            border: #AAA 1px solid;
+            max-height: 150px;
+            overflow-y: scroll;
+            min-height: 50px;
+            padding: 2px;
+        }
+        .option-list li {
+            min-width: 150px;
+            cursor: pointer;
+            line-height: 24px;
+            padding: 2px 3px;
+            border-bottom: 1px dashed #AAA;
+        }
+    </style>
+</head>
+<body>
+    <select>
+        <option value="1">测试1</option>
+        <option value="2">测试2</option>
+        <option value="3">测试3</option>
+        <option value="4">测试4</option>
+        <option value="5">测试5</option>
+        <option value="6">测试6</option>
+        <option value="7">测试7</option>
+        <option value="8">测试8</option>
+        <option value="9">测试9</option>
+        <option value="10">测试10</option>
+    </select>
+<script>
+    $.Datalist = $.factory({
+
+    }, $.UI);
+
+
+    var EXPR = {
+        0 : function(i, step, max, min){
+            var s = i + step;
+            if (s < min)
+                return min;
+            else if (s > max)
+                return max;
+            else return s;
+        },
+        1:  function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                return max;
+            } else if (s > max) {
+                return min
+            } else return s
+        },
+        2: function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                d = -d;
+                return 2 * min - s;
+            } else if (s > max) {
+                d = -d;
+                return 2 * max - s;
+            } else return s
+        },
+        3: function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                return max- min + s ;
+            } else if (s > max) {
+                return min - max + s
+            } else return s
+        }
+    };
+
+    $.Array.hasEqual = function(value, data){
+        return value.some(function(item){
+            return $.isEqual(item, data)
+        });
+    };
+
+    $.Array.indexOfEqual = function(value, data){
+        return value.reduce(function(memo, item, i){
+            if ($.isEqual(item, data)) return i;
+            else return memo
+        }, -1)
+    };
+
+    $.Object.instanceTo = function(constarctor, obj, context){
+        if (!context) context = window;
+        if (obj instanceof constarctor){
+            return obj
+        } else return constarctor.apply(context, $.isArrayLike(obj) ? obj : [obj]);
+    }
+
+
+    $.UI.extend('data-list', {
+        options: {
+            itemTemplate: $.template('<li>[%=name%]</li>'),
+            multi: false,
+            onchange: function(e, i, selectElem, otherElem){
+                this._data2Element(selectElem).addClass('selected')
+                this._data2Element(otherElem).removeClass('selected')
+            },
+            onrandered: function(){
+                var that = this;
+                if (that.value == null) return;
+                this._data2elementMap.forEach(function(element, obj){
+                    if (that.options.multi && $.Array.hasEqual(that.value, obj)) {
+                        $(element).addClass('selected')
+                    } else if ($.isEqual(obj, that.value)) {
+                        $(element).addClass('selected');
+                        return false
+                    }
+                })
+            }
+        },
+        _init: function(element, options){
+            this.options = $.mixOptions({}, this.constructor.defaults, this.options, options);
+            this.element = $(element);
+            this._data2elementMap = new Map();
+            var that = this;
+            this.options.source = $.Object.instanceTo($.DataSource, this.options.source);
+            this.options.source.on('filtered', function(e, data){
+                that.trigger('rander', [data]);
+            });
+            this.element.on('click', '> *', function(){
+                var selectElem = $(this);
+                var data = selectElem.data('data-list-item');
+                that.trigger('clickOption', [data, selectElem])
+            });
+            this.options.onchange && this.on('change', this.options.onchange);
+            this.options.onrandered && this.on('randered', this.options.onrandered);
+            if (this.options.multi) this.value = [];
+        },
+        _select: function(value, data){
+            if (this.options.multi) {
+                value.push(data)
+            } else value = data;
+            return value;
+        },
+        toggle: function(data, toggle){
+            var has = this.options.multi ? $.Array.hasEqual(this.value, data) : $.isEqual(this.value, data);
+                toggle = toggle == null ? !has : toggle;
+                if (has == toggle) return;
+            this.trigger('change', [this.options.multi ? this._select(this.value, data) : data, toggle ? [data] : [], toggle ? [] : [data]])
+        },
+        valueOf: function(){
+            return this.value
+        },
+        select: function(data){
+            this.toggle(data, true);
+        },
+        unselect: function(){
+            this.toggle(data, false);
+        },
+        _unselect: function(value, data){
+            if (this.options.multi) {
+                var index = $.Array.indexOfEqual(value, data);
+                value.splice(index, 1);
+
+            } else value = undefined;
+            return value;
+        },
+        _change: function(value){
+            this.value = value;
+        },
+        _getDataOfElement: function(data) {
+            return this.element.children().map(function(){
+                if ($(this).data('data-list-item')) return this;
+            }).eq(0);
+        },
+        _clickOption: function(data){
+            var that = this, e;
+
+            if (that.options.multi) {
+                var has = $.Array.hasEqual(that.value, data);
+                e = $.Event(has ? 'unselect' : 'select');
+                this.trigger(e, [that.value.slice(0), data]);
+                if (!e.isDefaultPrevented()) {
+                    this.trigger('change', [e.actionReturns, has ? [] : [data], has ? [data] : []]);
+                }
+            } else if (!$.isEqual(that.value, data)) {
+                var eu = $.Event('unselect');
+                e = $.Event('select');
+                if (that.value) this.trigger(eu, [that.value]);
+                if (!eu.isDefaultPrevented())
+                    this.trigger(e, [eu.actionReturns, data]);
+                if (!e.isDefaultPrevented())
+                    this.trigger('change', [e.actionReturns, [data], [that.value]]);
+            }
+        },
+        _data2Element: function(dataList){
+            var that = this;
+            var g = $();
+            dataList.forEach(function(item){
+                g = g.add(that._data2elementMap['get'](item))
+            });
+            return g;
+        },
+        query: function(search){
+            this.options.source.query(search)
+        },
+        _rander: function(data){
+            var that = this;
+            this.element.empty();
+            that._data2elementMap.clear();
+            data.forEach(function(item){
+                that._data2elementMap['set'](item, $(that.options.itemTemplate(item)).data('data-list-item', item).appendTo(that.element)[0]);
+            });
+            that.trigger('randered')
+        }
+    });
+
+
+    $.UI.DataList.extend('select')
+    $.UI.extend('select', {
+        options: {
+            dataList: '<ul class="option-list"></ul>'
+        },
+        _init: function(element, options){
+            this.element = element.hide();
+            this.options = $.mixOptions({}, this.constructor.defaults, this.options, options);
+            var name = $('<input>');
+            name.insertAfter(this.element);
+            var that = this;
+            that.datalist = $.Object.instanceTo($.UI.DataList, this.options.dataList);
+            if (!that.datalist.options.source.url && !that.datalist.options.source.source) {
+                that.datalist.options.source.source = $.when(this.element.find('option').map(function(item){
+                    return {name: this.innerHTML, value: this.value}
+                }).get());
+            }
+            this.$datalist = that.datalist.element.dialog({attach: name});
+            $(document).onExcept(name.add(this.$datalist), 'click', function(){
+                that.$datalist.dialog('trigger', 'close');
+            });
+            that.datalist.query('');
+            name.on('focus', function(){
+                that.$datalist.dialog().trigger('open');
+            });
+            that.on('change', function(e, data){
+                console.log(that.datalist.options);
+                if (that.datalist.options.multi) {
+                    name.val(data.map(function(item){
+                        return item.name;
+                    }).join(','))
+                } else {
+                    name.val(data.name);
+                    that.$datalist.dialog().trigger('close');
+                }
+            })
+            that.datalist.on('change', function(e, a, b, c){
+                that.trigger(e, [a, b, c])
+            })
+        }
+    });
+
+    $('select').select({
+        multi: true
+    });
+
+
+</script>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 /*!
- * armerjs - v0.6.8 - 2014-12-22 
- * Copyright (c) 2014 Alphmega; Licensed MIT() 
+ * armerjs - v0.6.9b - 2015-01-15 
+ * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
  * jQuery JavaScript Library v1.11.1
@@ -10312,12 +10312,12 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.6.8 - 2014-12-22 
- * Copyright (c) 2014 Alphmega; Licensed MIT() 
+ * armerjs - v0.6.9b - 2015-01-15 
+ * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.6.8 - 2014-12-22 
- * Copyright (c) 2014 Alphmega; Licensed MIT() 
+ * armerjs - v0.6.9b - 2015-01-15 
+ * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
@@ -10637,10 +10637,14 @@ armer = window.jQuery || window.Zepto;
                 function buildParams(i, value, assignment, add) {
                     var k;
                     if ($.isArray(value)) {
-                        $.each(value, function(_, value) {
-                            k = assume(value);
-                            if (k !== void 0) add(i + '[]', k, assignment);
-                        });
+                        if (typeof value[0] == 'object') {
+                            add(i, assume(value), assignment)
+                        } else {
+                            $.each(value, function(_, value) {
+                                k = assume(value);
+                                if (k !== void 0) add(i + '[]', k, assignment);
+                            });
+                        }
                     } else if ($.isPlainObject(value)) {
                         var k = assume(value);
                         if (k !== void 0) add(i, k, assignment);
@@ -10666,13 +10670,16 @@ armer = window.jQuery || window.Zepto;
                         var s = [],
                             arrSeparator,
                             add = function(key, value, assignment){
-                                s.push(key + assignment + (encode ? encodeURI(value) : value))
+                                s.push(key + assignment + (encode ? encodeURIComponent(value) : value))
                             },
                             resource = $.extend({}, obj);
                         if (typeof join == 'string') {
                             arrSeparator = join;
                             join = function(a){
-                                return a.join(arrSeparator);
+                                if (typeof a[0] == 'object')
+                                    return a
+                                else
+                                    return a.join(arrSeparator);
                             }
                         }
                         if (typeof join == 'function') {
@@ -10681,7 +10688,7 @@ armer = window.jQuery || window.Zepto;
                                     resource[i] = join(resource[i]);
                             }
                         }
-                        $.each(obj, function(i, value){
+                        $.each(resource, function(i, value){
                             buildParams(i, value, assignment, add);
                         })
                     } else {
@@ -10702,27 +10709,26 @@ armer = window.jQuery || window.Zepto;
             unserialize: function () {
                 var r = /[\n\r\s]/g;
                 function assume (value){
-                    if (value.indexOf('{') == 0) {
+                    try {
+                        value = decodeURIComponent(value)
+                    } catch(e) {}
+                    if (value.indexOf('{') == 0||value.indexOf('[') == 0) {
                         // 预测是对象或者数组
-                        return decodeURIComponent(JSON.parse(value));
+                        return JSON.parse(value);
                     } else if (value == '') {
                         //为空
                         return null
-                    /*
-                    } else if (!isNaN(Number(value).valueOf())) {
-                        //数字
-                        return Number(value).valueOf();
-                    */
+                        /*
+                         } else if (!isNaN(Number(value).valueOf())) {
+                         //数字
+                         return Number(value).valueOf();
+                         */
                     } else if (value == 'true') {
                         return true
                     } else if (value == 'false') {
                         return false
                     } else {
-                        try {
-                            return decodeURIComponent(value)
-                        } catch(e) {
-                            return value;
-                        }
+                        return value
                     }
                 }
                 function add(result, key, value) {
@@ -10755,13 +10761,16 @@ armer = window.jQuery || window.Zepto;
                         }
 
                         if (!value) return;
-                        else if (value.indexOf(spliter) > -1) {
-                            result[key] = result[key] || [];
-                            $.each(value.split(spliter), function(__, value){
+                        else {
+                            var s = decodeURIComponent(value);
+                            if (value.indexOf(spliter) > -1 && s.indexOf('[') != 0 && s.indexOf('{') != 0) {
+                                result[key] = result[key] || [];
+                                $.each(value.split(spliter), function(__, value){
+                                    add(result, key, assume(value))
+                                });
+                            } else {
                                 add(result, key, assume(value))
-                            });
-                        } else {
-                            add(result, key, assume(value))
+                            }
                         }
                     });
                     return result;
@@ -12333,7 +12342,7 @@ armer = window.jQuery || window.Zepto;
             var that = this;
             this._keys = [];
             this.length = this.size = 0;
-            array.forEach(function(item){
+            if (array) array.forEach(function(item){
                 if (!isArray(item))
                     throw Error('Iterator value ' + item.toString() + ' is not an entry object');
                 that['set'](item[0], item[1]);
@@ -12639,8 +12648,8 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.6.8 - 2014-12-22 
- * Copyright (c) 2014 Alphmega; Licensed MIT() 
+ * armerjs - v0.6.9b - 2015-01-15 
+ * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;(function($){
     var global = window,
@@ -19890,6 +19899,14 @@ $.fn.bgiframe = function(){
     $.EventEmitter = Emitter;
     Emitter.mix = $.mix;
     Emitter.extend = $.factory;
+    Emitter.trigger =  function(emitter, type){
+        var args = [].slice.call(arguments);
+        args.shift();
+        var e = $.Event(type);
+        args.unshift(e);
+        emitter.trigger.apply(emitter, args);
+        return e.actionReturns;
+    }
 })();
 
 // valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化
@@ -20164,6 +20181,7 @@ $.fn.bgiframe = function(){
                 }
             };
         }
+
         if (!$.isPlainObject(prototype)) {
             base = prototype;
             prototype = {}
@@ -20183,8 +20201,8 @@ $.fn.bgiframe = function(){
             base.prototype = tmp;
             basePrototype = new base();
         }
-        basePrototype.options = $.mixOptions( {}, basePrototype.options );
         base.prototype._init = baseInit;
+        var options = $.mixOptions( {}, basePrototype.options, prototype.options);
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {
@@ -20212,11 +20230,12 @@ $.fn.bgiframe = function(){
                 }
                 return fn;
             })();
-            constructor.prototype = $.extend(basePrototype, {
-                inherit: base
-            });
+
         });
-        constructor.prototype = basePrototype;
+        constructor.prototype = $.extend(basePrototype, {
+            options: options,
+            inherit: base
+        });
         constructor.extend = base.extend;
         constructor.mix = base.mix;
         return constructor
@@ -20409,113 +20428,13 @@ $.fn.bgiframe = function(){
             TICK: 'tick'
     }
 
-    $.Store = (function(){
-        function serialize(value){
-            return JSON.stringify(value)
-        }
-        function deserialize(value){
-            var result;
-            if (typeof value != 'string') result = value;
-            try {
-                result = JSON.parse(value)
-            } catch(e) {}
-            // 不是对象的时候，将其值为空对象
-            if (!$.isPlainObject(result)) result = {}
-            return result
-        }
-        return $.EventEmitter.extend({
-            _init: function(_key, triggerItself){
-                this._key = _key;
-                this._triggerItself = !!triggerItself;
-                this._list = deserialize(localStorage.getItem(this._key));
-                this.init();
-            },
-            get: function(key){
-                if (key)
-                    return $.cloneOf(this._list[key]);
-                // 先备份一下，以免被误改
-                else return $.cloneOf(this._list);
-            },
-            init: function(){
-                //Chrome下(14.0.794.0)重写了document.domain之后会导致onstorage不触发
-                //支持localStorage的情况
-                var callback = this._callback.bind(this);
-                if ('onstorage' in document) {
-                    // IE绑到document;
-                    document.attachEvent("onstorage", callback)
-                } else if ($.support.localStorage) {
-                    // 标准浏览器绑到window;
-                    window.addEventListener("storage", callback)
-                } else if (this.userTicker) {
-                    // 先刨个坑
-                } else {
-                    // IE678
-                    window.attachEvent('onfocus', callback)
-                }
-            },
-            _callback: function(e){
-                var that = this;
-                //IE下不使用setTimeout竟然获取不到改变后的值?!
-                $.nextTick(function(){
-                    e = e || window.storageEvent
-                    //若变化的key不是绑定的key，则过滤掉
-                    //IE下不支持key属性,因此需要根据storage中的数据判断key中的数据是否变化
-                    if (e.key && that._key != e.key) return
-                    //获取新的值
-                    var result = that._testAndSet(deserialize(e.newValue || localStorage.getItem(that._key)));
-                    if (that._isChange(result)) {
-                        that.trigger('change', result)
-                    }
-                });
-            },
-            set: function(hash, triggerItself){
-                var key, isNew = true, value;
-                var that = this;
-                if ($.type(hash) == 'string') {
-                    key = hash;
-                    value = triggerItself;
-                    triggerItself = arguments[2];
-                    hash = {}
-                    hash[key] = value
-                    isNew = false
-                    // 如果不是这个hash传递的话，只修改某个字段
-                }
-                triggerItself = triggerItself == null ? this._triggerItself : triggerItself;
-                var result = this._testAndSet(hash, isNew);
-                if (this._isChange(result)) {
-                    triggerItself && this.trigger('change', result);
-                    // 延迟渲染，以免阻塞
-                    $.nextTick(function () {
-                        localStorage.setItem(that._key, serialize(result[2]))
-                    })
-                }
-            },
-            _isChange: function(result){
-                return !$.isEmptyObject(result[0]) || !$.isEmptyObject(result[1])
-            },
-            // 比较新旧数据的差异
-            _testAndSet: function(valueHash, isNew){
-                var i, newValue = {}, oldValue = {}, mix
-                if (isNew) mix = $.mix({}, valueHash, this._list)
-                else mix = valueHash
-                for (i in mix) {
-                    if (mix.hasOwnProperty(i) && !$.isEqual(this._list[i], valueHash[i])) {
-                        // 如果不相等则赋值
-                        oldValue[i] = this._list[i];
-                        if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
-                        else delete this._list[i]
-                    }
-                }
-                return [newValue, oldValue, this._list]
-            }
-        })
-    })();
-    $.store = new $.Store('default-store');
-
-
 })(armer);
 
 
+/*!
+ * armerjs - v0.6.9b - 2015-01-15 
+ * Copyright (c) 2015 Alphmega; Licensed MIT() 
+ */
 // 关掉IE6 7 的动画
 if (!$.support.opacity) $.fx.off = true;
 
@@ -20551,16 +20470,28 @@ $.UI.extend = function(name, base, prototype){
     } else {
         tmp = this;
     }
-    fullName = 'ui-' + fullName;
-    tmp[constructorName] = constructor
+    fullName = 'ui-' + $.hyphen(fullName);
 
-    $.expr[':'][fullName.toLowerCase()] = function(elem){
+    tmp[constructorName] = constructor;
+
+    $.expr[':'][fullName] = function(elem){
         return !!$.data(elem, fullName);
     };
+    $.valHooks[fullName] = {
+        'set': function(element, value){
+            if ($.fn[name] && $.data(element, fullName)) {
 
-    $.fn[name] = function() {
+                $(element)[name]('val', value);
+            }
+        }
+    };
+    var fullNameCamel = $.camelCase(name)
+
+
+    $.fn[fullNameCamel] = function() {
         var self = this[0], ui, $this = $(this[0]);
         var args = arguments, command;
+        if (!$this[0]) return this;
         // 判断是否有这个方法
         if ($.type(args[0]) != 'string' && !constructor.prototype[args[0]]) {
             command = null;
@@ -20579,6 +20510,13 @@ $.UI.extend = function(name, base, prototype){
         } else if (!command) return ui;
         return ui[command].apply(ui, arguments);
     }
+
+    $(function(){
+        $('[type=' + fullName + ']').each(function(){
+            $(this)[fullNameCamel]()
+        });
+    });
+
 
     return constructor;
 };
@@ -20793,6 +20731,96 @@ $.fn.ellipsis = function() {
 
 $.fn.ellipsis.useCssClamp = true;
 
+(function(){
+    var d = 1;
+    var EXPR = {
+        0 : function(i, step, max, min){
+            var s = i + step;
+            if (s < min)
+                return min;
+            else if (s > max)
+                return max;
+            else return s;
+        },
+        1:  function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                return max;
+            } else if (s > max) {
+                return min
+            } else return s
+        },
+        2: function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                d = -d;
+                return 2 * min - s;
+            } else if (s > max) {
+                d = -d;
+                return 2 * max - s;
+            } else return s
+        },
+        3: function(i, step, max, min){
+            var diff = max - min;
+            var s = i +  ((step / diff > 0 && step % diff == 0) ? diff : (step % diff));
+            if (s < min) {
+                return max- min + s ;
+            } else if (s > max) {
+                return min - max + s
+            } else return s
+        }
+    };
+
+    var Switcher = $.EventEmitter.extend({
+        _init: function(options){
+            this.options = $.mixOptions({}, this.constructor.defaults, this.options, options);
+            this._index = this.options.start;
+
+            if (typeof this.options.formula == 'number') {
+                this.options.formula = {
+                    next: EXPR[this.options.formula],
+                    prev: EXPR[this.options.formula]
+                }
+            }
+
+            if (this.options.delay) this.auto(this.options.delay);
+        },
+        options: {
+            delay: false,
+            max: 5,
+            min: 0,
+            start: 0,
+            step: 1,
+            formula: 1
+        },
+        _switch: function(i){
+            this._index = i;
+        },
+        index: function(){
+            return this._index;
+        },
+        auto: function(delay){
+            var that = this;
+            that.off('next');
+            if (this.timer) this.timer.stop();
+            if (delay) {
+                this.timer = $.Timer(true, delay);
+                this.timer.on('tick', function(){
+                    that.trigger('next')
+                }).start();
+            }
+        },
+        next: function(){
+            this.trigger('switch', this.options.formula.next(this._index, this.options.step, this.options.max, this.options.min));
+        },
+        prev: function(){
+            this.trigger('switch', this.options.formula.prev(this._index, this.options.step * -1, this.options.max, this.options.min));
+        }
+    });
+    $.UI.Switcher = Switcher;
+})();
 (function ($) {
 
     var animate = function($elem, animateArgs){
@@ -20840,7 +20868,7 @@ $.fn.ellipsis.useCssClamp = true;
          * @method init
          * @returns {$.Deferred}
          */
-        init: function(){
+        _create: function(){
             var self = this;
             if (typeof this._content == "function") {
                 return this._content().done(function($elem){
@@ -20875,7 +20903,7 @@ $.fn.ellipsis.useCssClamp = true;
                 else $backdrop.css('zIndex', thisZindex);
             }
         },
-        _open: function(openOptions){
+        _innerOpen: function(openOptions){
             var list = this.options.queue, self = this, index, position;
             if (list.indexOf(self) >= 0) return $.when();
             this.lastOpen = openOptions;
@@ -20893,12 +20921,13 @@ $.fn.ellipsis.useCssClamp = true;
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
 
+
             self.container.show().finish().position(position).hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
         },
-        _close: function(returnValue, closeOptions){
+        _innerClose: function(returnValue, closeOptions){
             var self = this;
             self.container.off('focus.dialog');
             return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
@@ -20931,7 +20960,7 @@ $.fn.ellipsis.useCssClamp = true;
             closeOptions = $.extend({}, this.options.close, closeOptions);
             returnValue = returnValue || closeOptions.returnValue;
             returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
-            this._close(returnValue, closeOptions).done(function(){
+            this._innerClose(returnValue, closeOptions).done(function(){
                 ret.resolve(returnValue)
             });
             $.Array.remove(this.options.queue, this);
@@ -20955,17 +20984,17 @@ $.fn.ellipsis.useCssClamp = true;
                 openOptions = dfd;
                 dfd = null;
             }
-            openOptions = $.extend({}, this.options.open, openOptions);
+            openOptions = $.mixOptions({}, this.options.open, openOptions);
             dfd = dfd || openOptions.dfd;
             var init;
             if (typeof this._content == 'function') {
-                var e = $.Event('init');
+                var e = $.Event('create');
                 self.trigger(e);
                 init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
             $.when(init, dfd).done(function(){
-                self._open(openOptions).done(function(){
+                self._innerOpen(openOptions).done(function(){
                     ret.resolve();
                 });
                 self.trigger('focus.ui.dialog');
@@ -21020,7 +21049,7 @@ $.fn.ellipsis.useCssClamp = true;
                 var rt = returnValue || co.returnValue;
                 rt = $.isFunction(rt) ? rt.call(this) : rt;
                 $backdrop = item.options.backdrop;
-                item._close(rt, co)
+                item._innerClose(rt, co)
             });
             list.length = 0;
             !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);

@@ -33,16 +33,28 @@ $.UI.extend = function(name, base, prototype){
     } else {
         tmp = this;
     }
-    fullName = 'ui-' + fullName;
-    tmp[constructorName] = constructor
+    fullName = 'ui-' + $.hyphen(fullName);
 
-    $.expr[':'][fullName.toLowerCase()] = function(elem){
+    tmp[constructorName] = constructor;
+
+    $.expr[':'][fullName] = function(elem){
         return !!$.data(elem, fullName);
     };
+    $.valHooks[fullName] = {
+        'set': function(element, value){
+            if ($.fn[name] && $.data(element, fullName)) {
 
-    $.fn[name] = function() {
+                $(element)[name]('val', value);
+            }
+        }
+    };
+    var fullNameCamel = $.camelCase(name)
+
+
+    $.fn[fullNameCamel] = function() {
         var self = this[0], ui, $this = $(this[0]);
         var args = arguments, command;
+        if (!$this[0]) return this;
         // 判断是否有这个方法
         if ($.type(args[0]) != 'string' && !constructor.prototype[args[0]]) {
             command = null;
@@ -61,6 +73,13 @@ $.UI.extend = function(name, base, prototype){
         } else if (!command) return ui;
         return ui[command].apply(ui, arguments);
     }
+
+    $(function(){
+        $('[type=' + fullName + ']').each(function(){
+            $(this)[fullNameCamel]()
+        });
+    });
+
 
     return constructor;
 };

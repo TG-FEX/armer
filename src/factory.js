@@ -14,6 +14,7 @@
                 }
             };
         }
+
         if (!$.isPlainObject(prototype)) {
             base = prototype;
             prototype = {}
@@ -33,8 +34,8 @@
             base.prototype = tmp;
             basePrototype = new base();
         }
-        basePrototype.options = $.mixOptions( {}, basePrototype.options );
         base.prototype._init = baseInit;
+        var options = $.mixOptions( {}, basePrototype.options, prototype.options);
 
         $.each(prototype, function(prop, value){
             if (!$.isFunction(value)) {
@@ -62,11 +63,12 @@
                 }
                 return fn;
             })();
-            constructor.prototype = $.extend(basePrototype, {
-                inherit: base
-            });
+
         });
-        constructor.prototype = basePrototype;
+        constructor.prototype = $.extend(basePrototype, {
+            options: options,
+            inherit: base
+        });
         constructor.extend = base.extend;
         constructor.mix = base.mix;
         return constructor

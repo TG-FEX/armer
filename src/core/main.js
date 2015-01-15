@@ -319,10 +319,14 @@ armer = window.jQuery || window.Zepto;
                 function buildParams(i, value, assignment, add) {
                     var k;
                     if ($.isArray(value)) {
-                        $.each(value, function(_, value) {
-                            k = assume(value);
-                            if (k !== void 0) add(i + '[]', k, assignment);
-                        });
+                        if (typeof value[0] == 'object') {
+                            add(i, assume(value), assignment)
+                        } else {
+                            $.each(value, function(_, value) {
+                                k = assume(value);
+                                if (k !== void 0) add(i + '[]', k, assignment);
+                            });
+                        }
                     } else if ($.isPlainObject(value)) {
                         var k = assume(value);
                         if (k !== void 0) add(i, k, assignment);
@@ -348,13 +352,16 @@ armer = window.jQuery || window.Zepto;
                         var s = [],
                             arrSeparator,
                             add = function(key, value, assignment){
-                                s.push(key + assignment + (encode ? encodeURI(value) : value))
+                                s.push(key + assignment + (encode ? encodeURIComponent(value) : value))
                             },
                             resource = $.extend({}, obj);
                         if (typeof join == 'string') {
                             arrSeparator = join;
                             join = function(a){
-                                return a.join(arrSeparator);
+                                if (typeof a[0] == 'object')
+                                    return a
+                                else
+                                    return a.join(arrSeparator);
                             }
                         }
                         if (typeof join == 'function') {
@@ -363,7 +370,7 @@ armer = window.jQuery || window.Zepto;
                                     resource[i] = join(resource[i]);
                             }
                         }
-                        $.each(obj, function(i, value){
+                        $.each(resource, function(i, value){
                             buildParams(i, value, assignment, add);
                         })
                     } else {
@@ -384,27 +391,26 @@ armer = window.jQuery || window.Zepto;
             unserialize: function () {
                 var r = /[\n\r\s]/g;
                 function assume (value){
-                    if (value.indexOf('{') == 0) {
+                    try {
+                        value = decodeURIComponent(value)
+                    } catch(e) {}
+                    if (value.indexOf('{') == 0||value.indexOf('[') == 0) {
                         // 预测是对象或者数组
-                        return decodeURIComponent(JSON.parse(value));
+                        return JSON.parse(value);
                     } else if (value == '') {
                         //为空
                         return null
-                    /*
-                    } else if (!isNaN(Number(value).valueOf())) {
-                        //数字
-                        return Number(value).valueOf();
-                    */
+                        /*
+                         } else if (!isNaN(Number(value).valueOf())) {
+                         //数字
+                         return Number(value).valueOf();
+                         */
                     } else if (value == 'true') {
                         return true
                     } else if (value == 'false') {
                         return false
                     } else {
-                        try {
-                            return decodeURIComponent(value)
-                        } catch(e) {
-                            return value;
-                        }
+                        return value
                     }
                 }
                 function add(result, key, value) {
@@ -437,13 +443,16 @@ armer = window.jQuery || window.Zepto;
                         }
 
                         if (!value) return;
-                        else if (value.indexOf(spliter) > -1) {
-                            result[key] = result[key] || [];
-                            $.each(value.split(spliter), function(__, value){
+                        else {
+                            var s = decodeURIComponent(value);
+                            if (value.indexOf(spliter) > -1 && s.indexOf('[') != 0 && s.indexOf('{') != 0) {
+                                result[key] = result[key] || [];
+                                $.each(value.split(spliter), function(__, value){
+                                    add(result, key, assume(value))
+                                });
+                            } else {
                                 add(result, key, assume(value))
-                            });
-                        } else {
-                            add(result, key, assume(value))
+                            }
                         }
                     });
                     return result;

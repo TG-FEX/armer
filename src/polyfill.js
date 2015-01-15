@@ -561,7 +561,7 @@
             var that = this;
             this._keys = [];
             this.length = this.size = 0;
-            array.forEach(function(item){
+            if (array) array.forEach(function(item){
                 if (!isArray(item))
                     throw Error('Iterator value ' + item.toString() + ' is not an entry object');
                 that['set'](item[0], item[1]);

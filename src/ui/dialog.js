@@ -45,7 +45,7 @@
          * @method init
          * @returns {$.Deferred}
          */
-        init: function(){
+        _create: function(){
             var self = this;
             if (typeof this._content == "function") {
                 return this._content().done(function($elem){
@@ -80,7 +80,7 @@
                 else $backdrop.css('zIndex', thisZindex);
             }
         },
-        _open: function(openOptions){
+        _innerOpen: function(openOptions){
             var list = this.options.queue, self = this, index, position;
             if (list.indexOf(self) >= 0) return $.when();
             this.lastOpen = openOptions;
@@ -98,12 +98,13 @@
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
 
+
             self.container.show().finish().position(position).hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
         },
-        _close: function(returnValue, closeOptions){
+        _innerClose: function(returnValue, closeOptions){
             var self = this;
             self.container.off('focus.dialog');
             return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
@@ -136,7 +137,7 @@
             closeOptions = $.extend({}, this.options.close, closeOptions);
             returnValue = returnValue || closeOptions.returnValue;
             returnValue = $.isFunction(returnValue) ? returnValue.call(this) : returnValue;
-            this._close(returnValue, closeOptions).done(function(){
+            this._innerClose(returnValue, closeOptions).done(function(){
                 ret.resolve(returnValue)
             });
             $.Array.remove(this.options.queue, this);
@@ -160,17 +161,17 @@
                 openOptions = dfd;
                 dfd = null;
             }
-            openOptions = $.extend({}, this.options.open, openOptions);
+            openOptions = $.mixOptions({}, this.options.open, openOptions);
             dfd = dfd || openOptions.dfd;
             var init;
             if (typeof this._content == 'function') {
-                var e = $.Event('init');
+                var e = $.Event('create');
                 self.trigger(e);
                 init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
             $.when(init, dfd).done(function(){
-                self._open(openOptions).done(function(){
+                self._innerOpen(openOptions).done(function(){
                     ret.resolve();
                 });
                 self.trigger('focus.ui.dialog');
@@ -225,7 +226,7 @@
                 var rt = returnValue || co.returnValue;
                 rt = $.isFunction(rt) ? rt.call(this) : rt;
                 $backdrop = item.options.backdrop;
-                item._close(rt, co)
+                item._innerClose(rt, co)
             });
             list.length = 0;
             !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);

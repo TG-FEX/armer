@@ -34,6 +34,15 @@ module.exports = function(grunt) {
             ],
             dest: 'tmp/lang.js'
         },
+        'ui': {
+            src: [
+                'src/ui.js',
+                'src/ui/switcher.js',
+                'src/ui/dialog.js',
+                'src/ui/spinner.js'
+            ],
+            dest: 'dist/armer.ui.js'
+        },
         'armer': {
             src: [
                 'dist/armer.core.js',
@@ -46,20 +55,11 @@ module.exports = function(grunt) {
                 'src/event.js',
                 'src/factory.js',
                 'src/util.js',
-                'src/ui.js',
-                'src/ui/dialog.js',
-                'src/ui/spinner.js'
+                'dist/armer.ui.js'
             ],
             dest: 'dist/armer.js'
         },
         'jq': {
-            /* (���������)�������ļ�
-             * jquery.1.x ���Ŀ��
-             * armer ��չ��ܺ���
-             * armer.polyfill �޸�ģ��
-             * armer.mvvm ģ��
-             * armer.lang ������չģ��
-             */
             src: [
                 'bower_components/jquery/dist/jquery.js',
                 'dist/armer.js',
@@ -68,13 +68,6 @@ module.exports = function(grunt) {
             dest: 'dist/jqarmer.js'
         },
         z: {
-            /* (�ƶ���)�������ļ�
-             * zepto ���Ŀ��
-             * fastclick �Ż����
-             * zepto.adapter ������
-             * armer ��չ��ܺ���
-             * armer.mvvm ģ��
-             */
             src: [
                 'bower_components/zepto/zepto.js',
                 '../fastclick.js',

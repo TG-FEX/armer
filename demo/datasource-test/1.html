@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/polyfill.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/lang/array.js"></script>
+    <script src="../../src/lang/function.js"></script>
+    <script src="../../src/io.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/factory.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/effects.js"></script>
+    <script src="../../src/ui.js"></script>
+    <script src="../../src/ui/datasource.js"></script>
+</head>
+<body>
+<script>
+    var ds = $.DataSource('test.json', {
+        filter: function(data){
+            return data.data[1];
+        }
+    });
+
+    ds.on('filtered', function(e, data){
+        console.log(data);
+    })
+
+    ds.query('哈哈哈');
+
+</script>
+</body>
+</html>

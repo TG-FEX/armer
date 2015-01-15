@@ -115,6 +115,14 @@
     $.EventEmitter = Emitter;
     Emitter.mix = $.mix;
     Emitter.extend = $.factory;
+    Emitter.trigger =  function(emitter, type){
+        var args = [].slice.call(arguments);
+        args.shift();
+        var e = $.Event(type);
+        args.unshift(e);
+        emitter.trigger.apply(emitter, args);
+        return e.actionReturns;
+    }
 })();
 
 // valuechange事件，监听来自键盘敲打，复制咱贴，触屏事件，语音输入导致的表单值变化

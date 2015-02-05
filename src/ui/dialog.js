@@ -38,7 +38,7 @@
                 };
             else
                 this._content = content;
-            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="1" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
+            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="0" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
         },
         /**
          * 初始化方法
@@ -69,7 +69,7 @@
             list.push(that);
             list.forEach(function(item, i){
                 s = z.start + i * z.step;
-                var b = !!item.lastOpen.showBackdrop;
+                var b = !!item.lastOpenOptions.showBackdrop;
                 has = b || has;
                 if (b) thisZindex = s || thisZindex;
                 item.container.css('zIndex', s);
@@ -80,10 +80,15 @@
                 else $backdrop.css('zIndex', thisZindex);
             }
         },
+        isOpened: function(){
+            var list = this.options.queue;
+            return list.indexOf(this) >= 0
+        },
         _innerOpen: function(openOptions){
             var list = this.options.queue, self = this, index, position;
-            if (list.indexOf(self) >= 0) return $.when();
-            this.lastOpen = openOptions;
+            if (this.isOpened()) return $.when();
+            this.lastOpenOptions = openOptions;
+
             self.container.on('focus.ui.dialog', function(e){
                 self.trigger(e);
             });
@@ -175,7 +180,7 @@
                     ret.resolve();
                 });
                 self.trigger('focus.ui.dialog');
-                //self.container[0].focus();
+                openOptions.getFocus && self.container[0].focus();
             });
             return ret
         }

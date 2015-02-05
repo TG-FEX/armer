@@ -32,6 +32,9 @@
                     if (!ext) {
                         url.extension(defaults.ext);
                         ext = 'js';
+                    } else if (!$.ajax.ext2Type[ext]) {
+                        url.fileName(url.fileName + '.js');
+                        ext = 'js';
                     }
                     if (ext == 'js') {
                         this.name = url.fileNameWithoutExt()

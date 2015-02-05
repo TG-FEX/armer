@@ -112,116 +112,199 @@ $(function(){
 //==============================
 //   TODO(wuhf): UI级别的方法
 //==============================
-(function(support){
-    if (!support) {
-        var oVal = $.fn.val;
-        var togglePlaceHolder = function(val) {
-            val = val || oVal.call(this);
-            var holder = this.attr('placeholder');
-            if (!val && holder) oVal.call(this, holder).addClass('placeholder');
-            else this.removeClass('placeholder')
+(function() {
+
+    // Opera Mini v7 doesn't support placeholder although its DOM seems to indicate so
+    var isOperaMini = Object.prototype.toString.call(window.operamini) == '[object OperaMini]';
+    var isInputSupported = 'placeholder' in document.createElement('input') && !isOperaMini;
+    var isTextareaSupported = 'placeholder' in document.createElement('textarea') && !isOperaMini;
+    var valHooks = $.valHooks;
+    var propHooks = $.propHooks;
+    var hooks;
+    var placeholder;
+
+    if (isInputSupported && isTextareaSupported) {
+
+        placeholder = $.fn.placeholder = function() {
+            return this;
         };
-    }
-    var fixFn1 = function(){
-        var $this = this;
-        var str = $this.attr('placeholder')
-        var $holder = $(document.createElement('f-placeholder-text')).html(str);
-        var cssClass = $this.attr('class');
-        cssClass && cssClass.replace($.rword, function(cssClass){
-            $holder.addClass(cssClass);
-            return false;
-        });
-        var $wrapper = $(document.createElement('f-placeholder-wrapper'));
-        $this.wrap($wrapper);
-        var css = {
-            'position': 'absolute',
-            'width': $this.width(),
-            'height': $this.height(),
-            'fontFamily': $this.css('fontFamily'),
-            'fontSize': $this.css('fontSize'),
-            'fontWeight': $this.css('fontWeight'),
-            'fontStyle': $this.css('fontStyle'),
-            'lineHeight': $this.css('lineHeight')
+
+        placeholder.input = placeholder.textarea = true;
+
+    } else {
+
+        var settings = {};
+
+        placeholder = $.fn.placeholder = function(options) {
+
+            var defaults = {customClass: 'placeholder'};
+            settings = $.extend({}, defaults, options);
+
+            var $this = this;
+            $this
+                .filter((isInputSupported ? 'textarea' : ':input') + '[placeholder]')
+                .not('.'+settings.customClass)
+                .bind({
+                    'focus.placeholder': clearPlaceholder,
+                    'blur.placeholder': setPlaceholder
+                })
+                .data('placeholder-enabled', true)
+                .trigger('blur.placeholder');
+            return $this;
         };
-        'Top,Right,Bottom,Left'.replace($.rword, function(name){
-            css['padding' + name] = parseInt($this.css('padding' + name)) + parseInt($this.css('border' + name + 'Width'));
-            css['margin' + name] = parseInt($this.css('margin' + name));
-        });
-        css.marginTop ++;
-        $holder.css(css);
-        $this.on('valuechange.placeholder', function(){
-            var arg = arguments;
-            if(!arg[1]) $holder.show();
-            else $holder.hide();
-        });
-        $holder.on('click.placehoder', function(){
-            $this.focus();
-        });
-        $this.before($holder);
 
-    };
-    try {
-        $('<input/>').attr('placeholder')
-    } catch(e) {
-        //IE10你可以去死了...
-        support = true;
-    }
+        placeholder.input = isInputSupported;
+        placeholder.textarea = isTextareaSupported;
 
+        hooks = {
+            'get': function(element) {
+                var $element = $(element);
 
-    var fixFn2 = function(){
-        var $this = this;
-        !support && togglePlaceHolder.call($this);
-        $this.on('blur.placehoder', function(){
-            togglePlaceHolder.call($this);
-        }).on('focus.placehoder', function(){
-                if (oVal.call($this) == $this.attr('placeholder')) oVal.call($this, '');
-                $this.removeClass('placeholder');
+                var $passwordInput = $element.data('placeholder-password');
+                if ($passwordInput) {
+                    return $passwordInput[0].value;
+                }
+
+                return $element.data('placeholder-enabled') && $element.hasClass(settings.customClass) ? '' : element.value;
+            },
+            'set': function(element, value) {
+                var $element = $(element);
+
+                var $passwordInput = $element.data('placeholder-password');
+                if ($passwordInput) {
+                    return $passwordInput[0].value = value;
+                }
+
+                if (!$element.data('placeholder-enabled')) {
+                    return element.value = value;
+                }
+                if (value === '') {
+                    element.value = value;
+                    // Issue #56: Setting the placeholder causes problems if the element continues to have focus.
+                    if (element != safeActiveElement()) {
+                        // We can't use `triggerHandler` here because of dummy text/password inputs :(
+                        setPlaceholder.call(element);
+                    }
+                } else if ($element.hasClass(settings.customClass)) {
+                    clearPlaceholder.call(element, true, value) || (element.value = value);
+                } else {
+                    element.value = value;
+                }
+                // `set` can not return `undefined`; see http://jsapi.info/jquery/1.7.1/val#L2363
+                return $element;
+            }
+        };
+
+        if (!isInputSupported) {
+            valHooks.input = hooks;
+            propHooks.value = hooks;
+        }
+        if (!isTextareaSupported) {
+            valHooks.textarea = hooks;
+            propHooks.value = hooks;
+        }
+
+        $(function() {
+            // Look for forms
+            $(document).delegate('form', 'submit.placeholder', function() {
+                // Clear the placeholder values so they don't get submitted
+                var $inputs = $('.'+settings.customClass, this).each(clearPlaceholder);
+                setTimeout(function() {
+                    $inputs.each(setPlaceholder);
+                }, 10);
             });
+        });
 
-        //重写val
-        $.fn.val = function(val){
-            if (val == null && !val)
-                return this.each(function(){
-                    togglePlaceHolder.call($(this), val);
-                });
-            else if (val) return oVal.apply(this, arguments);
-            else {
-                val = oVal.apply(this);
-                if(val == this.attr('placeholder')) return '';
-                else return val;
-            }
-        };
-    };
+        // Clear placeholder values upon page reload
+        $(window).bind('beforeunload.placeholder', function() {
+            $('.'+settings.customClass).each(function() {
+                this.value = '';
+            });
+        });
 
-    $.fn.placeHolder =  function(str){
-        return this.each(function(){
-            var $this = $(this);
-            if (!$this.data('fix-placeHolder')) {
-                $this.data('fix-placeHolder', true);
-                !!str && $this.attr('placeholder', str);
-                !$.support.placeHolder && fixFn1.call($this);
-            }
-        })
     }
 
-    if (!support) {
-        //重写val
-        $.fn.val = function(val){
-            var $this = $(this);
-            if (!!val && !!$this.attr('placeholder')) {
-                oVal.apply(this, arguments);
-                $this.trigger("valuechange.placeholder",val);
-                return ;
+    function args(elem) {
+        // Return an object of element attributes
+        var newAttrs = {};
+        var rinlinejQuery = /^jQuery\d+$/;
+        $.each(elem.attributes, function(i, attr) {
+            if (attr.specified && !rinlinejQuery.test(attr.name)) {
+                newAttrs[attr.name] = attr.value;
+            }
+        });
+        return newAttrs;
+    }
+
+    function clearPlaceholder(event, value) {
+        var input = this;
+        var $input = $(input);
+        if (input.value == $input.attr('placeholder') && $input.hasClass(settings.customClass)) {
+            if ($input.data('placeholder-password')) {
+                $input = $input.hide().nextAll('input[type="password"]:first').show().attr('id', $input.removeAttr('id').data('placeholder-id'));
+                // If `clearPlaceholder` was called from `$.valHooks.input.set`
+                if (event === true) {
+                    return $input[0].value = value;
+                }
+                $input.focus();
             } else {
-                return oVal.apply(this, arguments);
+                input.value = '';
+                $input.removeClass(settings.customClass);
+                input == safeActiveElement() && input.select();
             }
-        };
-        $(function () {
-            $('input[placeholder], textarea[placeholder]').placeHolder();
-        })
+        }
     }
 
-})($.support.placeHolder =  'placeholder' in document.createElement('input'));
+    function setPlaceholder() {
+        var $replacement;
+        var input = this;
+        var $input = $(input);
+        var id = this.id;
+        if (input.value === '') {
+            if (input.type === 'password') {
+                if (!$input.data('placeholder-textinput')) {
+                    try {
+                        $replacement = $input.clone().attr({ 'type': 'text' });
+                    } catch(e) {
+                        $replacement = $('<input>').attr($.extend(args(this), { 'type': 'text' }));
+                    }
+                    $replacement
+                        .removeAttr('name')
+                        .data({
+                            'placeholder-password': $input,
+                            'placeholder-id': id
+                        })
+                        .bind('focus.placeholder', clearPlaceholder);
+                    $input
+                        .data({
+                            'placeholder-textinput': $replacement,
+                            'placeholder-id': id
+                        })
+                        .before($replacement);
+                }
+                $input = $input.removeAttr('id').hide().prevAll('input[type="text"]:first').attr('id', id).show();
+                // Note: `$input[0] != input` now!
+            }
+            $input.addClass(settings.customClass);
+            $input[0].value = $input.attr('placeholder');
+        } else {
+            $input.removeClass(settings.customClass);
+        }
+    }
+
+    function safeActiveElement() {
+        // Avoid IE9 `document.activeElement` of death
+        // https://github.com/mathiasbynens/jquery-placeholder/pull/99
+        try {
+            return document.activeElement;
+        } catch (exception) {}
+    }
+
+})();
+$(function(){
+    $('input, textarea').placeholder();
+});
+
 /*可截取多行显示省略号*/
 $.fn.ellipsis = function() {
     function loop ($container, maxHeight, str) {

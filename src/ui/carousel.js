@@ -63,27 +63,29 @@
             }, 0);
         },
         _switch: function(i){
-            var that = this;
-            // 判断一下滚动的尺寸是否超出能滚动的区域
-            //FIXME: 单纯判断是否滚动一个
+            if (this._allViewSize > this.viewSize) {
+                var that = this;
+                // 判断一下滚动的尺寸是否超出能滚动的区域
+                //FIXME: 单纯判断是否滚动一个
 
-            var offset = that._getOffset(i);
+                var offset = that._getOffset(i);
 
-            var s;
-            if (this._index == this.options.min && i == this.options.max)
-                s = - this._allViewSize + this._item.eq(i).outerWidth(true) + offset;
-            else if (this._index == this.options.max && i == this.options.min)
-                s = - 2 * this._allViewSize + offset;
-            else {
-                s = - this._allViewSize - this._getSize(0, i) + offset;
+                var s;
+                if (this._index == this.options.min && i == this.options.max)
+                    s = - this._allViewSize + this._item.eq(i).outerWidth(true) + offset;
+                else if (this._index == this.options.max && i == this.options.min)
+                    s = - 2 * this._allViewSize + offset;
+                else {
+                    s = - this._allViewSize - this._getSize(0, i) + offset;
+                }
+
+                this._inner.finish().animate({
+                    'margin-left': s
+                }, that.options.duration, function(){
+                    that._resume(offset)
+                });
+                this.trigger('scroll');
             }
-
-            this._inner.finish().animate({
-                'margin-left': s
-            }, that.options.duration, function(){
-                that._resume(offset)
-            });
-            this.trigger('scroll');
             this._super(i);
         }
     })

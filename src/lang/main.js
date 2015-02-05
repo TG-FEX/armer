@@ -1,4 +1,5 @@
-;(function($){
+;
+(function ($) {
     var global = window,
         DOC = global.document,
         seval = global.execScript ? "execScript" : "eval",
@@ -7,11 +8,11 @@
         rformat = /{{([^{}]+)}}/gm,
         noMatch = /(.)^/,
         escapes = {
-            "'":      "'",
-            '\\':     '\\',
-            '\r':     'r',
-            '\n':     'n',
-            '\t':     't',
+            "'": "'",
+            '\\': '\\',
+            '\r': 'r',
+            '\n': 'n',
+            '\t': 't',
             '\u2028': 'u2028',
             '\u2029': 'u2029'
         },
@@ -22,7 +23,7 @@
         return arguments !== undefined;
     }
 
-    function template(text, data, settings){
+    function template(text, data, settings) {
         settings = $.extend({}, arguments.callee.settings, settings);
 
         // Combine delimiters into one regular expression via alternation.
@@ -35,9 +36,11 @@
         // Compile the template source, escaping string literals appropriately.
         var index = 0;
         var source = "__p+='";
-        text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+        text.replace(matcher, function (match, escape, interpolate, evaluate, offset) {
             source += text.slice(index, offset)
-                .replace(escaper, function(match) { return '\\' + escapes[match]; });
+                .replace(escaper, function (match) {
+                    return '\\' + escapes[match];
+                });
             source +=
                 escape ? "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'" :
                     interpolate ? "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'" :
@@ -50,8 +53,8 @@
         if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
 
         source = "var __t,__p='',__j=Array.prototype.join," +
-            "print=function(){__p+=__j.call(arguments,'');};\n" +
-            source + "return __p;\n";
+        "print=function(){__p+=__j.call(arguments,'');};\n" +
+        source + "return __p;\n";
 
         try {
             var render = new Function(settings.variable || 'obj', '_', source);
@@ -61,7 +64,7 @@
         }
 
         if (data) return render(data, $);
-        var template = function(data) {
+        var template = function (data) {
             return render.call(this, data, $);
         };
 
@@ -72,15 +75,59 @@
     }
 
     template.settings = {
-        evaluate    : /\[%([\s\S]+?)%]/g,
-        interpolate : /\[%=([\s\S]+?)%]/g,
-        escape      : /\[%-([\s\S]+?)%]/g
+        evaluate: /\[%([\s\S]+?)%]/g,
+        interpolate: /\[%=([\s\S]+?)%]/g,
+        escape: /\[%-([\s\S]+?)%]/g
     };
+
+    $.fn.template = function () {
+        return this.each(function () {
+            var compiler = template($.trim(this.nodeValue || this.innerHTML));
+            var $placeholder = $(document.createComment('template here'));
+            $(this).replaceWith($placeholder).data('template', compiler).data('t-placeholder', $placeholder);
+        })
+    };
+    $.fn.templateRender = function () {
+        this.template();
+        return $(this[0]).data('template');
+    };
+    $.fn.compile = function (data) {
+        return this.each(function () {
+            var $this = $(this);
+            var p, $t;
+            var t = $this.data('template');
+            if (!t) $this.template();
+            p = $this.data('t-placeholder');
+            t = $this.data('template');
+            $t = $(t(data));
+            p.replaceWith($t);
+            $this.data('t-placeholder', $t);
+        })
+    }
+
+    function getWs(target, name) {
+        var a = [];
+        name.replace(/[a-zA-Z][a-zA-Z0-9]*/g, function (i) {
+            a.push(i)
+        });
+        var key = a.pop();
+        return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
+    }
 
     /**
      * @for armer
      */
     $.extend($, {
+        // apply的构造体版
+        applyConstr: function (constructor, args) {
+            var pram1 = '';
+            var pram2 = '';
+            for (var i = 0; i < args.length; i++) {
+                pram1 += 'var p' + i + ' = args[' + i + '];';
+                pram2 += i == 0 ? 'p' + i : ',p' + i;
+            }
+            return (new Function('constructor', 'args', pram1 + 'return new constructor(' + pram2 + ')'))(constructor, args)
+        },
         /**
          * 为hash选项对象添加默认成员
          * @method defaults
@@ -89,8 +136,8 @@
          * @param {object} [defaults]*  需要作为默认扩展的对象
          * @returns {*}
          */
-        defaults: function(obj) {
-            $.each($.slice(arguments, 1), function(_, source) {
+        defaults: function (obj) {
+            $.each($.slice(arguments, 1), function (_, source) {
                 if (source) {
                     for (var prop in source) {
                         if (obj[prop] == null) obj[prop] = source[prop];
@@ -99,40 +146,55 @@
             });
             return obj;
         },
-        cloneOf: function(item){
+        cloneOf: function (item) {
             var name = $.type(item);
             var cap = $.capitalize(name)
             if ($[cap] && typeof $[cap].clone == 'function')
                 return $[cap].clone(item)
             else return item;
         },
-        mixOptions: function( target ) {
+        mixOptions: function (target) {
             var callee = arguments.callee,
-                input = $.slice( arguments, 1 ),
+                input = $.slice(arguments, 1),
                 inputIndex = 0,
                 inputLength = input.length,
-                key,
+                key, tmp, obj,
                 value;
-            for ( ; inputIndex < inputLength; inputIndex++ ) {
-                for ( key in input[ inputIndex ] ) {
-                    value = input[ inputIndex ][ key ];
-                    if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
+            for (; inputIndex < inputLength; inputIndex++) {
+                for (key in input[inputIndex]) {
+                    value = input[inputIndex][key];
+                    if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
+
+                        if (/[\[\]\.]/.test(key)) {
+                            try {
+                                tmp =  getWs(target, key);
+                            } catch(e) {
+                                tmp = undefined;
+                            }
+                        }
+
+                        if (tmp && typeof tmp[0] == 'object') {
+                            obj = tmp[0];
+                            key = tmp[1];
+                        } else {
+                            obj = target
+                        }
+
                         // Clone objects
-                        if ( $.isPlainObject( value ) ) {
-                            target[ key ] = $.isPlainObject( target[ key ] ) ?
-                                callee.call(this, {}, target[ key ], value ) :
+                        if ($.isPlainObject(value)) {
+                            obj[key] = $.isPlainObject(obj[key]) ?
+                                callee.call(this, {}, obj[key], value) :
                                 // Don't extend strings, arrays, etc. with objects
-                                callee.call(this, {}, value );
+                                callee.call(this, {}, value);
                             // Copy everything else by reference
                         } else {
-                            target[ key ] = value;
+                            obj[key] = value;
                         }
                     }
                 }
             }
             return target;
         },
-
 
 
         /*
@@ -155,17 +217,18 @@
          * @param target {*} 目标变量
          * @returns {boolean}
          */
-        isString: function(target){
+        isString: function (target) {
             return $.type(target) == 'string';
         },
-        isArguments: function(obj) {
+        isArguments: function (obj) {
             if (obj != null) {
                 if ($.stringType(obj) == "Arguments") {
                     return true;
                 } else if ('callee' in obj) {
                     try {
                         return isArgs.apply(this, obj);
-                    } catch (e) {}
+                    } catch (e) {
+                    }
                 }
             }
             return false;
@@ -178,7 +241,7 @@
          * @param {object|function} target 目标对象
          * @return {boolean}
          */
-        isNative: function(methodKey, target) {
+        isNative: function (methodKey, target) {
             var m = target ? target[methodKey] : false,
                 r = new RegExp(methodKey, "g");
             return !!(m && typeof m != "string" && sopen === (m + "").replace(r, ""));
@@ -191,14 +254,15 @@
          * @param {object|function} target 目标对象
          * @return {boolean}
          */
-        isNativeEvent: function(eventName, target){
+        isNativeEvent: function (eventName, target) {
             target = target || DOC;
             eventName = 'on' + eventName;
             var osc = target[eventName];
             var support = false;
             try {
                 target[eventName] = 0;
-            } catch (e) {}
+            } catch (e) {
+            }
             support = target[eventName] === null;
             target[eventName] = osc;
             return support;
@@ -210,7 +274,7 @@
          * @param {Object} obj 需要判断的目标对象
          * @return {Boolean}
          */
-        isEmptyObject: function(obj) {
+        isEmptyObject: function (obj) {
             for (var i in obj) {
                 return false;
             }
@@ -223,7 +287,7 @@
          * @param target {*} 需要判断的目标对象
          * @returns {boolean}
          */
-        isNaN : function(target) {
+        isNaN: function (target) {
             return target !== target;
         },
         /**
@@ -233,7 +297,7 @@
          * @param target {*} 需要判断的目标对象
          * @returns {boolean}
          */
-        isNull : function(target){
+        isNull: function (target) {
             return target === null;
         },
         /**
@@ -243,43 +307,48 @@
          * @param target {*} 需要判断的目标对象
          * @returns {boolean}
          */
-        isUndefined : function(target){
+        isUndefined: function (target) {
             return target === void 0;
         },
-        isObjectLike : function(obj) {
+        isObjectLike: function (obj) {
             return typeof obj == 'object' || typeof obj == 'function';
         },
         // 判断字符串，对象，数组是否为空
-        isEmpty : function(obj) {
+        isEmpty: function (obj) {
             if (obj == null) return true;
             if ($.isArray(obj) || $.isString(obj)) return obj.length === 0;
             for (var key in obj) if (obj.hasOwnProperty(key)) return false;
             return true;
         },
+        isURLString: function(str){
+            return !!~str.indexOf('/') || !!~str.indexOf('?')
+        },
         // 判断一个对象是不是jQ对象
-        isQuaryElement : function(obj){
+        isQueryElement: function (obj) {
             return typeof obj == 'object' && obj.constructor == $;
         },
-        isDefined: function(obj){
+        isDefined: function (obj) {
             return obj !== null && obj !== undefined
         },
         // 判断是否DOM元素
-        isElement : function(obj){
+        isElement: function (obj) {
             return !!(obj && obj.nodeType == 1);
         },
         // 判断是否无穷大
-        isFinite : function(obj){
+        isFinite: function (obj) {
             return $.isNumeric(obj) && isFinite(obj);
         },
-        isEmptyJson: function(str){return str == '[]' || str == '{}'},
+        isEmptyJson: function (str) {
+            return str == '[]' || str == '{}'
+        },
         /**
          * 比较两个变量是否相等
          * @param {*} a 比较对象1
          * @param {*} b 比较对象2
          * @return {boolean} 是否相等
          */
-        isEqual: function(){
-            var eq = function(a, b, aStack, bStack) {
+        isEqual: function () {
+            var eq = function (a, b, aStack, bStack) {
                 // 0 === -0 为true，但实际上不应该相等
                 // http://wiki.ecmascript.org/doku.php?id=harmony:egal
                 // http://www.w3.org/TR/xmlschema11-2/
@@ -360,23 +429,34 @@
                 bStack.pop();
                 return result;
             };
-            return function(a, b) {
+            return function (a, b) {
                 return eq(a, b, [], []);
             }
         }(),
 
         // 强化类型判断
-        type: (function($type){
+        type: (function ($type) {
             var rsplit = /[, |]+/g;
             var typeCase = {
-                blank: function(){},
+                blank: function () {
+                },
                 arraylike: $.isArrayLike,
-                int: function(obj){return !isNaN(obj) && parseInt(obj) == obj},
-                uint: function(obj){return !isNaN(obj) && parseInt(obj) >= 0},
+                int: function (obj) {
+                    return !isNaN(obj) && parseInt(obj) == obj
+                },
+                uint: function (obj) {
+                    return !isNaN(obj) && parseInt(obj) >= 0
+                },
                 arguments: $.isArguments,
-                window: function(obj){return obj == obj.document && obj.document != obj || $.stringType(obj,'window|global')},
-                document: function(obj){return obj.nodeType === 9 || $.stringType(obj,'document')},
-                nodelist: function(obj){return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')}
+                window: function (obj) {
+                    return obj == obj.document && obj.document != obj || $.stringType(obj, 'window|global')
+                },
+                document: function (obj) {
+                    return obj.nodeType === 9 || $.stringType(obj, 'document')
+                },
+                nodelist: function (obj) {
+                    return isFinite(obj.length) && obj.item || $.stringType(obj, 'nodelist')
+                }
             };
             /**
              * 用于取得数据的类型（一个参数的情况下）或判定数据的类型（两个参数的情况下）
@@ -389,16 +469,16 @@
              * @return {string|boolean}
              * @api public
              */
-            return function(target, condition){
+            return function (target, condition) {
                 if (!condition) return $type.apply(this, arguments);
                 else {
                     if ('string' == typeof condition)
                         condition = condition.split(rsplit);
                     if ($.isArray(condition))
-                        condition = (function(arr){
-                            return function(obj){
+                        condition = (function (arr) {
+                            return function (obj) {
                                 var found = false;
-                                $.each(arr, function(__, type){
+                                $.each(arr, function (__, type) {
                                     var camel = $.camelCase(type);
                                     var cap = $.capitalize(camel);
                                     var lower = camel.toLowerCase();
@@ -415,7 +495,6 @@
         })($.type),
 
 
-
         /*
          ============= parse 系列 ================
          */
@@ -426,7 +505,7 @@
          * 将字符串当作JS代码执行
          * @param {string} code
          */
-        parseJS: function(code) {
+        parseJS: function (code) {
             //IE中，global.eval()和eval()一样只在当前作用域生效。
             //Firefox，Safari，Opera中，直接调用eval()为当前作用域，global.eval()调用为全局作用域。
             //window.execScript 在IE下一些限制条件
@@ -446,12 +525,11 @@
          * @beta
          * @returns {string}
          */
-        parseBase64: function(inputStr){
+        parseBase64: function (inputStr) {
             var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
             var outputStr = "";
             var i = 0;
-            while (i<inputStr.length)
-            {
+            while (i < inputStr.length) {
                 //all three "& 0xff" added below are there to fix a known bug
                 //with bytes returned by xhr.responseText
                 var byte1 = inputStr.charCodeAt(i++) & 0xff;
@@ -462,19 +540,16 @@
                 var enc3, enc4;
                 if (isNaN(byte2))
                     enc3 = enc4 = 64;
-                else
-                {
+                else {
                     enc3 = ((byte2 & 15) << 2) | (byte3 >> 6);
-                    if (isNaN(byte3))
-                    {
+                    if (isNaN(byte3)) {
                         enc4 = 64;
                     }
-                    else
-                    {
+                    else {
                         enc4 = byte3 & 63;
                     }
                 }
-                outputStr +=  b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4);
+                outputStr += b64.charAt(enc1) + b64.charAt(enc2) + b64.charAt(enc3) + b64.charAt(enc4);
             }
             return outputStr;
         },
@@ -484,7 +559,7 @@
          * @static
          * @param cssStr
          */
-        parseCSS: function (cssStr){
+        parseCSS: function (cssStr) {
             var styles = head.getElementsByTagName("style"), style, media;
             cssStr += "\n";
             if (styles.length == 0) {
@@ -516,6 +591,10 @@
 
 
         template: template,
+        toTemplate: function (str) {
+            if ($.isFunction(str)) return str;
+            else return $(str).templateRender()
+        },
         /**
          * 字符串插值，有两种插值方法。
          * 第一种，第二个参数为对象，{{}}里面为键名，替换为键值，适用于重叠值够多的情况
@@ -527,7 +606,7 @@
          * @param {*} object 插值包或某一个要插的值
          * @return {string}
          */
-        format: function(str, object) {
+        format: function (str, object) {
             if (arguments.length > 2)
                 object = $.slice(arguments, 1);
             return template(str, object, {
@@ -544,9 +623,9 @@
          * https://github.com/Canop/JSON.prune/blob/master/JSON.prune.js
          * http://freshbrewedcode.com/jimcowart/2013/01/29/what-you-might-not-know-about-json-stringify/
          */
-        dump: function(obj) {
+        dump: function (obj) {
             var space = $.isNative("parse", window.JSON) ? 4 : "\r\t", cache = [],
-                text = JSON.stringify(obj, function(key, value) {
+                text = JSON.stringify(obj, function (key, value) {
                     if (typeof value === 'object' && value !== null) {//防止环引用
                         if (cache.indexOf(value) !== -1) {
                             return;
@@ -577,18 +656,18 @@
             //转换为连字符线风格
             return target.replace(/([a-z\d])([A-Z]+)/g, "$1-$2").toLowerCase();
         },
-        capitalize: function(s){
+        capitalize: function (s) {
             return s.charAt(0).toUpperCase() + s.substr(1);
         },
-        throttle: function(func, wait) {
+        throttle: function (func, wait) {
             var context, args, timeout, result;
             var previous = 0;
-            var later = function() {
+            var later = function () {
                 previous = new Date;
                 timeout = null;
                 result = func.apply(context, args);
             };
-            return function() {
+            return function () {
                 var now = new Date;
                 var remaining = wait - (now - previous);
                 context = this;
@@ -607,8 +686,8 @@
 
 
         // 参数初始化整理方法
-        argsArrange: (function(){
-            var filter = function(args, paramsDescription, defaults, excludeRest) {
+        argsArrange: (function () {
+            var filter = function (args, paramsDescription, defaults, excludeRest) {
                 if (typeof defaults == 'boolean') {
                     excludeRest = defaults;
                     defaults = null;
@@ -637,7 +716,13 @@
                         length = Infinity;
                         isAutoLen = true;
                     } else length = match;
-                    grouper = group || length > 1 || isAutoLen ? function(arg){tempArr.push(arg); return tempArr} : function(arg){k++; return arg};
+                    grouper = group || length > 1 || isAutoLen ? function (arg) {
+                        tempArr.push(arg);
+                        return tempArr
+                    } : function (arg) {
+                        k++;
+                        return arg
+                    };
                     for (var k = 0; k < length || isAutoLen; k++) {
                         if ($.type(args[j], item.type))
                             a[i] = grouper(args[j++]);
@@ -649,16 +734,16 @@
                             a[i] = grouper(item.defaults);
                     }
                 }
-                for (;j < args.length && excludeRest;) {
+                for (; j < args.length && excludeRest;) {
                     a[i++] = args[j++];
                 }
                 return a;
             };
-            return function(args, paramsDescription, defaults){
+            return function (args, paramsDescription, defaults) {
                 if ($.isFunction(args)) {
                     paramsDescription = [].slice.call(arguments);
                     var func = args.shift();
-                    return function(){
+                    return function () {
                         return func.apply(this, filter(arguments, paramsDescription));
                     };
                 } else

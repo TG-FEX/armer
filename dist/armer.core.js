@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.6.9b - 2015-01-15 
+ * armerjs - v0.7.0 - 2015-02-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -608,6 +608,102 @@ armer = window.jQuery || window.Zepto;
         };
 
     })();
+    // 反序列化表单
+    (function(){
+        function setAsGroup(obj, key, item) {
+            if (obj[key] == null){
+                obj[key] = item;
+                return
+            }
+            if (!$.isArray(obj[key]))
+                obj[key] = [obj[key]];
+            obj[key].push(item);
+        }
+        $.flatten = function(obj, combine){
+            var a = {};
+            function s(name, obj, b){
+                if ($.type(obj) == 'object' || $.isArray(obj)) {
+                    $.each(obj, function(i, item){
+                        s((combine && $.isArray(obj) && typeof item != 'object') ? (name + '[]') : (name + '[' + i + ']'), item, b);
+                    })
+                } else setAsGroup(b, name, obj)
+
+            }
+            $.each(obj, function(key, item){
+                s(key, item, a);
+            });
+            return a;
+        };
+
+        $.unserializeNodes = function(data, nodes, hooks, phpstyle){
+            var callee = arguments.callee;
+            hooks = hooks || {};
+            nodes = $(nodes).find('input,select,textarea').andSelf();
+
+            var b = {};
+
+            $.each(data, function(key, item){
+                if (!phpstyle)
+                    setAsGroup(b, key, item);
+                if (typeof item == 'object' && phpstyle == null) {
+                    phpstyle = true;
+                    return false;
+                }
+            });
+
+            if (phpstyle)
+                b = $.flatten(data, true);
+
+            var a = {};
+            nodes.each(function(key, node){
+                var name = node.name;
+                if (!name) return;
+                if (!a[name]) a[name] = [];
+                a[name].push(node);
+            })
+            $.each(a, function(key, nodes){
+                var name = key.slice(0, -2);
+                if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
+                    b[key] = b[name]
+                }
+                (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
+            })
+        }
+
+        function has(values, node){
+            var has = false;
+            $.each(values, function(j, value){
+                if (value == node.value) {
+                    has = true;
+                }
+            })
+            return has;
+        }
+
+        $.unserializeNodes.defaultHandler = function(nodes, values, key, b){
+            if (!values) return;
+            if (!$.isArray(values)) values = [values];
+            if (nodes[0].tagName == 'SELECT') {
+                nodes = nodes[0];
+                $.each(nodes, function(i, node){
+                    node.selected = has(values, node);
+                })
+            } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
+                $.each(nodes, function(i, node){
+                    node.checked = has(values, node);
+                });
+            } else
+                $.each(nodes, function(i, node){
+                    node.value = values[i];
+                })
+        }
+
+
+        $.clearForm = function (form) {
+            $(':input, select', form).not(':button, :submit, :reset, :radio').val('');
+            $(':checkbox, :radio', form).prop('checked', false);
+        }
+    })();
 
     // TODO(wuhf): 增加ajax文件后缀与类型的映射
     // ========================================================
@@ -810,6 +906,10 @@ armer = window.jQuery || window.Zepto;
             self._protocol = protocol;
             return '';
         });
+        var i = parent.indexOf('?');
+        if (!!~i) {
+            parent = parent.substr(0, i)
+        }
         parent = parent.substr(0, parent.lastIndexOf('/'));
         return parent;
     };
@@ -1085,6 +1185,9 @@ armer = window.jQuery || window.Zepto;
                     var ext = url.extension();
                     if (!ext) {
                         url.extension(defaults.ext);
+                        ext = 'js';
+                    } else if (!$.ajax.ext2Type[ext]) {
+                        url.fileName(url.fileName + '.js');
                         ext = 'js';
                     }
                     if (ext == 'js') {

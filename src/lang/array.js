@@ -1,5 +1,18 @@
 ;(function($){
     $.Array = $.extend($.Array, {
+        // 判断数组是否包含相同的目标
+        containsEqual: function(value, data){
+            return value.some(function(item){
+                return $.isEqual(item, data)
+            });
+        },
+        // 判断数组是否包含相同的目标
+        indexOfEqual: function(value, data){
+            return value.reduce(function(memo, item, i){
+                if ($.isEqual(item, data)) return i;
+                else return memo
+            }, -1)
+        },
         contains: function(target, item) {
             //判定数组是否包含指定目标。
             return !!~target.indexOf(item);

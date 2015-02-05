@@ -3,13 +3,12 @@ $.UI.extend('spinner', {
 
         var that= this;
         this.element = element;
-        this._element = $('<span class="spinner"><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
-        this._input = this._element.find('input');
+        this.output = $('<span class="spinner"><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
+        this._input = this.output.find('input');
         this.options = $.extend({}, this.constructor.defaults, options);
-        this.oldValue = isNaN(this.element.val()) ?  options.min : this.element.val();
 
         var tmp;
-        this._element.on('click', 'a', function(){
+        this.output.on('click', 'a', function(){
             var $this = $(this);
             var klass = $this.attr('class');
             that.trigger(!~klass.indexOf('up') ? 'spinup' : 'spindown');
@@ -34,12 +33,13 @@ $.UI.extend('spinner', {
                 this.select();
                 return false;
             }
-        }).val(this.oldValue);
-        this.element.after(this._element);
+        });
+        this.element.after(this.output);
         this.on('invalid overflow', function(e, _, oldValue){
             that._input.val(oldValue);
         });
         this.editable(this.options.editable);
+        this.val(this.element.val());
     },
     editable: function(editable){
         this._input.prop('readonly', !editable);
@@ -63,23 +63,43 @@ $.UI.extend('spinner', {
         this.oldValue = newValue;
     },
     val: function(newValue){
-        if (newValue != null) this._change(newValue);
+        if (newValue != null) this.validate(newValue, this.oldValue);
         else return this.element.val();
+    },
+    _validate: function(newValue, oldValue){
+        var that = this;
+        var val = +newValue;
+        if (isNaN(val) || newValue === '') {
+            that.trigger('invalid', [newValue, oldValue]);
+        } else if (val < that.options.min || val > that.options.max) {
+            that.trigger('overflow', [val, oldValue]);
+        } else if (!$.isEqual(val, oldValue))
+            this.trigger('change', [val, oldValue]);
     },
     validate: function(newValue, oldValue){
         var that = this;
         var val = +newValue;
-        if (isNaN(val) || newValue == '') {
+        if (isNaN(val) || newValue === '') {
             that.trigger('invalid', [newValue, oldValue]);
         } else if (val < that.options.min || val > that.options.max) {
             that.trigger('overflow', [val, oldValue]);
-        } else this.trigger('change', [val, oldValue]);
+        } else if (!$.isEqual(val, oldValue))
+            this._change(val, oldValue);
     }
 }).mix({
     defaults: {
         min: 1,
         max: 99,
         step: 1,
-        editable: true
+        editable: true,
+        oninvalid: function(){
+            this.output.addClass('invalid');
+        },
+        onoverflow: function(){
+            this.output.addClass('overflow');
+        },
+        onchange: function(){
+            this.output.removeClass('invalid overflow');
+        }
     }
 })

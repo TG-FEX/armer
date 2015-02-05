@@ -1,40 +1,45 @@
 /**
  * Created by Administrator on 2014/12/23.
  */
-$.EventEmitter.trigger =  function(emitter, type){
-    var args = [].slice.call(arguments, 2);
-    var e = $.Event(type);
-    args.unshift(e);
-    emitter.trigger.apply(emitter, args);
-    return e.actionReturns;
-};
+
 $.DataSource = $.EventEmitter.extend({
     options: {
-        source: '',
-        type: 'post',
-        requireOnce: false,
+        source: '', //数据源,可以是url,
+        type: 'post', //如果是url时，传送的方式
+        cache: false, //是否缓存
         filter: function(data){
             return data
         }
     },
     _init: function(options){
+        if (typeof options != 'object') {
+            options = {source: options}
+        }
         this.options = $.mixOptions({}, this.constructor.defaults, this.options, options);
+        this.cache = {};
 
         if (this.options.source) {
-            console.log(this.options.source);
             if ($.type(this.options.source) == 'string') {
                 this.url = this.options.source;
-            } else this.source = $.when(this.options.source);
+            } else {
+                this.source = $.when(this.options.source);
+            }
         }
 
     },
     query: function(search){
         var source, that = this;
-        if (!this.source) {
-            source = $.EventEmitter.trigger(this, 'getdata', [search]).done(function(data){
-                that.trigger('gotdata', [data]);
-            });
-            if (this.options.requireOnce) this.source = source;
+        if (!this.source && this.url) {
+            var cacheKey = JSON.toString(search);
+            var cacheTime = this.options.cache === true ? Infinity : this.options.cache;
+            if (cacheTime && this.cache[cacheKey] && ($.now() - this.cache[cacheKey].timestamp < cacheTime)) {
+                source = this.cache[cacheKey];
+            } else {
+                this.cache[cacheKey] = source = $.EventEmitter.trigger(this, 'getData', [search]).done(function(data){
+                    that.trigger('gotData', [data]);
+                });
+                source.timestamp = $.now();
+            }
         } else
             source = this.source;
         if (source) {
@@ -43,8 +48,7 @@ $.DataSource = $.EventEmitter.extend({
             })
         }
     },
-    _getdata: function(search){
-        console.log(this.url);
+    _getData: function(search){
         return $.ajax({
             url: this.url,
             type: 'post',

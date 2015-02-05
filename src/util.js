@@ -64,8 +64,9 @@
     /**
      * 定时器
      * @param timeout {boolean|number} 超时时间，定时器开始后，会在该时间后停止
-     * @param [interval=200] 通知时隔，定时器开始后，每隔一段时间会进行进度通知
-     * @param [limit=Infinity] 进度生成次数限制，超过这个次数，定时器将会停止
+     * @param [interval=200] {number} 通知时隔，定时器开始后，每隔一段时间会进行进度通知
+     * @param [limit=Infinity] {number} 进度生成次数限制，超过这个次数，定时器将会停止
+     * @param [callback] {function} 成功后绑定的成功时间
      * @class armer.Timer
      * @constructor
      * @extends armer.EventEmitter
@@ -178,6 +179,19 @@
          * @event tick
          */
             TICK: 'tick'
+    }
+
+    $.setTimeout = function(callback, timeout){
+        return $.Timer(timeout, $.type(callback) == string ? function(){eval(callback)} : callbcak);
+    }
+    $.clearTimeout = function(timer) {
+        timer.stop();
+    }
+    $.setInterval = function(callback, interval){
+        return $.Timer(false, interval, callback);
+    }
+    $.clearInterval = function(timer){
+        timer.stop();
     }
 
 })(armer);

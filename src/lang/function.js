@@ -1,5 +1,6 @@
 ;(function($){
     $.Function = $.extend($.Function, {
+        applyConstr: $.applyConstr,
         clone: function(fn, extend){
             var newfn = new Function('return ' + fn.toString())();
             if (newfn.prototype)

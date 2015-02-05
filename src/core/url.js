@@ -21,6 +21,10 @@
             self._protocol = protocol;
             return '';
         });
+        var i = parent.indexOf('?');
+        if (!!~i) {
+            parent = parent.substr(0, i)
+        }
         parent = parent.substr(0, parent.lastIndexOf('/'));
         return parent;
     };

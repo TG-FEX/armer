@@ -116,8 +116,7 @@
     Emitter.mix = $.mix;
     Emitter.extend = $.factory;
     Emitter.trigger =  function(emitter, type){
-        var args = [].slice.call(arguments);
-        args.shift();
+        var args = [].slice.call(arguments, 2);
         var e = $.Event(type);
         args.unshift(e);
         emitter.trigger.apply(emitter, args);

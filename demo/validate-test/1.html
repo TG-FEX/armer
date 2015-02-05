@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="../../src/core/main.js"></script>
+    <script src="../../src/core/url.js"></script>
+    <script src="../../src/core/define.js"></script>
+    <script src="../../src/polyfill.js"></script>
+    <script src="../../src/lang/main.js"></script>
+    <script src="../../src/lang/object.js"></script>
+    <script src="../../src/lang/array.js"></script>
+    <script src="../../src/lang/function.js"></script>
+    <script src="../../src/io.js"></script>
+    <script src="../../src/event.js"></script>
+    <script src="../../src/factory.js"></script>
+    <script src="../../src/css.js"></script>
+    <script src="../../src/effects.js"></script>
+    <script src="../../src/ui.js"></script>
+    <script src="../../src/ui/validate.js"></script>
+</head>
+<body>
+<form>
+    <input value="1" id="s" data-bind-timing="2" data-condition="./test.json">
+    <input value="1" id="b">
+    <input type="checkbox"/>
+    <button>提交</button>
+</form>
+<script>
+    alert('init');
+
+    var pass = false;
+    $('#s').validate({
+        onerror: function(a, b){
+            alert(b)
+        }
+    });
+    $('#b').validate({
+        condition: function(val){
+            return val == 3;
+        }
+    });
+    $(':checkbox').click(function(){
+        pass = this.checked;
+    })
+
+</script>
+</body>
+</html>

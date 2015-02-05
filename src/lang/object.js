@@ -21,6 +21,17 @@
     $.Object.prototype = Object.prototype;
     $.Object.mix = $.extend;
     $.Object.mix(OldObject, {
+        /**
+         * 判断obj是不是属于constructor的实例，是则返回obj，不是则以obj作为参数，返回constructor的实例
+         * @param {Function} constructor 需要判断的构造器
+         * @param {*} obj 需要判断的东西
+         * @return {array}
+         */
+        instanceTo: function(constructor, obj){
+            if (obj instanceof constructor){
+                return obj
+            } else return $.Function.applyConstr(constructor, $.isArray(obj) ? obj : [obj]);
+        },
         size: function(obj){
             return $.isArrayLike(obj) ? obj.length: Object.keys(obj).length;
         },

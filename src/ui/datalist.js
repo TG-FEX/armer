@@ -2,6 +2,7 @@ define(['./datasource'], function(){
     $.UI.extend('data-list', {
         options: {
             item: $.template('<li>[%=name%]</li>'),
+            noResult: $.template('<div class="no-result">暂时没有该数据</div>'),
             multi: false,
             onchange: function(e, i, selectElem, otherElem){
                 this._data2Element(selectElem).addClass('selected');
@@ -179,15 +180,24 @@ define(['./datasource'], function(){
         query: function(search){
             this.options.source.query(search)
         },
+        _empty: function(){
+            this.noResult = $($.toTemplate(this.options.noResult)()).insertBefore(this.element);
+        },
+        _rendered: function(){
+            if (this.noResult) this.noResult.remove();
+        },
         _render: function(data){
             var that = this;
             that.focusedValue = null;
             this.element.empty().scrollTop(0);
             that._data2elementMap.clear();
-            data.forEach(function(item){
-                that._data2elementMap['set'](item, $($.toTemplate(that.options.item)(item)).data('data-list-item', item).appendTo(that.element)[0]);
-            });
-            that.trigger('rendered', [data]);
+            if (data.length) {
+                data.forEach(function(item){
+                    that._data2elementMap['set'](item, $($.toTemplate(that.options.item)(item)).data('data-list-item', item).appendTo(that.element)[0]);
+                });
+                that.trigger('rendered', [data]);
+            } else that.trigger('empty')
+
         }
     });
 

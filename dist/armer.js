@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.7.0 - 2015-02-05 
+ * armerjs - v0.7.0 - 2015-02-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.7.0 - 2015-02-05 
+ * armerjs - v0.7.0 - 2015-02-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1851,9 +1851,216 @@ armer = window.jQuery || window.Zepto;
             }
         });
 
-        Date.now = function () {
-            return +new Date;
-        };
+        // ISO 8601
+        if (!Date.prototype.toISOString){
+            var isLeapYear = function(year){
+                return (year % 400 === 0) || (year % 4 === 0 && year % 100 !== 0);
+            };
+            var operHoursAndMinutes = {};
+            operHoursAndMinutes['+'] = function(minusHours, minusMinutes, year, month, date, hours, minutes, seconds, milliseconds){
+                var ret = {};
+                minutes -= minusMinutes;
+                hours -= minusHours;
+                if (minutes < 0){
+                    hours -= 1;
+                    minutes += 60;
+                }
+                if (hours < 0 ){
+                    --date;
+                    hours += 24;
+                    if (date < 0){
+                        --month;
+                        if (month < 0){
+                            --year;
+                            month = 11;
+                        }
+                        if (month % 2 === 0){
+                            date += 31;
+                        }
+                        else if (month === 1)
+                        {
+                            date += isLeapYear(year) ? 29 : 28;
+                        }
+                        else{
+                            date += 30;
+                        }
+
+                        if (month < 0){
+                            --year;
+                            month += 12;
+                        }
+                    }
+                }
+
+                ret.year = year;
+                ret.month = month;
+                ret.date = date;
+                ret.hours = hours;
+                ret.minutes = minutes;
+                ret.seconds = seconds;
+                ret.milliseconds = milliseconds;
+
+                return ret;
+            };
+            operHoursAndMinutes['-'] = function(addHours, addMinutes, year, month, date, hours, minutes, seconds, milliseconds){
+                var ret = {};
+
+                minutes += addMinutes;
+                hours += addHours;
+                if (minutes >= 60){
+                    hours += 1;
+                    minutes -= 60;
+                }
+                if (hours >=24){
+                    ++date;
+                    hours -= 24;
+                    var dateOfCurrMonth = month % 2 === 0 ? 31 : (month === 1 ? (isLeapYear(year) ? 29 : 28) : 30);
+                    if (date >= dateOfCurrMonth){
+                        ++month;
+                        date -= dateOfCurrMonth;
+
+                        if (month >= 12){
+                            ++year;
+                            month -= 12;
+                        }
+                    }
+                }
+
+                ret.year = year;
+                ret.month = month;
+                ret.date = date;
+                ret.hours = hours;
+                ret.minutes = minutes;
+                ret.seconds = seconds;
+                ret.milliseconds = milliseconds;
+
+                return ret;
+            };
+            var regExp = new RegExp('^(\\d{4,4})'
+            + '-((?:0[123456789]|1[012]))'
+            + '-((?:0[123456789]|[12]\\d|3[01]))'
+            + 'T'
+            + '((?:[01]\\d|2[0123]))'
+            + ':([012345]\\d)'
+            + ':([012345]\\d)'
+            + '(?:.(\\d{3}))?'
+            + '(Z|[+-](?:[01]\\d|2[0123]):?[012345]\\d)$');
+            var parseISOString2UTC = function(ISOString){
+                var ret = {};
+                var year = Number(RegExp.$1)
+                    , month = Number(RegExp.$2) - 1
+                    , date = Number(RegExp.$3)
+                    , hours = Number(RegExp.$4)
+                    , minutes = Number(RegExp.$5)
+                    , seconds = Number(RegExp.$6)
+                    , offset = RegExp.$8
+                    , milliseconds;
+                milliseconds = (milliseconds = Number(RegExp.$7), !isNaN(milliseconds) && milliseconds || 0);
+
+                if (offset === 'Z'){
+                    ret.year = year;
+                    ret.month = month;
+                    ret.date = date;
+                    ret.hours = hours;
+                    ret.minutes = minutes;
+                    ret.seconds = seconds;
+                    ret.milliseconds = milliseconds;
+                }
+                else if (typeof offset !== 'undefined'){
+                    var symbol = offset.charAt(0);
+                    var offsetHours = Number(offset.substring(1,3));
+                    var offsetMinutes = Number(offset.substring(offset.length > 5 ? 4 : 3));
+
+                    ret = operHoursAndMinutes[symbol](offsetHours, offsetMinutes, year, month, date, hours, minutes, seconds, milliseconds);
+                }
+
+                return ret;
+            };
+
+            var _nativeDate = Date;
+            Date = function(Y,M,D,H,m,s,ms){
+                var ret, len = arguments.length;
+                if (!(this instanceof Date)){
+                    ret = _nativeDate.apply(null, arguments);
+                }
+                else if (len === 1 && typeof arguments[0] === 'string' && regExp.test(arguments[0])){
+                    var tmpRet;
+                    try{
+                        tmpRet = parseISOString2UTC();
+                    }
+                    catch(e){
+                        console && console.log('Invalid Date');
+                        return void 0;
+                    }
+
+                    ret = new _nativeDate(_nativeDate.UTC(tmpRet.year, tmpRet.month, tmpRet.date, tmpRet.hours, tmpRet.minutes, tmpRet.seconds, tmpRet.milliseconds));
+                }
+                else if (typeof arguments[0] === 'string'){
+                    ret = new _nativeDate(arguments[0]);
+                }
+                else{
+                    ret = len >= 7 ? new _nativeDate(Y, M, D, H, m, s, ms)
+                        : len >= 6 ? new _nativeDate(Y, M, D, H, m, s)
+                        : len >= 5 ? new _nativeDate(Y, M, D, H, m)
+                        : len >= 4 ? new _nativeDate(Y, M, D, H)
+                        : len >= 3 ? new _nativeDate(Y, M, D)
+                        : len >= 2 ? new _nativeDate(Y, M)
+                        : len >= 1 ? new _nativeDate(Y)
+                        : new _nativeDate();
+                }
+
+                return ret;
+            };
+            Date.prototype = _nativeDate.prototype;
+            Date.prototype.constructor = Date;
+
+            var _pad = function(num){
+                if (num < 10){
+                    return '0' + num;
+                }
+                return num;
+            };
+            var _padMillisecond = function(num){
+                if (num < 10){
+                    return '00' + num;
+                }
+                else if (num < 100){
+                    return '0' + num;
+                }
+                return num;
+            };
+            Date.prototype.toISOString = function(){
+                return [this.getUTCFullYear(), '-', _pad(this.getUTCMonth() + 1), '-', _pad(this.getUTCDate()), 'T'
+                    , _pad(this.getUTCHours()), ':', _pad(this.getUTCMinutes()), ':', _pad(this.getUTCSeconds()), '.', _padMillisecond(this.getUTCMilliseconds()), 'Z'].join('');
+            };
+
+            // 复制可枚举的类成员
+            for (var clsProp in _nativeDate){
+                if (_nativeDate.hasOwnProperty(clsProp)){
+                    Date[clsProp] = _nativeDate[clsProp];
+                }
+            }
+            // 复制不可枚举的类成员
+            var innumerableMems = ['UTC'];
+            for (var i = 0, clsProp; clsProp = innumerableMems[i++];){
+                Date[clsProp] = _nativeDate[clsProp];
+            }
+
+            Date.parse = function(str){
+                if (['string', 'number'].indexOf(typeof str) === -1) return NaN;
+
+                var isMatch = regExp.test(str), milliseconds = 0;
+                if (!isMatch) return _nativeDate.parse(str);
+
+                var tmpRet = parseISOString2UTC();
+
+                return _nativeDate.UTC(tmpRet.year, tmpRet.month, tmpRet.date, tmpRet.hours, tmpRet.minutes, tmpRet.seconds, tmpRet.milliseconds);
+            };
+            Date.now = Date.now
+            || function(){
+                return +new this();
+            };
+        }
 
         //=====================
         // TODO: String
@@ -2438,7 +2645,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.7.0 - 2015-02-05 
+ * armerjs - v0.7.0 - 2015-02-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -10345,7 +10552,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.7.0 - 2015-02-05 
+ * armerjs - v0.7.0 - 2015-02-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

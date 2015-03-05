@@ -103,8 +103,15 @@
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
 
+            self.container.show().finish().position(position);
 
-            self.container.show().finish().position(position).hide();
+            if (!openOptions.animate) {
+                return $.when().done(function(){
+                    self.trigger('opened.ui.dialog');
+                });
+            }
+
+            self.container.hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
@@ -112,11 +119,13 @@
         _innerClose: function(returnValue, closeOptions){
             var self = this;
             self.container.off('focus.dialog');
-            return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
+            return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
                 self.trigger('closed.ui.dialog', [returnValue]);
-            });
+            }) : (this.container.hide() && $.when().done(function(){
+                self.trigger('closed.ui.dialog', [returnValue]);
+            }));
         },
         /**
          * 开关弹出框
@@ -247,21 +256,23 @@
             },
             open: {
                 position: {
-                    at: 'left' + ' bottom' + '+15',
-                    my: 'left top'
+                    //at: 'left' + ' bottom' + '+15',
+                    at: 'left' + ' bottom' + '+5',
+                    my: 'left top',
+                    collision: 'flipfit flipfit'
                 },
                 showBackdrop: false,
                 closeOthers: true,
-                getFocus: false,
                 animate: [{
-                    top: '-=10',
+                    //top: '-=10',
                     opacity: 'show'
-                }]
+                }],
+                getFocus: false
             },
             close: {
                 animate: [{
-                    opacity: 'hide',
-                    top: '+=10'
+                    //top: '+=10',
+                    opacity: 'hide'
                 }]
             },
             onopen: $.noop,
@@ -299,7 +310,7 @@
                 return {
                     at: 'center' + offestY + ' center' + offestY,
                     my: 'center center',
-                    collision: 'flipfit'
+                    collision: 'fit'
                 }
             },
             showBackdrop: true,

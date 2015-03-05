@@ -73,7 +73,7 @@
     </style>
 </head>
 <body>
-    <select>
+    <select multiple>
         <option value="1">测试1</option>
         <option value="2">测试2</option>
         <option value="3" selected="selected">测试3</option>
@@ -97,7 +97,7 @@
             source: 'test2.php',
             filter: function(data){
                 return data.map(function(i){
-                    return {name: i, value: i}
+                    return {label: i, value: i}
                 })
             }
         })

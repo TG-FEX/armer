@@ -6,12 +6,22 @@
                 return $.isEqual(item, data)
             });
         },
-        // 判断数组是否包含相同的目标
+        // 根据条件查找数组下标
+        findIndexOf: function(value, iterator){
+            var ret = -1;
+            $.each(value, function(i, item){
+                if (iterator.call(value, item)) {
+                    ret = i;
+                    return false;
+                }
+            });
+            return ret;
+        },
+        // 查找第一个与value相同的下标
         indexOfEqual: function(value, data){
-            return value.reduce(function(memo, item, i){
-                if ($.isEqual(item, data)) return i;
-                else return memo
-            }, -1)
+            return $.Array.findIndexOf(value, function(item){
+                return $.isEqual(item, data)
+            })
         },
         contains: function(target, item) {
             //判定数组是否包含指定目标。

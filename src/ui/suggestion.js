@@ -45,7 +45,7 @@ define(['./datalist'], function() {
             });
 
             that.on('change', function (e, data) {
-                that.element.val(data.name);
+                that.element.val(data.label);
                 that.$datalist.dialog().trigger('close');
             });
             that.datalist.on('change', function (e, a, b, c) {

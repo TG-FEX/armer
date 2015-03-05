@@ -12,8 +12,10 @@
         'ftp:': '21',
         'ssh:': '22',
         'http:': '80',
+        'ws': '80',
         'https:': '443',
-        'file:': ''
+        'file:': '445'
+
     };
     var setProtocol = function(parent, self){
         parent = parent.replace(rProtocol, function(protocol){
@@ -243,7 +245,6 @@
         toString: function(){
             return this._protocol + '//' + this.host() + this._pathname + this._search + this._hash;
         },
-        href: function(url){},
         /**
          * 将URL对象转换为一个HTMLAnchorElement对象
          * @param {string=} innerHTML 作为anchor元素的innerHTML内容
@@ -264,5 +265,55 @@
         var a = document.createElement('a');
         a.href = url;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
+    }
+    /**
+     * 获取运行此代码所在的js的url
+     * @returns {string}
+     */
+    $.URL.current = function(){
+        //取得正在解析的script节点
+        if(document.currentScript) { //firefox 4+
+            return document.currentScript.src || location.href;
+        }
+        //只在head标签中寻找
+        var nodes = document.getElementsByTagName("script");
+        for(var i = 0, node; node = nodes[i++];) {
+            if(node.readyState === "interactive") {
+                if (node.src)
+                    return node.src;
+                else return location.href
+            }
+        }
+        // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
+        var stack;
+        try {
+            //强制报错,以便捕获e.stack
+            throw new Error();
+        } catch(e) {
+            //safari的错误对象只有line,sourceId,sourceURL
+            stack = e.stack;
+
+            if(!stack && window.opera){
+                //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
+                stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
+            }
+        }
+        if(stack) {
+            /**e.stack最后一行在所有支持的浏览器大致如下:
+             *chrome23:
+             * at http://113.93.50.63/data.js:4:1
+             *firefox17:
+             *@http://113.93.50.63/query.js:4
+             *opera12:
+             *@http://113.93.50.63/data.js:4
+             *IE10:
+             *  at Global code (http://113.93.50.63/data.js:4:1)
+             */
+                //取得最后一行,最后一个空格或@之后的部分
+            stack = stack.split( /[@ ]/g).pop();
+            stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
+            //去掉行号与或许存在的出错字符起始位置
+            return stack.replace(/(:\d+)?:\d+$/i, "");
+        }
     }
 })(armer);

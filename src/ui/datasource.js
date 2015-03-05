@@ -21,6 +21,8 @@ $.DataSource = $.EventEmitter.extend({
         if (this.options.source) {
             if ($.type(this.options.source) == 'string') {
                 this.url = this.options.source;
+            } else if ($.isElement(this.options.source) || $.isQueryElement(this.options.source)){
+                this.source = $.when(this.constructor.fromElement(this.options.source));
             } else {
                 this.source = $.when(this.options.source);
             }
@@ -62,5 +64,16 @@ $.DataSource = $.EventEmitter.extend({
             filter = this.options.filter;
         }
         this.trigger('filtered', [filter.call(this, source, keyword)])
+    }
+}).mix({
+    fromElement: function($this){
+        $this = $($this);
+        var $source = $this.find('option, input[type=checkbox], input[type=radio]').andSelf();
+        return $.map($source, function(element){
+            var forE
+            if (element.id)
+                forE = $('[for=' + element.id + ']')[0];
+            return {label: forE ? forE.innerHTML : element.innerHTML, value: element.value == undefined ? element.innerHTML : element.value}
+        })
     }
 });

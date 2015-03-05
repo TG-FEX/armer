@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -84,7 +84,10 @@ $.UI.extend = function(name, base, prototype){
         });
     });
 
-
+    constructor.defaults = constructor.prototype.options;
+    constructor.config = function(){
+        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    };
     return constructor;
 };
 
@@ -576,8 +579,15 @@ $.fn.ellipsis.useCssClamp = true;
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
 
+            self.container.show().finish().position(position);
 
-            self.container.show().finish().position(position).hide();
+            if (!openOptions.animate) {
+                return $.when().done(function(){
+                    self.trigger('opened.ui.dialog');
+                });
+            }
+
+            self.container.hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
@@ -585,11 +595,13 @@ $.fn.ellipsis.useCssClamp = true;
         _innerClose: function(returnValue, closeOptions){
             var self = this;
             self.container.off('focus.dialog');
-            return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
+            return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
                 self.trigger('closed.ui.dialog', [returnValue]);
-            });
+            }) : (this.container.hide() && $.when().done(function(){
+                self.trigger('closed.ui.dialog', [returnValue]);
+            }));
         },
         /**
          * 开关弹出框
@@ -720,21 +732,23 @@ $.fn.ellipsis.useCssClamp = true;
             },
             open: {
                 position: {
-                    at: 'left' + ' bottom' + '+15',
-                    my: 'left top'
+                    //at: 'left' + ' bottom' + '+15',
+                    at: 'left' + ' bottom' + '+5',
+                    my: 'left top',
+                    collision: 'flipfit flipfit'
                 },
                 showBackdrop: false,
                 closeOthers: true,
-                getFocus: false,
                 animate: [{
-                    top: '-=10',
+                    //top: '-=10',
                     opacity: 'show'
-                }]
+                }],
+                getFocus: false
             },
             close: {
                 animate: [{
-                    opacity: 'hide',
-                    top: '+=10'
+                    //top: '+=10',
+                    opacity: 'hide'
                 }]
             },
             onopen: $.noop,
@@ -772,7 +786,7 @@ $.fn.ellipsis.useCssClamp = true;
                 return {
                     at: 'center' + offestY + ' center' + offestY,
                     my: 'center center',
-                    collision: 'flipfit'
+                    collision: 'fit'
                 }
             },
             showBackdrop: true,

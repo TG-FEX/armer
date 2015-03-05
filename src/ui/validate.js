@@ -12,6 +12,7 @@
             onpass: function(){},
             onshowError: function(){},
             obstruct: false, // 校验未返回结果时阻塞再次校验
+            stopValidateWhenError: true, // 异常时不再检测
             bindTiming: 0 // 绑定表单值变化校验的时机，0：不绑定表单元素，1: 在表单第一次提交后绑定，2: 初始化时绑定
         },
         _init: function(element, options) {
@@ -35,21 +36,23 @@
             if (this.bindTiming == 2 || this.form.data('after-submit') && this.bindTiming == 1) {
                 bind();
             }
-            this.form.on('submit', function () {
+            this.form.on('submit', function (e) {
                 if (bind && that.bindTiming == 1) {
                     bind();
                 }
-                var r;
+                // 非异步的
                 that.valid().fail(function(){
-                    r = false;
-                });
-                return r
+                    if (that.options.stopValidateWhenError) {
+                        e.stopImmediatePropagation();
+                    }
+                    e.preventDefault();
+                }).done(function(){});
             })
         },
-        _check: function (condition) {
-            var e;
-            if ($.isString(condition) && this.constructor.condition[condition]) {
-                condition = this.constructor.condition[condition];
+        _check: function (oCondition) {
+            var e, condition;
+            if ($.isString(oCondition) && this.constructor.condition[oCondition]) {
+                condition = this.constructor.condition[oCondition];
             }
 
             var dfd = $.Deferred();
@@ -65,7 +68,7 @@
                 }
             };
             if ($.isFunction(condition)) {
-                e = condition.call(dfd, this.element, this.element.val(), this.element[0]) || dfd;
+                e = condition.call(dfd, this.element, this.element.val(), this.element[0]);
             } else if ($.isURLString(condition)) {
                 e = dfd;
                 $.ajax(ajaxConfig)
@@ -79,13 +82,13 @@
             if (!$.isDeferred(e)) {
                 ret = $.Deferred();
                 if ($.isString(e)) {
-                    ret.reject(e, this.element.val(), this.element, this.element[0]);
+                    ret.reject(e, oCondition, this.element.val(), this.element, this.element[0]);
                 } else if(e === undefined) {
-                    ret.resolve(e, this.element.val(), this.element, this.element[0]);
+                    ret.resolve(e, oCondition, this.element.val(), this.element, this.element[0]);
                 } else if (e) {
-                    ret.resolve(e, this.element.val(), this.element, this.element[0])
+                    ret.resolve(e, oCondition, this.element.val(), this.element, this.element[0])
                 } else {
-                    ret.reject(e, this.element.val(), this.element, this.element[0]);
+                    ret.reject(e, oCondition, this.element.val(), this.element, this.element[0]);
                 }
             } else ret = e;
             ret.timestamp = $.now();
@@ -115,10 +118,19 @@
             this.form.off('submit', this._lockform)
             this.trigger('showPass', [].slice.call(arguments));
         },
-        _getMsg: function(err){
-            if ($.type(this.options.message) == 'function') return this.options.message.call(this, err) || err;
-            else if ($.type(this.options.message) == 'object') return this.options.message[err] || err;
-            else return this.options.message || err;
+        _getMsg: function(err, oCondition){
+            var s
+            if ($.type(this.options.message) == 'object') {
+                if (err === false && (typeof oCondition == 'string') && this.options.message[oCondition]) {
+                    err = oCondition;
+                }
+                s = this.options.message[err];
+            }
+            else s = this.options.message;
+
+            if ($.type(this.options.message) == 'function') return s.call(this.err);
+            else return s || err;
+
         },
         _error: function(err){
             this.form.off('submit', this._lockform);
@@ -127,7 +139,9 @@
         }
     }).mix({
         condition: {
-
+            required: function(_, v){
+                return !$.isBlank(v);
+            }
         }
     });
 

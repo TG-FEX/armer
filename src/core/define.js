@@ -10,7 +10,7 @@
         exports: {exports: {}},
         module: {exports: {}}
     };
-    modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
+    modules.jQuery = modules.jquery = modules.zepto = modules.armer;
 
     var currentUrl = location.href, xhrRequestURL = null;
     // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
@@ -25,9 +25,26 @@
         method: 'auto',
         namespace: 'default',
         plusin: {
+            // domready 插件
+            domready: {
+                config: function(){
+                    var mod = {
+                        dfd: $.Deferred(),
+                        exports: $,
+                        method: 'domready'
+                    };
+                    $(function(){
+                        mod.dfd.resolveWith(mod, [mod]);
+                    });
+                    return mod;
+                }
+            },
             auto: {
                 config: function(config){
-                    var url = $.URL(this.url, this.parent);
+                    var url;
+                    if ($.type(this.url) == 'string') {
+                        url = $.URL(this.url, this.parent);
+                    } else url = this.url;
                     var ext = url.extension();
                     if (!ext) {
                         url.extension(defaults.ext);
@@ -162,7 +179,6 @@
     /**
      * 请求模块
      * @param deps 依赖列表
-     * @param callback 依赖加载成功后执行的回调函数
      * @returns {$.Deferred.promise}
      */
 
@@ -226,7 +242,7 @@
         return $.when.apply($, mDps);
     }
 
-    function require(deps, callback, errorCallback, options){
+    function require(deps, callback, errorCallback){
         // 兼容CMD模式
         if (!callback) {
             var mod;
@@ -236,7 +252,7 @@
                 throw Error('this module is not define');
             }
         }
-        return innerRequire(deps, options).done(function(){
+        return innerRequire(deps).done(function(){
             callback.apply(this, getExports(arguments))
         }).fail(errorCallback).promise();
 
@@ -260,7 +276,7 @@
         }
         var mod, config;
 
-        currentUrl = xhrRequestURL || currentScriptURL();
+        currentUrl = xhrRequestURL || $.URL.current();
         // 如果正在请求这个js
         if (mod = requesting[currentUrl]) {
             if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
@@ -310,56 +326,6 @@
         return mod;
     }
 
-    /**
-     * 获取运行此代码所在的js的url
-     * @returns {string}
-     */
-    function currentScriptURL(){
-        //取得正在解析的script节点
-        if(document.currentScript) { //firefox 4+
-            return document.currentScript.src || location.href;
-        }
-        //只在head标签中寻找
-        var nodes = document.getElementsByTagName("script");
-        for(var i = 0, node; node = nodes[i++];) {
-            if(node.readyState === "interactive") {
-                if (node.src)
-                    return node.src;
-                else return location.href
-            }
-        }
-        // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
-        var stack;
-        try {
-            //强制报错,以便捕获e.stack
-            throw new Error();
-        } catch(e) {
-            //safari的错误对象只有line,sourceId,sourceURL
-            stack = e.stack;
-
-            if(!stack && window.opera){
-                //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
-                stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
-            }
-        }
-        if(stack) {
-            /**e.stack最后一行在所有支持的浏览器大致如下:
-             *chrome23:
-             * at http://113.93.50.63/data.js:4:1
-             *firefox17:
-             *@http://113.93.50.63/query.js:4
-             *opera12:
-             *@http://113.93.50.63/data.js:4
-             *IE10:
-             *  at Global code (http://113.93.50.63/data.js:4:1)
-             */
-                //取得最后一行,最后一个空格或@之后的部分
-            stack = stack.split( /[@ ]/g).pop();
-            stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
-            //去掉行号与或许存在的出错字符起始位置
-            return stack.replace(/(:\d+)?:\d+$/i, "");
-        }
-    }
     function id2Config(name, url) {
         var s, c = {name: name};
         s = name.split('!');
@@ -395,7 +361,14 @@
     define.amd = define.cmd = modules;
     require.defaults = defaults;
     require.config = function(options){
-        $.extend(require.defaults, options)
+        options = $.mixOptions({}, options);
+        if (options.paths) $.each(options.paths, function(i, item){
+            if ($.type(item) == 'string') {
+                options.paths[i] = $.URL(item);
+            }
+        });
+        $.mixOptions(this.defaults, options);
+
     };
     // CMD的async方法实际是就是AMD的require
     require.async = require;
@@ -409,21 +382,8 @@
     $.require = require;
     $.define = define;
 
-    // domready 插件
-    defaults.plusin['domready'] = {
-        config: function(){
-            var mod = {
-                dfd: $.Deferred(),
-                exports: $,
-                method: 'domready'
-            };
-            $(function(){
-                mod.dfd.resolveWith(mod, [mod]);
-            });
-            return mod;
-        }
-
-    };
+    defaults.plusin.css = defaults.plusin.auto;
+    defaults.plusin.domReady = defaults.plusin.domready;
 
     var nodes = document.getElementsByTagName("script")
     var dataMain = $(nodes[nodes.length - 1]).data('main')

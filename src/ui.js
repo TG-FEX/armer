@@ -80,7 +80,10 @@ $.UI.extend = function(name, base, prototype){
         });
     });
 
-
+    constructor.defaults = constructor.prototype.options;
+    constructor.config = function(){
+        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    };
     return constructor;
 };
 

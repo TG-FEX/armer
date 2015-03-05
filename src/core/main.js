@@ -665,6 +665,7 @@ armer = window.jQuery || window.Zepto;
                 if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
                     b[key] = b[name]
                 }
+                if (!b[key]) return;
                 (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
             })
         }
@@ -672,30 +673,40 @@ armer = window.jQuery || window.Zepto;
         function has(values, node){
             var has = false;
             $.each(values, function(j, value){
-                if (value == node.value) {
+                if (node.value == undefined && node.innerHTML == value || value == node.value) {
                     has = true;
                 }
+                if (has) return false;
             })
             return has;
         }
 
-        $.unserializeNodes.defaultHandler = function(nodes, values, key, b){
-            if (!values) return;
-            if (!$.isArray(values)) values = [values];
-            if (nodes[0].tagName == 'SELECT') {
-                nodes = nodes[0];
-                $.each(nodes, function(i, node){
-                    node.selected = has(values, node);
-                })
-            } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
-                $.each(nodes, function(i, node){
-                    node.checked = has(values, node);
-                });
-            } else
-                $.each(nodes, function(i, node){
-                    node.value = values[i];
-                })
+        $.vals = function(nodes, values){
+            nodes = $(nodes);
+            if (!values) return $.serializeNodes(nodes, false)[nodes[0].name];
+            else {
+                if (!$.isArray(values)) values = [values];
+                if (nodes[0].tagName == 'SELECT' && nodes[0].multiple == true) {
+                    nodes = $(nodes[0]).find('option');
+                    $.each(nodes, function(i, node){
+                        node.selected = has(values, node);
+                    })
+                } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
+                    $.each(nodes, function(i, node){
+                        node.checked = has(values, node);
+                    });
+                } else
+                    $.each(nodes, function(i, node){
+                        node.value = values[i];
+                    })
+            }
         }
+
+        $.fn.vals = function(values){
+            return $.vals(this, values);
+        }
+
+        $.unserializeNodes.defaultHandler = $.vals
 
 
         $.clearForm = function (form) {

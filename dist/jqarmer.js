@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10312,11 +10312,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -10983,6 +10983,7 @@ armer = window.jQuery || window.Zepto;
                 if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
                     b[key] = b[name]
                 }
+                if (!b[key]) return;
                 (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
             })
         }
@@ -10990,30 +10991,40 @@ armer = window.jQuery || window.Zepto;
         function has(values, node){
             var has = false;
             $.each(values, function(j, value){
-                if (value == node.value) {
+                if (node.value == undefined && node.innerHTML == value || value == node.value) {
                     has = true;
                 }
+                if (has) return false;
             })
             return has;
         }
 
-        $.unserializeNodes.defaultHandler = function(nodes, values, key, b){
-            if (!values) return;
-            if (!$.isArray(values)) values = [values];
-            if (nodes[0].tagName == 'SELECT') {
-                nodes = nodes[0];
-                $.each(nodes, function(i, node){
-                    node.selected = has(values, node);
-                })
-            } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
-                $.each(nodes, function(i, node){
-                    node.checked = has(values, node);
-                });
-            } else
-                $.each(nodes, function(i, node){
-                    node.value = values[i];
-                })
+        $.vals = function(nodes, values){
+            nodes = $(nodes);
+            if (!values) return $.serializeNodes(nodes, false)[nodes[0].name];
+            else {
+                if (!$.isArray(values)) values = [values];
+                if (nodes[0].tagName == 'SELECT' && nodes[0].multiple == true) {
+                    nodes = $(nodes[0]).find('option');
+                    $.each(nodes, function(i, node){
+                        node.selected = has(values, node);
+                    })
+                } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
+                    $.each(nodes, function(i, node){
+                        node.checked = has(values, node);
+                    });
+                } else
+                    $.each(nodes, function(i, node){
+                        node.value = values[i];
+                    })
+            }
         }
+
+        $.fn.vals = function(values){
+            return $.vals(this, values);
+        }
+
+        $.unserializeNodes.defaultHandler = $.vals
 
 
         $.clearForm = function (form) {
@@ -11214,8 +11225,10 @@ armer = window.jQuery || window.Zepto;
         'ftp:': '21',
         'ssh:': '22',
         'http:': '80',
+        'ws': '80',
         'https:': '443',
-        'file:': ''
+        'file:': '445'
+
     };
     var setProtocol = function(parent, self){
         parent = parent.replace(rProtocol, function(protocol){
@@ -11445,7 +11458,6 @@ armer = window.jQuery || window.Zepto;
         toString: function(){
             return this._protocol + '//' + this.host() + this._pathname + this._search + this._hash;
         },
-        href: function(url){},
         /**
          * 将URL对象转换为一个HTMLAnchorElement对象
          * @param {string=} innerHTML 作为anchor元素的innerHTML内容
@@ -11467,6 +11479,56 @@ armer = window.jQuery || window.Zepto;
         a.href = url;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
+    /**
+     * 获取运行此代码所在的js的url
+     * @returns {string}
+     */
+    $.URL.current = function(){
+        //取得正在解析的script节点
+        if(document.currentScript) { //firefox 4+
+            return document.currentScript.src || location.href;
+        }
+        //只在head标签中寻找
+        var nodes = document.getElementsByTagName("script");
+        for(var i = 0, node; node = nodes[i++];) {
+            if(node.readyState === "interactive") {
+                if (node.src)
+                    return node.src;
+                else return location.href
+            }
+        }
+        // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
+        var stack;
+        try {
+            //强制报错,以便捕获e.stack
+            throw new Error();
+        } catch(e) {
+            //safari的错误对象只有line,sourceId,sourceURL
+            stack = e.stack;
+
+            if(!stack && window.opera){
+                //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
+                stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
+            }
+        }
+        if(stack) {
+            /**e.stack最后一行在所有支持的浏览器大致如下:
+             *chrome23:
+             * at http://113.93.50.63/data.js:4:1
+             *firefox17:
+             *@http://113.93.50.63/query.js:4
+             *opera12:
+             *@http://113.93.50.63/data.js:4
+             *IE10:
+             *  at Global code (http://113.93.50.63/data.js:4:1)
+             */
+                //取得最后一行,最后一个空格或@之后的部分
+            stack = stack.split( /[@ ]/g).pop();
+            stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
+            //去掉行号与或许存在的出错字符起始位置
+            return stack.replace(/(:\d+)?:\d+$/i, "");
+        }
+    }
 })(armer);
 
 // TODO(wuhf): AMD/CMD加载器
@@ -11481,7 +11543,7 @@ armer = window.jQuery || window.Zepto;
         exports: {exports: {}},
         module: {exports: {}}
     };
-    modules.jQuery = modules.jquery = modules.zepto = { exports: $ };
+    modules.jQuery = modules.jquery = modules.zepto = modules.armer;
 
     var currentUrl = location.href, xhrRequestURL = null;
     // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
@@ -11496,9 +11558,26 @@ armer = window.jQuery || window.Zepto;
         method: 'auto',
         namespace: 'default',
         plusin: {
+            // domready 插件
+            domready: {
+                config: function(){
+                    var mod = {
+                        dfd: $.Deferred(),
+                        exports: $,
+                        method: 'domready'
+                    };
+                    $(function(){
+                        mod.dfd.resolveWith(mod, [mod]);
+                    });
+                    return mod;
+                }
+            },
             auto: {
                 config: function(config){
-                    var url = $.URL(this.url, this.parent);
+                    var url;
+                    if ($.type(this.url) == 'string') {
+                        url = $.URL(this.url, this.parent);
+                    } else url = this.url;
                     var ext = url.extension();
                     if (!ext) {
                         url.extension(defaults.ext);
@@ -11633,7 +11712,6 @@ armer = window.jQuery || window.Zepto;
     /**
      * 请求模块
      * @param deps 依赖列表
-     * @param callback 依赖加载成功后执行的回调函数
      * @returns {$.Deferred.promise}
      */
 
@@ -11697,7 +11775,7 @@ armer = window.jQuery || window.Zepto;
         return $.when.apply($, mDps);
     }
 
-    function require(deps, callback, errorCallback, options){
+    function require(deps, callback, errorCallback){
         // 兼容CMD模式
         if (!callback) {
             var mod;
@@ -11707,7 +11785,7 @@ armer = window.jQuery || window.Zepto;
                 throw Error('this module is not define');
             }
         }
-        return innerRequire(deps, options).done(function(){
+        return innerRequire(deps).done(function(){
             callback.apply(this, getExports(arguments))
         }).fail(errorCallback).promise();
 
@@ -11731,7 +11809,7 @@ armer = window.jQuery || window.Zepto;
         }
         var mod, config;
 
-        currentUrl = xhrRequestURL || currentScriptURL();
+        currentUrl = xhrRequestURL || $.URL.current();
         // 如果正在请求这个js
         if (mod = requesting[currentUrl]) {
             if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
@@ -11781,56 +11859,6 @@ armer = window.jQuery || window.Zepto;
         return mod;
     }
 
-    /**
-     * 获取运行此代码所在的js的url
-     * @returns {string}
-     */
-    function currentScriptURL(){
-        //取得正在解析的script节点
-        if(document.currentScript) { //firefox 4+
-            return document.currentScript.src || location.href;
-        }
-        //只在head标签中寻找
-        var nodes = document.getElementsByTagName("script");
-        for(var i = 0, node; node = nodes[i++];) {
-            if(node.readyState === "interactive") {
-                if (node.src)
-                    return node.src;
-                else return location.href
-            }
-        }
-        // 参考 https://github.com/samyk/jiagra/blob/master/jiagra.js
-        var stack;
-        try {
-            //强制报错,以便捕获e.stack
-            throw new Error();
-        } catch(e) {
-            //safari的错误对象只有line,sourceId,sourceURL
-            stack = e.stack;
-
-            if(!stack && window.opera){
-                //opera 9没有e.stack,但有e.Backtrace,但不能直接取得,需要对e对象转字符串进行抽取
-                stack = (String(e).match(/of linked script \S+/g) || []).join(" ");
-            }
-        }
-        if(stack) {
-            /**e.stack最后一行在所有支持的浏览器大致如下:
-             *chrome23:
-             * at http://113.93.50.63/data.js:4:1
-             *firefox17:
-             *@http://113.93.50.63/query.js:4
-             *opera12:
-             *@http://113.93.50.63/data.js:4
-             *IE10:
-             *  at Global code (http://113.93.50.63/data.js:4:1)
-             */
-                //取得最后一行,最后一个空格或@之后的部分
-            stack = stack.split( /[@ ]/g).pop();
-            stack = stack[0] == "(" ? stack.slice(1,-1) : stack;
-            //去掉行号与或许存在的出错字符起始位置
-            return stack.replace(/(:\d+)?:\d+$/i, "");
-        }
-    }
     function id2Config(name, url) {
         var s, c = {name: name};
         s = name.split('!');
@@ -11866,7 +11894,14 @@ armer = window.jQuery || window.Zepto;
     define.amd = define.cmd = modules;
     require.defaults = defaults;
     require.config = function(options){
-        $.extend(require.defaults, options)
+        options = $.mixOptions({}, options);
+        if (options.paths) $.each(options.paths, function(i, item){
+            if ($.type(item) == 'string') {
+                options.paths[i] = $.URL(item);
+            }
+        });
+        $.mixOptions(this.defaults, options);
+
     };
     // CMD的async方法实际是就是AMD的require
     require.async = require;
@@ -11880,21 +11915,8 @@ armer = window.jQuery || window.Zepto;
     $.require = require;
     $.define = define;
 
-    // domready 插件
-    defaults.plusin['domready'] = {
-        config: function(){
-            var mod = {
-                dfd: $.Deferred(),
-                exports: $,
-                method: 'domready'
-            };
-            $(function(){
-                mod.dfd.resolveWith(mod, [mod]);
-            });
-            return mod;
-        }
-
-    };
+    defaults.plusin.css = defaults.plusin.auto;
+    defaults.plusin.domReady = defaults.plusin.domready;
 
     var nodes = document.getElementsByTagName("script")
     var dataMain = $(nodes[nodes.length - 1]).data('main')
@@ -12958,7 +12980,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -13066,6 +13088,10 @@ armer = window.jQuery || window.Zepto;
             p.replaceWith($t);
             $this.data('t-placeholder', $t);
         })
+    }
+    $.fn.render = function(data){
+        this.compile(data);
+        return this.data('t-placeholder');
     }
 
     function getWs(target, name) {
@@ -13906,12 +13932,22 @@ armer = window.jQuery || window.Zepto;
                 return $.isEqual(item, data)
             });
         },
-        // 判断数组是否包含相同的目标
+        // 根据条件查找数组下标
+        findIndexOf: function(value, iterator){
+            var ret = -1;
+            $.each(value, function(i, item){
+                if (iterator.call(value, item)) {
+                    ret = i;
+                    return false;
+                }
+            });
+            return ret;
+        },
+        // 查找第一个与value相同的下标
         indexOfEqual: function(value, data){
-            return value.reduce(function(memo, item, i){
-                if ($.isEqual(item, data)) return i;
-                else return memo
-            }, -1)
+            return $.Array.findIndexOf(value, function(item){
+                return $.isEqual(item, data)
+            })
         },
         contains: function(target, item) {
             //判定数组是否包含指定目标。
@@ -19183,26 +19219,61 @@ $.fn.bgiframe = function(){
 };
 
 // .position 改造;
-(function( $, undefined ) {
-    var cachedScrollbarWidth,
+(function($, undefined) {
+
+    $.ui = $.ui || {};
+    var uiPosition;
+
+    var cachedScrollbarWidth, supportsOffsetFractions,
         max = Math.max,
         abs = Math.abs,
         round = Math.round,
         rhorizontal = /left|center|right/,
         rvertical = /top|center|bottom/,
-        roffset = /[\+\-]\d+%?/,
+        roffset = /[\+\-]\d+(\.[\d]+)?%?/,
         rposition = /^\w+/,
         rpercent = /%$/,
         _position = $.fn.position;
 
     function getOffsets( offsets, width, height ) {
         return [
-            parseInt( offsets[ 0 ], 10 ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
-            parseInt( offsets[ 1 ], 10 ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
+            parseFloat( offsets[ 0 ] ) * ( rpercent.test( offsets[ 0 ] ) ? width / 100 : 1 ),
+            parseFloat( offsets[ 1 ] ) * ( rpercent.test( offsets[ 1 ] ) ? height / 100 : 1 )
         ];
     }
+
     function parseCss( element, property ) {
         return parseInt( $.css( element, property ), 10 ) || 0;
+    }
+
+    function getDimensions( elem ) {
+        var raw = elem[0];
+        if ( raw.nodeType === 9 ) {
+            return {
+                width: elem.width(),
+                height: elem.height(),
+                offset: { top: 0, left: 0 }
+            };
+        }
+        if ( $.isWindow( raw ) ) {
+            return {
+                width: elem.width(),
+                height: elem.height(),
+                offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+            };
+        }
+        if ( raw.preventDefault ) {
+            return {
+                width: 0,
+                height: 0,
+                offset: { top: raw.pageY, left: raw.pageX }
+            };
+        }
+        return {
+            width: elem.outerWidth(),
+            height: elem.outerHeight(),
+            offset: elem.offset()
+        };
     }
 
     $.position = {
@@ -19211,7 +19282,7 @@ $.fn.bgiframe = function(){
                 return cachedScrollbarWidth;
             }
             var w1, w2,
-                div = $( "<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
+                div = $( "<div style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
                 innerDiv = div.children()[0];
 
             $( "body" ).append( div );
@@ -19229,28 +19300,35 @@ $.fn.bgiframe = function(){
             return (cachedScrollbarWidth = w1 - w2);
         },
         getScrollInfo: function( within ) {
-            var overflowX = within.isWindow ? "" : within.element.css( "overflow-x" ),
-                overflowY = within.isWindow ? "" : within.element.css( "overflow-y" ),
+            var overflowX = within.isWindow || within.isDocument ? "" :
+                    within.element.css( "overflow-x" ),
+                overflowY = within.isWindow || within.isDocument ? "" :
+                    within.element.css( "overflow-y" ),
                 hasOverflowX = overflowX === "scroll" ||
                     ( overflowX === "auto" && within.width < within.element[0].scrollWidth ),
                 hasOverflowY = overflowY === "scroll" ||
                     ( overflowY === "auto" && within.height < within.element[0].scrollHeight );
             return {
-                width: hasOverflowX ? $.position.scrollbarWidth() : 0,
-                height: hasOverflowY ? $.position.scrollbarWidth() : 0
+                width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+                height: hasOverflowX ? $.position.scrollbarWidth() : 0
             };
         },
         getWithinInfo: function( element ) {
             var withinElement = $( element || window ),
-                isWindow = $.isWindow( withinElement[0] );
+                isWindow = $.isWindow( withinElement[0] ),
+                isDocument = !!withinElement[ 0 ] && withinElement[ 0 ].nodeType === 9;
             return {
                 element: withinElement,
                 isWindow: isWindow,
+                isDocument: isDocument,
                 offset: withinElement.offset() || { left: 0, top: 0 },
                 scrollLeft: withinElement.scrollLeft(),
                 scrollTop: withinElement.scrollTop(),
-                width: isWindow ? withinElement.width() : withinElement.outerWidth(),
-                height: isWindow ? withinElement.height() : withinElement.outerHeight()
+
+                // support: jQuery 1.6.x
+                // jQuery 1.6 doesn't support .outerWidth/Height() on documents or windows
+                width: isWindow || isDocument ? withinElement.width() : withinElement.outerWidth(),
+                height: isWindow || isDocument ? withinElement.height() : withinElement.outerHeight()
             };
         }
     };
@@ -19263,32 +19341,21 @@ $.fn.bgiframe = function(){
         // make a copy, we don't want to modify arguments
         options = $.extend( {}, options );
 
-        var atOffset, targetWidth, targetHeight, targetOffset, basePosition,
+        var atOffset, targetWidth, targetHeight, targetOffset, basePosition, dimensions,
             target = $( options.of ),
             within = $.position.getWithinInfo( options.within ),
             scrollInfo = $.position.getScrollInfo( within ),
-            targetElem = target[0],
             collision = ( options.collision || "flip" ).split( " " ),
             offsets = {};
 
-        if ( targetElem.nodeType === 9 ) {
-            targetWidth = target.width();
-            targetHeight = target.height();
-            targetOffset = { top: 0, left: 0 };
-        } else if ( $.isWindow( targetElem ) ) {
-            targetWidth = target.width();
-            targetHeight = target.height();
-            targetOffset = { top: target.scrollTop(), left: target.scrollLeft() };
-        } else if ( targetElem.preventDefault ) {
+        dimensions = getDimensions( target );
+        if ( target[0].preventDefault ) {
             // force left top to allow flipping
             options.at = "left top";
-            targetWidth = targetHeight = 0;
-            targetOffset = { top: targetElem.pageY, left: targetElem.pageX };
-        } else {
-            targetWidth = target.outerWidth();
-            targetHeight = target.outerHeight();
-            targetOffset = target.offset();
         }
+        targetWidth = dimensions.width;
+        targetHeight = dimensions.height;
+        targetOffset = dimensions.offset;
         // clone to reuse original targetOffset later
         basePosition = $.extend( {}, targetOffset );
 
@@ -19373,7 +19440,7 @@ $.fn.bgiframe = function(){
             position.top += myOffset[ 1 ];
 
             // if the browser doesn't support fractions, then round for consistent results
-            if ( !$.support.offsetFractions ) {
+            if ( !supportsOffsetFractions ) {
                 position.left = round( position.left );
                 position.top = round( position.top );
             }
@@ -19384,8 +19451,8 @@ $.fn.bgiframe = function(){
             };
 
             $.each( [ "left", "top" ], function( i, dir ) {
-                if ( position[ collision[ i ] ] ) {
-                    position[ collision[ i ] ][ dir ]( position, {
+                if ( uiPosition[ collision[ i ] ] ) {
+                    uiPosition[ collision[ i ] ][ dir ]( position, {
                         targetWidth: targetWidth,
                         targetHeight: targetHeight,
                         elemWidth: elemWidth,
@@ -19397,14 +19464,10 @@ $.fn.bgiframe = function(){
                         my: options.my,
                         at: options.at,
                         within: within,
-                        elem : elem
+                        elem: elem
                     });
                 }
             });
-
-            if ( $.fn.bgiframe && !!window.ActiveXObject && !window.XMLHttpRequest ) {
-                elem.bgiframe();
-            }
 
             if ( options.using ) {
                 // adds feedback as second argument to using callback, if present
@@ -19449,7 +19512,8 @@ $.fn.bgiframe = function(){
             elem.offset( $.extend( position, { using: using } ) );
         });
     };
-    var position = {
+
+    uiPosition = {
         fit: {
             left: function( position, data ) {
                 var within = data.within,
@@ -19554,8 +19618,7 @@ $.fn.bgiframe = function(){
                     if ( newOverRight < 0 || newOverRight < abs( overLeft ) ) {
                         position.left += myOffset + atOffset + offset;
                     }
-                }
-                else if ( overRight > 0 ) {
+                } else if ( overRight > 0 ) {
                     newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
                     if ( newOverLeft > 0 || abs( newOverLeft ) < overRight ) {
                         position.left += myOffset + atOffset + offset;
@@ -19586,13 +19649,12 @@ $.fn.bgiframe = function(){
                     newOverBottom;
                 if ( overTop < 0 ) {
                     newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
-                    if ( ( position.top + myOffset + atOffset + offset) > overTop && ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) ) {
+                    if ( newOverBottom < 0 || newOverBottom < abs( overTop ) ) {
                         position.top += myOffset + atOffset + offset;
                     }
-                }
-                else if ( overBottom > 0 ) {
-                    newOverTop = position.top -  data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
-                    if ( ( position.top + myOffset + atOffset + offset) > overBottom && ( newOverTop > 0 || abs( newOverTop ) < overBottom ) ) {
+                } else if ( overBottom > 0 ) {
+                    newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+                    if ( newOverTop > 0 || abs( newOverTop ) < overBottom ) {
                         position.top += myOffset + atOffset + offset;
                     }
                 }
@@ -19600,18 +19662,18 @@ $.fn.bgiframe = function(){
         },
         flipfit: {
             left: function() {
-                position.flip.left.apply( this, arguments );
-                position.fit.left.apply( this, arguments );
+                uiPosition.flip.left.apply( this, arguments );
+                uiPosition.fit.left.apply( this, arguments );
             },
             top: function() {
-                position.flip.top.apply( this, arguments );
-                position.fit.top.apply( this, arguments );
+                uiPosition.flip.top.apply( this, arguments );
+                uiPosition.fit.top.apply( this, arguments );
             }
         }
     };
 
-    // fraction support test
-    (function () {
+// fraction support test
+    (function() {
         var testElement, testElementParent, testElementStyle, offsetLeft, i,
             body = document.getElementsByTagName( "body" )[ 0 ],
             div = document.createElement( "div" );
@@ -19643,45 +19705,13 @@ $.fn.bgiframe = function(){
         div.style.cssText = "position: absolute; left: 10.7432222px;";
 
         offsetLeft = $( div ).offset().left;
-        $.support.offsetFractions = offsetLeft > 10 && offsetLeft < 11;
+        supportsOffsetFractions = offsetLeft > 10 && offsetLeft < 11;
 
         testElement.innerHTML = "";
         testElementParent.removeChild( testElement );
     })();
 
-    // offset option
-    (function() {
-        var _position = $.fn.position;
-        $.fn.position = function( options ) {
-            if ( !options || !options.offset ) {
-                return _position.call( this, options );
-            }
-            var offset = options.offset.split( " " ),
-                at = options.at.split( " " );
-            if ( offset.length === 1 ) {
-                offset[ 1 ] = offset[ 0 ];
-            }
-            if ( /^\d/.test( offset[ 0 ] ) ) {
-                offset[ 0 ] = "+" + offset[ 0 ];
-            }
-            if ( /^\d/.test( offset[ 1 ] ) ) {
-                offset[ 1 ] = "+" + offset[ 1 ];
-            }
-            if ( at.length === 1 ) {
-                if ( /left|center|right/.test( at[ 0 ] ) ) {
-                    at[ 1 ] = "center";
-                } else {
-                    at[ 1 ] = at[ 0 ];
-                    at[ 0 ] = "center";
-                }
-            }
-            return _position.call( this, $.extend( options, {
-                at: at[ 0 ] + offset[ 0 ] + " " + at[ 1 ] + offset[ 1 ],
-                offset: undefined
-            } ) );
-        };
-    }() );
-}( armer ) );
+})(armer);
 
 
 
@@ -20865,7 +20895,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.7.0 - 2015-02-12 
+ * armerjs - v0.8.0 - 2015-03-05 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -20950,7 +20980,10 @@ $.UI.extend = function(name, base, prototype){
         });
     });
 
-
+    constructor.defaults = constructor.prototype.options;
+    constructor.config = function(){
+        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    };
     return constructor;
 };
 
@@ -21442,8 +21475,15 @@ $.fn.ellipsis.useCssClamp = true;
             position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
             position.of = position.of || this.options.attach;
 
+            self.container.show().finish().position(position);
 
-            self.container.show().finish().position(position).hide();
+            if (!openOptions.animate) {
+                return $.when().done(function(){
+                    self.trigger('opened.ui.dialog');
+                });
+            }
+
+            self.container.hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
                 self.trigger('opened.ui.dialog');
             });
@@ -21451,11 +21491,13 @@ $.fn.ellipsis.useCssClamp = true;
         _innerClose: function(returnValue, closeOptions){
             var self = this;
             self.container.off('focus.dialog');
-            return animate(this.container.finish(), closeOptions.animate).promise().done(function(){
+            return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
                 self.trigger('closed.ui.dialog', [returnValue]);
-            });
+            }) : (this.container.hide() && $.when().done(function(){
+                self.trigger('closed.ui.dialog', [returnValue]);
+            }));
         },
         /**
          * 开关弹出框
@@ -21586,21 +21628,23 @@ $.fn.ellipsis.useCssClamp = true;
             },
             open: {
                 position: {
-                    at: 'left' + ' bottom' + '+15',
-                    my: 'left top'
+                    //at: 'left' + ' bottom' + '+15',
+                    at: 'left' + ' bottom' + '+5',
+                    my: 'left top',
+                    collision: 'flipfit flipfit'
                 },
                 showBackdrop: false,
                 closeOthers: true,
-                getFocus: false,
                 animate: [{
-                    top: '-=10',
+                    //top: '-=10',
                     opacity: 'show'
-                }]
+                }],
+                getFocus: false
             },
             close: {
                 animate: [{
-                    opacity: 'hide',
-                    top: '+=10'
+                    //top: '+=10',
+                    opacity: 'hide'
                 }]
             },
             onopen: $.noop,
@@ -21638,7 +21682,7 @@ $.fn.ellipsis.useCssClamp = true;
                 return {
                     at: 'center' + offestY + ' center' + offestY,
                     my: 'center center',
-                    collision: 'flipfit'
+                    collision: 'fit'
                 }
             },
             showBackdrop: true,

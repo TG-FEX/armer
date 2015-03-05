@@ -1,7 +1,7 @@
 define(['./datasource'], function(){
     $.UI.extend('data-list', {
         options: {
-            item: $.template('<li>[%=name%]</li>'),
+            item: $.template('<li>[%=label%]</li>'),
             noResult: $.template('<div class="no-result">暂时没有该数据</div>'),
             multi: false,
             onchange: function(e, i, selectElem, otherElem){
@@ -65,11 +65,11 @@ define(['./datasource'], function(){
             if (this.options.multi) this.value = [];
             this.focusedValue = null;
             this.element.attr('tabindex', 0).on('keydown', function(e){
-                e.preventDefault();
+                e.which != 9 && e.preventDefault();
             }).on('keyup', function(e){
                 var element, oldelement;
                 if (that.size()) {
-                    if (e.which == 13 && that.focusedValue) {
+                    if ((e.which == 13 || e.which == 32) && that.focusedValue) {
                         that._clickOption(that.focusedValue);
                     }
                     if (e.which == 40 || e.which == 38) {

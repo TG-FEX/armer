@@ -104,6 +104,10 @@
             $this.data('t-placeholder', $t);
         })
     }
+    $.fn.render = function(data){
+        this.compile(data);
+        return this.data('t-placeholder');
+    }
 
     function getWs(target, name) {
         var a = [];

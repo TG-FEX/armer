@@ -80,8 +80,10 @@
         escape: /\[%-([\s\S]+?)%]/g
     };
 
+
     $.fn.template = function () {
         return this.each(function () {
+            if ($(this).data('template')) return false;
             var compiler = template($.trim(this.nodeValue || this.innerHTML));
             var $placeholder = $(document.createComment('template here'));
             $(this).replaceWith($placeholder).data('template', compiler).data('t-placeholder', $placeholder);
@@ -91,19 +93,26 @@
         this.template();
         return $(this[0]).data('template');
     };
-    $.fn.compile = function (data) {
-        return this.each(function () {
+
+    $.fn.replaceAllWith = function(r){
+        this.eq(0).replaceWith(r).end().slice(1).remove();
+        return this;
+    }
+
+    $.fn.compile = function(data){
+        return this.each(function(){
             var $this = $(this);
             var p, $t;
-            var t = $this.data('template');
-            if (!t) $this.template();
+            var t;
+            $this.template()
             p = $this.data('t-placeholder');
             t = $this.data('template');
             $t = $(t(data));
-            p.replaceWith($t);
+            p.replaceAllWith($t);
             $this.data('t-placeholder', $t);
         })
     }
+
     $.fn.render = function(data){
         this.compile(data);
         return this.data('t-placeholder');

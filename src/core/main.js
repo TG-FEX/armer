@@ -265,7 +265,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {{}}
              */
             serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected){
-                obj = $(obj).find('input,option,textarea').andSelf();
+                obj = $(obj).find('input,option,textarea').andSelf().not(':disabled, fieldset:disabled *');
                 var result = {}, separator;
                 if (typeof join == 'string') {
                     separator = join;

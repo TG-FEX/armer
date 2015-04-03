@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.8.0 - 2015-03-05 
+ * armerjs - v0.8.1 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.0 - 2015-03-05 
+ * armerjs - v0.8.1 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -270,7 +270,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {{}}
              */
             serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected){
-                obj = $(obj).find('input,option,textarea').andSelf();
+                obj = $(obj).find('input,option,textarea').andSelf().not(':disabled, fieldset:disabled *');
                 var result = {}, separator;
                 if (typeof join == 'string') {
                     separator = join;
@@ -1268,12 +1268,12 @@ armer = window.jQuery || window.Zepto;
                     var ext = url.extension();
                     if (!ext) {
                         url.extension(defaults.ext);
-                        ext = 'js';
+                        ext = defaults.ext;
                     } else if (!$.ajax.ext2Type[ext]) {
-                        url.fileName(url.fileName + '.js');
-                        ext = 'js';
+                        url.fileName(url.fileName + '.' + defaults.ext);
+                        ext = defaults.ext;
                     }
-                    if (ext == 'js') {
+                    if (ext == defaults.ext) {
                         this.name = url.fileNameWithoutExt()
                     } else {
                         this.name = url.fileName()
@@ -1601,9 +1601,33 @@ armer = window.jQuery || window.Zepto;
     if (!window.define) window.define = define
     $.require = require;
     $.define = define;
+    $.use = function(deps){
+        return require(deps, $.noop);
+    }
 
-    defaults.plusin.css = defaults.plusin.auto;
-    defaults.plusin.domReady = defaults.plusin.domready;
+
+    defaults.plusin.domReady = defaults.plusin.ready = defaults.plusin.domready;
+    $.each(['js', 'css', 'text', 'html'], function(item){
+        defaults.plusin[item] = {
+            config: function(){
+                var url;
+                if ($.type(this.url) == 'string') {
+                    url = $.URL(this.url, this.parent);
+                } else url = this.url;
+                var ext = url.extension();
+                if (ext == defaults.ext) {
+                    this.name = url.fileNameWithoutExt()
+                } else {
+                    this.name = url.fileName()
+                }
+                url.search('callback', 'define');
+                this.url = url.toString();
+                this.type = item;
+            },
+            callback: defaults.plusin.auto.callback
+        }
+    });
+
 
     var nodes = document.getElementsByTagName("script")
     var dataMain = $(nodes[nodes.length - 1]).data('main')
@@ -2667,7 +2691,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.0 - 2015-03-05 
+ * armerjs - v0.8.1 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -2752,8 +2776,10 @@ armer = window.jQuery || window.Zepto;
         escape: /\[%-([\s\S]+?)%]/g
     };
 
+
     $.fn.template = function () {
         return this.each(function () {
+            if ($(this).data('template')) return false;
             var compiler = template($.trim(this.nodeValue || this.innerHTML));
             var $placeholder = $(document.createComment('template here'));
             $(this).replaceWith($placeholder).data('template', compiler).data('t-placeholder', $placeholder);
@@ -2763,19 +2789,26 @@ armer = window.jQuery || window.Zepto;
         this.template();
         return $(this[0]).data('template');
     };
-    $.fn.compile = function (data) {
-        return this.each(function () {
+
+    $.fn.replaceAllWith = function(r){
+        this.eq(0).replaceWith(r).end().slice(1).remove();
+        return this;
+    }
+
+    $.fn.compile = function(data){
+        return this.each(function(){
             var $this = $(this);
             var p, $t;
-            var t = $this.data('template');
-            if (!t) $this.template();
+            var t;
+            $this.template()
             p = $this.data('t-placeholder');
             t = $this.data('template');
             $t = $(t(data));
-            p.replaceWith($t);
+            p.replaceAllWith($t);
             $this.data('t-placeholder', $t);
         })
     }
+
     $.fn.render = function(data){
         this.compile(data);
         return this.data('t-placeholder');
@@ -10341,32 +10374,31 @@ $.fn.bgiframe = function(){
         var options = $.mixOptions( {}, basePrototype.options, prototype.options);
 
         $.each(prototype, function(prop, value){
-            if (!$.isFunction(value)) {
+            if ($.isFunction(value)) {
+                basePrototype[prop] = (function () {
+                    var _super = function () {
+                        return base.prototype[prop].apply(this, arguments);
+                    }, _superApply = function (args) {
+                        return base.prototype[prop].apply(this, args);
+                    }, fn = function () {
+                        var __super = this._super,
+                            __superApply = this._superApply,
+                            returnValue;
+                        this._super = _super;
+                        this._superApply = _superApply;
+                        returnValue = value.apply(this, arguments);
+                        this._super = __super;
+                        this._superApply = __superApply;
+                        return returnValue;
+                    }
+                    fn.toString = function () {
+                        return value.toString();
+                    }
+                    return fn;
+                })();
+            } else {
                 basePrototype[prop] = value;
-                return;
             }
-            basePrototype[prop] = (function(){
-                var _super = function(){
-                    return base.prototype[prop].apply(this, arguments);
-                }, _superApply = function(args) {
-                    return base.prototype[prop].apply(this, args);
-                }, fn = function(){
-                    var __super = this._super,
-                        __superApply = this._superApply,
-                        returnValue;
-                    this._super = _super;
-                    this._superApply = _superApply;
-                    returnValue = value.apply(this, arguments);
-                    this._super = __super;
-                    this._superApply = __superApply;
-                    return returnValue;
-                }
-                fn.toString = function(){
-                    return value.toString();
-                }
-                return fn;
-            })();
-
         });
         constructor.prototype = $.extend(basePrototype, {
             options: options,
@@ -10378,7 +10410,269 @@ $.fn.bgiframe = function(){
     };
 
     $.Object.extend = $.factory;
-    if ($.EventEmitter) $.EventEmitter.extend = $.factory
+    if ($.EventEmitter) $.EventEmitter.extend = $.factory;
+
+
+    this.VBClass || (function(window){
+        /*! (C) WebReflection - Mit Style License */
+        window.VBClass = function VBClass(name, definition) {
+            var
+                proto = [],
+                properties = [],
+                compile = [
+                    "Class VB_" + name,
+                    "", // properties
+                    ""  // constructor
+                ],
+                current, key, i, tmp
+                ;
+            for (i = hiddenProperties.length; i--;) {
+                key = hiddenProperties[i];
+                if (hasOwnProperty.call(definition, key)) {
+                    proto.push(key);
+                }
+            }
+            for (key in definition) {
+                if (hasOwnProperty.call(definition, key) && !indexOf(proto, key)) {
+                    proto.push(key);
+                }
+            }
+            for (i = proto.length; i--;) {
+                if ("constructor" != (key = proto[i])) {
+                    current = definition[key];
+                    if (hasOwnProperty.call(current, "value")) {
+                        if (typeof(current = current.value) == "function") {
+                            (function(callback, result){
+                                VBClass_bridge["VB_typeMethod_" + name + "_" + key] = function (vb) {
+                                    switch(typeof(result = callback.apply(vb, slice.call(arguments, 1)))) {
+                                        case "object":
+                                        case "unknown":
+                                        case "function":
+                                            if (result) {
+                                                return 1;
+                                            }
+                                    }
+                                    return 0;
+                                };
+                                VBClass_bridge["VB_valueMethod_" + name + "_" + key] = function() {
+                                    return result;
+                                };
+                            }(current));
+                            tmp = createArguments(current.length);
+                            compile.push(
+                                "Public Function " + key + "(" + tmp.slice(3) + ")",
+                                "If VBClass_bridge.VB_typeMethod_" + name + "_" + key + "(" + tmp + ") = 1 Then",
+                                "Set " + key + " = VBClass_bridge.VB_valueMethod_" + name + "_" + key + "()",
+                                "Else",
+                                key + " = VBClass_bridge.VB_valueMethod_" + name + "_" + key + "()",
+                                "End If",
+                                "End Function"
+                            );
+                        } else {
+                            properties.push(key);
+                            compile.push(
+                                "Public Property Get " + key,
+                                "If VB_type_" + key + " = 1 Then",
+                                "Set " + key + " = VB_value_" + key,
+                                "Else",
+                                key + " = VB_value_" + key,
+                                "End If",
+                                "End Property",
+                                "Public Property Let " + key + "(value)",
+                                "VB_value_" + key + " = value",
+                                "VB_type_" + key + " = 0",
+                                "End Property",
+                                "Public Property Set " + key + "(value)",
+                                "Set VB_value_" + key + " = value",
+                                "VB_type_" + key + " = 1",
+                                "End Property"
+                            );
+                        }
+                    } else {
+                        if (hasOwnProperty.call(current, "get")) {
+                            (function(callback, result){
+                                VBClass_bridge["VB_typeGet_" + name + "_" + key] = function (vb) {
+                                    switch(typeof(result = callback.call(vb))) {
+                                        case "object":
+                                        case "unknown":
+                                        case "function":
+                                            if (result) {
+                                                return 1;
+                                            }
+                                    }
+                                    return 0;
+                                };
+                                VBClass_bridge["VB_valueGet_" + name + "_" + key] = function() {
+                                    return result;
+                                };
+                            }(current.get));
+                            compile.push(
+                                "Public Property Get " + key,
+                                "If VBClass_bridge.VB_typeGet_" + name + "_" + key + "(me) = 1 Then",
+                                "Set " + key + " = VBClass_bridge.VB_valueGet_" + name + "_" + key + "()",
+                                "Else",
+                                key + " = VBClass_bridge.VB_valueGet_" + name + "_" + key + "()",
+                                "End If",
+                                "End Property"
+                            );
+                        }
+                        if (hasOwnProperty.call(current, "set")) {
+                            (function(callback){
+                                VBClass_bridge["VB_valueSet_" + name + "_" + key] = function(vb, value) {
+                                    callback.call(vb, value);
+                                };
+                            }(current.set));
+                            compile.push(
+                                "Public Property Let " + key + "(value)",
+                                "VBClass_bridge.VB_valueSet_" + name + "_" + key + " me, value",
+                                "End Property",
+                                "Public Property Set " + key + "(value)",
+                                "VBClass_bridge.VB_valueSet_" + name + "_" + key + " me, value",
+                                "End Property"
+                            );
+                        }
+                    }
+                }
+            }
+            compile.push(
+                "End Class",
+                "Function VB_" + name + "_Factory",
+                "Set VB_" + name + "_Factory = New VB_" + name,
+                "End Function"
+            );
+            if (i = properties.length) {
+                current = ["Private Sub Class_Initialize"];
+                while (i--) {
+                    key = properties[i];
+                    VBClass_bridge["VB_Class_" + name] = {};
+                    switch (typeof(
+                        VBClass_bridge["VB_Class_" + name][key] = definition[key].value
+                    )) {
+                        case "object":
+                        case "unknown":
+                        case "function":
+                            if (definition[key].value) {
+                                current.push(
+                                    "Set VB_value_" + key + " = VBClass_bridge.VB_Class_" + name + "." + key,
+                                    "VB_type_" + key + " = 1"
+                                );
+                                break;
+                            }
+                        default:
+                            current.push(
+                                "VB_value_" + key + " = VBClass_bridge.VB_Class_" + name + "." + key,
+                                "VB_type_" + key + " = 0"
+                            );
+                            break;
+                    }
+                    properties[i] = "Private VB_type_" + key + "\nPrivate VB_value_" + key;
+                }
+                current.push("End Sub");
+                compile[1] = properties.join("\n");
+                compile[2] = current.join("\n");
+            }
+            execScript(compile.join("\n"), "VBScript");
+            return (window[name] = function(VBFactory, constructor){
+                return constructor ?
+                    function VBClass() {
+                        var object = window[VBFactory]();
+                        constructor.apply(object, arguments);
+                        return object;
+                    } :
+                    function VBClass() {
+                        return window[VBFactory]();
+                    }
+                    ;
+            }(
+                "VB_" + name + "_Factory",
+                hasOwnProperty.call(definition, "constructor") && definition.constructor.value
+            ));
+        };
+
+        function constructor() {}
+
+        function createArguments(length) {
+            var $arguments = [];
+            while (length--) {
+                $arguments.push("a" + length);
+            }
+            $arguments.push("me");
+            return $arguments.reverse().join(",");
+        }
+
+        function indexOf(proto, key) {
+            for (var i = proto.length; i-- && proto[i] !== key;);
+            return ~i;
+        }
+
+        var
+            hiddenProperties = "hasOwnProperty.isPrototypeOf.propertyIsEnumerable.toLocaleString.toString.valueOf".split("."),
+            hasOwnProperty = {}.hasOwnProperty,
+            slice = [].slice
+            ;
+
+        window.VBClass_bridge = {};
+
+    }(this));
+
+
+    this.VBClass || (function(window){
+        /*! (C) WebReflection - Mit Style License */
+        var
+            Object = window.Object,
+            hasOwnProperty = {}.hasOwnProperty,
+            create = Object.create,
+            freeze = Object.preventExtensions || Object.freeze || Object.seal || function() {}
+            ;
+        window.VBClass = function VBClass(name, definition) {
+            if (hasOwnProperty.call(window, name)) {
+                throw "Class redefined";
+            }
+            var
+                creator = {},
+                current, key
+                ;
+            for (key in definition) {
+                if (hasOwnProperty.call(definition, key) && key != "constructor") {
+                    current = definition[key];
+                    creator[key] = {
+                        enumerable: true,
+                        configurable: false
+                    };
+                    if (hasOwnProperty.call(current, "value")) {
+                        if (typeof(creator[key].value = current.value) != "function") {
+                            creator[key].writable = true;
+                        }
+                    } else {
+                        if (hasOwnProperty.call(current, "get")) {
+                            creator[key].get = current.get;
+                        }
+                        if (hasOwnProperty.call(current, "set")) {
+                            creator[key].set = current.set;
+                        }
+                    }
+                }
+            }
+            return (window[name] = function(freeze, create, creator, constructor){
+                return constructor ?
+                    function VBClass() {
+                        var object = create(null, creator);
+                        constructor.apply(object, arguments);
+                        freeze(object);
+                        return object;
+                    } :
+                    function VBClass() {
+                        var object = create(null, creator);
+                        freeze(object);
+                        return object;
+                    }
+                    ;
+            }(
+                freeze, create, creator,
+                hasOwnProperty.call(definition, "constructor") && definition.constructor.value
+            ));
+        };
+    }(this));
 
 })(armer);
 
@@ -10582,7 +10876,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.8.0 - 2015-03-05 
+ * armerjs - v0.8.1 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

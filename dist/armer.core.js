@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.0 - 2015-03-05 
+ * armerjs - v0.8.1 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -266,7 +266,7 @@ armer = window.jQuery || window.Zepto;
              * @returns {{}}
              */
             serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected){
-                obj = $(obj).find('input,option,textarea').andSelf();
+                obj = $(obj).find('input,option,textarea').andSelf().not(':disabled, fieldset:disabled *');
                 var result = {}, separator;
                 if (typeof join == 'string') {
                     separator = join;
@@ -1264,12 +1264,12 @@ armer = window.jQuery || window.Zepto;
                     var ext = url.extension();
                     if (!ext) {
                         url.extension(defaults.ext);
-                        ext = 'js';
+                        ext = defaults.ext;
                     } else if (!$.ajax.ext2Type[ext]) {
-                        url.fileName(url.fileName + '.js');
-                        ext = 'js';
+                        url.fileName(url.fileName + '.' + defaults.ext);
+                        ext = defaults.ext;
                     }
-                    if (ext == 'js') {
+                    if (ext == defaults.ext) {
                         this.name = url.fileNameWithoutExt()
                     } else {
                         this.name = url.fileName()
@@ -1597,9 +1597,33 @@ armer = window.jQuery || window.Zepto;
     if (!window.define) window.define = define
     $.require = require;
     $.define = define;
+    $.use = function(deps){
+        return require(deps, $.noop);
+    }
 
-    defaults.plusin.css = defaults.plusin.auto;
-    defaults.plusin.domReady = defaults.plusin.domready;
+
+    defaults.plusin.domReady = defaults.plusin.ready = defaults.plusin.domready;
+    $.each(['js', 'css', 'text', 'html'], function(item){
+        defaults.plusin[item] = {
+            config: function(){
+                var url;
+                if ($.type(this.url) == 'string') {
+                    url = $.URL(this.url, this.parent);
+                } else url = this.url;
+                var ext = url.extension();
+                if (ext == defaults.ext) {
+                    this.name = url.fileNameWithoutExt()
+                } else {
+                    this.name = url.fileName()
+                }
+                url.search('callback', 'define');
+                this.url = url.toString();
+                this.type = item;
+            },
+            callback: defaults.plusin.auto.callback
+        }
+    });
+
 
     var nodes = document.getElementsByTagName("script")
     var dataMain = $(nodes[nodes.length - 1]).data('main')

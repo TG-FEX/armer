@@ -1,11 +1,5 @@
 define(['./datalist'], function(){
 
-    $.fn.replaceAllWith = function(r){
-        this.slice(1).remove();
-        this.eq(0).replaceWith(r);
-        return this;
-    }
-
 
     $.UI.extend('jselect', {
         options: {

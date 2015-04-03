@@ -2,14 +2,19 @@ define(['./datasource'], function(){
     $.UI.extend('data-list', {
         options: {
             item: $.template('<li>[%=label%]</li>'),
-            noResult: $.template('<div class="no-result">暂时没有该数据</div>'),
+            listSelector: 'ul',
             multi: false,
             onchange: function(e, i, selectElem, otherElem){
                 this._data2Element(selectElem).addClass('selected');
                 this._data2Element(otherElem).removeClass('selected');
             },
+            onempty: function(){
+                this.element.addClass('no-result');
+                this.element.removeClass('loading');
+            },
             onrendered: function(){
                 var that = this;
+                this.element.removeClass('no-result');
                 this.element.removeClass('loading');
                 if (that.value == null) return;
                 this._data2elementMap.forEach(function(element, obj){
@@ -52,12 +57,8 @@ define(['./datasource'], function(){
             }).on('getData', function(e){
                 that.trigger(e);
             });
-            this.element.on('click', '> *', function(){
-                var selectElem = $(this);
-                var data = selectElem.data('data-list-item');
-                that.trigger('clickOption', [data, selectElem])
-            });
             this.options.onchange && this.on('change', this.options.onchange);
+            this.options.onempty && this.on('empty', this.options.onempty);
             this.options.onrendered && this.on('rendered', this.options.onrendered);
             this.options.onfocusOption && this.on('focusOption', this.options.onfocusOption);
             this.options.onblurOption && this.on('blurOption', this.options.onblurOption);
@@ -67,6 +68,7 @@ define(['./datasource'], function(){
             this.element.attr('tabindex', 0).on('keydown', function(e){
                 e.which != 9 && e.preventDefault();
             }).on('keyup', function(e){
+                var $list = that._getList();
                 var element, oldelement;
                 if (that.size()) {
                     if ((e.which == 13 || e.which == 32) && that.focusedValue) {
@@ -74,18 +76,18 @@ define(['./datasource'], function(){
                     }
                     if (e.which == 40 || e.which == 38) {
                         if (!that.focusedValue) {
-                            element = that.element.find('> *').first();
+                            element = $list.find('> *').first();
                         } else {
                             oldelement = that._data2Element([that.focusedValue]);
                             switch(e.which) {
                                 case 40: {
                                     element = oldelement.next();
-                                    if (!element.length) element = that.element.find('> *').first();
+                                    if (!element.length) element = $list.find('> *').first();
                                     break;
                                 }
                                 case 38: {
                                     element = oldelement.prev();
-                                    if (!element.length) element = that.element.find('> *').last();
+                                    if (!element.length) element = $list.find('> *').last();
                                 }
                             }
                         }
@@ -109,6 +111,14 @@ define(['./datasource'], function(){
                 value.push(data)
             } else value = data;
             return value;
+        },
+        _rendered: function(){
+            var that = this;
+            that._getList().on('click', '> *', function(){
+                var selectElem = $(this);
+                var data = selectElem.data('data-list-item');
+                that.trigger('clickOption', [data, selectElem])
+            });
         },
         toggle: function(data, toggle){
             var has = this.options.multi ? $.Array.containsEqual(this.value, data) : $.isEqual(this.value, data);
@@ -141,7 +151,7 @@ define(['./datasource'], function(){
             this.value = value;
         },
         _getDataOfElement: function(data) {
-            return this.element.children().map(function(){
+            return this._getList().children().map(function(){
                 if ($(this).data('data-list-item')) return this;
             }).eq(0);
         },
@@ -180,20 +190,19 @@ define(['./datasource'], function(){
         query: function(search){
             this.options.source.query(search)
         },
-        _empty: function(){
-            this.noResult = $($.toTemplate(this.options.noResult)()).insertBefore(this.element);
-        },
-        _rendered: function(){
-            if (this.noResult) this.noResult.remove();
+        _getList: function(){
+            return this.element.filter(this.options.listSelector).add(this.element.find(this.options.listSelector)).eq(0);
         },
         _render: function(data){
             var that = this;
             that.focusedValue = null;
-            this.element.empty().scrollTop(0);
+            window.test = this.element;
+            var $list = this._getList();
+            $list.empty().scrollTop(0);
             that._data2elementMap.clear();
             if (data.length) {
                 data.forEach(function(item){
-                    that._data2elementMap['set'](item, $($.toTemplate(that.options.item)(item)).data('data-list-item', item).appendTo(that.element)[0]);
+                    that._data2elementMap['set'](item, $($.toTemplate(that.options.item)(item)).data('data-list-item', item).appendTo($list)[0]);
                 });
                 that.trigger('rendered', [data]);
             } else that.trigger('empty')

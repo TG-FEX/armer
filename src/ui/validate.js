@@ -10,6 +10,7 @@
             }, // 校验的信息，可以是function，是function的情况会返回其返回值，是obj会通过hash查询
             onerror: function(){},
             onpass: function(){},
+            onvalid: function(){},
             onshowError: function(){},
             obstruct: false, // 校验未返回结果时阻塞再次校验
             stopValidateWhenError: true, // 异常时不再检测
@@ -22,6 +23,7 @@
             this.form = $(this.options.form).off('submit', s).one('submit', s);
             this.options.onerror && this.on('error', this.options.onerror);
             this.options.onpass && this.on('pass', this.options.onpass);
+            this.options.onvalid && this.on('valid', this.options.onvalid);
             this.options.onshowError && this.on('showError', this.options.onshowError);
             this.validating = false;
             this.bindTiming = this.options.bindTiming;
@@ -29,7 +31,7 @@
 
             var bind = function () {
                 that.element.on('change', function () {
-                    that.valid();
+                    that.trigger('valid');
                 });
                 bind = null;
             }
@@ -40,6 +42,8 @@
                 if (bind && that.bindTiming == 1) {
                     bind();
                 }
+                if (that.element.is(':disabled *, :disabled')) return;
+
                 // 非异步的
                 that.valid().fail(function(){
                     if (that.options.stopValidateWhenError) {
@@ -53,12 +57,13 @@
             var e, condition;
             if ($.isString(oCondition) && this.constructor.condition[oCondition]) {
                 condition = this.constructor.condition[oCondition];
+            } else {
+                condition = oCondition;
             }
-
             var dfd = $.Deferred();
             var ajaxConfig = {
                 url: condition,
-                dataType: 'json',
+                //dataType: "text",
                 data: $.serializeNodes(this.element),
                 success: function(data){
                     dfd.resolve(data)

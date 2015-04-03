@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../dist/jqarmer.js"></script>
+</head>
+<body>
+    <script>
+        require.config({
+            paths: {
+                avalon: '/armer/bower_components/avalon/avalon.js'
+            },
+            shim: {
+                avalon: {
+                    exports: 'avalon'
+                }
+            }
+        });
+        require(['../../bower_components/oniui/smartgrid/avalon.smartgrid.js'], function(){
+            alert(11);
+        })
+    </script>
+</body>
+</html>

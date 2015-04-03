@@ -232,13 +232,17 @@
                 this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
 
         },
-        extension : function(value){
+        extension : function(value, add){
             var p = this._pathname;
             p = p[p.length - 1];
             var i = p.lastIndexOf('.');
             if (value == null) return i < 0 ? '' : p.substr(i + 1);
             else {
-                this._pathname[this._pathname.length - 1] = (i < 0 ? p : p.substr(0, i - 1)) + '.' + value.replace('.', '');
+                value = value.replace('.', '');
+                if (add || i < 0) {
+                    this._pathname[this._pathname.length - 1] = p + '.' + value
+                } else
+                    this._pathname[this._pathname.length - 1] = p.substr(0, i) + '.' + value;
                 return this;
             }
         },

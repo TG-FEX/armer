@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.1 - 2015-04-03 
+ * armerjs - v0.8.3 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.1 - 2015-04-03 
+ * armerjs - v0.8.3 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.1 - 2015-04-03 
+ * armerjs - v0.8.3 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11483,13 +11483,17 @@ armer = window.jQuery || window.Zepto;
                 this._pathname[this._pathname.length - 1] = i < 0 ? value : value + '.' + p.substr(i + 1)
 
         },
-        extension : function(value){
+        extension : function(value, add){
             var p = this._pathname;
             p = p[p.length - 1];
             var i = p.lastIndexOf('.');
             if (value == null) return i < 0 ? '' : p.substr(i + 1);
             else {
-                this._pathname[this._pathname.length - 1] = (i < 0 ? p : p.substr(0, i - 1)) + '.' + value.replace('.', '');
+                value = value.replace('.', '');
+                if (add || i < 0) {
+                    this._pathname[this._pathname.length - 1] = p + '.' + value
+                } else
+                    this._pathname[this._pathname.length - 1] = p.substr(0, i) + '.' + value;
                 return this;
             }
         },
@@ -11621,7 +11625,7 @@ armer = window.jQuery || window.Zepto;
                         url.extension(defaults.ext);
                         ext = defaults.ext;
                     } else if (!$.ajax.ext2Type[ext]) {
-                        url.fileName(url.fileName + '.' + defaults.ext);
+                        url.extension(defaults.ext, true);
                         ext = defaults.ext;
                     }
                     if (ext == defaults.ext) {
@@ -11644,7 +11648,8 @@ armer = window.jQuery || window.Zepto;
                             this.exports = exports
                         else if (this.exports == null)
                             this.exports = modules.exports.exports
-                    }
+                    } else
+                        this.exports = modules.exports.exports
 
                     this.dfd.resolveWith(this, [this]);
                 }
@@ -11677,7 +11682,8 @@ armer = window.jQuery || window.Zepto;
                 modules.exports.exports = {};
                 currentUrl = mod.url;
                 if (shim.exports)
-                    modules.exports.exports = modules.exports.exports || eval('(function(){return ' + shim.exports + '})')
+                    modules.exports.exports = eval('(function(){return ' + shim.exports + '})()');
+                mod.factory = mod.factory || shim.init;
                 defaults.plusin[mod.method].callback.apply(mod, arguments);
                 modules.module.exports = null;
             }
@@ -11958,7 +11964,7 @@ armer = window.jQuery || window.Zepto;
 
 
     defaults.plusin.domReady = defaults.plusin.ready = defaults.plusin.domready;
-    $.each(['js', 'css', 'text', 'html'], function(item){
+    $.each(['js', 'css', 'text', 'html'], function(i, item){
         defaults.plusin[item] = {
             config: function(){
                 var url;
@@ -11973,7 +11979,7 @@ armer = window.jQuery || window.Zepto;
                 }
                 url.search('callback', 'define');
                 this.url = url.toString();
-                this.type = item;
+                this.type = $.ajax.ext2Type[item] || item;
             },
             callback: defaults.plusin.auto.callback
         }
@@ -13042,7 +13048,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.1 - 2015-04-03 
+ * armerjs - v0.8.3 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -21227,7 +21233,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.8.1 - 2015-04-03 
+ * armerjs - v0.8.3 - 2015-04-03 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

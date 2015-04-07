@@ -379,8 +379,6 @@
     };
     require.requesting = requesting;
     require.register = define;
-    if (!window.require) window.require = require
-    if (!window.define) window.define = define
     $.require = require;
     $.define = define;
     $.use = function(deps){
@@ -411,7 +409,11 @@
     });
 
 
-    var nodes = document.getElementsByTagName("script")
-    var dataMain = $(nodes[nodes.length - 1]).data('main')
-    if (dataMain) $(function(){require(dataMain, $.noop)});
+    var nodes = document.getElementsByTagName("script");
+    defaults = $.mixOptions(defaults, window.require, $(nodes[nodes.length - 1]).data());
+
+    if (!window.require) window.require = require;
+    if (!window.define) window.define = define;
+
+    if (defaults.main) $(function(){require(defaults.main, $.noop)});
 })(armer, window);

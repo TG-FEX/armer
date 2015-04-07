@@ -3,11 +3,8 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="../../dist/jqarmer.js"></script>
-</head>
-<body>
     <script>
-        require.config({
+        var require = {
             paths: {
                 avalon: '/armer/bower_components/avalon/avalon.js'
             },
@@ -15,11 +12,13 @@
                 avalon: {
                     exports: 'avalon'
                 }
-            }
-        });
-        require(['../../bower_components/oniui/smartgrid/avalon.smartgrid.js'], function(){
-            alert(11);
-        })
+            },
+            main: 'main.js'
+        }
     </script>
+    <script src="../../dist/jqarmer.js"></script>
+</head>
+<body>
+
 </body>
 </html>

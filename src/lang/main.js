@@ -166,49 +166,6 @@
                 return $[cap].clone(item)
             else return item;
         },
-        mixOptions: function (target) {
-            var callee = arguments.callee,
-                input = $.slice(arguments, 1),
-                inputIndex = 0,
-                inputLength = input.length,
-                key, tmp, obj,
-                value;
-            for (; inputIndex < inputLength; inputIndex++) {
-                for (key in input[inputIndex]) {
-                    value = input[inputIndex][key];
-                    if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
-
-                        if (/[\[\]\.]/.test(key)) {
-                            try {
-                                tmp =  getWs(target, key);
-                            } catch(e) {
-                                tmp = undefined;
-                            }
-                        }
-
-                        if (tmp && typeof tmp[0] == 'object') {
-                            obj = tmp[0];
-                            key = tmp[1];
-                        } else {
-                            obj = target
-                        }
-
-                        // Clone objects
-                        if ($.isPlainObject(value)) {
-                            obj[key] = $.isPlainObject(obj[key]) ?
-                                callee.call(this, {}, obj[key], value) :
-                                // Don't extend strings, arrays, etc. with objects
-                                callee.call(this, {}, value);
-                            // Copy everything else by reference
-                        } else {
-                            obj[key] = value;
-                        }
-                    }
-                }
-            }
-            return target;
-        },
-
 
         /*
          ============= is 系列 ================

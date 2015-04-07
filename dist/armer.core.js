@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.3 - 2015-04-03 
+ * armerjs - v0.8.4 - 2015-04-07 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -122,6 +122,48 @@ armer = window.jQuery || window.Zepto;
              */
             generateID: function () {
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+            },
+            mixOptions: function (target) {
+                var callee = arguments.callee,
+                    input = $.slice(arguments, 1),
+                    inputIndex = 0,
+                    inputLength = input.length,
+                    key, tmp, obj,
+                    value;
+                for (; inputIndex < inputLength; inputIndex++) {
+                    for (key in input[inputIndex]) {
+                        value = input[inputIndex][key];
+                        if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
+
+                            if (/[\[\]\.]/.test(key)) {
+                                try {
+                                    tmp =  getWs(target, key);
+                                } catch(e) {
+                                    tmp = undefined;
+                                }
+                            }
+
+                            if (tmp && typeof tmp[0] == 'object') {
+                                obj = tmp[0];
+                                key = tmp[1];
+                            } else {
+                                obj = target
+                            }
+
+                            // Clone objects
+                            if ($.isPlainObject(value)) {
+                                obj[key] = $.isPlainObject(obj[key]) ?
+                                    callee.call(this, {}, obj[key], value) :
+                                    // Don't extend strings, arrays, etc. with objects
+                                    callee.call(this, {}, value);
+                                // Copy everything else by reference
+                            } else {
+                                obj[key] = value;
+                            }
+                        }
+                    }
+                }
+                return target;
             },
             /**
              * 生成随机数
@@ -1599,8 +1641,6 @@ armer = window.jQuery || window.Zepto;
     };
     require.requesting = requesting;
     require.register = define;
-    if (!window.require) window.require = require
-    if (!window.define) window.define = define
     $.require = require;
     $.define = define;
     $.use = function(deps){
@@ -1631,7 +1671,11 @@ armer = window.jQuery || window.Zepto;
     });
 
 
-    var nodes = document.getElementsByTagName("script")
-    var dataMain = $(nodes[nodes.length - 1]).data('main')
-    if (dataMain) $(function(){require(dataMain, $.noop)});
+    var nodes = document.getElementsByTagName("script");
+    defaults = $.mixOptions(defaults, window.require, $(nodes[nodes.length - 1]).data());
+
+    if (!window.require) window.require = require;
+    if (!window.define) window.define = define;
+
+    if (defaults.main) $(function(){require(defaults.main, $.noop)});
 })(armer, window);

@@ -1006,7 +1006,7 @@
 
         $.fn[ hashchange ].delay = 50;
 
-        if(!$.support.hashChange){
+        if(!$.support.hashchange){
             var iframe, timeoutID, html = '<!doctype html><html><body>#{0}</body></html>'
             if( $.fn[ hashchange ].domain){
                 html = html.replace("<body>","<script>document.domain ="+

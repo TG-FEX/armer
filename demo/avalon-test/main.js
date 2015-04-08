@@ -1,4 +1,5 @@
-define(['../../bower_components/oniui/smartgrid/avalon.smartgrid.js'], function(){
-    alert(111);
+define(function(){
+    alert(__inline('test.html'))
+    alert(__inline('test.css'))
     return 123;
 });

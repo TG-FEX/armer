@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.4 - 2015-04-07 
+ * armerjs - v0.8.5 - 2015-04-08 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.4 - 2015-04-07 
+ * armerjs - v0.8.5 - 2015-04-08 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.4 - 2015-04-07 
+ * armerjs - v0.8.5 - 2015-04-08 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11641,7 +11641,41 @@ armer = window.jQuery || window.Zepto;
         map: {},
         method: 'auto',
         namespace: 'default',
-        plusin: {
+        collector: [
+            function (deps, factory){
+                var withCMD = -1, i;
+                for (i = 0; i < deps.length; i++) {
+                    // 看deps里是否有require，是则找出其index
+                    if (deps[i] == 'require') {
+                        withCMD = i;
+                    }
+                }
+
+                // CMD分析require
+                if (typeof factory == "function" && !!~withCMD) {
+                    var requireS, fn = factory.toString();
+                    var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1];
+                    if ($.trim(args) != '')  {
+                        args = args.split(',');
+                        requireS = $.trim(args[withCMD]);
+                        fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                            dep = eval.call(null, dep);
+                            if (typeof dep == 'string') deps.push(dep);
+                        })
+                    }
+                }
+            },
+            function(deps, factory){
+                var s = ['__inline'], fn = factory.toString();
+                $.each(s, function(_, item){
+                    fn.replace(RegExp('[^\\w\\d$_]' + item + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                        dep = eval.call(null, dep);
+                        if (typeof dep == 'string') deps.push(item + '!' + dep);
+                    })
+                });
+            }
+        ],
+        plugins: {
             // domready 插件
             domready: {
                 config: function(){
@@ -11662,25 +11696,24 @@ armer = window.jQuery || window.Zepto;
                     if ($.type(this.url) == 'string') {
                         url = $.URL(this.url, this.parent);
                     } else url = this.url;
-                    var ext = url.extension();
-                    if (!ext) {
+                    this.ext = url.extension();
+                    if (!this.ext) {
                         url.extension(defaults.ext);
-                        ext = defaults.ext;
-                    } else if (!$.ajax.ext2Type[ext]) {
+                        this.ext = defaults.ext;
+                    } else if (!$.ajax.ext2Type[this.ext]) {
                         url.extension(defaults.ext, true);
-                        ext = defaults.ext;
+                        this.ext = defaults.ext;
                     }
-                    if (ext == defaults.ext) {
+                    if (this.ext == defaults.ext) {
                         this.name = url.fileNameWithoutExt()
                     } else {
                         this.name = url.fileName()
                     }
                     url.search('callback', 'define');
                     this.url = url.toString();
-                    this.type = $.ajax.ext2Type[ext];
+                    this.type = $.ajax.ext2Type[this.ext];
                 },
                 callback: function(){
-                    var that = this;
 
                     if (this.type !== 'script'){
                         this.exports = this.originData;
@@ -11726,7 +11759,7 @@ armer = window.jQuery || window.Zepto;
                 if (shim.exports)
                     modules.exports.exports = eval('(function(){return ' + shim.exports + '})()');
                 mod.factory = mod.factory || shim.init;
-                defaults.plusin[mod.method].callback.apply(mod, arguments);
+                defaults.plugins[mod.method].callback.apply(mod, arguments);
                 modules.module.exports = null;
             }
             if (mod.deps && mod.deps.length) {
@@ -11913,30 +11946,12 @@ armer = window.jQuery || window.Zepto;
             else mod = new require.Model(id2Config(name, currentUrl))
         }
 
-        var withCMD = -1, i;
-        for (i = 0; i < deps.length; i++) {
-            // 看deps里是否有require，是则找出其index
-            if (deps[i] == 'require') {
-                withCMD = i;
-            }
-        }
-
         mod.deps = deps;
         mod.type = 'script';
 
-        // CMD分析require
-        if (typeof factory == "function" && !!~withCMD) {
-            var fn = factory.toString(), requireS;
-            var args = fn.match(/^function[^(]*\(([^)]*)\)/)[1];
-            if ($.trim(args) != '')  {
-                args = args.split(',');
-                requireS = $.trim(args[withCMD]);
-                fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                    dep = eval.call(null, dep);
-                    if (typeof dep == 'string') mod.deps.push(dep);
-                })
-            }
-        }
+        $.each(defaults.collector, function(i, item){
+            item(mod.deps, factory);
+        });
 
         if (typeof factory == 'function')
             mod.factory = factory;
@@ -11971,7 +11986,7 @@ armer = window.jQuery || window.Zepto;
             c.url = c.name;
             //别名机制
             c.url = defaults.paths[name] || c.url;
-            c = defaults.plusin[c.method].config.call(c) || c;
+            c = defaults.plugins[c.method].config.call(c) || c;
         }
         c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
             (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
@@ -12003,16 +12018,16 @@ armer = window.jQuery || window.Zepto;
     }
 
 
-    defaults.plusin.domReady = defaults.plusin.ready = defaults.plusin.domready;
+    defaults.plugins.domReady = defaults.plugins.ready = defaults.plugins.domready;
     $.each(['js', 'css', 'text', 'html'], function(i, item){
-        defaults.plusin[item] = {
+        defaults.plugins[item] = {
             config: function(){
                 var url;
                 if ($.type(this.url) == 'string') {
                     url = $.URL(this.url, this.parent);
                 } else url = this.url;
-                var ext = url.extension();
-                if (ext == defaults.ext) {
+                this.ext = url.extension();
+                if (this.ext == defaults.ext) {
                     this.name = url.fileNameWithoutExt()
                 } else {
                     this.name = url.fileName()
@@ -12021,9 +12036,27 @@ armer = window.jQuery || window.Zepto;
                 this.url = url.toString();
                 this.type = $.ajax.ext2Type[item] || item;
             },
-            callback: defaults.plusin.auto.callback
+            callback: defaults.plugins.auto.callback
         }
     });
+    defaults.plugins['__inline'] = {
+        config: function(){
+            var url;
+            if ($.type(this.url) == 'string') {
+                url = $.URL(this.url, this.parent);
+            } else url = this.url;
+            this.ext = url.extension();
+            if (this.ext == defaults.ext)
+                this.name = url.fileNameWithoutExt();
+            else
+                this.name = url.fileName();
+            this.type = 'text'
+            url.search('callback', 'define');
+            this.url = url.toString();
+        },
+        callback: defaults.plugins.auto.callback
+    };
+
 
 
     var nodes = document.getElementsByTagName("script");
@@ -12031,6 +12064,9 @@ armer = window.jQuery || window.Zepto;
 
     if (!window.require) window.require = require;
     if (!window.define) window.define = define;
+    window.__inline = function(url){
+        return require('__inline!' + url);
+    }
 
     if (defaults.main) $(function(){require(defaults.main, $.noop)});
 })(armer, window);
@@ -13092,7 +13128,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.4 - 2015-04-07 
+ * armerjs - v0.8.5 - 2015-04-08 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20972,7 +21008,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.8.4 - 2015-04-07 
+ * armerjs - v0.8.5 - 2015-04-08 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

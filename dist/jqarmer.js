@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.5 - 2015-04-08 
+ * armerjs - v0.8.6 - 2015-04-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.5 - 2015-04-08 
+ * armerjs - v0.8.6 - 2015-04-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.5 - 2015-04-08 
+ * armerjs - v0.8.6 - 2015-04-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11985,7 +11985,14 @@ armer = window.jQuery || window.Zepto;
             c.parent = currentUrl;
             c.url = c.name;
             //别名机制
-            c.url = defaults.paths[name] || c.url;
+            var tmpExt = '.' + defaults.ext;
+            var path;
+            if (name.indexOf(tmpExt) == name.length - tmpExt.length) {
+                path = defaults.paths[name.substr(name.length)]
+            } else {
+                path = defaults.paths[name + tmpExt];
+            }
+            c.url = defaults.paths[name] || path || c.url;
             c = defaults.plugins[c.method].config.call(c) || c;
         }
         c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
@@ -13128,7 +13135,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.5 - 2015-04-08 
+ * armerjs - v0.8.6 - 2015-04-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -21008,7 +21015,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.8.5 - 2015-04-08 
+ * armerjs - v0.8.6 - 2015-04-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

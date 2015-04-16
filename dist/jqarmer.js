@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -13135,7 +13135,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -21015,7 +21015,7 @@ $.fn.bgiframe = function(){
 
 
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.6 - 2015-04-15 
+ * armerjs - v0.8.7 - 2015-04-16 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;

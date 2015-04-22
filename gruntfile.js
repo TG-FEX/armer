@@ -34,6 +34,15 @@ module.exports = function(grunt) {
             ],
             dest: 'tmp/lang.js'
         },
+        'util': {
+            src: [
+                'src/util/main.js',
+                'src/util/store.js',
+                'src/lang/timer.js',
+                'src/lang/cookie.js'
+            ],
+            dest: 'tmp/util.js'
+        },
         'ui': {
             src: [
                 'src/ui.js',
@@ -54,7 +63,7 @@ module.exports = function(grunt) {
                 'src/effects.js',
                 'src/event.js',
                 'src/factory.js',
-                'src/util.js',
+                'tmp/util.js',
                 'dist/armer.ui.js'
             ],
             dest: 'dist/armer.js'

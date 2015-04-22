@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.7 - 2015-04-16 
+ * armerjs - v0.8.8 - 2015-04-22 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1360,7 +1360,7 @@ armer = window.jQuery || window.Zepto;
                 },
                 callback: function(){
 
-                    if (this.type !== 'script'){
+                    if (this.type !== 'script') {
                         this.exports = this.originData;
                     } else if (this.factory) {
                         var exports = this.factory.apply(this, getExports(arguments))
@@ -1368,7 +1368,7 @@ armer = window.jQuery || window.Zepto;
                             this.exports = exports
                         else if (this.exports == null)
                             this.exports = modules.exports.exports
-                    } else
+                    } else if (this.exports == null)
                         this.exports = modules.exports.exports
 
                     this.dfd.resolveWith(this, [this]);

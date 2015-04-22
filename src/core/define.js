@@ -98,7 +98,7 @@
                 },
                 callback: function(){
 
-                    if (this.type !== 'script'){
+                    if (this.type !== 'script') {
                         this.exports = this.originData;
                     } else if (this.factory) {
                         var exports = this.factory.apply(this, getExports(arguments))
@@ -106,7 +106,7 @@
                             this.exports = exports
                         else if (this.exports == null)
                             this.exports = modules.exports.exports
-                    } else
+                    } else if (this.exports == null)
                         this.exports = modules.exports.exports
 
                     this.dfd.resolveWith(this, [this]);

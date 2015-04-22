@@ -101,7 +101,6 @@ module.exports = function(grunt) {
             dest: 'dist/zarmer.min.js'
         }
     }
-
     /*
     options.qunit = {
         all: {

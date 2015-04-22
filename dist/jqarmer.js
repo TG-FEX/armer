@@ -20990,6 +20990,207 @@ $.Store = (function(){
 })();
 $.store = new $.Store('default-store');
 
+;(function($){
+
+    /**
+     * 定时器
+     * @param timeout {boolean|number} 超时时间，定时器开始后，会在该时间后停止
+     * @param [interval=200] {number} 通知时隔，定时器开始后，每隔一段时间会进行进度通知
+     * @param [limit=Infinity] {number} 进度生成次数限制，超过这个次数，定时器将会停止
+     * @param [callback] {function} 成功后绑定的成功时间
+     * @class armer.Timer
+     * @constructor
+     * @extends armer.EventEmitter
+     */
+    $.Timer = $.EventEmitter.extend({
+        _init: function(timeout, interval, limit, callback){
+            // 总需要的事件
+            if ($.type(limit) != 'number' && limit < 1) {
+                callback = limit;
+                limit = Infinity;
+            }
+            if ($.type(interval) != 'number') {
+                callback = interval;
+                interval = null;
+            }
+            if ($.type(timeout) != 'number') {
+                timeout = Infinity;
+            }
+
+            this._pass = 0;
+
+            /**
+             * 最大超时时间
+             * @property timeout
+             * @type {number}
+             */
+            this.timeout = this._total = timeout;
+            /**
+             * 当前通知数
+             * @property tickNum
+             * @type {number}
+             */
+            this.tickNum = 0;
+            /**
+             * 最大的通知数
+             * @property limit
+             * @type {number}
+             */
+            this.limit = limit;
+            /**
+             * 通知的间隔时间
+             * @property interval
+             * @type {number}
+             */
+            this.interval = interval || 200;
+            if ($.type(callback) == 'function') {
+                this.onfinish = callback;
+                this.start();
+            }
+        },
+        /**
+         * 开始定时器
+         * @method start
+         */
+        start: function(){
+            if (list.length == 0) start();
+            $.Array.ensure(list, this);
+            this._startTime = $.now();
+        },
+        finish: function(){
+            this.reset();
+        },
+        /**
+         * 停止定时器
+         * @method stop
+         */
+        stop: function(){
+            $.Array.remove(list, this);
+            if (list.length == 0) clearInterval(t);
+        },
+        /**
+         * 停止并重设定时器
+         * @method reset
+         */
+        reset: function(){
+            this.stop();
+            this._pass = 0;
+            this._total = $.now();
+        },
+        /**
+         * 暂停定时器
+         * @method pause
+         */
+        pause: function(){
+            this.stop();
+            var now = $.now();
+            this._pass = getpass(this, now);
+            this._total = now;
+        }
+    });
+    $.Timer.interval = 13;
+    $.Timer.event = {
+        /**
+         * 启动事件
+         * @event start
+         */
+        START: 'start',
+        /**
+         * 完成事件
+         * @event finish
+         */
+        FINISH: 'finish',
+        /**
+         * 停止事件
+         * @event stop
+         */
+        STOP: 'stop',
+        /**
+         * 通知事件
+         * @event tick
+         */
+        TICK: 'tick'
+    }
+
+    $.setTimeout = function(callback, timeout){
+        return $.Timer(timeout, $.type(callback) == string ? function(){eval(callback)} : callbcak);
+    }
+    $.clearTimeout = function(timer) {
+        timer.stop();
+    }
+    $.setInterval = function(callback, interval){
+        return $.Timer(false, interval, callback);
+    }
+    $.clearInterval = function(timer){
+        timer.stop();
+    }
+
+})(armer);
+$.Cookie = (function(){
+    return $.EventEmitter.extend({
+        _init: function(){
+            this._list = $.unserialize(document.cookie, ';', '=');
+        },
+        'get': function(key){
+            if (key)
+                return $.cloneOf(this._list[key]);
+            // 先备份一下，以免被误改
+            else return $.cloneOf(this._list);
+        },
+
+        'set': function(hash, value){
+            var key, isNew = true;
+            var that = this;
+            if ($.type(hash) == 'string') {
+                key = hash;
+                hash = {}
+                hash[key] = value
+                isNew = false
+            }
+            var options = {};
+            if ('expires' in hash) {
+                options.expires = hash.expires
+                delete hash.expires;
+            }
+            if ('path' in hash) {
+                options.path = hash.path
+                delete hash.path;
+            }
+            var result = this._testAndSet(hash, isNew);
+            if (this._isChange(result)) {
+                // 延迟渲染，以免阻塞
+                $.nextTick(function () {
+                    $.each(result[0], function(i, item){
+                        var s = {};
+                        s[i] = item;
+                        document.cookie = $.serialize(s, ';', '=') + '; ' + $.serialize(options, ';', '=', ',', false);
+                    });
+                })
+            }
+        },
+        _isChange: function(result){
+            return !$.isEmptyObject(result[0]) || !$.isEmptyObject(result[1])
+        },
+        _testAndSet: function(valueHash, isNew){
+            var i, newValue = {}, oldValue = {}, mix
+            if (isNew) mix = $.mix({}, valueHash, this._list)
+            else mix = valueHash
+            for (i in mix) {
+                if (mix.hasOwnProperty(i) && !$.isEqual(this._list[i], valueHash[i])) {
+                    // 如果不相等则赋值
+
+                    oldValue[i] = this._list[i];
+
+                    if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
+                    else delete this._list[i]
+                }
+            }
+            return [newValue, oldValue, this._list]
+        }
+
+    })
+})();
+$.cookie = new $.Cookie;
 /*!
  * armerjs - v0.8.8 - 2015-04-22 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 

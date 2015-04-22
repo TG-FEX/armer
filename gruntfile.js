@@ -38,8 +38,8 @@ module.exports = function(grunt) {
             src: [
                 'src/util/main.js',
                 'src/util/store.js',
-                'src/lang/timer.js',
-                'src/lang/cookie.js'
+                'src/util/timer.js',
+                'src/util/cookie.js'
             ],
             dest: 'tmp/util.js'
         },

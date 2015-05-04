@@ -27,7 +27,7 @@
             this.options.onshowError && this.on('showError', this.options.onshowError);
             this.validating = false;
             this.bindTiming = this.options.bindTiming;
-            this._lockform = function(e){return false};
+            //this._lockform = function(e){return false};
 
             var bind = function () {
                 that.element.on('change', function () {
@@ -38,14 +38,14 @@
             if (this.bindTiming == 2 || this.form.data('after-submit') && this.bindTiming == 1) {
                 bind();
             }
-            this.form.on('submit', function (e) {
+            this.form.on('submit.validate', function (e) {
                 if (bind && that.bindTiming == 1) {
                     bind();
                 }
                 if (that.element.is(':disabled *, :disabled')) return;
 
                 // 非异步的
-                that.valid().fail(function(){
+                that.valid(true).fail(function(){
                     if (that.options.stopValidateWhenError) {
                         e.stopImmediatePropagation();
                     }
@@ -53,7 +53,7 @@
                 }).done(function(){});
             })
         },
-        _check: function (oCondition) {
+        _check: function (oCondition, sync) {
             var e, condition;
             if ($.isString(oCondition) && this.constructor.condition[oCondition]) {
                 condition = this.constructor.condition[oCondition];
@@ -65,6 +65,7 @@
                 url: condition,
                 //dataType: "text",
                 data: $.serializeNodes(this.element),
+                sync: sync,
                 success: function(data){
                     dfd.resolve(data)
                 },
@@ -99,14 +100,14 @@
             ret.timestamp = $.now();
             return ret;
         },
-        valid: function(){
+        valid: function(sync){
             if (this.options.obstruct && this.validating) {
                 return this.validating.notify();
             }
             var that = this, condition;
             condition = $.isArray(this.options.condition) ? this.options.condition : [this.options.condition];
             var dfd = $.when.apply($, condition.map(function(item){
-                return that._check(item)
+                return that._check(item, sync)
             }));
             this.validating = dfd;
             this.dfd = dfd;
@@ -120,7 +121,7 @@
             return dfd;
         },
         _pass: function(){
-            this.form.off('submit', this._lockform)
+            //this.form.off('submit', this._lockform)
             this.trigger('showPass', [].slice.call(arguments));
         },
         _getMsg: function(err, oCondition){
@@ -138,8 +139,8 @@
 
         },
         _error: function(err){
-            this.form.off('submit', this._lockform);
-            this.form.on('submit', this._lockform);
+            //this.form.off('submit', this._lockform);
+            //this.form.on('submit', this._lockform);
             this.trigger('showError', [this._getMsg.apply(this, arguments)].concat([].slice.call(arguments)));
         }
     }).mix({

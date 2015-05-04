@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -12470,8 +12470,8 @@ armer = window.jQuery || window.Zepto;
             var _nativeDate = Date;
             Date = function(Y,M,D,H,m,s,ms){
                 var ret, len = arguments.length;
-                if (!(this instanceof Date)){
-                    ret = _nativeDate.apply(null, arguments);
+                if (!(this instanceof this.arguments.callee)){
+                    ret = this.arguments.callee.apply(null, arguments);
                 }
                 else if (len === 1 && typeof arguments[0] === 'string' && regExp.test(arguments[0])){
                     var tmpRet;
@@ -12770,6 +12770,8 @@ armer = window.jQuery || window.Zepto;
                     return feed ? 'true' : 'false';
                 } else if (type == 'number'){
                     return '' + feed;
+                } else if (type == 'date') {
+                    return feed.toISOString();
                 } else if (type == 'regexp') {
                     return '{}';
                 } else if(type == 'array'){
@@ -13135,7 +13137,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20816,7 +20818,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21192,7 +21194,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.8 - 2015-04-22 
+ * armerjs - v0.8.9 - 2015-05-04 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

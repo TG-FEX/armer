@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         },
         'ui': {
             src: [
-                'src/ui.js',
+                'src/ui/main.js',
                 'src/ui/switcher.js',
                 'src/ui/dialog.js',
                 'src/ui/spinner.js'

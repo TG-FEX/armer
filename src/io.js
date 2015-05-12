@@ -1,6 +1,6 @@
 // TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
 ;(function ($) {
-    var DOC = document, script,
+    var DOC = document,
         HEAD = document.head || document.getElementsByTagName('head')[0];
     var injectScript = function(src, beforeInject, charset){
         var script = document.createElement('script');
@@ -69,29 +69,28 @@
     });
     $.ajaxTransport('style', function(s) {
         if (s.crossDomain) {
-            var style;
             return {
                 send: function(_, callback) {
-                    style = document.createElement("link");
-                    style.rel = 'stylesheet';
+                    s.style = document.createElement("link");
+                    s.style.rel = 'stylesheet';
                     if (s.scriptCharset) {
-                        style.charset = s.scriptCharset;
+                        s.style.charset = s.scriptCharset;
                     }
-                    style.onload = style.onreadystatechange = function(_, isAbort) {
-                        if (isAbort || !style.readyState || style.readyState == 'complete') {
-                            style.onload = style.onreadystatechange = null;
-                            style = null;
+                    s.style.onload = s.style.onreadystatechange = function(_, isAbort) {
+                        if (isAbort || !s.style.readyState || s.style.readyState == 'complete') {
+                            s.style.onload = s.style.onreadystatechange = null;
+                            s.style = null;
                             if (!isAbort) {
                                 callback( 200, "success" );
                             }
                         }
                     };
-                    style.href = s.url;
-                    HEAD.appendChild(style);
+                    s.style.href = s.url;
+                    HEAD.appendChild(s.style);
                 },
                 abort: function() {
-                    if (style) {
-                        style.onload(undefined, true);
+                    if (s.style) {
+                        s.style.onload(undefined, true);
                     }
                 }
             };
@@ -102,15 +101,14 @@
     });
     // 对image 进行处理
     $.ajaxTransport('image', function(s){
-        var image;
         //if (s.crossDomain)
         return {
             send: function(response, done){
-                image = new Image();
+                s.image = new Image();
                 var error = 'error';
                 var load = 'load';
                 var a, b;
-                if (image.addEventListener) {
+                if (s.image.addEventListener) {
                     a = 'addEventListener';
                     b = 'removeEventListener';
                 }
@@ -120,31 +118,31 @@
                     error = 'on' + error;
                     load = 'on' + load;
                 }
-                image[a](load, function(){
-                    done(200, 'success', {image: image});
-                    image[b](load, arguments.callee);
+                s.image[a](load, function(){
+                    done(200, 'success', {image: s.image});
+                    s.image[b](load, arguments.callee);
                 });
-                image[a](error, function(){
-                    done(404, 'fail', {image: image});
-                    image[b](error, arguments.callee);
+                s.image[a](error, function(){
+                    done(404, 'fail', {image: s.image});
+                    s.image[b](error, arguments.callee);
                 });
-                image.src = s.url;
+                s.image.src = s.url;
             },
             abort: function(){
-                if (image) image.onload = image.onerror = null;
+                if (s.image) s.image.onload = s.image.onerror = null;
             }
         }
     });
 
     // 修复script onload的bug
     $.ajaxTransport('+script', function(s){
-        var src = s.url;
         if (s.crossDomain) {
             return {
                 send: function(_, complete){
+                    var src = s.url;
                     var handler;
-                    if (DOC.dispatchEvent) {
-                        // 对于w3c标准浏览器，采用onerror和onload判断脚本加载情况
+                    // 对于w3c标准浏览器，采用onerror和onload判断脚本加载情况
+                    if (DOC.dispatchEvent)
                         handler = function(){
                             var s = this;
                             s.onload = function(){
@@ -158,7 +156,7 @@
                                 complete(404, 'fail');
                             };
                         };
-                    } else {
+                    else
                         // 对于恶心的IE8-，我们通过一个vbscript元素，来检测脚本是否加载成功
                         handler = function(){
                             var vbtest = this, flag = 0;
@@ -197,12 +195,11 @@
                             // 为window绑定一个错误，当js被误加载成vb的时候，会发生错误，来判断是否加载成功
                             window.attachEvent('onerror', errorHandler);
                         };
-                    }
-                    script = injectScript(src, handler, s.scriptCharset);
+                    s.script = injectScript(src, handler, s.scriptCharset);
                 },
                 abort: function(){
-                    if (script) {
-                        script['on' + (DOC.dispatchEvent ? 'load' : 'readystatechange')](undefined, true);
+                    if (s.script) {
+                        s.script['on' + (DOC.dispatchEvent ? 'load' : 'readystatechange')](undefined, true);
                     }
                 }
             }

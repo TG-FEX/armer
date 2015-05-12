@@ -1,4 +1,4 @@
-var JSONGetter = (function () {
+$.JSONGetter = (function () {
     function createDefaultRetune(retry) {
         if (retry === true) retry = Infinity;
         return function defaultRetryment (dataArray){
@@ -112,7 +112,7 @@ var JSONGetter = (function () {
             if (this.retry || !this.options.obstruction || !this._ajax || this._ajax.state() != 'pending') {
                 var d = {}
                 if (this.options.beforeSend && (false === this.options.beforeSend(sendData, d))) {
-                    $.extend(d, {code: -403, info:'由于需求请求被中断'});
+                    $.extend(d, {state: -403, info:'由于需求请求被中断'});
                     request.branchAjaxResult(dfd, d);
                 }  else {
                     ajaxOptions = {
@@ -135,7 +135,7 @@ var JSONGetter = (function () {
                     else
                         this._ajax = $.ajax(ajaxOptions);
                 }
-            } else request.branchAjaxResult(dfd, { code: -100 });
+            } else request.branchAjaxResult(dfd, { state: -100 });
 
             return dfd.promise();
         },
@@ -195,11 +195,18 @@ var JSONGetter = (function () {
                     data.state = data.code;
                     data.data = data.msg;
                 } catch(e) {
-                    data = {
-                        info: jqXHR.responseText
-                    }
+                    if (/<doctype|<html/i.test(jqXHR.responseText)) {
+                        //应该是传了一个html了吧
+                        data = {
+                            code: 500
+                        }
+                    } else
+                        data = {
+                            info: jqXHR.responseText
+                        }
+
                 }
-                data.state = data.state || jqXHR.status;
+                data.state = data.state || data.code || jqXHR.status;
                 if (data.state >= 200 && data.state < 300 || data.state == 304) {
                     data.info = data.info || '请求成功'
                 } else data.info = data.info || '未知错误';
@@ -219,8 +226,8 @@ var JSONGetter = (function () {
         },
         defaultErrHandler: function(D){
             var msg = D.info || '系统错误';
-            if (D.code > 0 || D.code < -499) alert(msg);
-            else alert('(错误码：'+ D.code + ")" + msg + '\n' + '请稍候重试或联系客服!');
+            if (D.state > 0 || D.state < -499) alert(msg);
+            else alert('(错误码：'+ D.state + ")" + msg + '\n' + '请稍候重试或联系客服!');
         },
         /**
          * JSONGetter的监听器，用去调试

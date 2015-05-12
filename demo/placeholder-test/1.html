@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../bower_components/jquery/dist/jquery.js"></script>
+    <script src="placeholder.js"></script>
+
+    <script>
+
+        $(function(){
+
+            $('input, textarea').placeholder();
+
+            // 坑爹的IE9-对 javascript:触发beforeunload
+            $(document).on('click', 'a[href^="javascript:"]', function(){
+                var event = $._data(window, 'events')['beforeunload'];
+                var handler = window.onbeforeunload;
+                delete $._data(window, 'events')['beforeunload'];
+                window.onbeforeunload = null;
+                setTimeout(function(){
+                    $._data(window, 'events')['beforeunload'] = event;
+                    window.onbeforeunload = handler;
+                })
+
+            })
+
+            $('a').click(function(){
+                $('form')[0].reset()
+            });
+        });
+    </script>
+</head>
+<body>
+<form>
+    <input type="text" placeholder="i'm placeholder text">
+    <a href="javascript:">placeholder clear</a>
+</form>
+</body>
+</html>

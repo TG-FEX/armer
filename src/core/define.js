@@ -457,6 +457,9 @@
     window.__inline = function(url){
         return require('__inline!' + url);
     }
+    window.__uri = function(url){
+        return $.URL(url, $.URL.current()).toString()
+    }
 
     if (defaults.main) $(function(){require(defaults.main, $.noop)});
 })(armer, window);

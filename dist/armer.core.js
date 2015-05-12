@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -756,6 +756,33 @@ armer = window.jQuery || window.Zepto;
             $(':input, select', form).not(':button, :submit, :reset, :radio').val('');
             $(':checkbox, :radio', form).prop('checked', false);
         }
+
+        /**
+         * 将$.Deferred转换为Promise
+         * @param dfd {$.Deferred}
+         * @returns {Window.Promise}
+         */
+
+        $.toPromise = function (dfd){
+            return new Promise(function(rs, rj){
+                dfd.done(function(data){
+                    rs(data)
+                }).fail(function(data){
+                    rj(data)
+                })
+            })
+        }
+
+        $.toDeferred = function(pm){
+            var dfd = $.Deferred();
+            pm.then(function(data){
+                dfd.resolve(data)
+            }, function(){
+                dfd.reject(data)
+            })
+
+        }
+
     })();
 
     // TODO(wuhf): 增加ajax文件后缀与类型的映射
@@ -1718,6 +1745,9 @@ armer = window.jQuery || window.Zepto;
     if (!window.define) window.define = define;
     window.__inline = function(url){
         return require('__inline!' + url);
+    }
+    window.__uri = function(url){
+        return $.URL(url, $.URL.current()).toString()
     }
 
     if (defaults.main) $(function(){require(defaults.main, $.noop)});

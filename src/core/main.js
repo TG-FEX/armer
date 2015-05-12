@@ -755,6 +755,33 @@ armer = window.jQuery || window.Zepto;
             $(':input, select', form).not(':button, :submit, :reset, :radio').val('');
             $(':checkbox, :radio', form).prop('checked', false);
         }
+
+        /**
+         * 将$.Deferred转换为Promise
+         * @param dfd {$.Deferred}
+         * @returns {Window.Promise}
+         */
+
+        $.toPromise = function (dfd){
+            return new Promise(function(rs, rj){
+                dfd.done(function(data){
+                    rs(data)
+                }).fail(function(data){
+                    rj(data)
+                })
+            })
+        }
+
+        $.toDeferred = function(pm){
+            var dfd = $.Deferred();
+            pm.then(function(data){
+                dfd.resolve(data)
+            }, function(){
+                dfd.reject(data)
+            })
+
+        }
+
     })();
 
     // TODO(wuhf): 增加ajax文件后缀与类型的映射

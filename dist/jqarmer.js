@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11111,6 +11111,33 @@ armer = window.jQuery || window.Zepto;
             $(':input, select', form).not(':button, :submit, :reset, :radio').val('');
             $(':checkbox, :radio', form).prop('checked', false);
         }
+
+        /**
+         * 将$.Deferred转换为Promise
+         * @param dfd {$.Deferred}
+         * @returns {Window.Promise}
+         */
+
+        $.toPromise = function (dfd){
+            return new Promise(function(rs, rj){
+                dfd.done(function(data){
+                    rs(data)
+                }).fail(function(data){
+                    rj(data)
+                })
+            })
+        }
+
+        $.toDeferred = function(pm){
+            var dfd = $.Deferred();
+            pm.then(function(data){
+                dfd.resolve(data)
+            }, function(){
+                dfd.reject(data)
+            })
+
+        }
+
     })();
 
     // TODO(wuhf): 增加ajax文件后缀与类型的映射
@@ -12073,6 +12100,9 @@ armer = window.jQuery || window.Zepto;
     if (!window.define) window.define = define;
     window.__inline = function(url){
         return require('__inline!' + url);
+    }
+    window.__uri = function(url){
+        return $.URL(url, $.URL.current()).toString()
     }
 
     if (defaults.main) $(function(){require(defaults.main, $.noop)});
@@ -13137,7 +13167,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -18778,7 +18808,7 @@ if (window.define) {
 
 // TODO(wuhf): 强化$.ajax让它支持style类型(暂时不支持onerror)image类型和修复script.onerror
 ;(function ($) {
-    var DOC = document, script,
+    var DOC = document,
         HEAD = document.head || document.getElementsByTagName('head')[0];
     var injectScript = function(src, beforeInject, charset){
         var script = document.createElement('script');
@@ -18847,29 +18877,28 @@ if (window.define) {
     });
     $.ajaxTransport('style', function(s) {
         if (s.crossDomain) {
-            var style;
             return {
                 send: function(_, callback) {
-                    style = document.createElement("link");
-                    style.rel = 'stylesheet';
+                    s.style = document.createElement("link");
+                    s.style.rel = 'stylesheet';
                     if (s.scriptCharset) {
-                        style.charset = s.scriptCharset;
+                        s.style.charset = s.scriptCharset;
                     }
-                    style.onload = style.onreadystatechange = function(_, isAbort) {
-                        if (isAbort || !style.readyState || style.readyState == 'complete') {
-                            style.onload = style.onreadystatechange = null;
-                            style = null;
+                    s.style.onload = s.style.onreadystatechange = function(_, isAbort) {
+                        if (isAbort || !s.style.readyState || s.style.readyState == 'complete') {
+                            s.style.onload = s.style.onreadystatechange = null;
+                            s.style = null;
                             if (!isAbort) {
                                 callback( 200, "success" );
                             }
                         }
                     };
-                    style.href = s.url;
-                    HEAD.appendChild(style);
+                    s.style.href = s.url;
+                    HEAD.appendChild(s.style);
                 },
                 abort: function() {
-                    if (style) {
-                        style.onload(undefined, true);
+                    if (s.style) {
+                        s.style.onload(undefined, true);
                     }
                 }
             };
@@ -18880,15 +18909,14 @@ if (window.define) {
     });
     // 对image 进行处理
     $.ajaxTransport('image', function(s){
-        var image;
         //if (s.crossDomain)
         return {
             send: function(response, done){
-                image = new Image();
+                s.image = new Image();
                 var error = 'error';
                 var load = 'load';
                 var a, b;
-                if (image.addEventListener) {
+                if (s.image.addEventListener) {
                     a = 'addEventListener';
                     b = 'removeEventListener';
                 }
@@ -18898,31 +18926,31 @@ if (window.define) {
                     error = 'on' + error;
                     load = 'on' + load;
                 }
-                image[a](load, function(){
-                    done(200, 'success', {image: image});
-                    image[b](load, arguments.callee);
+                s.image[a](load, function(){
+                    done(200, 'success', {image: s.image});
+                    s.image[b](load, arguments.callee);
                 });
-                image[a](error, function(){
-                    done(404, 'fail', {image: image});
-                    image[b](error, arguments.callee);
+                s.image[a](error, function(){
+                    done(404, 'fail', {image: s.image});
+                    s.image[b](error, arguments.callee);
                 });
-                image.src = s.url;
+                s.image.src = s.url;
             },
             abort: function(){
-                if (image) image.onload = image.onerror = null;
+                if (s.image) s.image.onload = s.image.onerror = null;
             }
         }
     });
 
     // 修复script onload的bug
     $.ajaxTransport('+script', function(s){
-        var src = s.url;
         if (s.crossDomain) {
             return {
                 send: function(_, complete){
+                    var src = s.url;
                     var handler;
-                    if (DOC.dispatchEvent) {
-                        // 对于w3c标准浏览器，采用onerror和onload判断脚本加载情况
+                    // 对于w3c标准浏览器，采用onerror和onload判断脚本加载情况
+                    if (DOC.dispatchEvent)
                         handler = function(){
                             var s = this;
                             s.onload = function(){
@@ -18936,7 +18964,7 @@ if (window.define) {
                                 complete(404, 'fail');
                             };
                         };
-                    } else {
+                    else
                         // 对于恶心的IE8-，我们通过一个vbscript元素，来检测脚本是否加载成功
                         handler = function(){
                             var vbtest = this, flag = 0;
@@ -18975,12 +19003,11 @@ if (window.define) {
                             // 为window绑定一个错误，当js被误加载成vb的时候，会发生错误，来判断是否加载成功
                             window.attachEvent('onerror', errorHandler);
                         };
-                    }
-                    script = injectScript(src, handler, s.scriptCharset);
+                    s.script = injectScript(src, handler, s.scriptCharset);
                 },
                 abort: function(){
-                    if (script) {
-                        script['on' + (DOC.dispatchEvent ? 'load' : 'readystatechange')](undefined, true);
+                    if (s.script) {
+                        s.script['on' + (DOC.dispatchEvent ? 'load' : 'readystatechange')](undefined, true);
                     }
                 }
             }
@@ -20818,7 +20845,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21194,7 +21221,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.9 - 2015-05-04 
+ * armerjs - v0.8.10 - 2015-05-12 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -21407,14 +21434,16 @@ $(function(){
         }
 
         $(function() {
-            // Look for forms
-            $(document).delegate('form', 'submit.placeholder', function() {
+            var handler = function () {
                 // Clear the placeholder values so they don't get submitted
-                var $inputs = $('.'+settings.customClass, this).each(clearPlaceholder);
-                setTimeout(function() {
+                var $inputs = $('.' + settings.customClass, this).each(clearInner);
+                setTimeout(function () {
                     $inputs.each(setPlaceholder);
                 }, 10);
-            });
+
+            };
+            // Look for forms
+            $(document).delegate('form', 'submit.placeholder', handler).delegate('form', 'reset.placeholder', handler);
         });
 
         // Clear placeholder values upon page reload
@@ -21439,28 +21468,44 @@ $(function(){
     }
 
     function clearPlaceholder(event, value) {
+        return clearInner.call(this, event, value, function(input, isPassword){
+            if (isPassword) {
+                input.focus();
+            } else {
+                input == safeActiveElement() && input.select();
+            }
+        })
+    }
+
+
+    function clearInner(event, value, afterclear) {
+        afterclear = afterclear || $.noop;
         var input = this;
         var $input = $(input);
         if (input.value == $input.attr('placeholder') && $input.hasClass(settings.customClass)) {
-            if ($input.data('placeholder-password')) {
+            var isPassword = $input.data('placeholder-password');
+            if (isPassword) {
                 $input = $input.hide().nextAll('input[type="password"]:first').show().attr('id', $input.removeAttr('id').data('placeholder-id'));
                 // If `clearPlaceholder` was called from `$.valHooks.input.set`
                 if (event === true) {
                     return $input[0].value = value;
                 }
-                $input.focus();
+                afterclear($input[0], isPassword)
+
             } else {
                 input.value = '';
                 $input.removeClass(settings.customClass);
-                input == safeActiveElement() && input.select();
+                afterclear($input[0], isPassword)
+
             }
         }
     }
 
     function setPlaceholder() {
         var $replacement;
-        var input = this;
-        var $input = $(input);
+        var $input = $(this);
+        $input = $input.data('placeholder-password') || $input;
+        var input = $input[0];
         var id = this.id;
         if (input.value === '') {
             if (input.type === 'password') {
@@ -21476,7 +21521,7 @@ $(function(){
                             'placeholder-password': $input,
                             'placeholder-id': id
                         })
-                        .bind('focus.placeholder', clearPlaceholder);
+                        .bind('focus.placeholder', clearPlaceholder).addClass(settings.customClass)[0].value = $replacement.attr('placeholder');
                     $input
                         .data({
                             'placeholder-textinput': $replacement,
@@ -21486,9 +21531,10 @@ $(function(){
                 }
                 $input = $input.removeAttr('id').hide().prevAll('input[type="text"]:first').attr('id', id).show();
                 // Note: `$input[0] != input` now!
+            } else {
+                $input.addClass(settings.customClass);
+                $input[0].value = $input.attr('placeholder');
             }
-            $input.addClass(settings.customClass);
-            $input[0].value = $input.attr('placeholder');
         } else {
             $input.removeClass(settings.customClass);
         }
@@ -21504,6 +21550,21 @@ $(function(){
 
 })();
 $(function(){
+
+
+    // 坑爹的IE9-对 javascript:触发beforeunload
+    $(document).on('click', 'a[href^="javascript:"]', function(){
+        var event = $._data(window, 'events')['beforeunload'];
+        var handler = window.onbeforeunload;
+        delete $._data(window, 'events')['beforeunload'];
+        window.onbeforeunload = null;
+        setTimeout(function(){
+            $._data(window, 'events')['beforeunload'] = event;
+            window.onbeforeunload = handler;
+        })
+
+    })
+
     $('input, textarea').placeholder();
 });
 

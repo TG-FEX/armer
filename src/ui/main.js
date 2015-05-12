@@ -208,14 +208,16 @@ $(function(){
         }
 
         $(function() {
-            // Look for forms
-            $(document).delegate('form', 'submit.placeholder', function() {
+            var handler = function () {
                 // Clear the placeholder values so they don't get submitted
-                var $inputs = $('.'+settings.customClass, this).each(clearPlaceholder);
-                setTimeout(function() {
+                var $inputs = $('.' + settings.customClass, this).each(clearInner);
+                setTimeout(function () {
                     $inputs.each(setPlaceholder);
                 }, 10);
-            });
+
+            };
+            // Look for forms
+            $(document).delegate('form', 'submit.placeholder', handler).delegate('form', 'reset.placeholder', handler);
         });
 
         // Clear placeholder values upon page reload
@@ -240,28 +242,44 @@ $(function(){
     }
 
     function clearPlaceholder(event, value) {
+        return clearInner.call(this, event, value, function(input, isPassword){
+            if (isPassword) {
+                input.focus();
+            } else {
+                input == safeActiveElement() && input.select();
+            }
+        })
+    }
+
+
+    function clearInner(event, value, afterclear) {
+        afterclear = afterclear || $.noop;
         var input = this;
         var $input = $(input);
         if (input.value == $input.attr('placeholder') && $input.hasClass(settings.customClass)) {
-            if ($input.data('placeholder-password')) {
+            var isPassword = $input.data('placeholder-password');
+            if (isPassword) {
                 $input = $input.hide().nextAll('input[type="password"]:first').show().attr('id', $input.removeAttr('id').data('placeholder-id'));
                 // If `clearPlaceholder` was called from `$.valHooks.input.set`
                 if (event === true) {
                     return $input[0].value = value;
                 }
-                $input.focus();
+                afterclear($input[0], isPassword)
+
             } else {
                 input.value = '';
                 $input.removeClass(settings.customClass);
-                input == safeActiveElement() && input.select();
+                afterclear($input[0], isPassword)
+
             }
         }
     }
 
     function setPlaceholder() {
         var $replacement;
-        var input = this;
-        var $input = $(input);
+        var $input = $(this);
+        $input = $input.data('placeholder-password') || $input;
+        var input = $input[0];
         var id = this.id;
         if (input.value === '') {
             if (input.type === 'password') {
@@ -277,7 +295,7 @@ $(function(){
                             'placeholder-password': $input,
                             'placeholder-id': id
                         })
-                        .bind('focus.placeholder', clearPlaceholder);
+                        .bind('focus.placeholder', clearPlaceholder).addClass(settings.customClass)[0].value = $replacement.attr('placeholder');
                     $input
                         .data({
                             'placeholder-textinput': $replacement,
@@ -287,9 +305,10 @@ $(function(){
                 }
                 $input = $input.removeAttr('id').hide().prevAll('input[type="text"]:first').attr('id', id).show();
                 // Note: `$input[0] != input` now!
+            } else {
+                $input.addClass(settings.customClass);
+                $input[0].value = $input.attr('placeholder');
             }
-            $input.addClass(settings.customClass);
-            $input[0].value = $input.attr('placeholder');
         } else {
             $input.removeClass(settings.customClass);
         }
@@ -305,6 +324,21 @@ $(function(){
 
 })();
 $(function(){
+
+
+    // 坑爹的IE9-对 javascript:触发beforeunload
+    $(document).on('click', 'a[href^="javascript:"]', function(){
+        var event = $._data(window, 'events')['beforeunload'];
+        var handler = window.onbeforeunload;
+        delete $._data(window, 'events')['beforeunload'];
+        window.onbeforeunload = null;
+        setTimeout(function(){
+            $._data(window, 'events')['beforeunload'] = event;
+            window.onbeforeunload = handler;
+        })
+
+    })
+
     $('input, textarea').placeholder();
 });
 

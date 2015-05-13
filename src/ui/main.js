@@ -328,14 +328,19 @@ $(function(){
 
     // 坑爹的IE9-对 javascript:触发beforeunload
     $(document).on('click', 'a[href^="javascript:"]', function(){
-        var event = $._data(window, 'events')['beforeunload'];
-        var handler = window.onbeforeunload;
-        delete $._data(window, 'events')['beforeunload'];
+        var events = $._data(window, 'events'), event;
+        if (events) {
+            event = events['beforeunload'];
+            var handler = window.onbeforeunload;
+            delete events['beforeunload'];
+        }
         window.onbeforeunload = null;
         setTimeout(function(){
-            $._data(window, 'events')['beforeunload'] = event;
+            if (event) {
+                events['beforeunload'] = event;
+            }
             window.onbeforeunload = handler;
-        })
+        }, 0)
 
     })
 

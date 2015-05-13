@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.8.10 - 2015-05-12 
+ * armerjs - v0.8.10 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.10 - 2015-05-12 
+ * armerjs - v0.8.10 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -2149,8 +2149,8 @@ armer = window.jQuery || window.Zepto;
             var _nativeDate = Date;
             Date = function(Y,M,D,H,m,s,ms){
                 var ret, len = arguments.length;
-                if (!(this instanceof this.arguments.callee)){
-                    ret = this.arguments.callee.apply(null, arguments);
+                if (!(this instanceof arguments.callee)){
+                    ret = arguments.callee.apply(null, arguments);
                 }
                 else if (len === 1 && typeof arguments[0] === 'string' && regExp.test(arguments[0])){
                     var tmpRet;
@@ -2816,7 +2816,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.10 - 2015-05-12 
+ * armerjs - v0.8.10 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -10494,7 +10494,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.10 - 2015-05-12 
+ * armerjs - v0.8.10 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -10870,7 +10870,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.10 - 2015-05-12 
+ * armerjs - v0.8.10 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -11203,12 +11203,17 @@ $(function(){
 
     // 坑爹的IE9-对 javascript:触发beforeunload
     $(document).on('click', 'a[href^="javascript:"]', function(){
-        var event = $._data(window, 'events')['beforeunload'];
-        var handler = window.onbeforeunload;
-        delete $._data(window, 'events')['beforeunload'];
+        var events = $._data(window, 'events'), event;
+        if (events) {
+            event = events['beforeunload'];
+            var handler = window.onbeforeunload;
+            delete events['beforeunload'];
+        }
         window.onbeforeunload = null;
         setTimeout(function(){
-            $._data(window, 'events')['beforeunload'] = event;
+            if (event) {
+                events['beforeunload'] = event;
+            }
             window.onbeforeunload = handler;
         })
 

@@ -409,8 +409,8 @@
             var _nativeDate = Date;
             Date = function(Y,M,D,H,m,s,ms){
                 var ret, len = arguments.length;
-                if (!(this instanceof this.arguments.callee)){
-                    ret = this.arguments.callee.apply(null, arguments);
+                if (!(this instanceof arguments.callee)){
+                    ret = arguments.callee.apply(null, arguments);
                 }
                 else if (len === 1 && typeof arguments[0] === 'string' && regExp.test(arguments[0])){
                     var tmpRet;

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 var Zepto = (function() {
@@ -1590,7 +1590,7 @@ window.$ === undefined && (window.$ = Zepto)
 ;
 
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;

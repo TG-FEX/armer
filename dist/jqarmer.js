@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -13167,7 +13167,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20845,7 +20845,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21221,7 +21221,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.10 - 2015-05-13 
+ * armerjs - v0.8.11 - 2015-05-13 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -21566,7 +21566,7 @@ $(function(){
                 events['beforeunload'] = event;
             }
             window.onbeforeunload = handler;
-        })
+        }, 0)
 
     })
 

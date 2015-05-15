@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11656,7 +11656,7 @@ armer = window.jQuery || window.Zepto;
     };
     modules.jQuery = modules.jquery = modules.zepto = modules.armer;
 
-    var currentUrl = location.href, xhrRequestURL = null;
+    var requestUrl = null;
     // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
     var requesting = {};
     // 通过require正在请求的模块
@@ -11722,7 +11722,11 @@ armer = window.jQuery || window.Zepto;
                     var url;
                     if ($.type(this.url) == 'string') {
                         url = $.URL(this.url, this.parent);
-                    } else url = this.url;
+                    } else if (this.url) {
+                        url = this.url;
+                    } else {
+                        url = $.URL(this.name, this.parent);
+                    }
                     this.ext = url.extension();
                     if (!this.ext) {
                         url.extension(defaults.ext);
@@ -11782,18 +11786,20 @@ armer = window.jQuery || window.Zepto;
             var success = function(){
                 modules.module.exports = mod;
                 modules.exports.exports = {};
-                currentUrl = mod.url;
                 if (shim.exports)
                     modules.exports.exports = eval('(function(){return ' + shim.exports + '})()');
                 mod.factory = mod.factory || shim.init;
+                requestUrl = mod.url;
                 defaults.plugins[mod.method].callback.apply(mod, arguments);
+                requestUrl = null;
                 modules.module.exports = null;
             }
             if (mod.deps && mod.deps.length) {
-                currentUrl = mod.url;
-                innerRequire(mod.deps).done(success).fail(function(){
+                requestUrl = mod.url;
+                innerRequire(mod.deps, mod.url).done(success).fail(function(){
                     mod.dfd.rejectWith(mod, arguments);
                 });
+                requestUrl = null;
             } else
             // 避免加载过快 parseDep 时currentUrl的出错
                 $.nextTick(function(){success()}, 0);
@@ -11822,42 +11828,43 @@ armer = window.jQuery || window.Zepto;
         return arr;
     }
 
-    function parseDep(config) {
-        var mod;
+    function parseDep(config, currentUrl) {
+        var mod, tmp;
         if (typeof config == 'string') {
             // 存在同名模块
-            if (!(mod = modules[config] || modules[id2Config(config, currentUrl).id])) {
-                // 不存在则是新的模块
-                config = id2Config(config);
+            tmp = id2Config(config, currentUrl);
+            if (!(mod = modules[tmp.id] || modules[config])) {
+                config = tmp
             }
         }
-        if (mod) {
-            1;
-            //如果有mod证明已经通过同名模块的if分支
-        } else if ($.isDeferred(config)) {
-            var id;
-            if (config.modelName && modules[config.modelName])
-                mod = modules[config.modelName];
-            else {
-                // 如果是一个dfd，则通过dfd产生一个匿名模块
-                id = 'anonymousModel' + $.now();
-                mod = new require.Model({dfd: config, id: id});
-                config.modelName = id;
-            }
-        }
-        else if (typeof config == 'object') {
-            // 处理同样地址同样方式加载但不同name的模块
-            if (!(mod = modules[config.id]))
-                mod = new require.Model(config);
-            // 模块作为参数情况
-        } else if (typeof config == 'string')
-            mod = new require.Model({url: config})
 
+        //如果有mod证明已经通过同名模块的if分支
+        if (!mod) {
+            if ($.isDeferred(config)) {
+                var id;
+                if (config.modelName && modules[config.modelName])
+                    mod = modules[config.modelName];
+                else {
+                    // 如果是一个dfd，则通过dfd产生一个匿名模块
+                    id = 'anonymousModel' + $.now();
+                    mod = new require.Model({dfd: config, id: id});
+                    config.modelName = id;
+                }
+            }
+            else if (typeof config == 'object') {
+                // 处理同样地址同样方式加载但不同name的模块
+                if (!(mod = modules[config.id]))
+                    mod = new require.Model(config);
+                // 模块作为参数情况
+            } else if (typeof config == 'string')
+                mod = new require.Model({url: config})
+        }
         return mod;
     }
     /**
      * 请求模块
      * @param deps 依赖列表
+     * @param parent 当前路径
      * @returns {$.Deferred.promise}
      */
 
@@ -11865,7 +11872,7 @@ armer = window.jQuery || window.Zepto;
         if (!$.isArray(deps)) deps = [deps];
         var mDps = [], mod;
         for (var i = 0; i < deps.length; i++) {
-            mod = parseDep(deps[i]);
+            mod = parseDep(deps[i], requestUrl);
             // 当不存在dfd的时候证明这个模块没有初始化
             // 当存在状态为rejected的模块，则重新请求
             if (!mod.dfd || mod.dfd.state() == 'rejected') {
@@ -11901,9 +11908,9 @@ armer = window.jQuery || window.Zepto;
                             },
                             converters: {
                                 "text script": function(text) {
-                                    xhrRequestURL = mod.url
-                                    jQuery.globalEval(text);
-                                    xhrRequestURL = null;
+                                    requestUrl = mod.url
+                                    $.globalEval(text);
+                                    requestUrl = null;
                                     return text;
                                 }
                             }
@@ -11923,17 +11930,20 @@ armer = window.jQuery || window.Zepto;
 
     function require(deps, callback, errorCallback){
         // 兼容CMD模式
-        if (!callback) {
+        if (!callback && !$.isArray(deps)) {
             var mod;
-            if (mod = modules[deps] || modules[id2Config(deps, currentUrl).id] || modules[id2Config(deps).id])
+            if (mod = modules[id2Config(deps, requestUrl).id] || modules[deps])
                 return mod.exports;
             else {
                 throw Error('this module is not define');
             }
         }
-        return innerRequire(deps).done(function(){
+        requestUrl = $.URL.current();
+        var ret = innerRequire(deps).done(function(){
             callback.apply(this, getExports(arguments))
-        }).fail(errorCallback).promise();
+        }).fail(errorCallback).promise()
+        requestUrl = null;
+        return ret;
 
     }
     /**
@@ -11955,7 +11965,7 @@ armer = window.jQuery || window.Zepto;
         }
         var mod, config;
 
-        currentUrl = xhrRequestURL || $.URL.current();
+        var currentUrl = requestUrl || $.URL.current();
         // 如果正在请求这个js
         if (mod = requesting[currentUrl]) {
             if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
@@ -11987,9 +11997,12 @@ armer = window.jQuery || window.Zepto;
         return mod;
     }
 
-    function id2Config(name, url) {
+    function id2Config(name, parent) {
+
+
         var s, c = {name: name};
-        s = name.split('!');
+            s = name.split('!');
+
         // 分析处理方法
         if (s.length == 2) {
             c.method = s[0];
@@ -12006,24 +12019,22 @@ armer = window.jQuery || window.Zepto;
         else
             c.namespace = s.shift();
         c.name = s.join(':');
-        if (url) {
-            c.url = url;
+        c.parent = parent;
+
+        //别名机制
+        var tmpExt = '.' + defaults.ext;
+        var path;
+        if (name.indexOf(tmpExt) == name.length - tmpExt.length) {
+            path = defaults.paths[name.substr(name.length)]
         } else {
-            c.parent = currentUrl;
-            c.url = c.name;
-            //别名机制
-            var tmpExt = '.' + defaults.ext;
-            var path;
-            if (name.indexOf(tmpExt) == name.length - tmpExt.length) {
-                path = defaults.paths[name.substr(name.length)]
-            } else {
-                path = defaults.paths[name + tmpExt];
-            }
-            c.url = defaults.paths[name] || path || c.url;
-            c = defaults.plugins[c.method].config.call(c) || c;
+            path = defaults.paths[name + tmpExt];
         }
-        c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') +
-            (c.name ? c.name : '')  + (c.url ? ('@' + c.url) : '')
+        if (defaults.paths[name] || path) {
+            c.url = defaults.paths[name] || path
+        }
+
+        c = defaults.plugins[c.method].config.call(c) || c;
+        c.id = c.id || c.method + '!' + (c.namespace ? (c.namespace + ':') : '') + c.url;
         return c;
     }
     define.amd = define.cmd = modules;
@@ -12059,7 +12070,11 @@ armer = window.jQuery || window.Zepto;
                 var url;
                 if ($.type(this.url) == 'string') {
                     url = $.URL(this.url, this.parent);
-                } else url = this.url;
+                } else if (this.url) {
+                    url = this.url;
+                } else {
+                    url = $.URL(this.name, this.parent);
+                }
                 this.ext = url.extension();
                 if (this.ext == defaults.ext) {
                     this.name = url.fileNameWithoutExt()
@@ -12105,7 +12120,7 @@ armer = window.jQuery || window.Zepto;
         return $.URL(url, $.URL.current()).toString()
     }
 
-    if (defaults.main) $(function(){require(defaults.main, $.noop)});
+    if (defaults.main) $(function(){requestUrl = location.href; innerRequire(defaults.main); requestUrl = null;});
 })(armer, window);
 
 ;(function(){
@@ -13167,7 +13182,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20845,7 +20860,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21221,7 +21236,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.11 - 2015-05-13 
+ * armerjs - v0.8.12 - 2015-05-15 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

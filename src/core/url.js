@@ -270,6 +270,7 @@
         a.href = url;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
+
     /**
      * 获取运行此代码所在的js的url
      * @returns {string}

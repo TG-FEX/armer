@@ -1,5 +1,26 @@
 ;(function($){
-
+    var list = [], t;
+    function start(){
+        t = setInterval(function(){
+            list.forEach(function(item){
+                var now = $.now();
+                var pass = getpass(item, now);
+                item.tickNum ++;
+                if (now - item._lastTick >= item.interval || !item._lastTick) {
+                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
+                    item._lastTick = now;
+                }
+                if (item.tickNum >= item.limit || pass >= item.timeout) {
+                    item.trigger($.Timer.event.FINISH);
+                }
+            })
+        }, $.Timer.interval);
+    }
+    function getpass(item, now) {
+        var pass = now - item._startTime + item._pass;
+        pass = pass > item.timeout ? item.timeout : pass;
+        return pass;
+    }
     /**
      * 定时器
      * @param timeout {boolean|number} 超时时间，定时器开始后，会在该时间后停止

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1235,6 +1235,7 @@ armer = window.jQuery || window.Zepto;
         a.href = url;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
+
     /**
      * 获取运行此代码所在的js的url
      * @returns {string}
@@ -1658,12 +1659,14 @@ armer = window.jQuery || window.Zepto;
             c.method = defaults.method;
             c.name = s[0];
         }
-        s = c.name.split(':');
-        if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
-            c.namespace = defaults.namespace;
-        else
-            c.namespace = s.shift();
-        c.name = s.join(':');
+        if (!c.name.indexOf('://')) {
+            s = c.name.split(':');
+            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
+                c.namespace = defaults.namespace;
+            else
+                c.namespace = s.shift();
+            c.name = s.join(':');
+        }
         c.parent = parent;
 
         //别名机制
@@ -1738,7 +1741,11 @@ armer = window.jQuery || window.Zepto;
             var url;
             if ($.type(this.url) == 'string') {
                 url = $.URL(this.url, this.parent);
-            } else url = this.url;
+            } else if (this.url) {
+                url = this.url;
+            } else {
+                url = $.URL(this.name, this.parent);
+            }
             this.ext = url.extension();
             if (this.ext == defaults.ext)
                 this.name = url.fileNameWithoutExt();

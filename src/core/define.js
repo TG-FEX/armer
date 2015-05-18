@@ -369,12 +369,14 @@
             c.method = defaults.method;
             c.name = s[0];
         }
-        s = c.name.split(':');
-        if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
-            c.namespace = defaults.namespace;
-        else
-            c.namespace = s.shift();
-        c.name = s.join(':');
+        if (!c.name.indexOf('://')) {
+            s = c.name.split(':');
+            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
+                c.namespace = defaults.namespace;
+            else
+                c.namespace = s.shift();
+            c.name = s.join(':');
+        }
         c.parent = parent;
 
         //别名机制
@@ -449,7 +451,11 @@
             var url;
             if ($.type(this.url) == 'string') {
                 url = $.URL(this.url, this.parent);
-            } else url = this.url;
+            } else if (this.url) {
+                url = this.url;
+            } else {
+                url = $.URL(this.name, this.parent);
+            }
             this.ext = url.extension();
             if (this.ext == defaults.ext)
                 this.name = url.fileNameWithoutExt();

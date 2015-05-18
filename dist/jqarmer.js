@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11590,6 +11590,7 @@ armer = window.jQuery || window.Zepto;
         a.href = url;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
+
     /**
      * 获取运行此代码所在的js的url
      * @returns {string}
@@ -12013,12 +12014,14 @@ armer = window.jQuery || window.Zepto;
             c.method = defaults.method;
             c.name = s[0];
         }
-        s = c.name.split(':');
-        if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
-            c.namespace = defaults.namespace;
-        else
-            c.namespace = s.shift();
-        c.name = s.join(':');
+        if (!c.name.indexOf('://')) {
+            s = c.name.split(':');
+            if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
+                c.namespace = defaults.namespace;
+            else
+                c.namespace = s.shift();
+            c.name = s.join(':');
+        }
         c.parent = parent;
 
         //别名机制
@@ -12093,7 +12096,11 @@ armer = window.jQuery || window.Zepto;
             var url;
             if ($.type(this.url) == 'string') {
                 url = $.URL(this.url, this.parent);
-            } else url = this.url;
+            } else if (this.url) {
+                url = this.url;
+            } else {
+                url = $.URL(this.name, this.parent);
+            }
             this.ext = url.extension();
             if (this.ext == defaults.ext)
                 this.name = url.fileNameWithoutExt();
@@ -13182,7 +13189,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20860,7 +20867,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21035,7 +21042,28 @@ $.Store = (function(){
 $.store = new $.Store('default-store');
 
 ;(function($){
-
+    var list = [], t;
+    function start(){
+        t = setInterval(function(){
+            list.forEach(function(item){
+                var now = $.now();
+                var pass = getpass(item, now);
+                item.tickNum ++;
+                if (now - item._lastTick >= item.interval || !item._lastTick) {
+                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
+                    item._lastTick = now;
+                }
+                if (item.tickNum >= item.limit || pass >= item.timeout) {
+                    item.trigger($.Timer.event.FINISH);
+                }
+            })
+        }, $.Timer.interval);
+    }
+    function getpass(item, now) {
+        var pass = now - item._startTime + item._pass;
+        pass = pass > item.timeout ? item.timeout : pass;
+        return pass;
+    }
     /**
      * 定时器
      * @param timeout {boolean|number} 超时时间，定时器开始后，会在该时间后停止
@@ -21236,7 +21264,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.12 - 2015-05-15 
+ * armerjs - v0.8.12 - 2015-05-18 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

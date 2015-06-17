@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1240,6 +1240,10 @@ armer = window.jQuery || window.Zepto;
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
 
+    $.URL.query = function(){
+        var url = $.URL(location.href);
+        return url.search.apply(url, arguments);
+    };
     /**
      * 获取运行此代码所在的js的url
      * @returns {string}
@@ -1336,8 +1340,11 @@ armer = window.jQuery || window.Zepto;
                         args = args.split(',');
                         requireS = $.trim(args[withCMD]);
                         fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
-                            dep = eval.call(null, dep);
-                            if (typeof dep == 'string') deps.push(dep);
+                            // try 一下，确保不会把奇奇怪怪的东西放进去
+                            try {
+                                dep = eval.call(null, dep);
+                                if (typeof dep == 'string') deps.push(dep);
+                            } catch(e) {}
                         })
                     }
                 }
@@ -1407,7 +1414,6 @@ armer = window.jQuery || window.Zepto;
                     } else if (this.exports == null)
                         this.exports = modules.exports.exports
 
-                    this.dfd.resolveWith(this, [this]);
                 }
             }
         }
@@ -1439,17 +1445,20 @@ armer = window.jQuery || window.Zepto;
                 if (shim.exports)
                     modules.exports.exports = eval('(function(){return ' + shim.exports + '})()');
                 mod.factory = mod.factory || shim.init;
-                requestUrl = mod.url;
-                defaults.plugins[mod.method].callback.apply(mod, arguments);
-                requestUrl = null;
+                var args = arguments
+                require.rebase(mod.url, function(){
+                    if (defaults.plugins[mod.method].callback.apply(mod, args) !== false) {
+                        mod.dfd.resolveWith(mod, [mod]);
+                    }
+                });
                 modules.module.exports = null;
             }
             if (mod.deps && mod.deps.length) {
-                requestUrl = mod.url;
-                innerRequire(mod.deps, mod.url).done(success).fail(function(){
-                    mod.dfd.rejectWith(mod, arguments);
+                require.rebase(mod.url, function(){
+                    innerRequire(mod.deps).done(success).fail(function(){
+                        mod.dfd.rejectWith(mod, arguments);
+                    });
                 });
-                requestUrl = null;
             } else
             // 避免加载过快 parseDep 时currentUrl的出错
                 $.nextTick(function(){success()}, 0);
@@ -1535,8 +1544,8 @@ armer = window.jQuery || window.Zepto;
                         var options = {
                             url: mod.url,
                             cache: true,
-                            crossDomain: defaults.charset ? true : void 0,
-                            //crossDomain: true,
+                            //crossDomain: defaults.charset ? true : void 0,
+                            crossDomain: true,
                             dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                             scriptCharset: defaults.charset,
                             success: function(data) {
@@ -1558,9 +1567,9 @@ armer = window.jQuery || window.Zepto;
                             },
                             converters: {
                                 "text script": function(text) {
-                                    requestUrl = mod.url
-                                    $.globalEval(text);
-                                    requestUrl = null;
+                                    require.rebase(mod.url, function(){
+                                        $.globalEval(text);
+                                    });
                                     return text;
                                 }
                             }
@@ -1588,12 +1597,11 @@ armer = window.jQuery || window.Zepto;
                 throw Error('this module is not define');
             }
         }
-        requestUrl = $.URL.current();
-        var ret = innerRequire(deps).done(function(){
-            callback.apply(this, getExports(arguments))
-        }).fail(errorCallback).promise()
-        requestUrl = null;
-        return ret;
+        return require.rebase($.URL.current(), function(){
+            return innerRequire(deps).done(function(){
+                callback.apply(this, getExports(arguments))
+            }).fail(errorCallback).promise();
+        });
 
     }
     /**
@@ -1663,13 +1671,13 @@ armer = window.jQuery || window.Zepto;
             c.method = defaults.method;
             c.name = s[0];
         }
-        if (!c.name.indexOf('://')) {
+        if (!~c.name.indexOf('://')) {
             s = c.name.split(':');
             if (/:\/\//.test(c.name) && s.length == 2 || s.length == 1)
                 c.namespace = defaults.namespace;
             else
                 c.namespace = s.shift();
-            c.name = s.join(':');
+            c.name = s[s.length - 1];
         }
         c.parent = parent;
 
@@ -1692,14 +1700,28 @@ armer = window.jQuery || window.Zepto;
     define.amd = define.cmd = modules;
     require.defaults = defaults;
     require.config = function(options){
-        options = $.mixOptions({}, options);
-        if (options.paths) $.each(options.paths, function(i, item){
-            if ($.type(item) == 'string') {
-                options.paths[i] = $.URL(item);
-            }
-        });
-        $.mixOptions(this.defaults, options);
-
+        if ($.isPlainObject(options)) {
+            options = $.mixOptions({}, options);
+            if (options.paths) $.each(options.paths, function(i, item){
+                if ($.type(item) == 'string') {
+                    options.paths[i] = $.URL(item);
+                }
+            });
+            $.mixOptions(this.defaults, options);
+        } else return defaults[options];
+    };
+    /**
+     * 默认require会在当前js运行的环境下找相对require的路径，但如果要特定require相对路径查找的位置，需要运行这个方法
+     * @param url 给出的url
+     * @param callback
+     * @returns {*}
+     */
+    require.rebase = function(url, callback){
+        var ret
+        requestUrl = url;
+        ret = callback();
+        requestUrl = null;
+        return ret;
     };
     // CMD的async方法实际是就是AMD的require
     require.async = require;
@@ -1755,7 +1777,11 @@ armer = window.jQuery || window.Zepto;
                 this.name = url.fileNameWithoutExt();
             else
                 this.name = url.fileName();
-            this.type = 'text'
+
+            if (this.ext == 'js')
+                this.type = 'script'
+            else
+                this.type = 'text'
             url.search('callback', 'define');
             this.url = url.toString();
         },
@@ -1772,11 +1798,16 @@ armer = window.jQuery || window.Zepto;
     window.__inline = function(url){
         return require('__inline!' + url);
     }
-    window.__uri = function(url){
+    window.__uri = window.__uid = window.__urid = function(url){
         return $.URL(url, $.URL.current()).toString()
     }
 
-    if (defaults.main) $(function(){requestUrl = location.href; innerRequire(defaults.main); requestUrl = null;});
+    if (defaults.main)
+        $(function(){
+            require.rebase(location.href, function(){
+                innerRequire(defaults.main);
+            })
+        });
 })(armer, window);
 
 ;(function(){
@@ -2838,7 +2869,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -2954,6 +2985,11 @@ armer = window.jQuery || window.Zepto;
             p.replaceAllWith($t);
             $this.data('t-placeholder', $t);
         })
+    }
+
+    $.fn.compileAll = function(){
+        this.find('script[type="text/html"]').compile();
+        return this;
     }
 
     $.fn.render = function(data){
@@ -10193,6 +10229,10 @@ $.fn.bgiframe = function(){
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
+        // chrome 的一个bug
+        if (neo.charAt(neo.length - 1) == '\t') {
+            neo = neo.substr(0, neo.length - 1);
+        }
         if (old !== neo) {
             $.data(elem, DATA, neo);
             var event = new $.Event("valuechange");
@@ -10516,7 +10556,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -10556,31 +10596,6 @@ $.fn.bgiframe = function(){
             }
         }
     });
-
-
-    var list = [], t;
-    function start(){
-        t = setInterval(function(){
-            list.forEach(function(item){
-                var now = $.now();
-                var pass = getpass(item, now);
-                item.tickNum ++;
-                if (!item._lastTick) item._lastTick = now;
-                if (now - item._lastTick >= item.interval) {
-                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
-                    item._lastTick = now;
-                }
-                if (item.tickNum >= item.limit || pass >= item.timeout) {
-                    item.trigger($.Timer.event.FINISH);
-                }
-            })
-        }, $.Timer.interval);
-    }
-    function getpass(item, now) {
-        var pass = now - item._startTime + item._pass;
-        pass = pass > item.timeout ? item.timeout : pass;
-        return pass;
-    }
 
 })(armer);
 
@@ -10913,7 +10928,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -10923,7 +10938,7 @@ $.UI = $.EventEmitter.extend({
     _init: function(){}
 });
 $.UI.extend = function(name, base, prototype){
-    var tmp, namespace, fullName, constructor, constructorName;
+    var constructor;
 
     if (typeof name != 'string') {
         prototype = base;
@@ -10939,6 +10954,18 @@ $.UI.extend = function(name, base, prototype){
     constructor = $.factory(prototype, base);
     constructor.mix(base);
 
+
+    this.register(name, constructor);
+
+    constructor.defaults = constructor.prototype.options;
+    constructor.config = function(){
+        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    };
+    return constructor;
+};
+
+$.UI.register = function(name, constructor){
+    var tmp, namespace, fullName, constructorName;
 
     tmp = name.split('.');
     fullName = name = tmp.pop();
@@ -10997,14 +11024,7 @@ $.UI.extend = function(name, base, prototype){
             $(this)[fullNameCamel]()
         });
     });
-
-    constructor.defaults = constructor.prototype.options;
-    constructor.config = function(){
-        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
-    };
-    return constructor;
-};
-
+}
 
 $(function(){
     var $b = $('body');

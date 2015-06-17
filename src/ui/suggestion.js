@@ -1,5 +1,5 @@
 define(['./datalist'], function() {
-    $.UI.extend('suggestion', {
+    return $.UI.extend('suggestion', {
         options: {
             cache: false,
             optionList: '<ul class="option-list"></ul>'

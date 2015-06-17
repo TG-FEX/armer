@@ -138,6 +138,10 @@
     function testChange(elem, realEvent) {
         var old = $.data(elem, DATA);
         var neo = elem.value;
+        // chrome 的一个bug
+        if (neo.charAt(neo.length - 1) == '\t') {
+            neo = neo.substr(0, neo.length - 1);
+        }
         if (old !== neo) {
             $.data(elem, DATA, neo);
             var event = new $.Event("valuechange");

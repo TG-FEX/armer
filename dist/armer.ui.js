@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.12 - 2015-05-18 
+ * armerjs - v0.8.13 - 2015-06-17 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -9,7 +9,7 @@ $.UI = $.EventEmitter.extend({
     _init: function(){}
 });
 $.UI.extend = function(name, base, prototype){
-    var tmp, namespace, fullName, constructor, constructorName;
+    var constructor;
 
     if (typeof name != 'string') {
         prototype = base;
@@ -25,6 +25,18 @@ $.UI.extend = function(name, base, prototype){
     constructor = $.factory(prototype, base);
     constructor.mix(base);
 
+
+    this.register(name, constructor);
+
+    constructor.defaults = constructor.prototype.options;
+    constructor.config = function(){
+        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    };
+    return constructor;
+};
+
+$.UI.register = function(name, constructor){
+    var tmp, namespace, fullName, constructorName;
 
     tmp = name.split('.');
     fullName = name = tmp.pop();
@@ -83,14 +95,7 @@ $.UI.extend = function(name, base, prototype){
             $(this)[fullNameCamel]()
         });
     });
-
-    constructor.defaults = constructor.prototype.options;
-    constructor.config = function(){
-        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
-    };
-    return constructor;
-};
-
+}
 
 $(function(){
     var $b = $('body');

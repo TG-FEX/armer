@@ -36,30 +36,5 @@
         }
     });
 
-
-    var list = [], t;
-    function start(){
-        t = setInterval(function(){
-            list.forEach(function(item){
-                var now = $.now();
-                var pass = getpass(item, now);
-                item.tickNum ++;
-                if (!item._lastTick) item._lastTick = now;
-                if (now - item._lastTick >= item.interval) {
-                    item.trigger($.Timer.event.TICK, [pass,  pass / item.timeout, item.tickNum]);
-                    item._lastTick = now;
-                }
-                if (item.tickNum >= item.limit || pass >= item.timeout) {
-                    item.trigger($.Timer.event.FINISH);
-                }
-            })
-        }, $.Timer.interval);
-    }
-    function getpass(item, now) {
-        var pass = now - item._startTime + item._pass;
-        pass = pass > item.timeout ? item.timeout : pass;
-        return pass;
-    }
-
 })(armer);
 

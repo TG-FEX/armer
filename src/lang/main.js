@@ -113,6 +113,11 @@
         })
     }
 
+    $.fn.compileAll = function(){
+        this.find('script[type="text/html"]').compile();
+        return this;
+    }
+
     $.fn.render = function(data){
         this.compile(data);
         return this.data('t-placeholder');

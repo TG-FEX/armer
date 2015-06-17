@@ -271,6 +271,10 @@
         return !a.hasAttribute ? a.getAttribute("href", 4) : a.href
     }
 
+    $.URL.query = function(){
+        var url = $.URL(location.href);
+        return url.search.apply(url, arguments);
+    };
     /**
      * 获取运行此代码所在的js的url
      * @returns {string}

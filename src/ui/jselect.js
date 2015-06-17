@@ -1,7 +1,5 @@
 define(['./datalist'], function(){
-
-
-    $.UI.extend('jselect', {
+    return $.UI.extend('jselect', {
         options: {
             output: '<span class="select"></span>',
             optionList: '<ul class="option-list"></ul>'

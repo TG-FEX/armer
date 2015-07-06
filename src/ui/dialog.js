@@ -89,7 +89,7 @@
             if (this.isOpened()) return $.when();
             this.lastOpenOptions = openOptions;
 
-            self.container.on('focus.ui.dialog', function(e){
+            self.container.on('focus', function(e){
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
@@ -107,13 +107,13 @@
 
             if (!openOptions.animate) {
                 return $.when().done(function(){
-                    self.trigger('opened.ui.dialog');
+                    self.trigger('opened');
                 });
             }
 
             self.container.hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
-                self.trigger('opened.ui.dialog');
+                self.trigger('opened');
             });
         },
         _innerClose: function(returnValue, closeOptions){
@@ -122,9 +122,9 @@
             return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
-                self.trigger('closed.ui.dialog', [returnValue]);
+                self.trigger('closed', [returnValue]);
             }) : (this.container.hide() && $.when().done(function(){
-                self.trigger('closed.ui.dialog', [returnValue]);
+                self.trigger('closed', [returnValue]);
             }));
         },
         /**
@@ -157,7 +157,7 @@
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
                 if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].container.trigger('focus.ui.dialog');
+                list.length && list[list.length - 1].container.trigger('focus');
             }
             return ret
         },
@@ -188,7 +188,7 @@
                 self._innerOpen(openOptions).done(function(){
                     ret.resolve();
                 });
-                self.trigger('focus.ui.dialog');
+                self.trigger('focus');
                 openOptions.getFocus && self.container[0].focus();
             });
             return ret

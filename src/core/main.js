@@ -99,6 +99,7 @@ armer = window.jQuery || window.Zepto;
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
 
+
         $.extend($, {
             // ---补充一些全局变量---
 
@@ -123,6 +124,18 @@ armer = window.jQuery || window.Zepto;
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             mixOptions: function (target) {
+                function getWs(target, name) {
+                    var a = [];
+                    if (name.indexOf('[]') > -1 &&  name.indexOf('[]') < name.length - 2) {
+                        throw Error();
+                    }
+                    name.replace('[]', '[!@#%]');
+                    name.replace(/[a-zA-Z][a-zA-Z0-9]*|!@#%/g, function (i) {
+                        a.push(i)
+                    });
+                    var key = a.pop();
+                    return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
+                }
                 var callee = arguments.callee,
                     input = $.slice(arguments, 1),
                     inputIndex = 0,
@@ -156,6 +169,9 @@ armer = window.jQuery || window.Zepto;
                                     // Don't extend strings, arrays, etc. with objects
                                     callee.call(this, {}, value);
                                 // Copy everything else by reference
+                            } else if(key == '!@#%' && $.isArrayLike(obj)) {
+                                // 处理a[]这种情况下，推进数组
+                                [].push.call(obj, value);
                             } else {
                                 obj[key] = value;
                             }

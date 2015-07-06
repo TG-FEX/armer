@@ -7,6 +7,7 @@ define(['./datalist'], function(){
         _init: function(element, options){
             this.element = element;
             this.options = $.mixOptions({}, this.constructor.defaults, this.options, options);
+            this.options.placehoder = this.options.placeholder || this.element.attr('placeholder');
             this.output = $(this.options.output).attr('tabindex', 0);
             this.name= this.element.attr('name');
             //this.input = $('<input type="hidden" ' + (this.name ? ('name="' + this.name + '"') : '') + '>');
@@ -34,7 +35,8 @@ define(['./datalist'], function(){
             that.datalist = $.Object.instanceTo($.UI.DataList, dataListParam);
             this.$datalist = that.datalist.element.dialog({attach: this.output});
             that.datalist.val() && this._change(dataListParam.multi ? [that.datalist.val()]: that.datalist.val());
-            $(document).onExcept(this.output.add(this.$datalist), 'click', function(){
+            var $elem = this.output.add(this.$datalist);
+            $(document).onExcept($elem, 'click', function(){
                 that.$datalist.dialog('trigger', 'close');
             });
             that.datalist.query('');
@@ -42,7 +44,7 @@ define(['./datalist'], function(){
                 that.$datalist.dialog().trigger('close');
             });
             $('body').on('focusin', function(e){
-                if (!that.$datalist.is(e.target)) {
+                if (!$elem.is(e.target)) {
                     that.$datalist.dialog().trigger('close');
                 }
             });
@@ -72,14 +74,21 @@ define(['./datalist'], function(){
                 that.trigger(e, [a, b, c])
             })
         },
+        _clear: function(){
+            this.output.html('<span class="placeholder">' + this.options.placehoder + '</span>');
+        },
         _change: function(data) {
             var val = [], str = [];
             var that = this;
+            if (!data.length) {
+                this.trigger('clear');
+            }
             if (this.datalist.options.multi) {
                 data.forEach(function(item){
                     str.push(item.label);
                     val.push(item.value);
                 });
+
             } else {
                 str.push(data.label);
                 val.push(data.value);

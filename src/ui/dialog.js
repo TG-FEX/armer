@@ -38,7 +38,7 @@
                 };
             else
                 this._content = content;
-            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="0" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
+            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="0" style="position: absolute; z-index:1001; display: none;"></div>');
         },
         /**
          * 初始化方法
@@ -184,7 +184,9 @@
                 init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
-            $.when(init, dfd).done(function(){
+
+
+            $.when(init, dfd, self.options.resizeIframe ? self._resizeIframe() : undefined).done(function(){
                 self._innerOpen(openOptions).done(function(){
                     ret.resolve();
                 });
@@ -192,6 +194,39 @@
                 openOptions.getFocus && self.container[0].focus();
             });
             return ret
+        },
+        _resizeIframe: function(){
+            var ret = [];
+            var resize = function(iframe){
+                var win = iframe.contentWindow;
+                var doc = win.document;
+                var width = Math.max(doc.documentElement["clientWidth"], doc.body["scrollWidth"], doc.documentElement["scrollWidth"], doc.body["offsetWidth"], doc.documentElement["offsetWidth"]);
+                var height = Math.max(doc.documentElement["clientHeight"], doc.body["scrollHeight"], doc.documentElement["scrollHeight"], doc.body["offsetHeight"], doc.documentElement["offsetHeight"]);
+                iframe.style.width = width;
+                iframe.style.height = height;
+            }
+            this.element.find('iframe').each(function(i, iframe){
+                var dfd = $.Deferred();
+                ret.push(dfd);
+                var onload = function(){
+                    resize(iframe);
+                    dfd.resolve(iframe);
+                };
+                var win = iframe.contentWindow;
+                var doc = win.document;
+                if (doc.readyState == 'complete') {
+                    onload();
+                } else {
+                    if (win.attachEvent){
+                        win.attachEvent("onload", onload);
+                    } else if(win.addEventListener){
+                        win.addEventListener('load', onload)
+                    } else {
+                        win.onload = onload;
+                    }
+                }
+            });
+            return $.when.apply($, ret);
         }
     }).mix({
         event: {

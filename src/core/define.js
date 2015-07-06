@@ -500,8 +500,8 @@
     window.__inline = function(url){
         return require('__inline!' + url);
     }
-    window.__uri = window.__uid = window.__urid = function(url){
-        return $.URL(url, $.URL.current()).toString()
+    window.__uri = window.__uid = window.__uril = function(url){
+        return $.URL(url, requestUrl || $.URL.current()).toString()
     }
 
     if (defaults.main)

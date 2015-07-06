@@ -1,9 +1,9 @@
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -104,6 +104,7 @@ armer = window.jQuery || window.Zepto;
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
 
+
         $.extend($, {
             // ---补充一些全局变量---
 
@@ -128,6 +129,18 @@ armer = window.jQuery || window.Zepto;
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             mixOptions: function (target) {
+                function getWs(target, name) {
+                    var a = [];
+                    if (name.indexOf('[]') > -1 &&  name.indexOf('[]') < name.length - 2) {
+                        throw Error();
+                    }
+                    name.replace('[]', '[!@#%]');
+                    name.replace(/[a-zA-Z][a-zA-Z0-9]*|!@#%/g, function (i) {
+                        a.push(i)
+                    });
+                    var key = a.pop();
+                    return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
+                }
                 var callee = arguments.callee,
                     input = $.slice(arguments, 1),
                     inputIndex = 0,
@@ -161,6 +174,9 @@ armer = window.jQuery || window.Zepto;
                                     // Don't extend strings, arrays, etc. with objects
                                     callee.call(this, {}, value);
                                 // Copy everything else by reference
+                            } else if(key == '!@#%' && $.isArrayLike(obj)) {
+                                // 处理a[]这种情况下，推进数组
+                                [].push.call(obj, value);
                             } else {
                                 obj[key] = value;
                             }
@@ -1798,8 +1814,8 @@ armer = window.jQuery || window.Zepto;
     window.__inline = function(url){
         return require('__inline!' + url);
     }
-    window.__uri = window.__uid = window.__urid = function(url){
-        return $.URL(url, $.URL.current()).toString()
+    window.__uri = window.__uid = window.__uril = function(url){
+        return $.URL(url, requestUrl || $.URL.current()).toString()
     }
 
     if (defaults.main)
@@ -2869,7 +2885,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -2997,14 +3013,6 @@ armer = window.jQuery || window.Zepto;
         return this.data('t-placeholder');
     }
 
-    function getWs(target, name) {
-        var a = [];
-        name.replace(/[a-zA-Z][a-zA-Z0-9]*/g, function (i) {
-            a.push(i)
-        });
-        var key = a.pop();
-        return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
-    }
 
     /**
      * @for armer
@@ -10556,7 +10564,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -10874,22 +10882,22 @@ $.Cookie = (function(){
             else return $.cloneOf(this._list);
         },
 
-        'set': function(hash, value){
-            var key, isNew = true;
+        'set': function(hash, value, options){
             var that = this;
+            var key, isNew = true;
+            options = options || {};
             if ($.type(hash) == 'string') {
                 key = hash;
                 hash = {}
                 hash[key] = value
                 isNew = false
             }
-            var options = {};
             if ('expires' in hash) {
-                options.expires = hash.expires
+                options.expires = hash.expires;
                 delete hash.expires;
             }
             if ('path' in hash) {
-                options.path = hash.path
+                options.path = hash.path;
                 delete hash.path;
             }
             var result = this._testAndSet(hash, isNew);
@@ -10928,7 +10936,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -10955,7 +10963,9 @@ $.UI.extend = function(name, base, prototype){
     constructor.mix(base);
 
 
-    this.register(name, constructor);
+    if (name) {
+        this.register(name, constructor);
+    }
 
     constructor.defaults = constructor.prototype.options;
     constructor.config = function(){
@@ -11487,7 +11497,7 @@ $.fn.ellipsis.useCssClamp = true;
                 };
             else
                 this._content = content;
-            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="0" style="position: absolute; z-index:1001; display: none; overflow: hidden;"></div>');
+            this.container = $('<div class="' + this.options.dialogClass +'" tabindex="0" style="position: absolute; z-index:1001; display: none;"></div>');
         },
         /**
          * 初始化方法
@@ -11538,7 +11548,7 @@ $.fn.ellipsis.useCssClamp = true;
             if (this.isOpened()) return $.when();
             this.lastOpenOptions = openOptions;
 
-            self.container.on('focus.ui.dialog', function(e){
+            self.container.on('focus', function(e){
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
@@ -11556,13 +11566,13 @@ $.fn.ellipsis.useCssClamp = true;
 
             if (!openOptions.animate) {
                 return $.when().done(function(){
-                    self.trigger('opened.ui.dialog');
+                    self.trigger('opened');
                 });
             }
 
             self.container.hide();
             return animate(self.container, openOptions.animate).promise().done(function(){
-                self.trigger('opened.ui.dialog');
+                self.trigger('opened');
             });
         },
         _innerClose: function(returnValue, closeOptions){
@@ -11571,9 +11581,9 @@ $.fn.ellipsis.useCssClamp = true;
             return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
-                self.trigger('closed.ui.dialog', [returnValue]);
+                self.trigger('closed', [returnValue]);
             }) : (this.container.hide() && $.when().done(function(){
-                self.trigger('closed.ui.dialog', [returnValue]);
+                self.trigger('closed', [returnValue]);
             }));
         },
         /**
@@ -11606,7 +11616,7 @@ $.fn.ellipsis.useCssClamp = true;
             $.Array.remove(this.options.queue, this);
             if (!openCauseClose) {
                 if (!list.length) this.constructor.toggleBackdrop(false, this.options.backdrop);
-                list.length && list[list.length - 1].container.trigger('focus.ui.dialog');
+                list.length && list[list.length - 1].container.trigger('focus');
             }
             return ret
         },
@@ -11633,14 +11643,49 @@ $.fn.ellipsis.useCssClamp = true;
                 init = e.isDefaultPrevented() ? $.Deferred.reject() : e.actionReturns;
             } else
                 init = self._content;
-            $.when(init, dfd).done(function(){
+
+
+            $.when(init, dfd, self.options.resizeIframe ? self._resizeIframe() : undefined).done(function(){
                 self._innerOpen(openOptions).done(function(){
                     ret.resolve();
                 });
-                self.trigger('focus.ui.dialog');
+                self.trigger('focus');
                 openOptions.getFocus && self.container[0].focus();
             });
             return ret
+        },
+        _resizeIframe: function(){
+            var ret = [];
+            var resize = function(iframe){
+                var win = iframe.contentWindow;
+                var doc = win.document;
+                var width = Math.max(doc.documentElement["clientWidth"], doc.body["scrollWidth"], doc.documentElement["scrollWidth"], doc.body["offsetWidth"], doc.documentElement["offsetWidth"]);
+                var height = Math.max(doc.documentElement["clientHeight"], doc.body["scrollHeight"], doc.documentElement["scrollHeight"], doc.body["offsetHeight"], doc.documentElement["offsetHeight"]);
+                iframe.style.width = width;
+                iframe.style.height = height;
+            }
+            this.element.find('iframe').each(function(i, iframe){
+                var dfd = $.Deferred();
+                ret.push(dfd);
+                var onload = function(){
+                    resize(iframe);
+                    dfd.resolve(iframe);
+                };
+                var win = iframe.contentWindow;
+                var doc = win.document;
+                if (doc.readyState == 'complete') {
+                    onload();
+                } else {
+                    if (win.attachEvent){
+                        win.attachEvent("onload", onload);
+                    } else if(win.addEventListener){
+                        win.addEventListener('load', onload)
+                    } else {
+                        win.onload = onload;
+                    }
+                }
+            });
+            return $.when.apply($, ret);
         }
     }).mix({
         event: {
@@ -11789,6 +11834,7 @@ $.fn.ellipsis.useCssClamp = true;
     }
 
 })(jQuery);
+
 $.UI.extend('spinner', {
     _init: function(element, options){
 

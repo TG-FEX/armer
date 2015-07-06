@@ -10,22 +10,22 @@ $.Cookie = (function(){
             else return $.cloneOf(this._list);
         },
 
-        'set': function(hash, value){
-            var key, isNew = true;
+        'set': function(hash, value, options){
             var that = this;
+            var key, isNew = true;
+            options = options || {};
             if ($.type(hash) == 'string') {
                 key = hash;
                 hash = {}
                 hash[key] = value
                 isNew = false
             }
-            var options = {};
             if ('expires' in hash) {
-                options.expires = hash.expires
+                options.expires = hash.expires;
                 delete hash.expires;
             }
             if ('path' in hash) {
-                options.path = hash.path
+                options.path = hash.path;
                 delete hash.path;
             }
             var result = this._testAndSet(hash, isNew);

@@ -25,9 +25,22 @@ define(['./datalist'], function() {
                     that.$datalist.dialog().trigger('open');
                 } else that.$datalist.dialog().trigger('close');
             });
+            that.element.on('dblclick', function(e){
+                if (!that.$datalist.dialog().isOpened()){
+                    that.datalist.trigger('query', [$.isString(that.options.data) ? $(that.options.data).serialize() : that.options.data]);
+                }
+            });
             that.element.on('valuechange', function (e) {
                 that.datalist.val(e.newValue);
-                that.datalist.trigger('query', [$.isString(that.options.data) ? $(that.options.data).serialize() : that.options.data]);
+                var sendData;
+                if ($.isFunction(that.options.data)){
+                    sendData = that.options.data(that.element.val(), that.element);
+                } else if ($.isString(that.options.data)) {
+                    sendData = $(that.options.data).serialize();
+                } else {
+                    sendData = that.options.data;
+                }
+                that.datalist.trigger('query', [sendData]);
             }).on('keyup', function (e) {
                 if (that.$datalist.dialog().isOpened()) {
                     that.datalist.element.trigger(e);
@@ -44,8 +57,11 @@ define(['./datalist'], function() {
                 }
             });
 
+            if (this.options.onchange) {
+                this.onchange = this.options.onchange;
+            }
             that.on('change', function (e, data) {
-                that.element.val(data.label);
+                that.element.val(data.label).data('valuechangeData', data.label);
                 that.$datalist.dialog().trigger('close');
             });
             that.datalist.on('change', function (e, a, b, c) {

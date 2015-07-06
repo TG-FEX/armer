@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.13 - 2015-06-17 
+ * armerjs - v0.8.15 - 2015-07-06 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -100,6 +100,7 @@ armer = window.jQuery || window.Zepto;
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
 
+
         $.extend($, {
             // ---补充一些全局变量---
 
@@ -124,6 +125,18 @@ armer = window.jQuery || window.Zepto;
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             mixOptions: function (target) {
+                function getWs(target, name) {
+                    var a = [];
+                    if (name.indexOf('[]') > -1 &&  name.indexOf('[]') < name.length - 2) {
+                        throw Error();
+                    }
+                    name.replace('[]', '[!@#%]');
+                    name.replace(/[a-zA-Z][a-zA-Z0-9]*|!@#%/g, function (i) {
+                        a.push(i)
+                    });
+                    var key = a.pop();
+                    return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
+                }
                 var callee = arguments.callee,
                     input = $.slice(arguments, 1),
                     inputIndex = 0,
@@ -157,6 +170,9 @@ armer = window.jQuery || window.Zepto;
                                     // Don't extend strings, arrays, etc. with objects
                                     callee.call(this, {}, value);
                                 // Copy everything else by reference
+                            } else if(key == '!@#%' && $.isArrayLike(obj)) {
+                                // 处理a[]这种情况下，推进数组
+                                [].push.call(obj, value);
                             } else {
                                 obj[key] = value;
                             }
@@ -1794,8 +1810,8 @@ armer = window.jQuery || window.Zepto;
     window.__inline = function(url){
         return require('__inline!' + url);
     }
-    window.__uri = window.__uid = window.__urid = function(url){
-        return $.URL(url, $.URL.current()).toString()
+    window.__uri = window.__uid = window.__uril = function(url){
+        return $.URL(url, requestUrl || $.URL.current()).toString()
     }
 
     if (defaults.main)

@@ -123,14 +123,6 @@
         return this.data('t-placeholder');
     }
 
-    function getWs(target, name) {
-        var a = [];
-        name.replace(/[a-zA-Z][a-zA-Z0-9]*/g, function (i) {
-            a.push(i)
-        });
-        var key = a.pop();
-        return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
-    }
 
     /**
      * @for armer

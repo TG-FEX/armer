@@ -22,7 +22,9 @@ $.UI.extend = function(name, base, prototype){
     constructor.mix(base);
 
 
-    this.register(name, constructor);
+    if (name) {
+        this.register(name, constructor);
+    }
 
     constructor.defaults = constructor.prototype.options;
     constructor.config = function(){

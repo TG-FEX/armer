@@ -25,6 +25,9 @@ function Loader(type, url) {
     this.abort = this.constructor[type].abort;
 }
 Loader.transports = {
+    style: {
+
+    },
     script: {
         send: function(success, fail, context){
             context = context || this;

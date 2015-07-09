@@ -504,6 +504,9 @@
         return $.URL(url, requestUrl || $.URL.current()).toString()
     }
 
+    // 之前版本写错单词
+    defaults.plusin = defaults.plugins;
+
     if (defaults.main)
         $(function(){
             require.rebase(location.href, function(){

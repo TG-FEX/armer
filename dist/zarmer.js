@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.15 - 2015-07-06 
+ * armerjs - v0.8.16 - 2015-07-09 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 var Zepto = (function() {
@@ -1590,7 +1590,7 @@ window.$ === undefined && (window.$ = Zepto)
 ;
 
 /*!
- * armerjs - v0.8.15 - 2015-07-06 
+ * armerjs - v0.8.16 - 2015-07-09 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -3404,6 +3404,9 @@ armer = window.jQuery || window.Zepto;
     window.__uri = window.__uid = window.__uril = function(url){
         return $.URL(url, requestUrl || $.URL.current()).toString()
     }
+
+    // 之前版本写错单词
+    defaults.plusin = defaults.plugins;
 
     if (defaults.main)
         $(function(){

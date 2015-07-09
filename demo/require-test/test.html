@@ -31,6 +31,71 @@
     <script src="../../src/polyfill.js"></script>
     <script src="../../src/lang/main.js"></script>
     <script src="../../src/io.js"></script>
+    <script>
+        var TG = {};
+        (function () {
+            var regURL = /http:/;
+            var regSlash = /[\\/]/;
+            var options = {
+                base: 'http://js.tgimg.cn/jquery/base/',
+                version : 'newest',
+                perfix : 'jQuery.',
+                suffix : 'js',
+                subfix : ''
+            }
+            require.defaults.plugins.tg = {
+                config: function(){
+                    /*this.id = this.id.split('!');
+                     this.id = this.id[this.id.length - 1];*/
+                    var modelName =  this.url.substr(this.url.lastIndexOf('/') + 1);
+                    if (new RegExp("(.)*\\." + options.suffix + "$").test(modelName))
+                        modelName = this.url.substring(0, this.url.lastIndexOf('.') - 1);
+                    var pathName = this.url;
+                    if (!regURL.test(this.url)) {
+                        var _a = this.url.replace(regSlash, '/').substring(0, this.url.lastIndexOf('/')) + '/',
+                                _v = $.type(options.version) == 'string' ? options.version : options.version[pathName];
+                        _v = _v ? "?v=" + _v : "";
+                        this.url = options.base + _a + options.perfix + modelName + options.subfix + '.' + options.suffix + _v;
+                    }
+                    this.name = modelName;
+                },
+                callback: require.defaults.plugins.auto.callback
+            }
+            TG.require = function(deps, callback){
+                deps = deps.map(function(item){
+                    if ($.type(item) == 'string') return 'tg!' + item;
+                    return item;
+                })
+                return require(deps, callback);
+            }
+            TG.require.config = function(config){
+                $.extend(defaults, config);
+            }
+            var defaults = TG.require.defaults = {
+                perfix : 'jQuery.',
+                suffix : 'js',
+                subfix : '',
+                paths : {}
+            }
+            TG.define = function(id, deps, factory){
+                if (typeof id != 'string') {
+                    factory = deps;
+                    deps = id;
+                    id = null;
+                }
+                if (factory === undefined) {
+                    factory = deps;
+                    deps = [];
+                }
+                if (!$.isArray(deps)) deps = [deps];
+                deps = deps.map(function(item){
+                    if ($.type(item) == 'string') return 'tg!' + item;
+                    return item;
+                })
+                return define(deps, factory);
+            };
+        })();
+    </script>
     <script src="inner/outsideRequire.js"></script>
 
 </body>

@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -455,7 +455,11 @@ armer = window.jQuery || window.Zepto;
                     } catch(e) {}
                     if (value.indexOf('{') == 0||value.indexOf('[') == 0) {
                         // 预测是对象或者数组
-                        return JSON.parse(value);
+                        try {
+                            return JSON.parse(value)
+                        } catch(e) {
+                            return value;
+                        }
                     } else if (value == '') {
                         //为空
                         return null
@@ -1052,6 +1056,7 @@ armer = window.jQuery || window.Zepto;
             parent = parent ? this.constructor.absolutize(parent) : null;
             //alert(basePath);
             var self = this, tmp;
+            if (!path) path = location.href;
             // 获取 search
             path = path.replace(rSearch, function(search){
                 search = search.replace('?', '');
@@ -1322,11 +1327,17 @@ armer = window.jQuery || window.Zepto;
     };
     modules.jQuery = modules.jquery = modules.zepto = modules.armer;
 
+    function getFnRegExp(requireS) {
+        return RegExp('(?:[^\\w\\d$_]|^)' + requireS + '\\s*\\(([^)]*)\\)', 'g')
+    }
+
     var requestUrl = null;
     // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
     var requesting = {};
     // 通过require正在请求的模块
     var defaults = {
+        autoWrap: true, // xhr环境下支持无define的commonJS模式
+        linkStyleAsModule: true, // 自动分析link下的css，作为已加载的模块
         baseUrl : location.href,
         ext : 'js',
         paths : {},
@@ -1351,7 +1362,7 @@ armer = window.jQuery || window.Zepto;
                     if ($.trim(args) != '')  {
                         args = args.split(',');
                         requireS = $.trim(args[withCMD]);
-                        fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                        fn.replace(getFnRegExp(requireS), function(_, dep){
                             // try 一下，确保不会把奇奇怪怪的东西放进去
                             try {
                                 dep = eval.call(null, dep);
@@ -1364,7 +1375,7 @@ armer = window.jQuery || window.Zepto;
             function(deps, factory){
                 var s = ['__inline'], fn = factory.toString();
                 $.each(s, function(_, item){
-                    fn.replace(RegExp('[^\\w\\d$_]' + item + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    fn.replace(getFnRegExp(item), function(_, dep){
                         dep = eval.call(null, dep);
                         if (typeof dep == 'string') deps.push(item + '!' + dep);
                     })
@@ -1556,8 +1567,8 @@ armer = window.jQuery || window.Zepto;
                         var options = {
                             url: mod.url,
                             cache: true,
-                            //crossDomain: defaults.charset ? true : void 0,
-                            crossDomain: true,
+                            crossDomain: defaults.charset ? true : void 0,
+                            //crossDomain: true,
                             dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                             scriptCharset: defaults.charset,
                             success: function(data) {
@@ -1580,6 +1591,10 @@ armer = window.jQuery || window.Zepto;
                             converters: {
                                 "text script": function(text) {
                                     require.rebase(mod.url, function(){
+                                        var r = RegExp('[^\\w\\d$_]define\\s*\\(([^)]*)\\)', 'g')
+                                        if (defaults.autoWrap && !getFnRegExp('define').test(text)) {
+                                            text = 'define(function(require, exports, module){' + text + '})';
+                                        }
                                         $.globalEval(text);
                                     });
                                     return text;
@@ -1611,7 +1626,7 @@ armer = window.jQuery || window.Zepto;
         }
         return require.rebase($.URL.current(), function(){
             return innerRequire(deps).done(function(){
-                callback.apply(this, getExports(arguments))
+                callback && callback.apply(this, getExports(arguments))
             }).fail(errorCallback).promise();
         });
 
@@ -1649,7 +1664,7 @@ armer = window.jQuery || window.Zepto;
             }
         } else {
             //如果没有请求这个js
-            if (!name) $.error('can\'t create anonymous model here')
+            if (!name) $.error('can\'t create anonymous model form ' + currentUrl + ' at this time')
             else mod = new require.Model(id2Config(name, currentUrl))
         }
 

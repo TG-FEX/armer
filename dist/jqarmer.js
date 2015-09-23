@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -10810,7 +10810,11 @@ armer = window.jQuery || window.Zepto;
                     } catch(e) {}
                     if (value.indexOf('{') == 0||value.indexOf('[') == 0) {
                         // 预测是对象或者数组
-                        return JSON.parse(value);
+                        try {
+                            return JSON.parse(value)
+                        } catch(e) {
+                            return value;
+                        }
                     } else if (value == '') {
                         //为空
                         return null
@@ -11407,6 +11411,7 @@ armer = window.jQuery || window.Zepto;
             parent = parent ? this.constructor.absolutize(parent) : null;
             //alert(basePath);
             var self = this, tmp;
+            if (!path) path = location.href;
             // 获取 search
             path = path.replace(rSearch, function(search){
                 search = search.replace('?', '');
@@ -11677,11 +11682,17 @@ armer = window.jQuery || window.Zepto;
     };
     modules.jQuery = modules.jquery = modules.zepto = modules.armer;
 
+    function getFnRegExp(requireS) {
+        return RegExp('(?:[^\\w\\d$_]|^)' + requireS + '\\s*\\(([^)]*)\\)', 'g')
+    }
+
     var requestUrl = null;
     // 这个变量用于储存require的时候当前请求的位置来确定依赖的位置
     var requesting = {};
     // 通过require正在请求的模块
     var defaults = {
+        autoWrap: true, // xhr环境下支持无define的commonJS模式
+        linkStyleAsModule: true, // 自动分析link下的css，作为已加载的模块
         baseUrl : location.href,
         ext : 'js',
         paths : {},
@@ -11706,7 +11717,7 @@ armer = window.jQuery || window.Zepto;
                     if ($.trim(args) != '')  {
                         args = args.split(',');
                         requireS = $.trim(args[withCMD]);
-                        fn.replace(RegExp('[^\\w\\d$_]' + requireS + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                        fn.replace(getFnRegExp(requireS), function(_, dep){
                             // try 一下，确保不会把奇奇怪怪的东西放进去
                             try {
                                 dep = eval.call(null, dep);
@@ -11719,7 +11730,7 @@ armer = window.jQuery || window.Zepto;
             function(deps, factory){
                 var s = ['__inline'], fn = factory.toString();
                 $.each(s, function(_, item){
-                    fn.replace(RegExp('[^\\w\\d$_]' + item + '\\s*\\(([^)]*)\\)', 'g'), function(_, dep){
+                    fn.replace(getFnRegExp(item), function(_, dep){
                         dep = eval.call(null, dep);
                         if (typeof dep == 'string') deps.push(item + '!' + dep);
                     })
@@ -11911,8 +11922,8 @@ armer = window.jQuery || window.Zepto;
                         var options = {
                             url: mod.url,
                             cache: true,
-                            //crossDomain: defaults.charset ? true : void 0,
-                            crossDomain: true,
+                            crossDomain: defaults.charset ? true : void 0,
+                            //crossDomain: true,
                             dataType: mod.type || $.ajax.ext2Type[defaults.ext],
                             scriptCharset: defaults.charset,
                             success: function(data) {
@@ -11935,6 +11946,10 @@ armer = window.jQuery || window.Zepto;
                             converters: {
                                 "text script": function(text) {
                                     require.rebase(mod.url, function(){
+                                        var r = RegExp('[^\\w\\d$_]define\\s*\\(([^)]*)\\)', 'g')
+                                        if (defaults.autoWrap && !getFnRegExp('define').test(text)) {
+                                            text = 'define(function(require, exports, module){' + text + '})';
+                                        }
                                         $.globalEval(text);
                                     });
                                     return text;
@@ -11966,7 +11981,7 @@ armer = window.jQuery || window.Zepto;
         }
         return require.rebase($.URL.current(), function(){
             return innerRequire(deps).done(function(){
-                callback.apply(this, getExports(arguments))
+                callback && callback.apply(this, getExports(arguments))
             }).fail(errorCallback).promise();
         });
 
@@ -12004,7 +12019,7 @@ armer = window.jQuery || window.Zepto;
             }
         } else {
             //如果没有请求这个js
-            if (!name) $.error('can\'t create anonymous model here')
+            if (!name) $.error('can\'t create anonymous model form ' + currentUrl + ' at this time')
             else mod = new require.Model(id2Config(name, currentUrl))
         }
 
@@ -13239,7 +13254,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -13803,6 +13818,11 @@ armer = window.jQuery || window.Zepto;
 
         template: template,
         toTemplate: function (str) {
+/*
+            if ($.isString(str) && $.trim(str).toLowerCase().indexOf('<script') !== 0) {
+                str = '<script type="text/html">' + str + '<script>'
+            }
+*/
             if ($.isFunction(str)) return str;
             else return $(str).templateRender()
         },
@@ -20844,12 +20864,12 @@ $.fn.bgiframe = function(){
         if (!$.isFunction(constructor)) {
             base = prototype;
             prototype = constructor;
-            constructor = $.own(prototype, 'constructor') || function(a, b, c, d, e, f){
-                var callee = arguments.callee, prototype = callee.prototype;
-                if (!(this instanceof callee)) {return new callee(a, b, c, d, e, f)}
+            constructor = $.own(prototype, 'constructor') || function(){
+                var callee = arguments.callee;
+                if (!(this instanceof callee)) {return $.applyConstr(callee, arguments)}
                 this.constructor = callee;
                 if (this._init) {
-                    this._init(a, b, c, d, e, f);
+                    return this._init.apply(this, [].slice.call(arguments));
                 }
             };
         }
@@ -20918,7 +20938,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21055,8 +21075,6 @@ $.Store = (function(){
                 if (mix.hasOwnProperty(i) && !$.isEqual(this._list[i], valueHash[i])) {
                     // 如果不相等则赋值
                     oldValue[i] = this._list[i];
-                    console.log(i)
-                    console.log(valueHash.hasOwnProperty(i))
                     if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
                     else delete this._list[i]
                 }
@@ -21235,16 +21253,17 @@ $.Cookie = (function(){
             // 先备份一下，以免被误改
             else return $.cloneOf(this._list);
         },
-
         'set': function(hash, value, options){
             var that = this;
             var key, isNew = true;
-            options = options || {};
+            options = options || {
+                path: '/'
+            };
             if ($.type(hash) == 'string') {
                 key = hash;
                 hash = {}
                 hash[key] = value
-                isNew = false
+                isNew = value == null
             }
             if ('expires' in hash) {
                 options.expires = hash.expires;
@@ -21253,6 +21272,10 @@ $.Cookie = (function(){
             if ('path' in hash) {
                 options.path = hash.path;
                 delete hash.path;
+            }
+            if ('domain' in hash) {
+                options.domain = hash.domain;
+                delete hash.domain
             }
             var result = this._testAndSet(hash, isNew);
             if (this._isChange(result)) {
@@ -21280,17 +21303,32 @@ $.Cookie = (function(){
                     oldValue[i] = this._list[i];
 
                     if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
-                    else delete this._list[i]
+                    else if (isNew) {
+                        this.del(i)
+                    }
                 }
             }
             return [newValue, oldValue, this._list]
+        },
+        del: function(keys){
+            if ($.isString(keys)) {
+                keys = [keys];
+            }
+            keys = $.oneObject(keys, 'delete');
+            $.each(keys, function(key){
+                delete this._list[key];
+            })
+            document.cookie = $.serialize(keys, ';', '=') + '; ' +  $.serialize({
+                expires: (new Date($.now() - 10000)).toUTCString()
+            }, ';', '=', ',', false)
+
         }
 
     })
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.8.16 - 2015-07-09 
+ * armerjs - v0.9.1 - 2015-09-23 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -21321,9 +21359,23 @@ $.UI.extend = function(name, base, prototype){
         this.register(name, constructor);
     }
 
-    constructor.defaults = constructor.prototype.options;
-    constructor.config = function(){
-        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    constructor.defaults = constructor.options =  constructor.prototype.options;
+    constructor.prototype.config = constructor.config = function(name, value){
+        var params, provider = {};
+        if (this.defaults) {
+            params = [this.defaults];
+        } else if (this.options) {
+            params = [{}, this.options]
+            // 重新赋值
+            this.options = params[0];
+        } else {
+            params = [{}]
+        }
+        if ($.isString(name)) {
+            provider.name = value;
+            return $.mixOptions.apply($, params.concat([provider]))
+        } else
+            return $.mixOptions.apply($, params.concat([].slice.call(arguments)))
     };
     return constructor;
 };
@@ -21872,12 +21924,12 @@ $.fn.ellipsis.useCssClamp = true;
          * 聚焦弹出框
          * @method focus
          */
-        focus: function(){
+        focusin: function(){
             var $backdrop = this.options.backdrop;
             var list = this.options.queue;
             var z = this.options.zIndex;
             var that = this;
-            var thisZindex, has = false, s;
+            var thisZindex, has = false, s, r;
             $.Array.remove(list, that);
             list.push(that);
             list.forEach(function(item, i){
@@ -21892,17 +21944,39 @@ $.fn.ellipsis.useCssClamp = true;
                     this.constructor.toggleBackdrop(false, $backdrop);
                 else $backdrop.css('zIndex', thisZindex);
             }
+            if (this.options.reposition) {
+                if (!that.reposition) {
+                    that.reposition = $.Function.debounce(function(e) {
+                        if (e.target == that.container[0]) return;
+                        var position = that._getPosition();
+                        position.using = function(position){
+                            animate(that.container, [position])
+                        };
+                        that.container.position(position);
+                    }, 100);
+                }
+                this.container.on('DOMSubtreeModified propertychange', that.reposition);
+                $(window).on('resize scroll', that.reposition);
+            }
+        },
+        focusout: function(){
+            if (this.reposition) {
+                this.container.off('DOMSubtreeModified propertychange', this.reposition);
+                $(window).off('resize scroll', this.reposition);
+            }
         },
         isOpened: function(){
             var list = this.options.queue;
             return list.indexOf(this) >= 0
         },
         _innerOpen: function(openOptions){
-            var list = this.options.queue, self = this, index, position;
+            var list = this.options.queue, self = this, index, position, animatePosition = {}, animateFn;
             if (this.isOpened()) return $.when();
             this.lastOpenOptions = openOptions;
 
-            self.container.on('focus', function(e){
+            self.container.on('focusin.dialog', function(e){
+                self.trigger(e);
+            }).on('focusout.dialog', function(e){
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
@@ -21913,25 +21987,42 @@ $.fn.ellipsis.useCssClamp = true;
             }
             openCauseClose = false;
             list.push(self);
-            position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
-            position.of = position.of || this.options.attach;
 
-            self.container.show().finish().position(position);
-
-            if (!openOptions.animate) {
-                return $.when().done(function(){
-                    self.trigger('opened');
-                });
+            position = this._getPosition(openOptions.position);
+            if ($.isFunction(openOptions.animate)) {
+                animateFn = openOptions.animate
+            } else {
+                animateFn = function($elem, position){
+                    $elem.css(position);
+                    return openOptions.animate
+                }
+            }
+            self.container.show().finish();
+            if (openOptions.animate) {
+                animatePosition = {
+                    using: function(position){
+                        position.display = 'none';
+                        animate(self.container, animateFn(self.container, position))
+                    }
+                }
             }
 
-            self.container.hide();
-            return animate(self.container, openOptions.animate).promise().done(function(){
+            self.container.position($.mixOptions(animatePosition, position));
+            this.options.loadingClass && this.options.backdrop.addClass(this.options.loadingClass);
+
+            return self.container.promise().done(function(){
                 self.trigger('opened');
             });
         },
+        _getPosition: function(position){
+            position = position || this.options.position;
+            position = typeof position == 'object' ? position : position(this.options.queue.indexOf(this));
+            position.of = position.of || this.options.attach;
+            return position
+        },
         _innerClose: function(returnValue, closeOptions){
             var self = this;
-            self.container.off('focus.dialog');
+            self.container.off('focusin.dialog');
             return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
@@ -21950,6 +22041,7 @@ $.fn.ellipsis.useCssClamp = true;
             if (!(list.indexOf(this) >= 0)) this.open.apply(this, arguments);
             else this.close.apply(this, arguments);
         },
+
         /**
          * 关闭弹出框
          * @method close
@@ -21998,6 +22090,7 @@ $.fn.ellipsis.useCssClamp = true;
             } else
                 init = self._content;
 
+            //this.constructor.defaults.loadingClass && self.constructor.toggleBackdrop(true, this.options.backdrop);
 
             $.when(init, dfd, self.options.resizeIframe ? self._resizeIframe() : undefined).done(function(){
                 self._innerOpen(openOptions).done(function(){
@@ -22008,36 +22101,37 @@ $.fn.ellipsis.useCssClamp = true;
             });
             return ret
         },
+        _opened: function(){
+            this.options.loadingClass && this.options.backdrop.removeClass('loading');
+            var self = this;
+
+
+        },
         _resizeIframe: function(){
+            var that = this;
             var ret = [];
-            var resize = function(iframe){
-                var win = iframe.contentWindow;
-                var doc = win.document;
-                var width = Math.max(doc.documentElement["clientWidth"], doc.body["scrollWidth"], doc.documentElement["scrollWidth"], doc.body["offsetWidth"], doc.documentElement["offsetWidth"]);
-                var height = Math.max(doc.documentElement["clientHeight"], doc.body["scrollHeight"], doc.documentElement["scrollHeight"], doc.body["offsetHeight"], doc.documentElement["offsetHeight"]);
-                iframe.style.width = width;
-                iframe.style.height = height;
+            var resize = function(iframe, selector){
+                var $elem = iframe.contents().find(selector);
+                iframe.css({
+                    width: $elem.width(true),
+                    height: $elem.height(true)
+                })
             }
-            this.element.find('iframe').each(function(i, iframe){
+            this.element.find('iframe').each(function(i, iframe) {
+                var $iframe = $(iframe);
+                var src = $iframe.data('src');
+                if (src) {
+                    $iframe.attr('src', src);
+                }
+                $iframe.attr('scrolling', 'no');
                 var dfd = $.Deferred();
                 ret.push(dfd);
-                var onload = function(){
-                    resize(iframe);
+
+                $iframe.on('load', function(){
+                    resize($iframe, that.options.resizeIframe === true ? 'body' : that.options.resizeIframe);
                     dfd.resolve(iframe);
-                };
-                var win = iframe.contentWindow;
-                var doc = win.document;
-                if (doc.readyState == 'complete') {
-                    onload();
-                } else {
-                    if (win.attachEvent){
-                        win.attachEvent("onload", onload);
-                    } else if(win.addEventListener){
-                        win.addEventListener('load', onload)
-                    } else {
-                        win.onload = onload;
-                    }
-                }
+                })
+
             });
             return $.when.apply($, ret);
         }
@@ -22094,6 +22188,7 @@ $.fn.ellipsis.useCssClamp = true;
             !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
         },
         defaults: {
+
             dialogClass: 'dialog',
             queue: [],
             attach: $(window),
@@ -22102,24 +22197,24 @@ $.fn.ellipsis.useCssClamp = true;
                 step: 100,
                 end: 1400
             },
+            position: {
+                at: 'left' + ' bottom' + '+15',
+                //at: 'left' + ' bottom' + '+5',
+                my: 'left top',
+                collision: 'flipfit flipfit'
+            },
             open: {
-                position: {
-                    //at: 'left' + ' bottom' + '+15',
-                    at: 'left' + ' bottom' + '+5',
-                    my: 'left top',
-                    collision: 'flipfit flipfit'
-                },
                 showBackdrop: false,
                 closeOthers: true,
                 animate: [{
-                    //top: '-=10',
+                    top: '-=10',
                     opacity: 'show'
                 }],
                 getFocus: false
             },
             close: {
                 animate: [{
-                    //top: '+=10',
+                    top: '+=10',
                     opacity: 'hide'
                 }]
             },
@@ -22138,8 +22233,10 @@ $.fn.ellipsis.useCssClamp = true;
 
     $.UI.Modal = Dialog.extend('modal');
     $.UI.Modal.defaults = {
+        loadingClass: 'loading',
         dialogClass: 'modal',
         queue: [],
+        reposition: true,
         attach: $(window),
         backdrop: $('<div class="backdrop" style="display: none;"></div>'),
         zIndex: {
@@ -22147,31 +22244,36 @@ $.fn.ellipsis.useCssClamp = true;
             step: 10,
             end: 1300
         },
+        position: function(index){
+            var stepX = 20;
+            var stepY = 20;
+            var offestX = index * stepX;
+            var offestY = index * stepY;
+            offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
+            offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
+            return {
+                at: 'center' + offestX + ' center' + offestY,
+                my: 'center center',
+                collision: 'fit'
+            }
+        },
         open: {
-            position: function(index){
-                var stepX = 20;
-                var stepY = 20;
-                var offestX = index * stepX;
-                var offestY = index * stepX - 30;
-                offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
-                offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
-                return {
-                    at: 'center' + offestY + ' center' + offestY,
-                    my: 'center center',
-                    collision: 'fit'
-                }
-            },
             showBackdrop: true,
             closeOthers: true,
             getFocus: true,
-            animate: [{
-                top: '+=30',
-                opacity: 'show'
-            },{
-                done: function(){
-                    $(this).find('.modal-form :text, .modal-form textarea').eq(0).focus();
-                }
-            }]
+            animate: function($elem, position){
+                position.top -= 30;
+                $elem.css(position);
+
+                return [{
+                    top: '+=30',
+                    opacity: 'show'
+                },{
+                    done: function(){
+                        $(this).find('.modal-form :text, .modal-form textarea').eq(0).focus();
+                    }
+                }]
+            }
         },
         close: {
             animate: [{
@@ -22188,15 +22290,15 @@ $.fn.ellipsis.useCssClamp = true;
     }
 
 })(jQuery);
-
 $.UI.extend('spinner', {
     _init: function(element, options){
 
         var that= this;
-        this.element = element;
-        this.output = $('<span class="spinner"><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
+        this.element = $(element);
+        this.options = $.extend({}, this.constructor.defaults, this.element.data(), options);
+        this.output = $('<span><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
         this._input = this.output.find('input');
-        this.options = $.extend({}, this.constructor.defaults, options);
+        this.output.addClass(this.options.classes);
 
         var tmp;
         this.output.on('click', 'a', function(){
@@ -22253,6 +22355,9 @@ $.UI.extend('spinner', {
         this.element.val(newValue);
         this.oldValue = newValue;
     },
+    change: function(newValue){
+        this._change(newValue);
+    },
     val: function(newValue){
         if (newValue != null) this.validate(newValue, this.oldValue);
         else return this.element.val();
@@ -22279,6 +22384,7 @@ $.UI.extend('spinner', {
     }
 }).mix({
     defaults: {
+        classes: 'spinner',
         min: 1,
         max: 99,
         step: 1,

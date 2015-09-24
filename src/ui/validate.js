@@ -2,6 +2,7 @@
     var s = function(){
         $(this).data('after-submit', true);
     }
+    var INSTANCE_STR = 'validate-instance';
     $.UI.extend('validate', {
         options: {
             condition: function(){}, // 校验的条件，可以是function，deferred，url，reg
@@ -18,8 +19,11 @@
         },
         _init: function(element, options) {
             var that = this;
-            this.element = element;
-            this.options = $.mixOptions({form: $(this.element).closest('form')}, this.options, this.element.data(), options);
+            element = $(element)
+            var instance = element.data('INSTANCE_STR');
+            if (instance) return instance;
+            this.options = $.mixOptions({form: element.closest('form')}, this.options, element.data(), options);
+            this.element = this.options.form.find('[name="' + element.attr('name') + '"]').data(INSTANCE_STR, this);
             this.form = $(this.options.form).off('submit', s).one('submit', s);
             this.options.onerror && this.on('error', this.options.onerror);
             this.options.onpass && this.on('pass', this.options.onpass);
@@ -74,7 +78,7 @@
                 }
             };
             if ($.isFunction(condition)) {
-                e = condition.call(dfd, this.element, this.element.val(), this.element[0]);
+                e = condition.call(dfd, this.element, this.element.vals(), this.element[0]);
             } else if ($.isURLString(condition)) {
                 e = dfd;
                 $.ajax(ajaxConfig)
@@ -88,13 +92,13 @@
             if (!$.isDeferred(e)) {
                 ret = $.Deferred();
                 if ($.isString(e)) {
-                    ret.reject(e, oCondition, this.element.val(), this.element, this.element[0]);
+                    ret.reject(e, oCondition, this.element.vals(), this.element, this.element[0]);
                 } else if(e === undefined) {
-                    ret.resolve(e, oCondition, this.element.val(), this.element, this.element[0]);
+                    ret.resolve(e, oCondition, this.element.vals(), this.element, this.element[0]);
                 } else if (e) {
-                    ret.resolve(e, oCondition, this.element.val(), this.element, this.element[0])
+                    ret.resolve(e, oCondition, this.element.vals(), this.element, this.element[0])
                 } else {
-                    ret.reject(e, oCondition, this.element.val(), this.element, this.element[0]);
+                    ret.reject(e, oCondition, this.element.vals(), this.element, this.element[0]);
                 }
             } else ret = e;
             ret.timestamp = $.now();

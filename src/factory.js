@@ -5,12 +5,12 @@
         if (!$.isFunction(constructor)) {
             base = prototype;
             prototype = constructor;
-            constructor = $.own(prototype, 'constructor') || function(a, b, c, d, e, f){
-                var callee = arguments.callee, prototype = callee.prototype;
-                if (!(this instanceof callee)) {return new callee(a, b, c, d, e, f)}
+            constructor = $.own(prototype, 'constructor') || function(){
+                var callee = arguments.callee;
+                if (!(this instanceof callee)) {return $.applyConstr(callee, arguments)}
                 this.constructor = callee;
                 if (this._init) {
-                    this._init(a, b, c, d, e, f);
+                    return this._init.apply(this, [].slice.call(arguments));
                 }
             };
         }

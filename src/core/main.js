@@ -454,7 +454,11 @@ armer = window.jQuery || window.Zepto;
                     } catch(e) {}
                     if (value.indexOf('{') == 0||value.indexOf('[') == 0) {
                         // 预测是对象或者数组
-                        return JSON.parse(value);
+                        try {
+                            return JSON.parse(value)
+                        } catch(e) {
+                            return value;
+                        }
                     } else if (value == '') {
                         //为空
                         return null
@@ -723,7 +727,7 @@ armer = window.jQuery || window.Zepto;
                 if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
                     b[key] = b[name]
                 }
-                if (!b[key]) return;
+                if (b[key] == null) return;
                 (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
             })
         }
@@ -741,7 +745,7 @@ armer = window.jQuery || window.Zepto;
 
         $.vals = function(nodes, values){
             nodes = $(nodes);
-            if (!values) return $.serializeNodes(nodes, false)[nodes[0].name];
+            if (values == null) return $.serializeNodes(nodes, false)[nodes[0].name];
             else {
                 if (!$.isArray(values)) values = [values];
                 if (nodes[0].tagName == 'SELECT' && nodes[0].multiple == true) {

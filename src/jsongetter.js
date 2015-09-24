@@ -139,6 +139,9 @@ $.JSONGetter = (function () {
 
             return dfd.promise();
         },
+        abort: function(){
+            this._ajax && this._ajax.abort();
+        },
         branchAjaxResult: function (dfd, originData) {
             var request = this;
             var state = originData.state;

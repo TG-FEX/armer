@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
@@ -10350,11 +10350,11 @@ return jQuery;
 }));
 
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -11083,7 +11083,7 @@ armer = window.jQuery || window.Zepto;
                 if (!b.hasOwnProperty(key) && !!~key.indexOf('[]') && b.hasOwnProperty(name)) {
                     b[key] = b[name]
                 }
-                if (!b[key]) return;
+                if (b[key] == null) return;
                 (hooks[key] || callee.defaultHandler)(nodes, b[key], key, b);
             })
         }
@@ -11101,7 +11101,7 @@ armer = window.jQuery || window.Zepto;
 
         $.vals = function(nodes, values){
             nodes = $(nodes);
-            if (!values) return $.serializeNodes(nodes, false)[nodes[0].name];
+            if (values == null) return $.serializeNodes(nodes, false)[nodes[0].name];
             else {
                 if (!$.isArray(values)) values = [values];
                 if (nodes[0].tagName == 'SELECT' && nodes[0].multiple == true) {
@@ -13254,7 +13254,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 ;
@@ -20938,7 +20938,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -21328,7 +21328,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.9.1 - 2015-09-23 
+ * armerjs - v0.9.1 - 2015-09-24 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

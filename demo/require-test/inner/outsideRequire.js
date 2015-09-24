@@ -1,5 +1,4 @@
 require(['../main', 'jquery', '../tgtest'], function(_, jquery, tgtest){
-    alert(_);
-    alert(tgtest);
+    tgtest(_);
     console.log(jquery)
 });

@@ -16,6 +16,7 @@ define(['./datasource'], function(){
                 var that = this;
                 this.element.removeClass('no-result');
                 this.element.removeClass('loading');
+                this.element.addClass('rendered');
                 if (that.value == null) return;
                 this._data2elementMap.forEach(function(element, obj){
                     if (that.options.multi && $.Array.containsEqual(that.value, obj)) {
@@ -128,6 +129,10 @@ define(['./datasource'], function(){
         },
         valueOf: function(){
             return this.value
+        },
+        clear: function(){
+            this._getList().html('');
+            delete this.value;
         },
         select: function(data){
             this.toggle(data, true);

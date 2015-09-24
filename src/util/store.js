@@ -91,8 +91,6 @@ $.Store = (function(){
                 if (mix.hasOwnProperty(i) && !$.isEqual(this._list[i], valueHash[i])) {
                     // 如果不相等则赋值
                     oldValue[i] = this._list[i];
-                    console.log(i)
-                    console.log(valueHash.hasOwnProperty(i))
                     if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
                     else delete this._list[i]
                 }

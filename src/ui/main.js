@@ -26,9 +26,23 @@ $.UI.extend = function(name, base, prototype){
         this.register(name, constructor);
     }
 
-    constructor.defaults = constructor.prototype.options;
-    constructor.config = function(){
-        $.mixOptions.apply($, [this.defaults].concat([].slice.call(arguments)))
+    constructor.defaults = constructor.options =  constructor.prototype.options;
+    constructor.prototype.config = constructor.config = function(name, value){
+        var params, provider = {};
+        if (this.defaults) {
+            params = [this.defaults];
+        } else if (this.options) {
+            params = [{}, this.options]
+            // 重新赋值
+            this.options = params[0];
+        } else {
+            params = [{}]
+        }
+        if ($.isString(name)) {
+            provider.name = value;
+            return $.mixOptions.apply($, params.concat([provider]))
+        } else
+            return $.mixOptions.apply($, params.concat([].slice.call(arguments)))
     };
     return constructor;
 };

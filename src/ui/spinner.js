@@ -2,10 +2,11 @@ $.UI.extend('spinner', {
     _init: function(element, options){
 
         var that= this;
-        this.element = element;
-        this.output = $('<span class="spinner"><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
+        this.element = $(element);
+        this.options = $.extend({}, this.constructor.defaults, this.element.data(), options);
+        this.output = $('<span><a class="btn-spinup" href="javascript:">-</a><input  type="text"/><a class="btn-spindown" href="javascript:">+</a></span>');
         this._input = this.output.find('input');
-        this.options = $.extend({}, this.constructor.defaults, options);
+        this.output.addClass(this.options.classes);
 
         var tmp;
         this.output.on('click', 'a', function(){
@@ -62,6 +63,9 @@ $.UI.extend('spinner', {
         this.element.val(newValue);
         this.oldValue = newValue;
     },
+    change: function(newValue){
+        this._change(newValue);
+    },
     val: function(newValue){
         if (newValue != null) this.validate(newValue, this.oldValue);
         else return this.element.val();
@@ -88,6 +92,7 @@ $.UI.extend('spinner', {
     }
 }).mix({
     defaults: {
+        classes: 'spinner',
         min: 1,
         max: 99,
         step: 1,

@@ -71,6 +71,7 @@
             parent = parent ? this.constructor.absolutize(parent) : null;
             //alert(basePath);
             var self = this, tmp;
+            if (!path) path = location.href;
             // 获取 search
             path = path.replace(rSearch, function(search){
                 search = search.replace('?', '');

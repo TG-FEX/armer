@@ -9,16 +9,17 @@ $.Cookie = (function(){
             // 先备份一下，以免被误改
             else return $.cloneOf(this._list);
         },
-
         'set': function(hash, value, options){
             var that = this;
             var key, isNew = true;
-            options = options || {};
+            options = options || {
+                path: '/'
+            };
             if ($.type(hash) == 'string') {
                 key = hash;
                 hash = {}
                 hash[key] = value
-                isNew = false
+                isNew = value == null
             }
             if ('expires' in hash) {
                 options.expires = hash.expires;
@@ -27,6 +28,10 @@ $.Cookie = (function(){
             if ('path' in hash) {
                 options.path = hash.path;
                 delete hash.path;
+            }
+            if ('domain' in hash) {
+                options.domain = hash.domain;
+                delete hash.domain
             }
             var result = this._testAndSet(hash, isNew);
             if (this._isChange(result)) {
@@ -54,10 +59,25 @@ $.Cookie = (function(){
                     oldValue[i] = this._list[i];
 
                     if (valueHash.hasOwnProperty(i)) this._list[i] = newValue[i] = $.cloneOf(valueHash[i]);
-                    else delete this._list[i]
+                    else if (isNew) {
+                        this.del(i)
+                    }
                 }
             }
             return [newValue, oldValue, this._list]
+        },
+        del: function(keys){
+            if ($.isString(keys)) {
+                keys = [keys];
+            }
+            keys = $.oneObject(keys, 'delete');
+            $.each(keys, function(key){
+                delete this._list[key];
+            })
+            document.cookie = $.serialize(keys, ';', '=') + '; ' +  $.serialize({
+                expires: (new Date($.now() - 10000)).toUTCString()
+            }, ';', '=', ',', false)
+
         }
 
     })

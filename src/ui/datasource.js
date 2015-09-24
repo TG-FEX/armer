@@ -20,39 +20,46 @@ $.DataSource = $.EventEmitter.extend({
 
         if (this.options.source) {
             if ($.type(this.options.source) == 'string') {
-                this.url = this.options.source;
+                this.source = function(search){
+                    var source;
+                    var that = this;
+                    var cacheKey = JSON.toString(search);
+                    var cacheTime = this.options.cache === true ? Infinity : this.options.cache;
+                    if (cacheTime && this.cache[cacheKey] && ($.now() - this.cache[cacheKey].timestamp < cacheTime)) {
+                        source = this.cache[cacheKey];
+                    } else {
+                        this.cache[cacheKey] = source = $.EventEmitter.trigger(this, 'getData', [search, this.options.source]).done(function(data){
+                            that.trigger('gotData', [data])
+                        });
+                        source.timestamp = $.now();
+                    }
+
+                    return source;
+                };
             } else if ($.isElement(this.options.source) || $.isQueryElement(this.options.source)){
-                this.source = $.when(this.constructor.fromElement(this.options.source));
+                this.source = function(){ return $.when(this.constructor.fromElement(this.options.source)) };
+            } else if (!$.isFunction(this.options.source)) {
+                this.source = function(){ $.when(this.options.source) };
             } else {
-                this.source = $.when(this.options.source);
+                this.source = this.options.source;
             }
         }
 
     },
     query: function(search){
         var source, that = this;
-        if (!this.source && this.url) {
-            var cacheKey = JSON.toString(search);
-            var cacheTime = this.options.cache === true ? Infinity : this.options.cache;
-            if (cacheTime && this.cache[cacheKey] && ($.now() - this.cache[cacheKey].timestamp < cacheTime)) {
-                source = this.cache[cacheKey];
-            } else {
-                this.cache[cacheKey] = source = $.EventEmitter.trigger(this, 'getData', [search]).done(function(data){
-                    that.trigger('gotData', [data]);
-                });
-                source.timestamp = $.now();
-            }
-        } else
-            source = this.source;
+
+        source = this.source.call(this, search);
+
         if (source) {
             source.done(function(source) {
                 that.trigger('filter', [source, search]);
             })
         }
     },
-    _getData: function(search){
+    _getData: function(search, url){
         return $.ajax({
-            url: this.url,
+            url: url,
             type: 'post',
             data: search
         })

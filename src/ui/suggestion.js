@@ -27,7 +27,7 @@ define(['./datalist'], function() {
             });
             that.element.on('dblclick', function(e){
                 if (!that.$datalist.dialog().isOpened()){
-                    that.datalist.trigger('query', [$.isString(that.options.data) ? $(that.options.data).serialize() : that.options.data]);
+                    that.datalist.trigger('query', [$.isString(that.options.data) ? $.serialize(that.options.data) : that.options.data]);
                 }
             });
             that.element.on('valuechange', function (e) {
@@ -36,7 +36,7 @@ define(['./datalist'], function() {
                 if ($.isFunction(that.options.data)){
                     sendData = that.options.data(that.element.val(), that.element);
                 } else if ($.isString(that.options.data)) {
-                    sendData = $(that.options.data).serialize();
+                    sendData = $.serializeNodes(that.options.data)
                 } else {
                     sendData = that.options.data;
                 }
@@ -50,7 +50,7 @@ define(['./datalist'], function() {
                     if (that.datalist.size()) {
                         that.$datalist.dialog().trigger('open');
                     } else
-                        that.datalist.trigger('query', [$.isString(that.options.data) ? $(that.options.data).serialize() : that.options.data]);
+                        that.datalist.trigger('query', [$.isString(that.options.data) ? $.serialize(that.options.data) : that.options.data]);
                 } else if (e.which == 13 && that.$datalist.dialog().isOpened()) {
                     e.stopPropagation();
                     e.preventDefault();

@@ -559,6 +559,11 @@
 
         template: template,
         toTemplate: function (str) {
+/*
+            if ($.isString(str) && $.trim(str).toLowerCase().indexOf('<script') !== 0) {
+                str = '<script type="text/html">' + str + '<script>'
+            }
+*/
             if ($.isFunction(str)) return str;
             else return $(str).templateRender()
         },

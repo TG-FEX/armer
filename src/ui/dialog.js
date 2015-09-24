@@ -59,12 +59,12 @@
          * 聚焦弹出框
          * @method focus
          */
-        focus: function(){
+        focusin: function(){
             var $backdrop = this.options.backdrop;
             var list = this.options.queue;
             var z = this.options.zIndex;
             var that = this;
-            var thisZindex, has = false, s;
+            var thisZindex, has = false, s, r;
             $.Array.remove(list, that);
             list.push(that);
             list.forEach(function(item, i){
@@ -79,17 +79,39 @@
                     this.constructor.toggleBackdrop(false, $backdrop);
                 else $backdrop.css('zIndex', thisZindex);
             }
+            if (this.options.reposition) {
+                if (!that.reposition) {
+                    that.reposition = $.Function.debounce(function(e) {
+                        if (e.target == that.container[0]) return;
+                        var position = that._getPosition();
+                        position.using = function(position){
+                            animate(that.container, [position])
+                        };
+                        that.container.position(position);
+                    }, 100);
+                }
+                this.container.on('DOMSubtreeModified propertychange', that.reposition);
+                $(window).on('resize scroll', that.reposition);
+            }
+        },
+        focusout: function(){
+            if (this.reposition) {
+                this.container.off('DOMSubtreeModified propertychange', this.reposition);
+                $(window).off('resize scroll', this.reposition);
+            }
         },
         isOpened: function(){
             var list = this.options.queue;
             return list.indexOf(this) >= 0
         },
         _innerOpen: function(openOptions){
-            var list = this.options.queue, self = this, index, position;
+            var list = this.options.queue, self = this, index, position, animatePosition = {}, animateFn;
             if (this.isOpened()) return $.when();
             this.lastOpenOptions = openOptions;
 
-            self.container.on('focus', function(e){
+            self.container.on('focusin.dialog', function(e){
+                self.trigger(e);
+            }).on('focusout.dialog', function(e){
                 self.trigger(e);
             });
             if (openOptions.showBackdrop)
@@ -100,25 +122,42 @@
             }
             openCauseClose = false;
             list.push(self);
-            position = typeof openOptions.position == 'object' ? openOptions.position : openOptions.position(list.indexOf(self));
-            position.of = position.of || this.options.attach;
 
-            self.container.show().finish().position(position);
-
-            if (!openOptions.animate) {
-                return $.when().done(function(){
-                    self.trigger('opened');
-                });
+            position = this._getPosition(openOptions.position);
+            if ($.isFunction(openOptions.animate)) {
+                animateFn = openOptions.animate
+            } else {
+                animateFn = function($elem, position){
+                    $elem.css(position);
+                    return openOptions.animate
+                }
+            }
+            self.container.show().finish();
+            if (openOptions.animate) {
+                animatePosition = {
+                    using: function(position){
+                        position.display = 'none';
+                        animate(self.container, animateFn(self.container, position))
+                    }
+                }
             }
 
-            self.container.hide();
-            return animate(self.container, openOptions.animate).promise().done(function(){
+            self.container.position($.mixOptions(animatePosition, position));
+            this.options.loadingClass && this.options.backdrop.addClass(this.options.loadingClass);
+
+            return self.container.promise().done(function(){
                 self.trigger('opened');
             });
         },
+        _getPosition: function(position){
+            position = position || this.options.position;
+            position = typeof position == 'object' ? position : position(this.options.queue.indexOf(this));
+            position.of = position.of || this.options.attach;
+            return position
+        },
         _innerClose: function(returnValue, closeOptions){
             var self = this;
-            self.container.off('focus.dialog');
+            self.container.off('focusin.dialog');
             return closeOptions.animate ? animate(this.container.finish(), closeOptions.animate).promise().done(function(){
                 this[0].style.top = '';
                 this[0].style.left = '';
@@ -137,6 +176,7 @@
             if (!(list.indexOf(this) >= 0)) this.open.apply(this, arguments);
             else this.close.apply(this, arguments);
         },
+
         /**
          * 关闭弹出框
          * @method close
@@ -185,6 +225,7 @@
             } else
                 init = self._content;
 
+            //this.constructor.defaults.loadingClass && self.constructor.toggleBackdrop(true, this.options.backdrop);
 
             $.when(init, dfd, self.options.resizeIframe ? self._resizeIframe() : undefined).done(function(){
                 self._innerOpen(openOptions).done(function(){
@@ -195,36 +236,37 @@
             });
             return ret
         },
+        _opened: function(){
+            this.options.loadingClass && this.options.backdrop.removeClass('loading');
+            var self = this;
+
+
+        },
         _resizeIframe: function(){
+            var that = this;
             var ret = [];
-            var resize = function(iframe){
-                var win = iframe.contentWindow;
-                var doc = win.document;
-                var width = Math.max(doc.documentElement["clientWidth"], doc.body["scrollWidth"], doc.documentElement["scrollWidth"], doc.body["offsetWidth"], doc.documentElement["offsetWidth"]);
-                var height = Math.max(doc.documentElement["clientHeight"], doc.body["scrollHeight"], doc.documentElement["scrollHeight"], doc.body["offsetHeight"], doc.documentElement["offsetHeight"]);
-                iframe.style.width = width;
-                iframe.style.height = height;
+            var resize = function(iframe, selector){
+                var $elem = iframe.contents().find(selector);
+                iframe.css({
+                    width: $elem.width(true),
+                    height: $elem.height(true)
+                })
             }
-            this.element.find('iframe').each(function(i, iframe){
+            this.element.find('iframe').each(function(i, iframe) {
+                var $iframe = $(iframe);
+                var src = $iframe.data('src');
+                if (src) {
+                    $iframe.attr('src', src);
+                }
+                $iframe.attr('scrolling', 'no');
                 var dfd = $.Deferred();
                 ret.push(dfd);
-                var onload = function(){
-                    resize(iframe);
+
+                $iframe.on('load', function(){
+                    resize($iframe, that.options.resizeIframe === true ? 'body' : that.options.resizeIframe);
                     dfd.resolve(iframe);
-                };
-                var win = iframe.contentWindow;
-                var doc = win.document;
-                if (doc.readyState == 'complete') {
-                    onload();
-                } else {
-                    if (win.attachEvent){
-                        win.attachEvent("onload", onload);
-                    } else if(win.addEventListener){
-                        win.addEventListener('load', onload)
-                    } else {
-                        win.onload = onload;
-                    }
-                }
+                })
+
             });
             return $.when.apply($, ret);
         }
@@ -281,6 +323,7 @@
             !openCauseClose && $backdrop && this.toggleBackdrop(false, $backdrop);
         },
         defaults: {
+
             dialogClass: 'dialog',
             queue: [],
             attach: $(window),
@@ -289,24 +332,24 @@
                 step: 100,
                 end: 1400
             },
+            position: {
+                at: 'left' + ' bottom' + '+15',
+                //at: 'left' + ' bottom' + '+5',
+                my: 'left top',
+                collision: 'flipfit flipfit'
+            },
             open: {
-                position: {
-                    //at: 'left' + ' bottom' + '+15',
-                    at: 'left' + ' bottom' + '+5',
-                    my: 'left top',
-                    collision: 'flipfit flipfit'
-                },
                 showBackdrop: false,
                 closeOthers: true,
                 animate: [{
-                    //top: '-=10',
+                    top: '-=10',
                     opacity: 'show'
                 }],
                 getFocus: false
             },
             close: {
                 animate: [{
-                    //top: '+=10',
+                    top: '+=10',
                     opacity: 'hide'
                 }]
             },
@@ -325,8 +368,10 @@
 
     $.UI.Modal = Dialog.extend('modal');
     $.UI.Modal.defaults = {
+        loadingClass: 'loading',
         dialogClass: 'modal',
         queue: [],
+        reposition: true,
         attach: $(window),
         backdrop: $('<div class="backdrop" style="display: none;"></div>'),
         zIndex: {
@@ -334,31 +379,36 @@
             step: 10,
             end: 1300
         },
+        position: function(index){
+            var stepX = 20;
+            var stepY = 20;
+            var offestX = index * stepX;
+            var offestY = index * stepY;
+            offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
+            offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
+            return {
+                at: 'center' + offestX + ' center' + offestY,
+                my: 'center center',
+                collision: 'fit'
+            }
+        },
         open: {
-            position: function(index){
-                var stepX = 20;
-                var stepY = 20;
-                var offestX = index * stepX;
-                var offestY = index * stepX - 30;
-                offestX = offestX > 0 ? ('+' + offestX.toString()) : (offestX == 0) ? '' : offestX.toString();
-                offestY = offestY > 0 ? ('+' + offestY.toString()) : (offestY == 0) ? '' : offestY.toString();
-                return {
-                    at: 'center' + offestY + ' center' + offestY,
-                    my: 'center center',
-                    collision: 'fit'
-                }
-            },
             showBackdrop: true,
             closeOthers: true,
             getFocus: true,
-            animate: [{
-                top: '+=30',
-                opacity: 'show'
-            },{
-                done: function(){
-                    $(this).find('.modal-form :text, .modal-form textarea').eq(0).focus();
-                }
-            }]
+            animate: function($elem, position){
+                position.top -= 30;
+                $elem.css(position);
+
+                return [{
+                    top: '+=30',
+                    opacity: 'show'
+                },{
+                    done: function(){
+                        $(this).find('.modal-form :text, .modal-form textarea').eq(0).focus();
+                    }
+                }]
+            }
         },
         close: {
             animate: [{

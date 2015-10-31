@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.9.1 - 2015-09-24 
+ * armerjs - v0.9.2 - 2015-10-31 
  * Copyright (c) 2015 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
@@ -1025,6 +1025,7 @@ $.UI.extend('spinner', {
         this._input.val(newValue);
         this.element.val(newValue);
         this.oldValue = newValue;
+        this.trigger('changed', newValue);
     },
     change: function(newValue){
         this._change(newValue);

@@ -99,7 +99,31 @@ armer = window.jQuery || window.Zepto;
         $.slice.resetNumber = resetNumber;
         $.fn.mix = $.mix = $.extend;
 
+        function assert(target, name, arrayKey, create) {
+            var a = [];
+            if (name.indexOf('[]') > -1 &&  name.indexOf('[]') < name.length - 2) {
+                throw Error();
+            }
+            name.replace('[]', '[' + arrayKey + ']');
+            name.replace(/[a-zA-Z][a-zA-Z0-9]*|!@#%/g, function (i) {
+                a.push(i)
+            });
+            var key = a.pop();
 
+            var i = 0, lastIndex = a.length;
+            var objs = target, s, tmp;
+            if (create) {
+                for(;i < lastIndex;i++) {
+                    s = a[i];
+                    if ((tmp = objs[s]) == null) {
+                        tmp = objs[s] = {};
+                    }
+                    objs = tmp;
+                }
+            }
+
+            return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]["') + '"]'))(target) : target, key]
+        }
         $.extend($, {
             // ---补充一些全局变量---
 
@@ -124,24 +148,17 @@ armer = window.jQuery || window.Zepto;
                 return "armer" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
             },
             mixOptions: function (target) {
-                function getWs(target, name) {
-                    var a = [];
-                    if (name.indexOf('[]') > -1 &&  name.indexOf('[]') < name.length - 2) {
-                        throw Error();
-                    }
-                    name.replace('[]', '[!@#%]');
-                    name.replace(/[a-zA-Z][a-zA-Z0-9]*|!@#%/g, function (i) {
-                        a.push(i)
-                    });
-                    var key = a.pop();
-                    return [a.length ? (new Function('obj', 'return obj' + '["' + a.join('"]') + '"]'))(target) : target, key]
-                }
+                var sss = '!@#%';
+
                 var callee = arguments.callee,
                     input = $.slice(arguments, 1),
                     inputIndex = 0,
                     inputLength = input.length,
                     key, tmp, obj,
-                    value;
+                    value, create;
+                if (typeof input[input.length - 1] == 'boolean') {
+                    create = input.pop();
+                }
                 for (; inputIndex < inputLength; inputIndex++) {
                     for (key in input[inputIndex]) {
                         value = input[inputIndex][key];
@@ -149,7 +166,7 @@ armer = window.jQuery || window.Zepto;
 
                             if (/[\[\]\.]/.test(key)) {
                                 try {
-                                    tmp =  getWs(target, key);
+                                    tmp =  assert(target, key, sss, create);
                                 } catch(e) {
                                     tmp = undefined;
                                 }
@@ -161,6 +178,7 @@ armer = window.jQuery || window.Zepto;
                             } else {
                                 obj = target
                             }
+                            tmp = null;
 
                             // Clone objects
                             if ($.isPlainObject(value)) {
@@ -169,7 +187,7 @@ armer = window.jQuery || window.Zepto;
                                     // Don't extend strings, arrays, etc. with objects
                                     callee.call(this, {}, value);
                                 // Copy everything else by reference
-                            } else if(key == '!@#%' && $.isArrayLike(obj)) {
+                            } else if(key == sss && $.isArrayLike(obj)) {
                                 // 处理a[]这种情况下，推进数组
                                 [].push.call(obj, value);
                             } else {
@@ -179,6 +197,9 @@ armer = window.jQuery || window.Zepto;
                     }
                 }
                 return target;
+            },
+            deepen: function(obj){
+                return $.mixOptions({}, obj, true);
             },
             /**
              * 生成随机数
@@ -322,8 +343,10 @@ armer = window.jQuery || window.Zepto;
              * @param [ignoreAttrChecked=false] 是否忽略checked属性
              * @returns {{}}
              */
-            serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected){
-                obj = $(obj).find('input,option,textarea').andSelf().not(':disabled, fieldset:disabled *');
+            serializeNodes: function(obj, join, ignoreAttrCheckedOrSelected, hooks){
+                var is = 'input,option,textarea';
+                var not = ':disabled, fieldset:disabled *';
+                obj = $(obj).find(is).andSelf().filter(is).not(not);
                 var result = {}, separator;
                 if (typeof join == 'string') {
                     separator = join;
@@ -335,26 +358,63 @@ armer = window.jQuery || window.Zepto;
                         return (a.length > 1 ? a : a[0]) || '';
                     }
                 }
-                for (var i = 0; i <= obj.length; i++) {
-                    if ('object' != typeof obj[i] || !('value' in obj[i]))
-                        continue
-                    // 不允许一般数组
-                    var name = obj[i].name;
-                    if (obj[i].tagName == 'OPTION') name = $(obj[i]).closest('select').attr('name');
-                    if (!name) continue;
-                    result[name] = result[name] || [];
-                    if (ignoreAttrCheckedOrSelected  ||
-                        (obj[i].tagName != 'OPTION' && obj[i].type != 'checkbox' && obj[i].type != 'radio' || obj[i].checked || obj[i].selected)
+
+                var callee = arguments.callee;
+                hooks = hooks || {};
+
+                var a = {};
+                $.each(obj, function(key, node){
+                    var name = node.name;
+                    if (node.tagName == 'OPTION') name = $(node).closest('select').attr('name');
+                    if (!name) return;
+                    if (!a[name]) a[name] = [];
+                    a[name].push(node);
+                });
+
+
+                $.each(a, function(key, nodes){
+                    (hooks[key] || callee.defaultHandler || handler)(nodes, result, key, ignoreAttrCheckedOrSelected, join);
+                })
+
+                return result;
+
+
+                function handler(nodes, result, key, ignore, join){
+
+                    if (!ignore && nodes.length == 1 && !~key.indexOf('[]') && (nodes[0].type == 'radio' || nodes[0].type == 'checkbox') && (nodes[0].value == 'on' && nodes[0].checked || nodes[0].value == '' && !nodes[0].checked)) {
+                        result[key] = nodes[0].checked;
+                        return
+                    }
+
+
+                    var options = $()
+                    $.each(nodes, function(i, node){
+                        if (node.tagName == 'select') {
+                            nodes.splice(i, 1);
+                            $.merge(options, $(node).find('option'))
+                        }
+                    });
+                    nodes.concat(options.toArray());
+
+                    $.each(nodes, function(i, obj){
+                        var value = obj.value;
+                        if (ignore  ||
+                            (obj.tagName != 'OPTION' && obj.type != 'checkbox' && obj.type != 'radio' || obj.checked || obj.selected)
                         ) {
-                        result[name].push(obj[i].value);
+                            result[key] = result[key] || [];
+                            try {
+                                value = JSON.parse(value)
+                            } catch(e) {
+                            }
+                            result[key].push(value);
+                        }
+                    })
+
+                    if (join && result[key]) {
+                        result[key] = join(result[key]);
                     }
+
                 }
-                if (typeof join == 'function') {
-                    for (var i in result) {
-                        result[i] = join(result[i]);
-                    }
-                }
-                return result
             },
             /**
              * 序列化通过对象或数组产生类似cookie、get等字符串
@@ -754,9 +814,15 @@ armer = window.jQuery || window.Zepto;
                         node.selected = has(values, node);
                     })
                 } else if (nodes[0].type == 'checkbox' || nodes[0].type == 'radio') {
-                    $.each(nodes, function(i, node){
-                        node.checked = has(values, node);
-                    });
+                    // 只有一个元素，而且值也只有一个且为布尔值
+                    if(nodes.length == 1 && values.length == 1 && typeof(values[0]) == 'boolean') {
+                        nodes[0].checked = values[0];
+                    } else {
+                        $.each(nodes, function(i, node){
+                            node.checked = has(values, node);
+                        });
+                    }
+
                 } else
                     $.each(nodes, function(i, node){
                         node.value = values[i];
@@ -772,7 +838,7 @@ armer = window.jQuery || window.Zepto;
 
 
         $.clearForm = function (form) {
-            $(':input, select', form).not(':button, :submit, :reset, :radio').val('');
+            $(':input, select', form).not(':button, :submit, :reset, :radio, :checkbox').val('');
             $(':checkbox, :radio', form).prop('checked', false);
         }
 

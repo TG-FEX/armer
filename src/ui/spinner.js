@@ -62,6 +62,7 @@ $.UI.extend('spinner', {
         this._input.val(newValue);
         this.element.val(newValue);
         this.oldValue = newValue;
+        this.trigger('changed', newValue);
     },
     change: function(newValue){
         this._change(newValue);

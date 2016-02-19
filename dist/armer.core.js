@@ -1,6 +1,6 @@
 /*!
- * armerjs - v0.9.2 - 2015-10-31 
- * Copyright (c) 2015 Alphmega; Licensed MIT() 
+ * armerjs - v0.9.2 - 2016-01-28 
+ * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
 (function ($, global, DOC) {
@@ -1403,7 +1403,8 @@ armer = window.jQuery || window.Zepto;
     // 通过require正在请求的模块
     var defaults = {
         autoWrap: true, // xhr环境下支持无define的commonJS模式
-        linkStyleAsModule: true, // 自动分析link下的css，作为已加载的模块
+        //linkStyleAsModule: true, // 自动分析link下的css，作为已加载的模块
+        fireNoRequestingModel: true, // 允许匿名模块，当使用define来定义未被请求的匿名模块，设为false会被
         baseUrl : location.href,
         ext : 'js',
         paths : {},
@@ -1412,6 +1413,7 @@ armer = window.jQuery || window.Zepto;
         method: 'auto',
         namespace: 'default',
         collector: [
+            // 分析 require
             function (deps, factory){
                 var withCMD = -1, i;
                 for (i = 0; i < deps.length; i++) {
@@ -1438,6 +1440,7 @@ armer = window.jQuery || window.Zepto;
                     }
                 }
             },
+            // 分析 __inline
             function(deps, factory){
                 var s = ['__inline'], fn = factory.toString();
                 $.each(s, function(_, item){
@@ -1640,11 +1643,18 @@ armer = window.jQuery || window.Zepto;
                             success: function(data) {
                                 var bmod;
                                 if (requesting[mod.url]) {
-                                    if (bmod = requesting[mod.url].bmod) {
-                                        var dfd = mod.dfd;
-                                        $.extend(mod, bmod);
-                                        mod.dfd = dfd;
-                                        modules[bmod.id] = mod;
+                                    // 处理bmods
+                                    if (requesting[mod.url].bmods) {
+                                        if (requesting[mod.url].exports == null && requesting[mod.url].factory == null) {
+                                            bmod = requesting[mod.url].bmods.pop();
+                                            var dfd = mod.dfd;
+                                            $.extend(mod, bmod);
+                                            mod.dfd = dfd;
+                                            modules[bmod.id] = mod;
+                                            if (defaults.fireNoRequestingModel) $.each(requesting[mod.url].bmods, function(bmod){
+                                                bmod.fire(data)
+                                            })
+                                        }
                                     }
                                     delete requesting[mod.url]
                                 }
@@ -1657,7 +1667,6 @@ armer = window.jQuery || window.Zepto;
                             converters: {
                                 "text script": function(text) {
                                     require.rebase(mod.url, function(){
-                                        var r = RegExp('[^\\w\\d$_]define\\s*\\(([^)]*)\\)', 'g')
                                         if (defaults.autoWrap && !getFnRegExp('define').test(text)) {
                                             text = 'define(function(require, exports, module){' + text + '})';
                                         }
@@ -1722,20 +1731,27 @@ armer = window.jQuery || window.Zepto;
             if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
                 // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
                 mod = new require.Model(config);
-                requesting[currentUrl].bmod = mod;
-            } else {
-                // define()这种形式默认是这个模块
-                delete mod.bmod;
-                delete requesting[currentUrl]
-            }
+                requesting[currentUrl].bmods = requesting[currentUrl].bmods || [];
+                requesting[currentUrl].bmods.push(mod);
+            } else
+                mod.anonymous = true;
         } else {
             //如果没有请求这个js
-            if (!name) $.error('can\'t create anonymous model form ' + currentUrl + ' at this time')
+            if (!name) {
+                mod = new require.Model(id2Config(currentUrl, location.href));
+                mod.anonymous = true;
+            }
             else mod = new require.Model(id2Config(name, currentUrl))
+            if (defaults.fireNoRequestingModel) {
+                mod.dfd = $.Deferred();
+                mod.fire();
+            }
         }
 
         mod.deps = deps;
         mod.type = 'script';
+
+        if (mod.anonymous == null) mod.anonymous = false;
 
         $.each(defaults.collector, function(i, item){
             item(mod.deps, factory);

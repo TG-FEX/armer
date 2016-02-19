@@ -67,12 +67,13 @@ $.Cookie = (function(){
             return [newValue, oldValue, this._list]
         },
         del: function(keys){
+            var list = this._list;
             if ($.isString(keys)) {
                 keys = [keys];
             }
             keys = $.oneObject(keys, 'delete');
             $.each(keys, function(key){
-                delete this._list[key];
+                delete list[key];
             })
             document.cookie = $.serialize(keys, ';', '=') + '; ' +  $.serialize({
                 expires: (new Date($.now() - 10000)).toUTCString()

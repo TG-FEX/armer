@@ -1,6 +1,6 @@
 /*!
- * armerjs - v0.9.2 - 2015-10-31 
- * Copyright (c) 2015 Alphmega; Licensed MIT() 
+ * armerjs - v0.9.2 - 2016-01-28 
+ * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
 if (!$.support.opacity) $.fx.off = true;

@@ -148,7 +148,9 @@
         timer.stop();
     }
     $.setInterval = function(callback, interval){
-        return $.Timer(false, interval, callback);
+        var timer = $.Timer(false, interval);
+        timer.on($.Timer.event.TICK, callback);
+        return timer;
     }
     $.clearInterval = function(timer){
         timer.stop();

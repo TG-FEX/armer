@@ -52,18 +52,23 @@ module.exports = function(grunt) {
             ],
             dest: 'dist/armer.ui.js'
         },
-        'armer': {
+        'armer-without-ui': {
             src: [
                 'dist/armer.core.js',
                 'src/polyfill.js',
                 'tmp/lang.js',
-                'src/mvvm.js',
                 'src/io.js',
                 'src/css.js',
                 'src/effects.js',
                 'src/event.js',
                 'src/factory.js',
-                'tmp/util.js',
+                'tmp/util.js'
+            ],
+            dest: 'dist/armer.without-ui.js'
+        },
+        'armer': {
+            src: [
+                'dist/armer.without-ui.js',
                 'dist/armer.ui.js'
             ],
             dest: 'dist/armer.js'
@@ -99,6 +104,10 @@ module.exports = function(grunt) {
         z: {
             src: 'dist/zarmer.js',
             dest: 'dist/zarmer.min.js'
+        },
+        'without-ui': {
+            src: 'dist/armer.without-ui.js',
+            dest: 'dist/armer.without-ui.min.js'
         }
     }
     /*

@@ -442,7 +442,7 @@
         var animated = this, children, allAnimations, applyClassChange;
         if (!animated[0]) return ;
         var currentStyle = this[0].currentStyle;
-        var doAnimate = !!currentStyle &&
+        var doAnimate = !!currentStyle && !$.fx.offSimulateTransition && !$.fx.off &&
             (!!(children = currentStyle['fix-transition-chlidren']) ||
                 !!currentStyle['transition-property'] ||
                 !!currentStyle['transition']
@@ -503,6 +503,7 @@
 
         } else applyClassChange();
     };
+    $.fx.offSimulateTransition = false;
     $.each(classAnimationActions, function(__, action){
         var orig = $.fn[action + 'Class'];
         $.fn[action + 'Class'] = $.support.transition ? orig : function(classes) {

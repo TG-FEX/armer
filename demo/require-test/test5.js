@@ -1,3 +1,3 @@
-define(function(){
+define('testCustomerName', function(){
     return '5555'
 });

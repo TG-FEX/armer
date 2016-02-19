@@ -1,13 +1,13 @@
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 armer = window.jQuery || window.Zepto;
@@ -1520,10 +1520,11 @@ armer = window.jQuery || window.Zepto;
     };
 
     // 构造模块
-    require.Model = function Model(config){
+    require.Model = function Model(config, url){
         $.extend(this, config);
         //throw Error(this.id)
         modules[this.id] = this;
+        if (url != null) this.url = url;
         //if (this.url) modules[this.method + this.url] = this;
         //else if (this.id) modules[this.id] = this;
     };
@@ -1738,7 +1739,7 @@ armer = window.jQuery || window.Zepto;
         if (mod = requesting[currentUrl]) {
             if (name && (config = id2Config(name, currentUrl)).id !== mod.id) {
                 // 如果define的名字不一样，记录bmod作为后备模块，当文件请求完毕仍然没有同名模块，则最后一个后备模块为该模块
-                mod = new require.Model(config);
+                mod = new require.Model(config, currentUrl);
                 requesting[currentUrl].bmods = requesting[currentUrl].bmods || [];
                 requesting[currentUrl].bmods.push(mod);
             } else
@@ -2989,7 +2990,7 @@ armer = window.jQuery || window.Zepto;
 })();
 
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 ;
@@ -6457,7 +6458,7 @@ $.fn.bgiframe = function(){
 })(armer);
 
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 (function($){
@@ -6754,7 +6755,9 @@ $.store = new $.Store('default-store');
         timer.stop();
     }
     $.setInterval = function(callback, interval){
-        return $.Timer(false, interval, callback);
+        var timer = $.Timer(false, interval);
+        timer.on($.Timer.event.TICK, callback);
+        return timer;
     }
     $.clearInterval = function(timer){
         timer.stop();
@@ -6848,7 +6851,7 @@ $.Cookie = (function(){
 })();
 $.cookie = new $.Cookie;
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画

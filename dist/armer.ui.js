@@ -1,5 +1,5 @@
 /*!
- * armerjs - v0.9.2 - 2016-01-28 
+ * armerjs - v0.9.3 - 2016-02-19 
  * Copyright (c) 2016 Alphmega; Licensed MIT() 
  */
 // 关掉IE6 7 的动画
